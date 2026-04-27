@@ -6,7 +6,7 @@
 - Christian Manto
 
 ## Cosa facciamo?
-La nostra proposta è quella di realizzare un sito di streaming con un focus particolare all'aspetto di discussione.
+La nostra proposta è quella di realizzare un sito di streaming anime con un focus particolare all'aspetto di discussione.
 
 ## Quali sono gli attori dell'applicazione?
 

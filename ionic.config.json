@@ -1,0 +1,7 @@
+{
+  "name": "NexuStream",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

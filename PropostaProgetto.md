@@ -43,7 +43,7 @@ Si prevede in futuro l'implementazione di una feature di traduzione automatica d
 Di seguito, un diagramma ER che mostra le relazioni basilari presenti nel sito, in concordanza con quanto descritto sopra:
 
 
-![ERDiagram](ErDiagramma.png)
+![ERDiagram](src/ErDiagramma.png)
 
 ## Terms of Service
 Di seguito, le regole del sito:

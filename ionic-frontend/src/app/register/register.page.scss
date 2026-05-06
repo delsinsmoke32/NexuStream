@@ -1,0 +1,104 @@
+//se le modifiche rispetto al login ti piacciono apportale pure lì,
+//sennò sentiti libero di modificare
+
+:host {
+  --input-placeholder: #b3b3b3;
+}
+
+.login-content {
+  --background: var(--ion-color-secondary);
+}
+
+.split-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  gap: 30px;
+  padding: 20px;
+
+  @media (min-width: 992px) {
+    flex-direction: row;
+    align-items: flex-start; //per allineare i titoli sopra i form
+    justify-content: center;
+    gap: 60px;
+  }
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 450px;
+
+  h1 {
+    color: var(--ion-color-primary-contrast);
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    margin-top: -10px; //per fare apparire tutto più centrato
+  }
+}
+
+.form-log-in-card {
+  background: var(--ion-color-primary);
+  border-radius: 16px;
+  margin: 0;
+  // Box shadow interna come nel tuo design originale Figma
+  box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 10px 20px rgba(0,0,0,0.3);
+  
+  ion-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 32px 24px;
+  }
+}
+
+.red-sphere {
+  width: 180px;
+  height: 180px;
+  background: #b22222;
+  border-radius: 50%;
+  align-self: center; //centrata rispetto alla colonna a destra
+  margin-top: 40px;
+}
+
+.input-group {
+  ion-label {
+    color: var(--ion-color-primary-contrast);
+    font-weight: 500;
+    display: block;
+    font-size: 14px;
+    margin-bottom: 12px;
+    margin-top: -10px;
+  }
+}
+
+.custom-input {
+  --background: var(--ion-color-secondary);
+  --color: var(--ion-color-primary-contrast);
+  --placeholder-color: var(--input-placeholder);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.register-button {
+  --background: var(--ion-color-secondary);
+  --color: var(--ion-color-primary-contrast);
+  --border-radius: 8px;
+  font-weight: bold;
+  height: 48px;
+  margin-top: 8px;
+}
+
+.text-link {
+  text-align: center;
+  a {
+    color: var(--ion-color-secondary);
+    text-decoration: underline;
+    font-size: 14px;
+    font-weight: 500;
+  }
+}

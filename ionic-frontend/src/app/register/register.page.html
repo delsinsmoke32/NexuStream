@@ -1,0 +1,97 @@
+<ion-header [translucent]="true">
+    <ion-toolbar>
+        <ion-title
+            >Register on
+            <p
+                style="
+                    color: var(--ion-color-primary-tint);
+                    display: inline;
+                    font-weight: bolder;
+                "
+            >
+                NexuStream
+            </p></ion-title
+        >
+    </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="login-content">
+    <div class="split-wrapper">
+        
+        <!-- COLONNA SINISTRA -->
+        <div class="column left-column">
+            <h1 class="title">Welcome to NexuStream</h1>
+
+            <ion-card class="form-log-in-card">
+                <ion-card-content>
+                    <div class="input-group">
+                        <ion-label position="stacked">Email</ion-label>
+                        <ion-item lines="none" class="custom-input">
+                            <ion-input
+                                type="email"
+                                placeholder="example@mail.com"
+                            ></ion-input>
+                        </ion-item>
+                    </div>
+
+                    <div class="input-group">
+                        <ion-label position="stacked">Password</ion-label>
+                        <ion-item lines="none" class="custom-input">
+                            <ion-input
+                                type="password"
+                                placeholder="password"
+                            ></ion-input>
+                        </ion-item>
+                    </div>
+
+                    <div class="input-group">
+                        <ion-label position="stacked">Conferma Password</ion-label>
+                        <ion-item lines="none" class="custom-input">
+                            <ion-input
+                                type="password"
+                                placeholder="password"
+                            ></ion-input>
+                        </ion-item>
+                    </div>
+
+                    <div class="button-container">
+                        <ion-button expand="block" class="register-button">
+                            Register
+                        </ion-button>
+                    </div>
+
+                    <div class="text-link">
+                        <a href="#">Forgot password?</a>
+                    </div>
+                </ion-card-content>
+            </ion-card>
+        </div>
+
+        <!-- COLONNA DESTRA -->
+        <div class="column right-column">
+            <h1 class="title">What's your name?</h1>
+
+            <ion-card class="form-log-in-card">
+                <ion-card-content>
+                    <div class="input-group">
+                        <ion-label position="stacked">Username</ion-label>
+                        <ion-item lines="none" class="custom-input">
+                            <ion-input
+                                type="text"
+                                placeholder="username"
+                            ></ion-input>
+                        </ion-item>
+                    </div>
+                </ion-card-content>
+            </ion-card>
+
+            <div class="red-sphere"></div>
+        </div>
+
+
+    </div>
+</ion-content>
+
+
+
+

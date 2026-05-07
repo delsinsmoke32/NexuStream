@@ -43,6 +43,7 @@ import {
     ],
 })
 export class RegisterPage implements OnInit {
+    
     register() {}
     constructor() {}
 

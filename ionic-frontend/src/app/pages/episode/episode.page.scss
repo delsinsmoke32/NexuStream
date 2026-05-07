@@ -1,0 +1,129 @@
+.streaming-content {
+  --background: #0a0a0a; // Più scuro per risaltare il video
+}
+
+.video-layout-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  min-height: 100%;
+
+  @media (min-width: 992px) {
+    flex-direction: row;
+    padding: 40px;
+    align-items: flex-start;
+  }
+}
+
+// --- PLAYER SECTION ---
+.main-video-section {
+  flex: 3; // Occupa più spazio
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.video-placeholder {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: var(--ion-color-secondary);
+  border-radius: 16px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0px 4px 10px rgba(0, 0, 0, 0.8), 0px 10px 30px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+
+  .play-hint {
+    font-size: 80px;
+    color: var(--ion-color-primary);
+    opacity: 0.8;
+  }
+
+  .video-overlay-bottom {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.9));
+    color: white;
+  }
+}
+
+.episode-details {
+  h1 {
+    color: white;
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0;
+  }
+  .description {
+    color: #b3b3b3;
+    line-height: 1.6;
+    max-width: 800px;
+  }
+}
+
+// --- SIDEBAR SECTION ---
+.episode-sidebar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.sidebar-title {
+  color: white;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.episode-card {
+  background: var(--ion-color-secondary);
+  border-radius: 12px;
+  margin: 0 0 10px 0;
+  cursor: pointer;
+  transition: transform 0.2s;
+
+  ion-card-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+  }
+
+  &.active {
+    border: 2px solid var(--ion-color-primary);
+    background: #251010;
+  }
+
+  .ep-num {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--ion-color-primary);
+    min-width: 30px;
+  }
+
+  h3 {
+    color: var(--ion-color-primary-contrast);
+    margin: 0;
+    font-size: 16px;
+  }
+
+  p {
+    color: #666;
+    margin: 5px 0 0 0;
+    font-size: 14px;
+  }
+
+  &:hover {
+    transform: translateX(5px);
+  }
+}
+
+.btn-secondary {
+  --color: #b3b3b3;
+  font-weight: 500;
+}

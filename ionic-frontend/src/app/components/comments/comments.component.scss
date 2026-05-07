@@ -1,0 +1,66 @@
+.comments-wrapper {
+  margin-top: 40px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 20px;
+
+  h3 {
+    color: white;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+}
+
+.new-comment-box {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 30px;
+  box-shadow: inset 0px 2px 5px rgba(0,0,0,0.5);
+
+  .post-btn {
+    --color: var(--ion-color-primary);
+    font-weight: bold;
+    float: right;
+  }
+}
+
+.comment-item {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 25px;
+
+  ion-avatar {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--ion-color-primary);
+  }
+
+  .comment-content {
+    flex: 1;
+    .comment-header {
+      display: flex;
+      gap: 10px;
+      align-items: baseline;
+      .username { color: var(--ion-color-primary-contrast); font-weight: bold; font-size: 0.9rem; }
+      .time { color: #666; font-size: 0.8rem; }
+    }
+    .text {
+      color: #b3b3b3;
+      margin: 5px 0;
+      font-size: 0.95rem;
+      line-height: 1.4;
+    }
+  }
+}
+
+.comment-actions {
+  ion-button {
+    --color: #666;
+    font-size: 0.75rem;
+    margin: 0;
+    --padding-start: 0;
+  }
+}

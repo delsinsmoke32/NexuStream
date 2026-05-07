@@ -1,0 +1,35 @@
+<div class="comments-wrapper">
+  <h3><ion-icon name="chatbubbles-outline"></ion-icon> 12 Comments</h3>
+
+  <div class="new-comment-box">
+    <ion-item lines="none" class="custom-input">
+      <ion-avatar slot="start">
+        <img src="assets/pictures/website_placeholder.webp" alt="User" />
+      </ion-avatar>
+      <ion-textarea placeholder="Write a comment..." autosize="true"></ion-textarea>
+    </ion-item>
+    <div class="btn-container">
+      <ion-button fill="clear" class="post-btn">Post</ion-button>
+    </div>
+  </div>
+
+  <div class="comments-list">
+  <div class="comment-item" *ngFor="let comment of comments">
+    <ion-avatar>
+      <img [src]="comment.avatar" [alt]="comment.username" />
+    </ion-avatar>
+    <div class="comment-content">
+      <div class="comment-header">
+        <span class="username">{{ comment.username }}</span>
+        <span class="time">{{ comment.time }}</span>
+      </div>
+      <p class="text">{{ comment.text }}</p>
+      <div class="comment-actions">
+        <ion-button fill="clear" size="small">
+          <ion-icon name="thumbs-up-outline"></ion-icon> Like
+        </ion-button>
+        <ion-button fill="clear" size="small">Reply</ion-button>
+      </div>
+    </div>
+  </div>
+</div>

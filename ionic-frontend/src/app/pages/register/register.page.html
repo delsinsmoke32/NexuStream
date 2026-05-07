@@ -28,6 +28,7 @@
                         <ion-label position="stacked">Email</ion-label>
                         <ion-item lines="none" class="custom-input">
                             <ion-input
+                                errorText="Invalid email"
                                 type="email"
                                 placeholder="example@mail.com"
                             ></ion-input>
@@ -59,10 +60,6 @@
                             Register
                         </ion-button>
                     </div>
-
-                    <div class="text-link">
-                        <a href="#">Forgot password?</a>
-                    </div>
                 </ion-card-content>
             </ion-card>
         </div>
@@ -85,7 +82,11 @@
                 </ion-card-content>
             </ion-card>
 
-            <div class="red-sphere"></div>
+            <div class="red-sphere">
+                <div class="smaller-sphere">
+                    <img src="../../assets/pictures/website_placeholder.webp"/>
+                </div>
+            </div>
         </div>
 
 

@@ -1,0 +1,60 @@
+<ion-content [fullscreen]="true" class="streaming-content">
+  <div class="video-layout-wrapper">
+    
+    <div class="main-video-section">
+      <div class="player-container">
+        <div class="video-placeholder">
+          <ion-icon name="play-circle" class="play-hint"></ion-icon>
+          <div class="video-overlay-bottom">
+            <p>S1:E4 - Il più forte</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="episode-details">
+        <h1>S1:E4 - Il più forte</h1>
+        <p class="description">
+          Chuck Norris, dopo aver sconfitto Satoru Gojo, si ritrova davanti a una
+          Shibuya desolata. Dall'ombra, esce qualcuno; si tratta di lui, il più forte!
+          Proprio lui, Gianni Morandi!
+        </p>
+        <div class="action-buttons">
+          <ion-button fill="clear" class="btn-secondary">
+            <ion-icon slot="start" name="share-social-outline"></ion-icon> Share
+          </ion-button>
+          <ion-button fill="clear" class="btn-secondary">
+            <ion-icon slot="start" name="add-circle-outline"></ion-icon> My List
+          </ion-button>
+        </div>
+      </div>
+      <app-comments></app-comments>
+    </div>
+
+    <div class="episode-sidebar">
+      <h2 class="sidebar-title">Next Episodes</h2>
+      
+      <div class="playlist-container">
+        <ion-card class="episode-card active">
+          <ion-card-content>
+            <div class="ep-num">4</div>
+            <div class="ep-info">
+              <h3>Il più forte</h3>
+              <p>24 min</p>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card class="episode-card">
+          <ion-card-content>
+            <div class="ep-num">5</div>
+            <div class="ep-info">
+              <h3>End of Za Warudo</h3>
+              <p>24 min</p>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+
+  </div>
+</ion-content>

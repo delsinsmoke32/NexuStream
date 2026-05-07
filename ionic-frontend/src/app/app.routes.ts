@@ -7,11 +7,19 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    loadComponent: () => import('./login/login.page').then( m => m.LoginPage)
+    loadComponent: () => import('./pages/login/login.page').then( m => m.LoginPage)
   },
   {
     path: 'register',
-    loadComponent: () => import('./register/register.page').then(m => m.RegisterPage)
+    loadComponent: () => import('./pages/register/register.page').then(m => m.RegisterPage)
+  },
+  {
+    path: 'episode',
+    loadComponent: () => import('./pages/episode/episode.page').then( m => m.EpisodePage)
+  },
+  {
+    path: 'episode',
+    loadComponent: () => import('./pages/episode/episode.page').then( m => m.EpisodePage)
   },
 
 ];

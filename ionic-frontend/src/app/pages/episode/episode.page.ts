@@ -17,6 +17,7 @@ import {
     IonLabel,
     IonInput,
     IonIcon,
+    IonSkeletonText
 } from '@ionic/angular/standalone'
 import { CommentsComponent } from '@app/components/comments/comments.component'
 import { Episode, EpisodeApi } from '@app/services/episode-api'
@@ -46,6 +47,7 @@ import { Observable } from '@lib/rxjs/dist/types'
         IonInput,
         IonIcon,
         CommentsComponent,
+        IonSkeletonText
     ],
 })
 export class EpisodePage implements OnInit {

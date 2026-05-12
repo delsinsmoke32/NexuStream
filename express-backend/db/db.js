@@ -1,9 +1,33 @@
+require('dotenv').config();
 const sqlite3 = require("sqlite3").verbose();
 
 const db = new sqlite3.Database("./db/database.sqlite", (err) => {
     if (err) console.error(err.message);
     else console.log("Connected to SQLite DB")
 });
+
+const getAsync = (sql, params) => {
+    return new Promise((resolve, reject) => {
+        db.get(sql, params, (err, row) => {
+            if (err) reject(err);
+            else resolve(row);
+        });
+    });
+};
+
+const runAsync = (sql, params) => {
+    return new Promise((resolve, reject) => {
+        // Uso function(err) invece di (err) => per mantenere il contesto 'this'
+        db.run(sql, params, function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                // 'this' contiene lastID (l'ID inserito) e changes (righe modificate)
+                resolve({ id: this.lastID, changes: this.changes });
+            }
+        });
+    });
+};
 
 db.pragma('foreign_keys = ON');
 
@@ -52,6 +76,9 @@ const initDb = () => {
 
     CREATE TABLE IF NOT EXISTS "Users" (
         "UserID" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        "Email" TEXT NOT NULL UNIQUE,
+        "Password" TEXT NOT NULL,
+        "Username" TEXT NOT NULL,
         "isMod" INTEGER NOT NULL,
         "isCataloguer" INTEGER NOT NULL,
         "isAdmin" INTEGER NOT NULL,
@@ -131,4 +158,4 @@ const initDb = () => {
     console.log("Database inizializzato correttamente.");
 };
 
-module.exports = { db, initDb };
+module.exports = { db, initDb , getAsync, runAsync};

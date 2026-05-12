@@ -5,7 +5,13 @@ const db = new sqlite3.Database("./db/database.sqlite", (err) => {
     else console.log("Connected to SQLite DB")
 });
 
-db.pragma('foreign_keys = ON');
+db.run('PRAGMA foreign_keys = ON;', (pragmaErr) => {
+    if (pragmaErr) {
+        console.error("Errore nell'attivazione delle chiavi esterne:", pragmaErr.message);
+    } else {
+        console.log("Foreign keys enabled successfully.");
+    }
+});
 
 const initDb = () => {
     const schema = `
@@ -52,6 +58,9 @@ const initDb = () => {
 
     CREATE TABLE IF NOT EXISTS "Users" (
         "UserID" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        "Email" TEXT NOT NULL UNIQUE,
+        "Password" TEXT NOT NULL,
+        "Username" TEXT NOT NULL,
         "isMod" INTEGER NOT NULL,
         "isCataloguer" INTEGER NOT NULL,
         "isAdmin" INTEGER NOT NULL,
@@ -131,4 +140,34 @@ const initDb = () => {
     console.log("Database inizializzato correttamente.");
 };
 
-module.exports = { db, initDb };
+const resetDb = () => {
+    const drop = `
+    -- Disabilita temporaneamente i vincoli se necessario (opzionale per SQLite)
+    PRAGMA foreign_keys = OFF;
+
+    -- Tabelle di collegamento (LINKs) e tabelle dipendenti
+    DROP TABLE IF EXISTS "LINKs_User_Interacts_Comment";
+    DROP TABLE IF EXISTS "LINKs_User_Likes_Show";
+    DROP TABLE IF EXISTS "LINKs_User_Interacts_Episode";
+    DROP TABLE IF EXISTS "Comments";
+    DROP TABLE IF EXISTS "EpisodeLanguage";
+    DROP TABLE IF EXISTS "EpisodeTimes";
+    DROP TABLE IF EXISTS "EpisodeSub";
+    DROP TABLE IF EXISTS "Episodes";
+    DROP TABLE IF EXISTS "Seasons";
+
+    -- Tabelle principali (Padri)
+    DROP TABLE IF EXISTS "Users";
+    DROP TABLE IF EXISTS "Shows";
+    DROP TABLE IF EXISTS "Propics";
+    DROP TABLE IF EXISTS "SupportedLanguages";
+
+    -- Riabilita i vincoli
+    PRAGMA foreign_keys = ON;
+    `;
+
+    db.exec(drop);
+    console.log("Database droppato correttamente.");
+}
+
+module.exports = { db, initDb, resetDb };

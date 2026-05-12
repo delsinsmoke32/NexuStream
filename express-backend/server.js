@@ -3,6 +3,10 @@ const app = express();
 const cors = require('cors');
 const episodeRoute = require("./routes/episode");
 const commentsRoute = require("./routes/comments");
+const resetDb = require('./db/db').resetDb;
+const db = require("./db/db").db;
+const initDb = require("./db/db").initDb;
+const populateDb = require("./db/populateDb").populateDb
 
 
 const PORT = 3000;
@@ -12,6 +16,10 @@ app.use('/api/episode', episodeRoute);
 app.use('/api/episode/:id/comments', commentsRoute);
 
 BigInt.prototype.toJSON = function() { return this.toString() }; //fixgpt
+
+resetDb();
+initDb();
+populateDb();
 
 app.get('/', (req, res) => {
     res.send('Server attivo');
@@ -31,5 +39,5 @@ app.use((req, res) => {
 
 
 app.listen(PORT, () => {
-console.log(`Server in ascolto su http://localhost:${PORT}`);
+    console.log(`Server in ascolto su http://localhost:${PORT}`);
 });

@@ -2,6 +2,8 @@
 
 export interface User {
     UserID: bigint;
+    Email: string;
+    Username: string;
     isMod: boolean;
     isCataloguer: boolean;
     isAdmin: boolean;

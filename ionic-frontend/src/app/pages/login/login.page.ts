@@ -17,6 +17,8 @@ import {
     IonLabel,
     IonInput,
 } from '@ionic/angular/standalone'
+import { AuthService } from '@app/services/auth';
+import { Router } from '@lib/@angular/router';
 
 @Component({
     selector: 'app-login',
@@ -43,8 +45,28 @@ import {
     ],
 })
 export class LoginPage implements OnInit {
-    login() {}
-    constructor() {}
+
+    loginData = {email: '', password: ''};
+
+
+    constructor(
+        private authService: AuthService,
+        private router: Router, 
+    ) {}
+
+    login() {
+        this.authService.login(this.loginData).subscribe({
+            next: (res) => {
+                console.log('Login OK: ', res);
+                localStorage.setItem('user', JSON.stringify(res.user));
+                this.router.navigate(["/episode"]);
+            },
+            error: (err) => {
+                console.error("Errore login: ", err);
+                alert(err.error.message || "Errore durante il login.");
+            }
+        });
+    };
 
     ngOnInit() {}
 }

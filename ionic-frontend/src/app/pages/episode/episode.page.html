@@ -1,26 +1,28 @@
 <ion-content
     [fullscreen]="true"
-    class="streaming-content"
-    *ngIf="episode$ | async as episode"
->
+    class="streaming-content">
     <div class="video-layout-wrapper">
         <div class="main-video-section">
             <div class="player-container">
                 <div class="video-placeholder">
                     <ion-icon name="play-circle" class="play-hint"></ion-icon>
                     <div class="video-overlay-bottom">
-                        <p>{{ episode.title }}</p>
+                        @if ( episode$ | async; as episode ) {
+                            <p>{{ episode.Title }}</p>
+                        } @else {
+                            <p><ion-skeleton-text animated style="width: 60%"></ion-skeleton-text></p>
+                        }
                     </div>
                 </div>
             </div>
 
             <div class="episode-details">
-                <h1>{{ episode.title }}</h1>
+                <h1>Titolo</h1>
                 <p class="description">
                     <!--Chuck Norris, dopo aver sconfitto Satoru Gojo, si ritrova
                     davanti a una Shibuya desolata. Dall'ombra, esce qualcuno;
                     si tratta di lui, il più forte! Proprio lui, Gianni Morandi!-->
-                    {{ episode.description }}
+                    Descrizione
                 </p>
                 <div class="action-buttons">
                     <ion-button fill="clear" class="btn-secondary">

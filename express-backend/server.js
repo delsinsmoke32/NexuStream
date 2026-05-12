@@ -1,13 +1,17 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const episodeRoutes = require("./routes/episodes");
+const episodeRoute = require("./routes/episode");
+const commentsRoute = require("./routes/comments");
 
 
 const PORT = 3000;
 app.use(express.json());
 app.use(cors());
-app.use('/api/episodes', episodeRoutes);
+app.use('/api/episode', episodeRoute);
+app.use('/api/episode/:id/comments', commentsRoute);
+
+BigInt.prototype.toJSON = function() { return this.toString() }; //fixgpt
 
 app.get('/', (req, res) => {
     res.send('Server attivo');

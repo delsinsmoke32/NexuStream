@@ -17,7 +17,6 @@
 
 <ion-content [fullscreen]="true" class="login-content">
     <div class="split-wrapper">
-        
         <!-- COLONNA SINISTRA -->
         <div class="column left-column">
             <h1 class="title">Welcome to NexuStream</h1>
@@ -46,7 +45,9 @@
                     </div>
 
                     <div class="input-group">
-                        <ion-label position="stacked">Conferma Password</ion-label>
+                        <ion-label position="stacked"
+                            >Conferma Password</ion-label
+                        >
                         <ion-item lines="none" class="custom-input">
                             <ion-input
                                 type="password"
@@ -84,15 +85,9 @@
 
             <div class="red-sphere">
                 <div class="smaller-sphere">
-                    <img src="../../assets/pictures/website_placeholder.webp"/>
+                    <img [src]='"static/avatars/avatar-000.png" | backendUrl' />
                 </div>
             </div>
         </div>
-
-
     </div>
 </ion-content>
-
-
-
-

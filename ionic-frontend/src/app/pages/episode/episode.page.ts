@@ -17,11 +17,13 @@ import {
     IonLabel,
     IonInput,
     IonIcon,
-    IonSkeletonText
+    IonSkeletonText,
 } from '@ionic/angular/standalone'
+import { addIcons } from 'ionicons'
 import { CommentsComponent } from '@app/components/comments/comments.component'
 import { Episode, EpisodeApi } from '@app/services/episode-api'
 import { Observable } from '@lib/rxjs/dist/types'
+import { playCircle } from '@lib/ionicons/icons'
 
 @Component({
     selector: 'app-episode',
@@ -47,7 +49,7 @@ import { Observable } from '@lib/rxjs/dist/types'
         IonInput,
         IonIcon,
         CommentsComponent,
-        IonSkeletonText
+        IonSkeletonText,
     ],
 })
 export class EpisodePage implements OnInit {
@@ -55,6 +57,7 @@ export class EpisodePage implements OnInit {
     episode$: Observable<Episode>
     constructor(api: EpisodeApi) {
         this.episode$ = api.getEpisode(this.id)
+        addIcons({ playCircle })
     }
     ngOnInit() {}
 }

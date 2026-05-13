@@ -17,6 +17,7 @@ import {
     IonLabel,
     IonInput,
 } from '@ionic/angular/standalone'
+import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
 
 @Component({
     selector: 'app-register',
@@ -40,10 +41,10 @@ import {
         FormsModule,
         IonLabel,
         IonInput,
+        BackendUrlPipe,
     ],
 })
 export class RegisterPage implements OnInit {
-    
     register() {}
     constructor() {}
 

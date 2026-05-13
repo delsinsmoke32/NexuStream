@@ -11,7 +11,8 @@ const populateDb = require("./db/populateDb").populateDb
 const loginRoute = require("./routes/login");
 const registerRoute = require("./routes/register");
 const userRoute = require("./routes/user");
-
+const fs = require('fs');
+const path = require('path');
 
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
@@ -21,6 +22,7 @@ app.use('/api/episode/:id/comments', commentsRoute);
 app.use('/api/login', loginRoute);
 app.use('/api/register', registerRoute);
 app.use('/api/user', userRoute);
+app.use('/static', express.static(path.join(__dirname, 'public')));
 
 BigInt.prototype.toJSON = function() { return this.toString() }; //fixgpt
 

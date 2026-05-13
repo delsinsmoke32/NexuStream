@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -7,13 +8,19 @@ const resetDb = require('./db/db').resetDb;
 const db = require("./db/db").db;
 const initDb = require("./db/db").initDb;
 const populateDb = require("./db/populateDb").populateDb
+const loginRoute = require("./routes/login");
+const registerRoute = require("./routes/register");
+const userRoute = require("./routes/user");
 
 
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
 app.use('/api/episode', episodeRoute);
 app.use('/api/episode/:id/comments', commentsRoute);
+app.use('/api/login', loginRoute);
+app.use('/api/register', registerRoute);
+app.use('/api/user', userRoute);
 
 BigInt.prototype.toJSON = function() { return this.toString() }; //fixgpt
 

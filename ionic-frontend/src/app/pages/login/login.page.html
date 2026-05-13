@@ -28,6 +28,7 @@
                     <ion-item lines="none" class="custom-input">
                         <ion-input
                             type="email"
+                            [(ngModel)]="loginData.email"
                             errorText="Invalid email"
                             placeholder="example@mail.com"
                         ></ion-input>
@@ -39,6 +40,7 @@
                     <ion-item lines="none" class="custom-input">
                         <ion-input
                             errorText="Wrong password"
+                            [(ngModel)]="loginData.password"
                             type="password"
                             placeholder="password"
                         ></ion-input>
@@ -46,7 +48,7 @@
                 </div>
 
                 <div class="button-container">
-                    <ion-button expand="block" class="login-button">
+                    <ion-button expand="block" (click)="login()" class="login-button">
                         Login
                     </ion-button>
                 </div>

@@ -1,3 +1,4 @@
+require('dotenv').config();
 const sqlite3 = require("sqlite3").verbose();
 
 const db = new sqlite3.Database("./db/database.sqlite", (err) => {
@@ -12,6 +13,30 @@ db.run('PRAGMA foreign_keys = ON;', (pragmaErr) => {
         console.log("Foreign keys enabled successfully.");
     }
 });
+const getAsync = (sql, params) => {
+    return new Promise((resolve, reject) => {
+        db.get(sql, params, (err, row) => {
+            if (err) reject(err);
+            else resolve(row);
+        });
+    });
+};
+
+const runAsync = (sql, params) => {
+    return new Promise((resolve, reject) => {
+        // Uso function(err) invece di (err) => per mantenere il contesto 'this'
+        db.run(sql, params, function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                // 'this' contiene lastID (l'ID inserito) e changes (righe modificate)
+                resolve({ id: this.lastID, changes: this.changes });
+            }
+        });
+    });
+};
+
+db.pragma('foreign_keys = ON');
 
 const initDb = () => {
     const schema = `
@@ -170,4 +195,4 @@ const resetDb = () => {
     console.log("Database droppato correttamente.");
 }
 
-module.exports = { db, initDb, resetDb };
+module.exports = { db, initDb , getAsync, runAsync};

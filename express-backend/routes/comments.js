@@ -6,7 +6,7 @@ const authOptional = require("../middleware/authOptional");
 const auth = require("../middleware/auth");
 
 
-//GET /api/episodes/:episodeID/comments
+//GET /api/episodes/:id/comments
 router.get('/', authOptional, async (req, res) => {
     //la logica dell'authOptional è che non serve avere il jwt per vederli
     const episodeId = req.params.id;
@@ -36,10 +36,10 @@ router.get('/', authOptional, async (req, res) => {
 
     try {
         let sql = `SELECT
-                c.*
+                c.*,
                 u.Username, u.isAdmin, u.isMod
                 FROM Comments c
-                JOIN Users ON c.REF_UserID = u.UserID
+                JOIN Users AS u ON c.REF_UserID = u.UserID
                 WHERE c.REF_EpisodeID = ?`;
 
         const params = [episodeId];
@@ -74,12 +74,10 @@ router.get('/', authOptional, async (req, res) => {
             res.status(400).json({message: "Errore sconosciuto."});
         }
     }
-
-    res.json([comment1, comment2])
 });
 
 
-//PATCH /api/episodes/:episodeId/comments/:commentId/hide
+//PATCH /api/episodes/:id/comments/:commentId/hide
 router.patch('/:commentId/hide', auth, async (req, res) => {
     if (!req.user.isMod == 0) {
         res.status(403).json({message: "Non hai i permessi per visualizzare questa pagina."});
@@ -104,7 +102,7 @@ router.patch('/:commentId/hide', auth, async (req, res) => {
     }
 });
 
-//PATCH /api/episodes/:episodeId/comments/:commentId/approve
+//PATCH /api/episodes/:id/comments/:commentId/approve
 router.patch('/:commentId/approve', auth, async (req, res) => {
     if (!req.user.isMod == 0){
         res.status(403).json({message: "Non hai i permessi per visualizzare questa pagina."});

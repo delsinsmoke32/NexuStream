@@ -46,7 +46,7 @@ const populateDb = async () => {
     const commentsSql = `
             INSERT INTO "Comments" ("REF_UserID", "REF_EpisodeID", "DateCommented", "REF_CommentID", "isHidden", "Likes", "isApproved") 
             VALUES 
-            (2, 1, '2023-05-10 14:30', 1, 0, 10, 1),
+            (2, 1, '2023-05-10 14:30', 1, 1, 10, 1),
             (1, 1, '2023-05-10 15:00', 1, 0, 2, 1)
     `;
 

@@ -17,11 +17,11 @@ const path = require('path');
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
-app.use('/api/episode', episodeRoute);
-app.use('/api/episode/:id/comments', commentsRoute);
+app.use('/api/episodes', episodeRoute);
+app.use('/api/episodes/:id/comments', commentsRoute);
 app.use('/api/login', loginRoute);
 app.use('/api/register', registerRoute);
-app.use('/api/user', userRoute);
+app.use('/api/users', userRoute);
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
 BigInt.prototype.toJSON = function() { return this.toString() }; //fixgpt

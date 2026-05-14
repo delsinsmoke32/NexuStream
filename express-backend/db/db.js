@@ -16,6 +16,8 @@ db.run('PRAGMA foreign_keys = ON;', (pragmaErr) => {
     }
 });
 
+
+//recupera una sola riga
 const getAsync = (sql, params) => {
     return new Promise((resolve, reject) => {
         db.get(sql, params, (err, row) => {
@@ -25,6 +27,7 @@ const getAsync = (sql, params) => {
     });
 };
 
+//inserisce nel db
 const runAsync = (sql, params) => {
     return new Promise((resolve, reject) => {
         // Uso function(err) invece di (err) => per mantenere il contesto 'this'
@@ -34,6 +37,20 @@ const runAsync = (sql, params) => {
             } else {
                 // 'this' contiene lastID (l'ID inserito) e changes (righe modificate)
                 resolve({ id: this.lastID, changes: this.changes });
+            }
+        });
+    });
+};
+
+//recupera tutte le righe che rispettano le condizioni
+const allAsync = (sql, params) => {
+    return new Promise((resolve, reject) => {
+        db.all(sql, params, (err, rows) => {
+            if (err) {
+                reject(err);
+            } else {
+                // 'rows' è un array di oggetti, se non trova nulla è un array vuoto []
+                resolve(rows);
             }
         });
     });
@@ -63,4 +80,4 @@ const resetDb = () => {
     }
 }
 
-module.exports = { db, initDb, resetDb, getAsync, runAsync };
+module.exports = { db, initDb, resetDb, getAsync, runAsync, allAsync };

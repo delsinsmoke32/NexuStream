@@ -8,7 +8,7 @@ router.get('/me', auth, async (req, res) => {
     try {
         const uid = req.user.id;
 
-        const sql = `SELECT UserID, Username, Email, isAdmin, isMod, isCataloguer FROM Users WHERE id = ?`;
+        const sql = `SELECT UserID, Username, Email, isAdmin, isMod, isCataloguer FROM Users WHERE UserID = ?`;
         const user = await db.getAsync(sql, [uid]);
 
         if (!user) {

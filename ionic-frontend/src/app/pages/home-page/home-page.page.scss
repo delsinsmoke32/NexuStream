@@ -1,0 +1,45 @@
+/* Stili per le liste di categorie, i poster, il testo, ecc. */
+.category-list {
+  h3 {
+    margin-left: 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: white; /* O il colore che preferisci */
+  }
+
+  .horizontal-scroll {
+  display: flex;             // Mette gli elementi uno accanto all'altro
+  overflow-x: auto;          // Abilita lo scorrimento orizzontale
+  scroll-snap-type: x mandatory; // Fa sì che i poster si "aggancino" quando scorri
+  padding: 10px;
+  gap: 15px;                 // Spazio tra i poster
+  
+  // Nasconde la barra di scorrimento brutta su alcuni browser
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.anime-card {
+  flex: 0 0 auto;            // Impedisce ai poster di rimpicciolirsi
+  width: 140px;              // Larghezza del poster (simile a Immagine 2026-05-14 110108.jpg)
+  scroll-snap-align: start;  // Punto di aggancio per lo scorrimento
+
+  img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  }
+
+  p {
+    color: white;
+    font-size: 0.9rem;
+    margin-top: 5px;
+    white-space: nowrap;     // Evita che il titolo vada a capo
+    overflow: hidden;
+    text-overflow: ellipsis; // Aggiunge i puntini sospensivi se il titolo è lungo
+  }
+}
+}

@@ -9,8 +9,8 @@ INSERT INTO "Propics" ("PropicPath") VALUES ('/static/avatars/avatar-000.png'), 
 
 -- Serie TV
 INSERT INTO "Shows" ("DateStarted", "hasEnded", "DateEnded", "Favourited", "Description", "Title") VALUES 
-(1672531200, 0, NULL, 150, 'Un thriller psicologico ambientato a Milano.', 'Nebbia Urbana'),
-(1614556800, 1, '2022-05-10', 3200, 'Lotta per il potere in un mondo fantasy.', 'Il Trono di Pixel');
+('2023-01-01', 0, NULL, 150, 'Un thriller psicologico ambientato a Milano.', 'Nebbia Urbana'),
+('2021-03-01', 1, '2022-05-10', 3200, 'Lotta per il potere in un mondo fantasy.', 'Il Trono di Pixel');
 
 -- Stagioni
 INSERT INTO "Seasons" ("REF_ShowID", "DateStarted", "hasEnded", "DateEnded", "Description", "Title") VALUES 

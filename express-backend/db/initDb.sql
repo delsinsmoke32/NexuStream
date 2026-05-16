@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS "Propics" (
 
 CREATE TABLE IF NOT EXISTS "Shows" (
     "ShowID" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    "DateStarted" INTEGER NOT NULL,
+    "DateStarted" TEXT NOT NULL,
     "hasEnded" INTEGER NOT NULL,
     "DateEnded" TEXT NULL,
     "Favourited" INTEGER NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS "Seasons" (
     "DateEnded" TEXT NULL,
     "Description" TEXT NOT NULL,
     "Title" TEXT NOT NULL,
-    FOREIGN KEY ("REF_ShowID") REFERENCES "Shows" ("ShowID")
+    FOREIGN KEY ("REF_ShowID") REFERENCES "Shows" ("ShowID") ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS "Episodes" (
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS "Episodes" (
     "Streams" INTEGER NOT NULL,
     "Description" TEXT NOT NULL,
     "Title" TEXT NOT NULL,
-    FOREIGN KEY ("REF_SeasonID") REFERENCES "Seasons" ("SeasonID")
+    FOREIGN KEY ("REF_SeasonID") REFERENCES "Seasons" ("SeasonID") ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS "Users" (

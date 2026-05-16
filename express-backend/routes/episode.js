@@ -8,6 +8,7 @@ const db = dbf.db;
 //     res.send('Lista completa degli episodi...');
 // });
 
+//GET /api/episodes/id
 router.get('/:id', async (req, res) => {
     const episodeId = req.params.id;
 
@@ -23,8 +24,8 @@ router.get('/:id', async (req, res) => {
         res.json(episode);
 
     } catch (err) {
-        console.error("Errore query episodio:", err);
-        res.status(500).json({ error: "Errore interno del server" });
+        console.error("Errore query episodio: ", err);
+        return res.status(500).json({ error: "Errore interno del server" });
     }
 });
 

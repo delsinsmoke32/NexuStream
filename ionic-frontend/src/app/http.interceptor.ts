@@ -7,6 +7,8 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
     const router = inject(Router)
     const baseUrl = 'http://localhost:3000'
 
+    const token = localStorage.getItem('token');
+
     let apiReq = req
     if (!req.url.startsWith('http://') && !req.url.startsWith('https://')) {
         apiReq = req.clone({
@@ -14,14 +16,23 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
         })
     }
 
+    if (token) {
+        apiReq = apiReq.clone({
+            setHeaders: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+    }
+
     return next(apiReq).pipe(
         catchError((error: HttpErrorResponse) => {
             if (error.status == 401) {
-                console.error('Errore')
+                console.error('Sessione scaduta o non autorizzata.');
+                localStorage.removeItem('token');
+                router.navigate(['/login']);
             }
 
             return throwError(() => error)
         })
     )
-    return next(req)
 }

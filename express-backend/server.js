@@ -4,13 +4,16 @@ const app = express();
 const cors = require('cors');
 const episodeRoute = require("./routes/episode");
 const commentsRoute = require("./routes/comments");
+const loginRoute = require("./routes/login");
+const registerRoute = require("./routes/register");
+const userRoute = require("./routes/user");
+const homeRoute = require("./routes/home");
+const adminRoute = require("./routes/adminPage");
+const cataloguerRoute = require("./routes/cataloguerPage");
 const resetDb = require('./db/db').resetDb;
 const db = require("./db/db").db;
 const initDb = require("./db/db").initDb;
 const populateDb = require("./db/populateDb").populateDb
-const loginRoute = require("./routes/login");
-const registerRoute = require("./routes/register");
-const userRoute = require("./routes/user");
 const fs = require('fs');
 const path = require('path');
 
@@ -22,6 +25,9 @@ app.use('/api/episodes/:id/comments', commentsRoute);
 app.use('/api/login', loginRoute);
 app.use('/api/register', registerRoute);
 app.use('/api/users', userRoute);
+app.use('/api/home', homeRoute);
+app.use('/api/admin/users', adminRoute);
+app.use('/api/cataloguer', cataloguerRoute);
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
 BigInt.prototype.toJSON = function() { return this.toString() }; //fixgpt

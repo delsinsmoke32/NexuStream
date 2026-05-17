@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS "Comments" (
 
 CREATE TABLE IF NOT EXISTS "LINKs_User_Interacts_Episode" (
     "REF_UserID" INTEGER NOT NULL,
-    "REF_EpisodeID" INTEGER PRIMARY KEY NOT NULL,
+    "REF_EpisodeID" INTEGER NOT NULL,
     "LastWatchedDate" TEXT NOT NULL,
     "Progress" INTEGER NOT NULL,
     "isCompleted" INTEGER NOT NULL,
@@ -104,7 +104,7 @@ CREATE TABLE IF NOT EXISTS "EpisodeLanguage" (
 );
 
 CREATE TABLE IF NOT EXISTS "EpisodeTimes" (
-    "REF_EpisodeID" INTEGER PRIMARY KEY NOT NULL,
+    "REF_EpisodeID" INTEGER NOT NULL,
     "StartTime" INTEGER NOT NULL,
     "EndTime" INTEGER NOT NULL,
     "Type" TEXT NOT NULL,

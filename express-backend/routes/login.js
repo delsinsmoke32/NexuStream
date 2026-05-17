@@ -6,6 +6,8 @@ const db = require("../db/db");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+
+//POST /api/login
 router.post('/', async (req, res) => {
     const {email, password} = req.body;
     try {
@@ -16,20 +18,20 @@ router.post('/', async (req, res) => {
             return res.status(400).json({ message: "L'utente non esiste."});
         }
 
-        const isMatch = await bcrypt.compare(password, usr.password);
+        const isMatch = await bcrypt.compare(password, usr.Password);
         if (!isMatch){
             return res.status(400).json({ message: "Email o password errati." });
         }
 
         const token = jwt.sign(
-            {id: usr.id, username: usr.username},
-            process.env.JWT_TOKEN,
+            {id: usr.UserID, username: usr.Username, isAdmin: usr.isAdmin, isMod: usr.isMod, isCat: usr.isCataloguer},
+            process.env.JWT_SECRET,
             { expiresIn: '24h' } //scadenza del token
         );
 
-        delete usr.password;
+        delete usr.Password;
         res.json({
-            message: "Welcome back, " + usr.username,
+            message: "Welcome back, " + usr.Username,
             usr,
             token,
         });

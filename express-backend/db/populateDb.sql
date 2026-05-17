@@ -4,12 +4,8 @@ INSERT INTO "SupportedLanguages" ("LanguageID") VALUES ('it'), ('en'), ('jp');
 -- Immagini Profilo
 INSERT INTO "Propics" ("PropicPath") VALUES ('/static/avatars/avatar-000.png'), ('/static/avatars/avatar-001.png'), ('/static/avatars/avatar-002.png');
 
--- Utenti (Password in chiaro per esempio, usa hash in produzione)
-INSERT INTO "Users" ("Email", "Password", "Username", "isMod", "isCataloguer", "isAdmin", "REF_LanguageID", "REF_PropicID") VALUES 
-('admin@stream.it', 'admin123', 'SuperAdmin', 1, 1, 1, 'it', '/static/avatars/avatar-000.png'),
-('marco@email.com', 'marco88', 'MarcoRossi', 0, 0, 0, 'it', '/static/avatars/avatar-001.png'),
-('gino@email.com', 'gino99', 'GinoRossi', 1, 0, 0, 'it', '/static/avatars/avatar-001.png'),
-('guest@test.com', 'guest99', 'GuestUser', 0, 1, 0, 'en', '/static/avatars/avatar-002.png');
+-- Utenti
+-- SE NE OCCUPA IL FILE populateDb.js PER VIA DEGLI HASH
 
 -- Serie TV
 INSERT INTO "Shows" ("DateStarted", "hasEnded", "DateEnded", "Favourited", "Description", "Title") VALUES 
@@ -37,14 +33,14 @@ INSERT INTO "EpisodeTimes" ("REF_EpisodeID", "StartTime", "EndTime", "Type") VAL
 (1, 2400, 2700, 'Ending');
 
 -- Commenti (incluso un commento ricorsivo/risposta)
-INSERT INTO "Comments" ("REF_UserID", "REF_EpisodeID", "DateCommented", "REF_CommentID", "isHidden", "Likes", "isApproved") VALUES 
-(2, 1, '2023-05-10 14:30', 1, 0, 10, 1), -- Commento principale (ID 1)
-(1, 1, '2023-05-10 15:00', 1, 0, 2, 1);  -- Risposta al commento 1
+--INSERT INTO "Comments" ("REF_UserID", "REF_EpisodeID", "DateCommented", "REF_CommentID", "isHidden", "Likes", "isApproved") VALUES 
+--(2, 1, '2023-05-10 14:30', 1, 0, 10, 1), -- Commento principale (ID 1)
+--(1, 1, '2023-05-10 15:00', 1, 0, 2, 1);  -- Risposta al commento 1
 
 -- Interazioni Utente-Episodio
-INSERT INTO "LINKs_User_Interacts_Episode" ("REF_UserID", "REF_EpisodeID", "LastWatchedDate", "Progress", "isCompleted", "isDropped", "isLiked") VALUES 
-(2, 1, '2023-06-01', 100, 1, 0, 1),
-(3, 1, '2023-06-02', 20, 0, 1, 0);
+--INSERT INTO "LINKs_User_Interacts_Episode" ("REF_UserID", "REF_EpisodeID", "LastWatchedDate", "Progress", "isCompleted", "isDropped", "isLiked") VALUES 
+--(2, 1, '2023-06-01', 100, 1, 0, 1),
+--(3, 1, '2023-06-02', 20, 0, 1, 0);
 
 -- Like alle Serie
-INSERT INTO "LINKs_User_Likes_Show" ("REF_UserID", "REF_ShowID") VALUES (2, 1), (2, 2);
+--INSERT INTO "LINKs_User_Likes_Show" ("REF_UserID", "REF_ShowID") VALUES (2, 1), (2, 2);

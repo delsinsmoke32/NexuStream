@@ -1,10 +1,11 @@
 require('dotenv').config();
 const express = require('express');
-const router = express.Router();
+const router = express.Router({mergeParams: true});
 const dbf = require("../db/db");
 const db = dbf.db;
 const authOptional = require("../middleware/authOptional");
 const { body, param, validationResult } = require('express-validator');
+const commentsRoute = require("./comments");
 
 // router.get('/', (req, res) => {
 //     res.send('Lista completa degli episodi...');
@@ -12,6 +13,8 @@ const { body, param, validationResult } = require('express-validator');
 
 //GET /api/shows/:showId/seasons/:seasonId/episodes/:episodeId
 router.get('/:episodeId', authOptional, [
+    param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido"),
+    param('seasonId').isInt({ min: 1 }).notEmpty().withMessage("ID stagione non valido"),
     param('episodeId').isInt({ min: 1 }).notEmpty().withMessage("ID episodio non valido"),
 ], async (req, res) => {
 
@@ -19,7 +22,7 @@ router.get('/:episodeId', authOptional, [
     if (!errors.isEmpty()){
         return res.status(400).json({ errors: errors.array() });
     }
-    const episodeId = req.params.episodeId;
+    const {showId, seasonId, episodeId} = req.params;
 
     const sql = `SELECT e.*,
             (SELECT GROUP_CONCAT(Language) FROM EpisodeLanguage AS el WHERE e.EpisodeID = el.REF_EpisodeID) AS DubLanguages,
@@ -48,5 +51,7 @@ router.get('/:episodeId', authOptional, [
         return res.status(500).json({ error: "Errore interno del server" });
     }
 });
+
+router.use('/:episodeId/comments');
 
 module.exports = router;

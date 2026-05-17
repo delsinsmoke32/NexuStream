@@ -5,6 +5,7 @@ const dbf = require("../db/db");
 const db = dbf.db;
 const authOptional = require("../middleware/authOptional");
 const { body, param, validationResult } = require('express-validator');
+const seasonRoute = require("./season");
 
 
 //GET /api/shows/:id
@@ -42,4 +43,8 @@ router.get('/:showId', authOptional, [
     }
 
 
-})
+});
+
+router.use('/:showId/seasons');
+
+module.exports = router;

@@ -6,12 +6,20 @@ const authOptional = require("../middleware/authOptional");
 const auth = require("../middleware/auth");
 const { query, body, param, validationResult } = require('express-validator');
 
-//GET /api/episodes/:id/comments
+//GET /api/shows/:showId/seasons/:seasonId/episodes/:episodeId/comments
 router.get('/', authOptional, [
-
+    param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido"),
+    param('seasonId').isInt({ min: 1 }).notEmpty().withMessage("ID stagione non valido"),
+    param('episodeId').isInt({ min: 1 }).notEmpty().withMessage("ID episodio non valido"),
 ], async (req, res) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     //la logica dell'authOptional è che non serve avere il jwt per vederli
-    const episodeId = req.params.id;
+     const {showId, seasonId, episodeId} = req.params;
     if (req.user) {
         const user = req.user.id;
     }
@@ -81,14 +89,26 @@ router.get('/', authOptional, [
 });
 
 
-//PATCH /api/episodes/:id/comments/:commentId/hide
-router.patch('/:commentId/hide', auth, async (req, res) => {
+//PATCH /api/shows/:showId/seasons/:seasonId/episodes/:episodeId/comments/:commentId/hide
+router.patch('/:commentId/hide', auth, [
+    param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido"),
+    param('seasonId').isInt({ min: 1 }).notEmpty().withMessage("ID stagione non valido"),
+    param('episodeId').isInt({ min: 1 }).notEmpty().withMessage("ID episodio non valido"),
+    param('commentId').isInt({ min: 1 }).notEmpty().withMessage("ID commento non valido"),
+    body('isHidden').isInt({min: 0, max: 1}).notEmpty().withMessage("isHidden deve essere un intero fra 0 e 1")
+], async (req, res) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const {showId, seasonId, episodeId, commentId} = req.params;
+    const { isHidden } = req.body; //booleano
+
     if (!req.user.isMod == 0) {
         res.status(403).json({message: "Non hai i permessi per visualizzare questa pagina."});
     }
-
-    const { commentId } = req.params;
-    const { isHidden } = req.body; //booleano
 
     try {
         const sql = `UPDATE Comments SET isHidden = ? WHERE CommentID = ?`;
@@ -106,14 +126,26 @@ router.patch('/:commentId/hide', auth, async (req, res) => {
     }
 });
 
-//PATCH /api/episodes/:id/comments/:commentId/approve
-router.patch('/:commentId/approve', auth, async (req, res) => {
+//PATCH /api/shows/:showId/seasons/:seasonId/episodes/:episodeId/comments/:commentId/approve
+router.patch('/:commentId/approve', auth, [
+    param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido"),
+    param('seasonId').isInt({ min: 1 }).notEmpty().withMessage("ID stagione non valido"),
+    param('episodeId').isInt({ min: 1 }).notEmpty().withMessage("ID episodio non valido"),
+    param('commentId').isInt({ min: 1 }).notEmpty().withMessage("ID commento non valido"),
+    body('isApproved').isInt({min: 0, max: 1}).notEmpty().withMessage("isHidden deve essere un intero fra 0 e 1")
+], async (req, res) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const {showId, seasonId, episodeId, commentId} = req.params;
+    const { isApproved } = req.body;
+
     if (!req.user.isMod == 0){
         res.status(403).json({message: "Non hai i permessi per visualizzare questa pagina."});
     }
-
-    const { commentId } = req.params;
-    const { isApproved } = req.body;
 
     try {
         const sql = `UPDATE Comments SET isApproved = ? WHERE CommentID = ?`;

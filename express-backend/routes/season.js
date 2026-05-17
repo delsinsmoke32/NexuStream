@@ -1,15 +1,17 @@
 require('dotenv').config();
 const express = require('express');
-const router = express.Router();
+const router = express.Router({mergeParams: true});
 const dbf = require("../db/db");
 const db = dbf.db;
 const authOptional = require("../middleware/authOptional");
 const { body, param, validationResult } = require('express-validator');
+const episodeRoute = require("./episode");
 
 
 //GET /api/shows/:showId/seasons/:seasonId
 router.get('/:seasonId', authOptional, [
-    param('seasonId').isInt({min: 1}).notEmpty().withMessage("ID stagione non valido")
+    param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido"),
+    param('seasonId').isInt({ min: 1 }).notEmpty().withMessage("ID stagione non valido")
 ],async (req, res) => {
 
     const errors = validationResult(req);
@@ -17,7 +19,7 @@ router.get('/:seasonId', authOptional, [
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const seasonId = req.params.seasonId;
+    const {showId, seasonId} = req.params;
 
     if (req.user) {
         const user = req.user;
@@ -42,4 +44,8 @@ router.get('/:seasonId', authOptional, [
     }
 
 
-})
+});
+
+router.use('/:seasonId/episodes');
+
+module.exports = router;

@@ -3,14 +3,23 @@ const express = require('express');
 const router = express.Router();
 const dbf = require("../db/db");
 const db = dbf.db;
+const authOptional = require("../middleware/authOptional");
+const { body, param, validationResult } = require('express-validator');
 
 // router.get('/', (req, res) => {
 //     res.send('Lista completa degli episodi...');
 // });
 
-//GET /api/episodes/id
-router.get('/:id', async (req, res) => {
-    const episodeId = req.params.id;
+//GET /api/shows/:showId/seasons/:seasonId/episodes/:episodeId
+router.get('/:episodeId', authOptional, [
+    param('episodeId').isInt({ min: 1 }).notEmpty().withMessage("ID episodio non valido"),
+], async (req, res) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.status(400).json({ errors: errors.array() });
+    }
+    const episodeId = req.params.episodeId;
 
     const sql = `SELECT e.*,
             (SELECT GROUP_CONCAT(Language) FROM EpisodeLanguage AS el WHERE e.EpisodeID = el.REF_EpisodeID) AS DubLanguages,

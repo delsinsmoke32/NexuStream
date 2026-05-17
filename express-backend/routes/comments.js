@@ -4,13 +4,17 @@ const router = express.Router({ mergeParams: true });
 const db = require("../db/db")
 const authOptional = require("../middleware/authOptional");
 const auth = require("../middleware/auth");
-
+const { query, body, param, validationResult } = require('express-validator');
 
 //GET /api/episodes/:id/comments
-router.get('/', authOptional, async (req, res) => {
+router.get('/', authOptional, [
+
+], async (req, res) => {
     //la logica dell'authOptional è che non serve avere il jwt per vederli
     const episodeId = req.params.id;
-    const user = req.user;
+    if (req.user) {
+        const user = req.user.id;
+    }
 
     /*const comment1 = {
         CommentID: 1001n,

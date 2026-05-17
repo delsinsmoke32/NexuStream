@@ -3,11 +3,21 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 const dbf = require("../db/db");
 const isAdmin = require("../middleware/isAdmin");
+const { query, body, param, validationResult } = require('express-validator');
 
 router.use(isAdmin);
 
 //GET /api/admin/users
-router.get('/', async (req, res) => {
+router.get('/', [
+    query('search').optional().isString().trim().notEmpty().withMessage("Titolo non valido"),
+    query('role').optional().isIn(['mod', 'cataloguer', 'admin']).withMessage("Descrizione non valida"),
+], async (req, res) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.status(400).json({ errors: errors.array() });
+    }
+    
     const {search, role} = req.query;
     let sql = `
         SELECT u.UserID, u.Username, u.Email, u.isMod, u.isCataloguer, u.isAdmin, u.REF_PropicID
@@ -18,7 +28,7 @@ router.get('/', async (req, res) => {
 
     //filtro 1: ricerca testuale (username, email)
     if (search) {
-        sql += ` AND u.Username LIKE ? OR u.Email LIKE ?`;
+        sql += ` AND (u.Username LIKE ? OR u.Email LIKE ?)`;
         const searchParam = `%${search}%`;
         params.push(searchParam, searchParam);
     }
@@ -49,7 +59,17 @@ router.get('/', async (req, res) => {
 
 
 //PATCH /api/admin/users/:id/roles
-router.patch('/:id/roles', async (req, res) => {
+router.patch('/:id/roles', [
+    param('id').isInt({min: 1}).withMessage("ID utente non valido"),
+    body('isMod').optional().isInt({min: 0, max: 1}).withMessage("Mod non valido, 0 o 1"),
+    body('isCataloguer').optional().isInt({min: 0, max: 1}).withMessage("Cataloguer non valido, 0 o 1")
+], async (req, res) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.status(400).json({ errors: errors.array() });
+    }
+    
     const uid = req.params.id;
     const { isMod, isCataloguer } = req.body;
 

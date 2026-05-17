@@ -3,8 +3,7 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 const dbf = require("../db/db");
 const isCataloguer = require("../middleware/isCataloguer");
-const { body, validationResult } = require('express-validator');
-//DA AGGIUNGERE ERROR CHECKING, SIA QUI CHE VIRTUALMENTE OVUNQUE
+const { body, param, validationResult } = require('express-validator');
 
 router.use(isCataloguer);
 
@@ -12,19 +11,31 @@ router.use(isCataloguer);
 //           GESTIONE SERIE
 //-------------------------------------
 
-//POST /api/cataloguer/shows/add -> aggiunge serie
-router.post('/shows/add', async (req, res) => {
+// POST /api/cataloguer/shows/add -> aggiunge serie
+router.post('/shows/add', [
+    body('title').isString().trim().notEmpty().withMessage("Titolo non valido"),
+    body('description').isString().trim().notEmpty().withMessage("Descrizione non valida"),
+    body('dateStarted').isDate({ format: 'YYYY-MM-DD' }).withMessage("La data d'inizio deve essere YYYY-MM-DD"),
+    body('dateEnded').optional({ checkFalsy: true }).isDate({ format: 'YYYY-MM-DD' }).withMessage("La data di fine deve essere YYYY-MM-DD"),
+    body('hasEnded').optional().isInt({ min: 0, max: 1 }).withMessage("hasEnded deve essere 0 o 1")
+], async (req, res) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    
     const { title, description, dateStarted, dateEnded, hasEnded } = req.body;
 
     if (!title || !description || !dateStarted) {
-        return res.status(401).json({message: "Titolo, Descrizione e Data d'Inizio sono obbligatori."});
+        return res.status(400).json({message: "Titolo, Descrizione e Data d'Inizio sono obbligatori."});
     }
 
     const sql = `INSERT INTO Shows (Title, Description, DateStarted, DateEnded, hasEnded, Favourited)
                 VALUES (?, ?, ?, ?, ?, 0)`;
     
     try {
-        await dbf.runAsync(sql, [title, description, dateStarted, dateEnded || null, hasEnded]);
+        await dbf.runAsync(sql, [title, description, dateStarted, dateEnded || null, hasEnded || 0]);
         return res.status(200).json({message: "Serie creata con successo!"});
     } catch (err) {
         console.error("Errore query aggiunta serie: ", err);
@@ -32,8 +43,20 @@ router.post('/shows/add', async (req, res) => {
     }
 });
 
-//POST /api/cataloguer/shows/modify/:id -> modifica serie
-router.post('/shows/modify/:id', async (req, res) => {
+// POST /api/cataloguer/shows/modify/:id -> modifica serie
+router.post('/shows/modify/:id', [
+    param('id').isInt({ min: 1 }).withMessage("ID serie non valido"),
+    body('title').optional().isString().trim().notEmpty().withMessage("Titolo non valido"),
+    body('description').optional().isString().trim().notEmpty().withMessage("Descrizione non valida"),
+    body('dateEnded').optional({ checkFalsy: true }).isDate({ format: 'YYYY-MM-DD' }).withMessage("La data deve essere YYYY-MM-DD"),
+    body('hasEnded').optional().isInt({ min: 0, max: 1 }).withMessage("hasEnded deve essere 0 o 1")
+], async (req, res) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const showid = req.params.id;
     const { title, description, dateEnded, hasEnded } = req.body;
 
@@ -46,7 +69,7 @@ router.post('/shows/modify/:id', async (req, res) => {
     if (hasEnded !== undefined) {updateFields.push('hasEnded = ?'); params.push(hasEnded);}
 
     if (updateFields.length === 0) {
-        return res.status(400).json({message: "Inserisci qualche parametro da modificare."});
+        return res.status(400).json({message: "Inserisci qualche parametero da modificare."});
     }
 
     params.push(showid);
@@ -64,10 +87,17 @@ router.post('/shows/modify/:id', async (req, res) => {
     }
 });
 
-//POST /api/cataloguer/shows/delete/:id -> cancella serie
-router.post('/shows/delete/:id', async (req, res) => {
-    const showid = req.params.id;
+// POST /api/cataloguer/shows/delete/:id -> cancella serie
+router.post('/shows/delete/:id', [
+    param('id').isInt({ min: 1 }).withMessage("ID serie non valido")
+], async (req, res) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
+    const showid = req.params.id;
     const sql = `DELETE FROM Shows WHERE ShowID = ?`;
     
     try {
@@ -82,24 +112,36 @@ router.post('/shows/delete/:id', async (req, res) => {
 });
 
 
-
 //-------------------------------------
 //          GESTIONE STAGIONI
 //-------------------------------------
 
-//POST /api/cataloguer/seasons/add -> aggiunge stagione
-router.post('/seasons/add', async (req, res) => {
+// POST /api/cataloguer/seasons/add -> aggiunge stagione
+router.post('/seasons/add', [
+    body('title').isString().trim().notEmpty().withMessage("Titolo non valido"),
+    body('description').isString().trim().notEmpty().withMessage("Descrizione non valida"),
+    body('dateStarted').isDate({ format: 'YYYY-MM-DD' }).withMessage("La data d'inizio deve essere YYYY-MM-DD"),
+    body('dateEnded').optional({ checkFalsy: true }).isDate({ format: 'YYYY-MM-DD' }).withMessage("La data di fine deve essere YYYY-MM-DD"),
+    body('hasEnded').optional().isInt({ min: 0, max: 1 }).withMessage("hasEnded deve essere 0 o 1"),
+    body('refShow').isInt({ min: 1 }).withMessage("ID della serie non valido")
+], async (req, res) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const { title, description, dateStarted, dateEnded, hasEnded, refShow} = req.body;
 
     if (!title || !description || !dateStarted || !refShow) {
-        return res.status(401).json({message: "Titolo, Descrizione, Data d'Inizio e Riferimento alla Serie sono obbligatori."});
+        return res.status(400).json({message: "Titolo, Descrizione, Data d'Inizio e Riferimento alla Serie sono obbligatori."});
     }
 
     const sql = `INSERT INTO Seasons (Title, Description, DateStarted, DateEnded, hasEnded, REF_ShowID)
                 VALUES (?, ?, ?, ?, ?, ?)`;
     
     try {
-        await dbf.runAsync(sql, [title, description, dateStarted, dateEnded || null, hasEnded, refShow]);
+        await dbf.runAsync(sql, [title, description, dateStarted, dateEnded || null, hasEnded || 0, refShow]);
         return res.status(200).json({message: "Stagione creata con successo!"});
     } catch (err) {
         console.error("Errore query aggiunta stagione: ", err);
@@ -107,8 +149,21 @@ router.post('/seasons/add', async (req, res) => {
     }
 });
 
-//POST /api/cataloguer/seasons/modify/:id -> modifica stagione
-router.post('/seasons/modify/:id', async (req, res) => {
+// POST /api/cataloguer/seasons/modify/:id -> modifica stagione
+router.post('/seasons/modify/:id', [
+    param('id').isInt({ min: 1 }).withMessage("ID stagione non valido"),
+    body('title').optional().isString().trim().notEmpty().withMessage("Titolo non valido"),
+    body('description').optional().isString().trim().notEmpty().withMessage("Descrizione non valida"),
+    body('dateEnded').optional({ checkFalsy: true }).isDate({ format: 'YYYY-MM-DD' }).withMessage("La data deve essere YYYY-MM-DD"),
+    body('hasEnded').optional().isInt({ min: 0, max: 1 }).withMessage("hasEnded deve essere 0 o 1"),
+    body('refShow').optional().isInt({ min: 1 }).withMessage("ID della serie non valido")
+], async (req, res) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const seasonid = req.params.id;
     const { title, description, dateEnded, hasEnded, refShow } = req.body;
 
@@ -140,10 +195,17 @@ router.post('/seasons/modify/:id', async (req, res) => {
     }
 });
 
-//POST /api/cataloguer/seasons/delete/:id -> cancella stagione
-router.post('/seasons/delete/:id', async (req, res) => {
-    const seasonid = req.params.id;
+// POST /api/cataloguer/seasons/delete/:id -> cancella stagione
+router.post('/seasons/delete/:id', [
+    param('id').isInt({ min: 1 }).withMessage("ID stagione non valido")
+], async (req, res) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
+    const seasonid = req.params.id;
     const sql = `DELETE FROM Seasons WHERE SeasonID = ?`;
     
     try {
@@ -158,17 +220,30 @@ router.post('/seasons/delete/:id', async (req, res) => {
 });
 
 
-
 //------------------------------------
 //          GESTIONE EPISODI
 //------------------------------------
 
-//POST /api/cataloguer/episodes/add -> aggiunge episodio
-router.post('/episodes/add', async (req, res) => {
+// POST /api/cataloguer/episodes/add -> aggiunge episodio
+router.post('/episodes/add', [
+    body('title').isString().trim().notEmpty().withMessage("Titolo non valido"),
+    body('description').isString().trim().notEmpty().withMessage("Descrizione non valida"),
+    body('releaseDate').isDate({ format: 'YYYY-MM-DD' }).withMessage("La data deve essere YYYY-MM-DD"),
+    body('duration').isInt({ min: 1 }).withMessage("La durata deve essere un intero positivo"),
+    body('refSeason').isInt({ min: 1 }).withMessage("ID stagione non valido"),
+    body('DubLanguages').optional().isArray().withMessage("DubLanguages deve essere un array"),
+    body('SubLanguages').optional().isArray().withMessage("SubLanguages deve essere un array")
+], async (req, res) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const { title, description, releaseDate, duration, refSeason, DubLanguages, SubLanguages } = req.body;
 
     if (!title || !description || !duration || !refSeason || !releaseDate) {
-        return res.status(401).json({message: "Titolo, Descrizione, Durata, Data di Uscita e Riferimento alla Stagione sono obbligatori."});
+        return res.status(400).json({message: "Titolo, Descrizione, Durata, Data di Uscita e Riferimento alla Stagione sono obbligatori."});
     }
 
     const sql = `INSERT INTO Episodes (Title, Description, ReleaseDate, Duration, REF_SeasonID, Streams, Likes)
@@ -178,7 +253,7 @@ router.post('/episodes/add', async (req, res) => {
         const result = await dbf.runAsync(sql, [title, description, releaseDate, duration, refSeason]);
         const newEpisodeId = result.id;
 
-        //DUBS
+        // DUBS
         if (DubLanguages && Array.isArray(DubLanguages)) {
             for (const lang of DubLanguages) {
                 await dbf.runAsync(
@@ -188,7 +263,7 @@ router.post('/episodes/add', async (req, res) => {
             }
         }
 
-        //SUBS
+        // SUBS
         if (SubLanguages && Array.isArray(SubLanguages)) {
             for (const lang of SubLanguages) {
                 await dbf.runAsync(
@@ -205,8 +280,21 @@ router.post('/episodes/add', async (req, res) => {
     }
 });
 
-//POST /api/cataloguer/episodes/modify/:id -> modifica episodio
-router.post('/episodes/modify/:id', async (req, res) => {
+// POST /api/cataloguer/episodes/modify/:id -> modifica episodio
+router.post('/episodes/modify/:id', [
+    param('id').isInt({ min: 1 }).withMessage("ID episodio non valido"),
+    body('title').optional().isString().trim().notEmpty().withMessage("Titolo non valido"),
+    body('description').optional().isString().trim().notEmpty().withMessage("Descrizione non valida"),
+    body('refSeason').optional().isInt({ min: 1 }).withMessage("ID stagione non valido"),
+    body('DubLanguages').optional().isArray().withMessage("DubLanguages deve essere un array"),
+    body('SubLanguages').optional().isArray().withMessage("SubLanguages deve essere un array")
+], async (req, res) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const episodeid = req.params.id;
     const { title, description, refSeason, DubLanguages, SubLanguages} = req.body;
 
@@ -218,22 +306,22 @@ router.post('/episodes/modify/:id', async (req, res) => {
     if (refSeason !== undefined) {updateFields.push('REF_SeasonID = ?'); params.push(refSeason);}
     
 
-    if (updateFields.length === 0) {
+    if (updateFields.length === 0 && !DubLanguages && !SubLanguages) {
         return res.status(400).json({message: "Inserisci qualche parametro da modificare."});
     }
 
-    params.push(episodeid);
-
-    const sql = `UPDATE Episodes SET ${updateFields.join(', ')} WHERE EpisodeID = ?`;
-    
     try {
-        const result = await dbf.runAsync(sql, params);
+        if (updateFields.length > 0) {
+            params.push(episodeid);
+            const sql = `UPDATE Episodes SET ${updateFields.join(', ')} WHERE EpisodeID = ?`;
+            const result = await dbf.runAsync(sql, params);
 
-        if (result.changes === 0){
-            return res.status(404).json({ error: "L'episodio specificato non è stata trovato." });
+            if (result.changes === 0){
+                return res.status(404).json({ error: "L'episodio specificato non è stata trovato." });
+            }
         }
 
-        //DUBS
+        // DUBS
         if (DubLanguages && Array.isArray(DubLanguages)) {
             await dbf.runAsync(`DELETE FROM "EpisodeLanguage" WHERE "REF_EpisodeID" = ?`, [episodeid]);
             for (const lang of DubLanguages) {
@@ -244,7 +332,7 @@ router.post('/episodes/modify/:id', async (req, res) => {
             }
         }
 
-        //SUBS
+        // SUBS
         if (SubLanguages && Array.isArray(SubLanguages)) {
             await dbf.runAsync(`DELETE FROM "EpisodeSub" WHERE "REF_EpisodeID" = ?`, [episodeid]);
             for (const lang of SubLanguages) {
@@ -255,17 +343,23 @@ router.post('/episodes/modify/:id', async (req, res) => {
             }
         }
 
-
         return res.status(200).json({message: "Episodio aggiornato con successo!"});
     } catch (err) {
         return res.status(500).json({ error: "Errore interno del server" });
     }
 });
 
-//POST /api/cataloguer/episodes/delete/:id -> cancella episodio
-router.post('/episodes/delete/:id', async (req, res) => {
-    const episodeid = req.params.id;
+// POST /api/cataloguer/episodes/delete/:id -> cancella episodio
+router.post('/episodes/delete/:id', [
+    param('id').isInt({ min: 1 }).withMessage("ID episodio non valido")
+], async (req, res) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
+    const episodeid = req.params.id;
     const sql = `DELETE FROM Episodes WHERE EpisodeID = ?`;
     
     try {
@@ -284,10 +378,17 @@ router.post('/episodes/delete/:id', async (req, res) => {
 //          GESTIONE PROPIC
 //------------------------------------
 
-//POST /api/cataloguer/propic/add -> aggiungi propic
-router.post('/propic/add', async (req, res) => {
-    const propicPath = req.body;
+// POST /api/cataloguer/propic/add -> aggiungi propic
+router.post('/propic/add', [
+    body('propicPath').isString().trim().notEmpty().withMessage("Il path della propic non è valido")
+], async (req, res) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
+    const { propicPath } = req.body;
     const sql = `INSERT INTO Propics (PropicPath) VALUES (?)`;
 
     try {
@@ -300,10 +401,17 @@ router.post('/propic/add', async (req, res) => {
 });
 
 
-//POST /api/cataloguer/propic/delete -> cancella propic
-router.post('/propic/delete', async (req, res) => {
-    const propicPath = req.body;
+// POST /api/cataloguer/propic/delete -> cancella propic
+router.post('/propic/delete', [
+    body('propicPath').isString().trim().notEmpty().withMessage("Il path della propic non è valido")
+], async (req, res) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
 
+    const { propicPath } = req.body;
     const sql = `DELETE FROM Propics WHERE PropicPath = ?`;
 
     try {
@@ -316,6 +424,5 @@ router.post('/propic/delete', async (req, res) => {
         return res.status(500).json({ error: "Errore interno del server" });
     }
 });
-
 
 module.exports = router;

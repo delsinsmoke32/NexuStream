@@ -4,9 +4,18 @@ const router = express.Router({ mergeParams: true });
 const dbf = require("../db/db")
 const authOptional = require("../middleware/authOptional");
 const auth = require("../middleware/auth");
+const { body, query, param, validationResult } = require('express-validator');
 
 //GET /api/search
-router.get('/', authOptional, async (req, res) => {
+router.get('/', authOptional, [
+    query('searchTerm').isString().notEmpty().trim().withMessage("Il termine di ricerca deve essere una stringa")
+], async (req, res) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.status(400).json({ errors: errors.array() });
+    }
+    
     const user = req.user;
     const searchTerm = req.query.q;
 

@@ -3,8 +3,20 @@ const express = require('express');
 const router = express.Router();
 const db = require("../db/db");
 const bcrypt = require('bcrypt');
+const { body, param, validationResult } = require('express-validator');
 
-router.post('/', async (req, res) => {
+router.post('/', [
+    body('email').isEmail().notEmpty().withMessage("Email non valida"),
+    body('password').isAlphanumeric().isLength({min : 8, max: 24}).notEmpty().withMessage("La password deve essere composta da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri."),
+    body('conf_password').isAlphanumeric().isLength({min : 8, max: 24}).notEmpty().withMessage("La password deve essere composta da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri."),
+    body('username').isAlphanumeric().isLength({min : 8, max: 24}).notEmpty().withMessage("L'username deve essere composto da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri.")
+], async (req, res) => {
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.status(400).json({ errors: errors.array() });
+    }
+    
     const {email, password, username, conf_password} = req.body;
 
     if (password !== conf_password){

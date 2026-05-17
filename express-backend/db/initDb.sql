@@ -57,7 +57,8 @@ CREATE TABLE IF NOT EXISTS "Comments" (
     "CommentID" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     "REF_UserID" INTEGER NOT NULL,
     "REF_EpisodeID" INTEGER NOT NULL,
-    "DateCommented" TEXT NOT NULL,
+    "CommentText" TEXT NOT NULL,
+    "DateCommented" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "REF_CommentID" INTEGER NOT NULL,
     "isHidden" INTEGER NOT NULL,
     "Likes" INTEGER NOT NULL,
@@ -75,6 +76,7 @@ CREATE TABLE IF NOT EXISTS "LINKs_User_Interacts_Episode" (
     "isCompleted" INTEGER NOT NULL,
     "isDropped" INTEGER NOT NULL,
     "isLiked" INTEGER NOT NULL,
+    PRIMARY KEY ("REF_UserID", "REF_EpisodeID"),
     FOREIGN KEY ("REF_UserID") REFERENCES "Users" ("UserID"),
     FOREIGN KEY ("REF_EpisodeID") REFERENCES "Episodes" ("EpisodeID")
 );
@@ -104,6 +106,7 @@ CREATE TABLE IF NOT EXISTS "EpisodeLanguage" (
 );
 
 CREATE TABLE IF NOT EXISTS "EpisodeTimes" (
+    "EpisodeTimeID" INTEGER PRIMARY KEY AUTOINCREMENT,
     "REF_EpisodeID" INTEGER NOT NULL,
     "StartTime" INTEGER NOT NULL,
     "EndTime" INTEGER NOT NULL,

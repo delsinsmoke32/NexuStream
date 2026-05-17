@@ -3,9 +3,109 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 const dbf = require("../db/db");
 const isCataloguer = require("../middleware/isCataloguer");
-const { body, param, validationResult } = require('express-validator');
+const { query, body, param, validationResult } = require('express-validator');
 
 router.use(isCataloguer);
+
+//-------------------------------------
+//      GET - RECUPERO CONTENUTI
+//-------------------------------------
+
+// GET /api/cataloguer/shows -> Prende tutte le serie
+router.get('/shows', [
+    // Opzionale: permette di cercare una serie specifica per titolo nella dashboard
+    query('search').optional().isString().trim().withMessage("Il parametro di ricerca deve essere una stringa")
+], async (req, res) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { search } = req.query;
+    let sql = `SELECT ShowID, Title, Description, DateStarted, DateEnded, hasEnded FROM Shows WHERE 1=1`;
+    const params = [];
+
+    if (search) {
+        sql += ` AND Title LIKE ?`;
+        params.push(`%${search}%`);
+    }
+
+    sql += ` ORDER BY Title ASC`;
+
+    try {
+        const shows = await dbf.allAsync(sql, params);
+        return res.status(200).json(shows);
+    } catch (err) {
+        console.error("Errore GET shows cataloguer: ", err);
+        return res.status(500).json({ error: "Errore interno del server" });
+    }
+});
+
+
+// GET /api/cataloguer/seasons -> Prende le stagioni (filtrabili per serie)
+router.get('/seasons', [
+    // L'ID della serie è opzionale: se lo passi vedi le stagioni di quella serie, se non lo passi le vedi tutte
+    query('refShow').optional().isInt({ min: 1 }).withMessage("L'ID della serie deve essere un intero valido")
+], async (req, res) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { refShow } = req.query;
+    let sql = `SELECT SeasonID, Title, Description, DateStarted, DateEnded, hasEnded, REF_ShowID FROM Seasons WHERE 1=1`;
+    const params = [];
+
+    if (refShow) {
+        sql += ` AND REF_ShowID = ?`;
+        params.push(refShow);
+    }
+
+    sql += ` ORDER BY SeasonID ASC`;
+
+    try {
+        const seasons = await dbf.allAsync(sql, params);
+        return res.status(200).json(seasons);
+    } catch (err) {
+        console.error("Errore GET seasons cataloguer: ", err);
+        return res.status(500).json({ error: "Errore interno del server" });
+    }
+});
+
+
+// GET /api/cataloguer/episodes -> Prende gli episodi (filtrabili per stagione)
+router.get('/episodes', [
+     // L'ID della stagione è opzionale: se lo passi vedi gli episodi di quella stagione, se non lo passi li vedi tutti
+    query('refSeason').optional().isInt({ min: 1 }).withMessage("L'ID della stagione deve essere un intero valido")
+], async (req, res) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { refSeason } = req.query;
+    let sql = `SELECT EpisodeID, Title, Description, ReleaseDate, Duration, REF_SeasonID, Streams, Likes FROM Episodes WHERE 1=1`;
+    const params = [];
+
+    if (refSeason) {
+        sql += ` AND REF_SeasonID = ?`;
+        params.push(refSeason);
+    }
+
+    sql += ` ORDER BY EpisodeID ASC`;
+
+    try {
+        const episodes = await dbf.allAsync(sql, params);
+        return res.status(200).json(episodes);
+    } catch (err) {
+        console.error("Errore GET episodes cataloguer: ", err);
+        return res.status(500).json({ error: "Errore interno del server" });
+    }
+});
+
 
 //-------------------------------------
 //           GESTIONE SERIE
@@ -31,12 +131,14 @@ router.post('/shows/add', [
         return res.status(400).json({message: "Titolo, Descrizione e Data d'Inizio sono obbligatori."});
     }
 
-    const sql = `INSERT INTO Shows (Title, Description, DateStarted, DateEnded, hasEnded, Favourited)
+    let sql = `INSERT INTO Shows (Title, Description, DateStarted, DateEnded, hasEnded, Favourited)
                 VALUES (?, ?, ?, ?, ?, 0)`;
     
     try {
-        await dbf.runAsync(sql, [title, description, dateStarted, dateEnded || null, hasEnded || 0]);
-        return res.status(200).json({message: "Serie creata con successo!"});
+        const result = await dbf.runAsync(sql, [title, description, dateStarted, dateEnded || null, hasEnded || 0]);
+        return res.status(201).json({
+            message: "Serie creata con successo!",
+            showId: result.id});
     } catch (err) {
         console.error("Errore query aggiunta serie: ", err);
         return res.status(500).json({ error: "Errore interno del server" });
@@ -141,8 +243,10 @@ router.post('/seasons/add', [
                 VALUES (?, ?, ?, ?, ?, ?)`;
     
     try {
-        await dbf.runAsync(sql, [title, description, dateStarted, dateEnded || null, hasEnded || 0, refShow]);
-        return res.status(200).json({message: "Stagione creata con successo!"});
+        const result = await dbf.runAsync(sql, [title, description, dateStarted, dateEnded || null, hasEnded || 0, refShow]);
+        return res.status(201).json({
+            message: "Stagione creata con successo!",
+            seasonId: result.id});
     } catch (err) {
         console.error("Errore query aggiunta stagione: ", err);
         return res.status(500).json({ error: "Errore interno del server" });
@@ -273,7 +377,9 @@ router.post('/episodes/add', [
             }
         }
 
-        return res.status(200).json({message: "Episodio creato con successo!"});
+        return res.status(201).json({
+            message: "Episodio creato con successo!",
+            episodeId: result.id});
     } catch (err) {
         console.error("Errore query aggiunta episodio: ", err);
         return res.status(500).json({ error: "Errore interno del server" });

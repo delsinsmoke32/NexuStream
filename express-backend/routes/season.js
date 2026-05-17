@@ -46,6 +46,6 @@ router.get('/:seasonId', authOptional, [
 
 });
 
-router.use('/:seasonId/episodes');
+router.use('/:seasonId/episodes', episodeRoute);
 
 module.exports = router;

@@ -24,6 +24,17 @@ app.use('/api/register', registerRoute);
 app.use('/api/users', userRoute);
 app.use('/static', express.static(path.join(__dirname, 'public')));
 
+// app.use('/static/videos', (req, res, next) => {
+//   if (req.path.endsWith('.m4s')) {
+//     res.set('Content-Type', 'video/iso.segment');
+//   } else if (req.path.endsWith('.mp4')) {
+//     res.set('Content-Type', 'video/mp4');
+//   } else if (req.path.endsWith('.m3u8')) {
+//     res.set('Content-Type', 'application/x-mpegURL');
+//   }
+//   next();
+// }, express.static('public/videos'));
+
 BigInt.prototype.toJSON = function() { return this.toString() }; //fixgpt
 
 resetDb();
@@ -33,6 +44,10 @@ populateDb();
 app.get('/', (req, res) => {
     res.send('Server attivo');
 });
+
+app.get('/keys', (req, res) => { 
+    res.status(200).send(atob(process.env.VIDEO_KEY))
+ })
 
 // app.get('/api/episodes', (req, res) => {
 //     res.json([

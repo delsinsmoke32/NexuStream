@@ -5,7 +5,8 @@
     "paths": {
       // add ./src from baseUrl
       "@app/*": ["./src/app/*"],
-      "@lib/*": ["./node_modules/*"]
+      "@lib/*": ["./node_modules/*"],
+      // "videojs-theme-kit": ["./node_modules/videojs-theme-kit/index.js"]
     },
     // "ignoreDeprecations": "6.0", // Perché moduleResolution: node è deprecato
     "outDir": "./dist/out-tsc",

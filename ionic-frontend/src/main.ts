@@ -12,7 +12,11 @@ import {
 
 import { routes } from './app/app.routes'
 import { AppComponent } from './app/app.component'
-import { provideHttpClient, withInterceptors } from '@angular/common/http'
+import {
+    provideHttpClient,
+    withFetch,
+    withInterceptors,
+} from '@angular/common/http'
 import { httpInterceptor } from '@app/http.interceptor'
 
 bootstrapApplication(AppComponent, {
@@ -20,6 +24,6 @@ bootstrapApplication(AppComponent, {
         { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
         provideIonicAngular(),
         provideRouter(routes, withPreloading(PreloadAllModules)),
-        provideHttpClient(withInterceptors([httpInterceptor])),
+        provideHttpClient(withInterceptors([httpInterceptor]), withFetch()),
     ],
 })

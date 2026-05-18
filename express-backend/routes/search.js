@@ -1,43 +1,40 @@
-require('dotenv').config();
 const express = require('express');
-const router = express.Router({ mergeParams: true });
-const dbf = require("../db/db")
+// Mantenuto mergeParams: true come nel tuo originale
+const router = express.Router({ mergeParams: true }); 
+const showController = require('../controllers/showController');
 const authOptional = require("../middleware/authOptional");
-const auth = require("../middleware/auth");
-const { body, query, param, validationResult } = require('express-validator');
+const { query } = require('express-validator');
 
-//GET /api/search
+
+// Abbinato lo schema Swagger protetto dai trattini bassi
+/**
+ * @swagger
+ * /api/search:
+ *   get:
+ *     summary: Cerca serie TV (Shows) per titolo o descrizione
+ *     description: Restituisce una lista di show ordinati per rilevanza (il match nel titolo vale più del match nella descrizione).
+ *     tags:
+ *       - Shows
+ *     parameters:
+ *       - in: query
+ *         name: searchTerm
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Il testo da cercare nel titolo o nella descrizione
+ *         example: breaking
+ *     responses:
+ *       200:
+ *         description: Ricerca completata con successo. Restituisce l'array dei risultati.
+ *       400:
+ *         description: Termine di ricerca mancante o non valido.
+ *       500:
+ *         description: Errore interno del server durante la ricerca.
+ */
+
+
 router.get('/', authOptional, [
     query('searchTerm').isString().notEmpty().trim().withMessage("Il termine di ricerca deve essere una stringa")
-], async (req, res) => {
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()){
-        return res.status(400).json({ errors: errors.array() });
-    }
-    
-    const user = req.user;
-    const searchTerm = req.query.q;
-
-    if (!searchTerm) {
-        return res.status(400).json({error: "Inserire un termine di ricerca."});
-    }
-
-    const sql = `SELECT *,
-       (CASE WHEN s.Title LIKE ? THEN 10 ELSE 0 END +
-        CASE WHEN s.Description LIKE ? THEN 1 ELSE 0 END) AS RelevanceScore
-        FROM Shows AS s WHERE s.Title LIKE ? OR s.Description LIKE ?
-        ORDER BY RelevanceScore DESC, s.Title ASC`;
-
-    const queryParam = `%${searchTerm}%`;
-
-    try {
-        const results = await dbf.allAsync(sql, [queryParam, queryParam, queryParam, queryParam]);
-        res.json(results);
-    } catch (err) {
-        console.error("Errore query ricerca: ", err);
-        return res.status(500).json({ error: "Errore interno del server" });
-    }
-});
+], showController.search);
 
 module.exports = router;

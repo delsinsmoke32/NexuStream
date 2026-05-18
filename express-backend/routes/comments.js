@@ -7,6 +7,7 @@ const authOptional = require("../middleware/authOptional");
 const isMod = require("../middleware/isMod");
 const { query, body, param, validationResult } = require('express-validator');
 
+
 //GET /api/shows/:showId/seasons/:seasonId/episodes/:episodeId/comments
 router.get('/', authOptional, [
     param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido"),
@@ -123,6 +124,7 @@ router.post('/', auth, [
             commentId: result.id});
     } catch (err) {
         if (err.code === 'SQLITE_CONSTRAINT') {
+            console.error(err);
             return res.status(400).json({ message: "Impossibile postare il commento: riferimenti non validi." });
         }
         return res.status(500).json({ message: "Errore interno del server." });

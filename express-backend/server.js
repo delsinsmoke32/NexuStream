@@ -2,10 +2,13 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
 const loginRoute = require("./routes/login");
 const registerRoute = require("./routes/register");
 const userRoute = require("./routes/user");
 const homeRoute = require("./routes/home");
+const searchRoute = require("./routes/search");
 const adminRoute = require("./routes/adminPage");
 const cataloguerRoute = require("./routes/cataloguerPage");
 const showRoute = require("./routes/show");
@@ -16,6 +19,37 @@ const populateDb = require("./db/populateDb").populateDb
 const fs = require('fs');
 const path = require('path');
 
+// Configurazione di Swagger
+const swaggerOptions = {
+    swaggerDefinition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'NexuStream API',
+            version: '1.0.0',
+            description: 'Documentazione ufficiale del backend di NexuStream',
+        },
+        servers: [
+            {
+                url: 'http://localhost:3000',
+            },
+        ],
+        components: {
+            securitySchemes: {
+                BearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT', // Specifichiamo che è un token JWT
+                    description: "Inserisci il tuo token JWT qui sotto per autenticarti."
+                }
+            }
+        },
+    },
+    // Indica a swagger-jsdoc dove andare a cercare i commenti @swagger
+    apis: ['./routes/*.js', './controllers/*.js'], 
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(cors());
@@ -23,10 +57,12 @@ app.use('/api/login', loginRoute);
 app.use('/api/register', registerRoute);
 app.use('/api/users', userRoute);
 app.use('/api/home', homeRoute);
+app.use('/api/search', searchRoute);
 app.use('/api/admin/users', adminRoute);
 app.use('/api/cataloguer', cataloguerRoute);
 app.use("/api/shows", showRoute);
 app.use('/static', express.static(path.join(__dirname, 'public')));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // app.use('/static/videos', (req, res, next) => {
 //   if (req.path.endsWith('.m4s')) {

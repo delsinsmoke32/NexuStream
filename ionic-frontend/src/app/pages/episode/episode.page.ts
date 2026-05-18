@@ -29,7 +29,7 @@ import {
     addCircleOutline,
 } from '@lib/ionicons/icons'
 import videojs from 'video.js'
-import 'videojs-theme-kit'
+//import 'videojs-theme-kit' aggiunto alla angular.json in styles
 
 @Component({
     selector: 'app-episode',

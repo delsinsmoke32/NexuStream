@@ -1,55 +1,81 @@
-require('dotenv').config();
 const express = require('express');
 const router = express.Router();
-const db = require("../db/db");
-const bcrypt = require('bcrypt');
-const { body, param, validationResult } = require('express-validator');
+const authController = require('../controllers/authController');
+const { body } = require('express-validator');
 
+
+/**
+ * @swagger
+ * /api/register:
+ *   post:
+ *     summary: Registra un nuovo utente nel sistema
+ *     description: Crea un nuovo account utente crittografando la password e salvando le preferenze di lingua e immagine del profilo.
+ *     tags:
+ *       - Autenticazione
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *               - conf password
+ *               - username
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 minLength: 8
+ *                 maxLength: 24
+ *                 example: NuovoUtente99
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: registrazione@email.com
+ *               password:
+ *                 type: string
+ *                 minLength: 8
+ *                 maxLength: 24
+ *                 example: Segreta123!
+ *               conf password:
+ *                 type: string
+ *                 minLength: 8
+ *                 maxLength: 24
+ *                 example: Segreta123!
+ *               languageId:
+ *                 type: string
+ *                 example: "it"
+ *               propicId:
+ *                 type: string
+ *                 example: /static/avatars/avatar-000.png
+ *     responses:
+ *       201:
+ *         description: Registrazione completata con successo.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Registrazione Completata!
+ *                 userId:
+ *                   type: integer
+ *                   example: 42
+ *       400:
+ *         description: Richiesta non valida, password non corrispondenti o email/username già in uso.
+ *       500:
+ *         description: Errore interno del server durante la registrazione.
+ */
+
+
+// POST /api/register
 router.post('/', [
     body('email').isEmail().notEmpty().withMessage("Email non valida"),
-    body('password').isAlphanumeric().isLength({min : 8, max: 24}).notEmpty().withMessage("La password deve essere composta da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri."),
-    body('conf_password').isAlphanumeric().isLength({min : 8, max: 24}).notEmpty().withMessage("La password deve essere composta da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri."),
-    body('username').isAlphanumeric().isLength({min : 8, max: 24}).notEmpty().withMessage("L'username deve essere composto da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri.")
-], async (req, res) => {
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()){
-        return res.status(400).json({ errors: errors.array() });
-    }
-    
-    const {email, password, username, conf_password, languageId, propicId} = req.body;
-
-    if (password !== conf_password){
-        return res.status(400).json({ message: "Le password non corrispondono." });
-    }
-
-    if (!password || String(password).length < 8) {
-        return res.status(400).json({ message: "La password è troppo corta." });
-    }
-
-    try {
-        const rounds = 10; //numero di round di hash
-        const hashedPassword = await bcrypt.hash(password, rounds);
-
-        const sql = `INSERT INTO Users (Username, Email, Password, isAdmin, isMod, isCataloguer, REF_LanguageID, REF_PropicID) VALUES (?, ?, ?, 0, 0, 0, ?, ?)`;
-
-        const result = await db.runAsync(sql, [username, email, hashedPassword, languageId, propicId]);
-
-        console.log("Utente creato con ID: ", result.id);
-        res.status(201).json({ message: "Registrazione Completata!", userId: result.id });
-
-    } catch (error) {
-        console.error(error);
-        if (error instanceof Error){
-            if (error.message.includes("UNIQUE")){
-                return res.status(400).json({ message: "Email già in uso."});
-            }
-            res.status(500).json({ message: "Errore durante la registrazione." });
-        }
-         
-    }
-
-});
-
+    body('password').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("La password deve essere composta da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri."),
+    body('conf password').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("La password deve essere composta da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri."),
+    body('username').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("L'username deve essere composto da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri.")
+], authController.register);
 
 module.exports = router;

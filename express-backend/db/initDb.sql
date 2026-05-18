@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS "Comments" (
     "REF_EpisodeID" INTEGER NOT NULL,
     "CommentText" TEXT NOT NULL,
     "DateCommented" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "REF_CommentID" INTEGER NOT NULL,
+    "REF_CommentID" INTEGER NULL,
     "isHidden" INTEGER NOT NULL,
     "Likes" INTEGER NOT NULL,
     "isApproved" INTEGER NOT NULL,

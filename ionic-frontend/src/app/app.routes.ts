@@ -22,7 +22,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/episode/episode.page').then( m => m.EpisodePage)
   },
   {
-    path: 'home-page',
+    path: 'home',
     loadComponent: () => import('./pages/home-page/home-page.page').then( m => m.HomePagePage)
   },
 

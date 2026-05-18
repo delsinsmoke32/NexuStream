@@ -38,13 +38,13 @@ Ogni episodio avrà una sezione commenti ad esso dedicata: i commenti supportera
 
 ## Quali sono le entità principali?
 
-| Attore | Ruolo |
+| Entità | Descrizione |
 |---|---|
 | Show | Ha un titolo, una descrizione, un thumbnail, e diverse stagioni. Ha una data di inizio e di fine. Può avere uno o più generi. Può essere aggiunto ai preferiti. |
 | Stagione | Ha un titolo, una descrizione, data di inizio e di fine. Contiene più episodi.  |
 | Episodio | Ha un titolo, una descrizione, e data di uscita. Può essere visualizzato in più lingue e con più sottotitoli, se presenti. L'utente può mettere like a un episodio. Viene mantenuta la cronologia di visione. |
 | Commento | Ha un autore e una data di scrittura. Può essere riferito a un commento genitore, creando così un thread. Ogni thread fa riferimento a uno specifico episodio. Può contenere timestamp dell'episodio, testo formattato, e tag spoiler. Il moderatore ne gestisce la visibilà e l'approvazione. |
-
+---
 
 ## Quali sono le relazioni tra i nostri attori?
 

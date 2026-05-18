@@ -17,7 +17,7 @@ router.post('/', [
         return res.status(400).json({ errors: errors.array() });
     }
     
-    const {email, password, username, conf_password} = req.body;
+    const {email, password, username, conf_password, languageId, propicId} = req.body;
 
     if (password !== conf_password){
         return res.status(400).json({ message: "Le password non corrispondono." });
@@ -31,14 +31,15 @@ router.post('/', [
         const rounds = 10; //numero di round di hash
         const hashedPassword = await bcrypt.hash(password, rounds);
 
-        const sql = `INSERT INTO Users (Username, Email, Password, isAdmin, isMod, isCataloguer) VALUES (?, ?, ?, 0, 0, 0)`;
+        const sql = `INSERT INTO Users (Username, Email, Password, isAdmin, isMod, isCataloguer, REF_LanguageID, REF_PropicID) VALUES (?, ?, ?, 0, 0, 0, ?, ?)`;
 
-        const result = await db.runAsync(sql, [username, email, hashedPassword]);
+        const result = await db.runAsync(sql, [username, email, hashedPassword, languageId, propicId]);
 
         console.log("Utente creato con ID: ", result.id);
         res.status(201).json({ message: "Registrazione Completata!", userId: result.id });
 
     } catch (error) {
+        console.error(error);
         if (error instanceof Error){
             if (error.message.includes("UNIQUE")){
                 return res.status(400).json({ message: "Email già in uso."});

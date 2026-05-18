@@ -21,10 +21,9 @@ router.get('/:seasonId', authOptional, [
 
     const {showId, seasonId} = req.params;
 
-    if (req.user) {
-        const user = req.user;
-    }
-
+    
+    const user = req.user;
+    
     const sql = `SELECT * FROM Seasons WHERE SeasonID = ?`;
 
     

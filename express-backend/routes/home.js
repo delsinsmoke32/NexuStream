@@ -8,9 +8,9 @@ const auth = require("../middleware/auth");
 //GET /api/home
 router.get('/', authOptional, async (req, res) => {
 
-    if (req.user){
-        const user = req.user;
-    }
+    
+    const user = req.user;
+    
     const topFavoritedQuery = `
         SELECT *
         FROM Shows AS s

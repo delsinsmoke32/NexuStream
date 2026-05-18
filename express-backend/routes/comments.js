@@ -21,9 +21,8 @@ router.get('/', authOptional, [
 
     //la logica dell'authOptional è che non serve avere il jwt per vederli
     const {showId, seasonId, episodeId} = req.params;
-    if (req.user) {
-        const user = req.user.id;
-    }
+
+    const user = req.user;
 
     /*const comment1 = {
         CommentID: 1001n,
@@ -219,6 +218,7 @@ router.patch('/:commentId/hide', isMod, [
         }
     }
 });
+
 
 //PATCH /api/shows/:showId/seasons/:seasonId/episodes/:episodeId/comments/:commentId/approve
 router.patch('/:commentId/approve', isMod, [

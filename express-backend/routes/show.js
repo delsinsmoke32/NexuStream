@@ -21,9 +21,9 @@ router.get('/:showId', authOptional, [
 
     const showId = req.params.showId;
 
-    if (req.user) {
-        const user = req.user;
-    }
+   
+    const user = req.user;
+
 
     const sql = `SELECT * FROM Shows WHERE ShowID = ?`;
 

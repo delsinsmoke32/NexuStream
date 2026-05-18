@@ -1,0 +1,103 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <!-- SEZIONE RICERCA (Appare solo se isSearchbarVisible è true) -->
+    <ion-searchbar *ngIf="isSearchbarVisible" 
+                   showCancelButton="always" 
+                   (ionCancel)="toggleSearch()" 
+                   placeholder="Cerca anime..." 
+                   color="light">
+    </ion-searchbar>
+
+    <!-- HEADER NORMALE (Appare solo se isSearchbarVisible è false) -->
+    <ng-container *ngIf="!isSearchbarVisible">
+      <ion-buttons slot="start">
+        <ion-menu-button color="danger"></ion-menu-button>
+      </ion-buttons>
+
+      <ion-title color="danger" class="ion-text-center">NexuStream</ion-title>
+
+      <ion-buttons slot="end">
+        <ion-button color="light" (click)="toggleSearch()">
+          <ion-icon slot="icon-only" name="search-outline"></ion-icon>
+        </ion-button>
+        <ion-button color="light" (click)="openProfileMenu($event)">
+          <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ng-container>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="dark">
+  <div class="category-list">
+    <h3>I PIÙ VISTI QUESTA SETTIMANA</h3>
+    <div class ="horizontal-scroll">
+      <div class = "anime-card" *ngFor="let anime of popularAnimes">
+        <img [src]="anime.posterUrl" alt="{{ anime.title }}" />
+      </div>
+    </div>
+  </div>
+
+  <div class="category-list">
+    <h3>AGGIUNTI DI RECENTE</h3>
+    <div class ="horizontal-scroll">
+      <div class = "anime-card" *ngFor="let anime of recentlyAddedAnimes">
+        <img [src]="anime.posterUrl" alt="{{ anime.title }}" />
+      </div>
+    </div>
+  </div>
+
+  <div class="category-list">
+    <h3>CONTINUA A GUARDARE</h3>
+    <div class ="horizontal-scroll">
+      <div class ="anime-card" *ngFor="let anime of continueWatchingAnimes">
+        <img [src]="anime.posterUrl" alt="{{ anime.title }}" />
+        <p>{{ anime.title }} - Ep. {{ anime.currentEpisode }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Altre categorie opzionali -->
+  <!-- <div class="category-list">
+    <h3>CONSIGLIATI PER TE</h3>
+    <ion-slides>
+      <ion-slide *ngFor="let anime of recommendedAnimes">
+        <img [src]="anime.posterUrl" alt="{{ anime.title }}" />
+      </ion-slide>
+    </ion-slides>
+  </div> -->
+  <!-- Menu laterale per i generi -->
+<ion-menu side="start" contentId="main-content" (ionDidOpen)="onMenuOpen()" (ionDidClose)="onMenuClose()">
+  <ion-header>
+    <ion-toolbar color="dark">
+      <ion-title color="light">Generi Anime</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-content color="dark">
+    <ion-list>
+      <ion-item *ngFor="let genre of genres" [routerLink]="['/genre', genre.id]" (click)="closeMenu()">
+        {{ genre.name }}
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-menu>
+
+<!-- Menu a tendina per il profilo -->
+<ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
+  <ng-template>
+    <ion-list color="dark">
+      <ion-item button (click)="openUserSettings()">
+        <ion-icon slot="start" name="settings-outline"></ion-icon>
+        Impostazioni
+      </ion-item>
+      <ion-item button (click)="openFavorites()">
+        <ion-icon slot="start" name="heart-outline"></ion-icon>
+        Lista Preferiti
+      </ion-item>
+      <ion-item button (click)="logout()">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Logout
+      </ion-item>
+    </ion-list>
+  </ng-template>
+</ion-popover>

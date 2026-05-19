@@ -35,3 +35,13 @@
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
 @import '@ionic/angular/css/palettes/dark.system.css';
+
+@import "video.js/dist/video-js.css";
+@import "videojs-theme-kit/style.css";
+
+/* Personalizzazione per rendere il player responsive */
+// .video-container {
+//   width: 100%;
+//   max-width: 100px;
+//   margin: 0 auto;
+// }

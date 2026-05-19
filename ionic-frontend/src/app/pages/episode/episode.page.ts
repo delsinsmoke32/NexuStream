@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import {
@@ -23,7 +23,13 @@ import { addIcons } from 'ionicons'
 import { CommentsComponent } from '@app/components/comments/comments.component'
 import { Episode, EpisodeApi } from '@app/services/episode-api'
 import { Observable } from '@lib/rxjs/dist/types'
-import { playCircle } from '@lib/ionicons/icons'
+import {
+    playCircle,
+    shareSocialOutline,
+    addCircleOutline,
+} from '@lib/ionicons/icons'
+import videojs from 'video.js'
+//import 'videojs-theme-kit' aggiunto alla angular.json in styles
 
 @Component({
     selector: 'app-episode',
@@ -53,11 +59,49 @@ import { playCircle } from '@lib/ionicons/icons'
     ],
 })
 export class EpisodePage implements OnInit {
-    id = 10
+    @ViewChild('videoPlayer', { static: true }) videoElement!: ElementRef
+    player: any
+
+    id = 1
     episode$: Observable<Episode>
     constructor(api: EpisodeApi) {
         this.episode$ = api.getEpisode(this.id)
-        addIcons({ playCircle })
+        addIcons({ shareSocialOutline, addCircleOutline, playCircle })
     }
-    ngOnInit() {}
+    ngOnInit() {
+        this.initPlayer()
+    }
+
+    initPlayer() {
+        // Configura il player
+        this.player = videojs(
+            this.videoElement.nativeElement,
+            {
+                autoplay: false,
+                controls: true,
+                responsive: true,
+                fluid: true,
+                sources: [
+                    {
+                        src: 'http://localhost:3000/static/videos/test/master.m3u8',
+                        type: 'application/x-mpegURL',
+                    },
+                ],
+            },
+            () => {
+                console.log('Player Pronto!')
+            }
+        )
+
+        // this.player.on('ready', () => {
+        //     this.player.theme({ skin: 'sleek' })
+        // })
+    }
+
+    // Fondamentale: pulire il player quando si cambia pagina
+    ngOnDestroy() {
+        if (this.player) {
+            this.player.dispose()
+        }
+    }
 }

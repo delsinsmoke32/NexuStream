@@ -1,130 +1,264 @@
-require('dotenv').config();
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const db = require("../db/db")
-const authOptional = require("../middleware/authOptional");
+const commentController = require('../controllers/commentController');
 const auth = require("../middleware/auth");
+const authOptional = require("../middleware/authOptional");
+const isMod = require("../middleware/isMod");
+const { body, param } = require('express-validator');
+
+const commonParams = [
+    param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido"),
+    param('seasonId').isInt({ min: 1 }).notEmpty().withMessage("ID stagione non valido"),
+    param('episodeId').isInt({ min: 1 }).notEmpty().withMessage("ID episodio non valido")
+];
 
 
-//GET /api/episodes/:id/comments
-router.get('/', authOptional, async (req, res) => {
-    //la logica dell'authOptional è che non serve avere il jwt per vederli
-    const episodeId = req.params.id;
-    const user = req.user;
-
-    /*const comment1 = {
-        CommentID: 1001n,
-        REF_UserID: 42n,
-        REF_EpisodeID: 101n,
-        DateCommented: '2024-05-10T14:30:00Z',
-        REF_CommentID: 0n, // 0 indica che è un commento principale, non una risposta
-        isHidden: false,
-        Likes: 156n,
-        isApproved: true
-    };
-
-    const comment2 = {
-        CommentID: 1002n,
-        REF_UserID: 88n,
-        REF_EpisodeID: 101n,
-        DateCommented: '2024-05-10T15:00:00Z',
-        REF_CommentID: 1001n, // Questo commento è una risposta al commento 1001
-        isHidden: false,
-        Likes: 12n,
-        isApproved: true
-    };*/
-
-    try {
-        let sql = `SELECT
-                c.*,
-                u.Username, u.isAdmin, u.isMod
-                FROM Comments c
-                JOIN Users AS u ON c.REF_UserID = u.UserID
-                WHERE c.REF_EpisodeID = ?`;
-
-        const params = [episodeId];
-
-        if (!user || !user.isMod) {
-            //se l'utente non è mod vede solo i commenti non nascosti
-            sql += ` AND c.isHidden = 0`;
-        }
-
-        sql += ` ORDER BY c.DateCommented DESC`;
-
-        const comments = await db.allAsync(sql, params);
-
-        //qualche check di sicurezza sui return values
-
-        const sanitizedComments = comments.map(c => ({
-            //spread operator, spalma tutte le proprietà di c qua dentro
-            //e le converte come specificato
-            ...c,
-            CommentID: Number(c.CommentID),
-            REF_UserID: Number(c.REF_UserID),
-            REF_EpisodeID: Number(c.REF_EpisodeID),
-            REF_CommentID: Number(c.REF_CommentID),
-        }));
-
-        res.json(sanitizedComments);
-
-    } catch (err) {
-        if (err instanceof Error) {
-            res.status(500).json({message: err.message});
-        } else {
-            res.status(400).json({message: "Errore sconosciuto."});
-        }
-    }
-});
+/**
+ * @swagger
+ * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/comments:
+ *   get:
+ *     summary: Ottiene l'elenco dei commenti di un episodio
+ *     tags:
+ *       - Comments
+ *     parameters:
+ *       - in: path
+ *         name: showId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: seasonId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: episodeId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Lista dei commenti caricata con successo.
+ *   post:
+ *     summary: Inserisce un nuovo commento o una risposta (Richiede Auth)
+ *     tags:
+ *       - Comments
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: showId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: seasonId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: episodeId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - text
+ *             properties:
+ *               text:
+ *                 type: string
+ *                 example: "Episodio spettacolare!"
+ *               parentCommentId:
+ *                 type: integer
+ *                 example: 45
+ *     responses:
+ *       201:
+ *         description: Commento creato con successo.
+ */
 
 
-//PATCH /api/episodes/:id/comments/:commentId/hide
-router.patch('/:commentId/hide', auth, async (req, res) => {
-    if (!req.user.isMod == 0) {
-        res.status(403).json({message: "Non hai i permessi per visualizzare questa pagina."});
-    }
+router.get('/', authOptional, commonParams, commentController.getEpisodeComments);
 
-    const { commentId } = req.params;
-    const { isHidden } = req.body; //booleano
+router.post('/', auth, [
+    ...commonParams,
+    body('parentCommentId').optional().isInt({ min: 1 }).withMessage("ID commento genitore non valido"),
+    body('text').isString().trim().notEmpty().withMessage("Non si possono postare commenti vuoti")
+], commentController.postComment);
 
-    try {
-        const sql = `UPDATE Comments SET isHidden = ? WHERE CommentID = ?`;
 
-        await db.allAsync(sql, [isHidden, commentId]);
+/**
+ * @swagger
+ * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/comments/{commentId}/interact:
+ *   post:
+ *     summary: Gestisce i Like e i Report su un commento (Richiede Auth)
+ *     tags:
+ *       - Comments
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: showId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: seasonId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: episodeId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: commentId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               isLiked:
+ *                 type: integer
+ *                 enum: [0, 1]
+ *                 example: 1
+ *               isReported:
+ *                 type: integer
+ *                 enum: [0, 1]
+ *                 example: 0
+ *     responses:
+ *       201:
+ *         description: Interazione elaborata con successo.
+ */
 
-        res.json({message: `Commento ${isHidden ? 'nascosto' : 'mostrato'} con successo.`});
 
-    } catch (err) {
-        if (err instanceof Error) {
-            res.status(500).json({message: err.message});
-        } else {
-            res.status(400).json({message: "Errore sconosciuto."});
-        }
-    }
-});
+router.post('/:commentId/interact', auth, [
+    ...commonParams,
+    param('commentId').isInt({ min: 1 }).notEmpty().withMessage("ID commento non valido"),
+    body('isLiked').optional().isInt({ min: 0, max: 1 }).withMessage("Il like deve essere 0 o 1"),
+    body('isReported').optional().isInt({ min: 0, max: 1 }).withMessage("Il report deve essere 0 o 1")
+], commentController.interactWithComment);
 
-//PATCH /api/episodes/:id/comments/:commentId/approve
-router.patch('/:commentId/approve', auth, async (req, res) => {
-    if (!req.user.isMod == 0){
-        res.status(403).json({message: "Non hai i permessi per visualizzare questa pagina."});
-    }
 
-    const { commentId } = req.params;
-    const { isApproved } = req.body;
+/**
+ * @swagger
+ * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/comments/{commentId}/hide:
+ *   patch:
+ *     summary: Nasconde o mostra un commento (Solo Moderatori)
+ *     tags:
+ *       - Comments Moderation
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: showId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: seasonId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: episodeId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: commentId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - isHidden
+ *             properties:
+ *               isHidden:
+ *                 type: integer
+ *                 enum: [0, 1]
+ *                 example: 1
+ *     responses:
+ *       200:
+ *         description: Visibilità aggiornata con successo.
+ */
 
-    try {
-        const sql = `UPDATE Comments SET isApproved = ? WHERE CommentID = ?`;
 
-        await db.allAsync(sql, [isApproved, commentId]);
+router.patch('/:commentId/hide', isMod, [
+    ...commonParams,
+    param('commentId').isInt({ min: 1 }).notEmpty().withMessage("ID commento non valido"),
+    body('isHidden').isInt({ min: 0, max: 1 }).notEmpty().withMessage("isHidden deve essere un intero fra 0 e 1")
+], commentController.hideComment);
 
-        res.json({message: `Commento ${isApproved ? 'approvato' : 'non approvato'} con successo.`});
 
-    } catch (err) {
-        if (err instanceof Error) {
-            res.status(500).json({message: err.message});
-        } else {
-            res.status(400).json({message: "Errore sconosciuto."});
-        }
-    }
-});
+/**
+ * @swagger
+ * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/comments/{commentId}/approve:
+ *   patch:
+ *     summary: Approva o disapprova un commento (Solo Moderatori)
+ *     tags:
+ *       - Comments Moderation
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: showId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: seasonId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: episodeId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: commentId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - isApproved
+ *             properties:
+ *               isApproved:
+ *                 type: integer
+ *                 enum: [0, 1]
+ *                 example: 1
+ *     responses:
+ *       200:
+ *         description: Stato approvazione aggiornato con successo.
+ */
+
+
+router.patch('/:commentId/approve', isMod, [
+    ...commonParams,
+    param('commentId').isInt({ min: 1 }).notEmpty().withMessage("ID commento non valido"),
+    body('isApproved').isInt({ min: 0, max: 1 }).notEmpty().withMessage("isApproved deve essere un intero fra 0 e 1")
+], commentController.approveComment);
 
 module.exports = router;

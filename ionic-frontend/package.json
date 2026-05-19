@@ -10,7 +10,8 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "postinstall": "patch-package"
   },
   "private": true,
   "dependencies": {
@@ -28,11 +29,14 @@
     "@capacitor/keyboard": "8.0.3",
     "@capacitor/status-bar": "8.0.2",
     "@ionic/angular": "^8.0.0",
+    "@videojs/http-streaming": "^3.17.4",
     "dotenv": "^17.4.2",
     "ionicons": "^7.0.0",
     "jsonwebtoken": "^9.0.3",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "video.js": "^8.23.7",
+    "videojs-theme-kit": "^0.0.15",
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
@@ -49,6 +53,7 @@
     "@ionic/angular-toolkit": "^12.0.0",
     "@types/jasmine": "~5.1.0",
     "@types/jest": "^30.0.0",
+    "@types/video.js": "^7.3.58",
     "@typescript-eslint/eslint-plugin": "^8.18.0",
     "@typescript-eslint/parser": "^8.18.0",
     "eslint": "^9.16.0",
@@ -62,6 +67,8 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "patch-package": "^8.0.1",
+    "postinstall-postinstall": "^2.1.0",
     "prettier": "3.8.3",
     "typescript": "~5.9.0"
   },

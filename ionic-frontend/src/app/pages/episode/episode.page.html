@@ -1,19 +1,35 @@
-<ion-content
-    [fullscreen]="true"
-    class="streaming-content">
+<ion-content [fullscreen]="true" class="streaming-content">
     <div class="video-layout-wrapper">
         <div class="main-video-section">
             <div class="player-container">
-                <div class="video-placeholder">
+                <!-- <div class="video-placeholder">
                     <ion-icon name="play-circle" class="play-hint"></ion-icon>
                     <div class="video-overlay-bottom">
                         @if ( episode$ | async; as episode ) {
-                            <p>{{ episode.Title }}</p>
+                        <p>{{ episode.Title }}</p>
                         } @else {
-                            <p><ion-skeleton-text animated style="width: 60%"></ion-skeleton-text></p>
+                        <p>
+                            <ion-skeleton-text
+                                animated
+                                style="width: 60%"
+                            ></ion-skeleton-text>
+                        </p>
                         }
                     </div>
-                </div>
+                </div> -->
+                <video
+                    #videoPlayer
+                    class="video-js vjs-default-skin vjs-big-play-centered video-placeholder"
+                    controls
+                    preload="auto"
+                    playsinline
+                ></video>
+                <!-- <video controls>
+                    <source
+                        src="http://localhost:3000/static/videos/test/master.m3u8"
+                        type="application/x-mpegURL"
+                    />
+                </video> -->
             </div>
 
             <div class="episode-details">

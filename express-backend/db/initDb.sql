@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS "Propics" (
 
 CREATE TABLE IF NOT EXISTS "Shows" (
     "ShowID" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    "DateStarted" INTEGER NOT NULL,
+    "DateStarted" TEXT NOT NULL,
     "hasEnded" INTEGER NOT NULL,
     "DateEnded" TEXT NULL,
     "Favourited" INTEGER NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS "Seasons" (
     "DateEnded" TEXT NULL,
     "Description" TEXT NOT NULL,
     "Title" TEXT NOT NULL,
-    FOREIGN KEY ("REF_ShowID") REFERENCES "Shows" ("ShowID")
+    FOREIGN KEY ("REF_ShowID") REFERENCES "Shows" ("ShowID") ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS "Episodes" (
@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS "Episodes" (
     "Streams" INTEGER NOT NULL,
     "Description" TEXT NOT NULL,
     "Title" TEXT NOT NULL,
-    FOREIGN KEY ("REF_SeasonID") REFERENCES "Seasons" ("SeasonID")
+    FOREIGN KEY ("REF_SeasonID") REFERENCES "Seasons" ("SeasonID") ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS "Users" (
@@ -57,8 +57,9 @@ CREATE TABLE IF NOT EXISTS "Comments" (
     "CommentID" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     "REF_UserID" INTEGER NOT NULL,
     "REF_EpisodeID" INTEGER NOT NULL,
-    "DateCommented" TEXT NOT NULL,
-    "REF_CommentID" INTEGER NOT NULL,
+    "CommentText" TEXT NOT NULL,
+    "DateCommented" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "REF_CommentID" INTEGER NULL,
     "isHidden" INTEGER NOT NULL,
     "Likes" INTEGER NOT NULL,
     "isApproved" INTEGER NOT NULL,
@@ -75,6 +76,7 @@ CREATE TABLE IF NOT EXISTS "LINKs_User_Interacts_Episode" (
     "isCompleted" INTEGER NOT NULL,
     "isDropped" INTEGER NOT NULL,
     "isLiked" INTEGER NOT NULL,
+    PRIMARY KEY ("REF_UserID", "REF_EpisodeID"),
     FOREIGN KEY ("REF_UserID") REFERENCES "Users" ("UserID"),
     FOREIGN KEY ("REF_EpisodeID") REFERENCES "Episodes" ("EpisodeID")
 );
@@ -100,19 +102,20 @@ CREATE TABLE IF NOT EXISTS "LINKs_User_Interacts_Comment" (
 CREATE TABLE IF NOT EXISTS "EpisodeLanguage" (
     "REF_EpisodeID" INTEGER PRIMARY KEY NOT NULL,
     "Language" TEXT NOT NULL,
-    FOREIGN KEY ("REF_EpisodeID") REFERENCES "Episodes" ("EpisodeID")
+    FOREIGN KEY ("REF_EpisodeID") REFERENCES "Episodes" ("EpisodeID") ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS "EpisodeTimes" (
+    "EpisodeTimeID" INTEGER PRIMARY KEY AUTOINCREMENT,
     "REF_EpisodeID" INTEGER NOT NULL,
     "StartTime" INTEGER NOT NULL,
     "EndTime" INTEGER NOT NULL,
     "Type" TEXT NOT NULL,
-    FOREIGN KEY ("REF_EpisodeID") REFERENCES "Episodes" ("EpisodeID")
+    FOREIGN KEY ("REF_EpisodeID") REFERENCES "Episodes" ("EpisodeID") ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS "EpisodeSub" (
     "REF_EpisodeID" INTEGER PRIMARY KEY NOT NULL,
     "Language" TEXT NOT NULL,
-    FOREIGN KEY ("REF_EpisodeID") REFERENCES "Episodes" ("EpisodeID")
+    FOREIGN KEY ("REF_EpisodeID") REFERENCES "Episodes" ("EpisodeID") ON DELETE CASCADE
 );

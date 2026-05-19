@@ -23,7 +23,7 @@ export const routes: Routes = [
   },
   {
     path: 'home',
-    loadComponent: () => import('./pages/home-page/home-page.page').then( m => m.HomePagePage)
+    loadComponent: () => import('./pages/home/home.page').then( m => m.HomePage)
   },
   {
     path: 'serie',

@@ -7,9 +7,9 @@ import { RouterModule } from '@angular/router';
 import { heartOutline, logOutOutline, personCircleOutline, searchOutline, settingsOutline } from '@lib/ionicons/icons';
 
 @Component({
-  selector: 'app-home-page',
-  templateUrl: './home-page.page.html',
-  styleUrls: ['./home-page.page.scss'],
+  selector: 'app-home',
+  templateUrl: './home.page.html',
+  styleUrls: ['./home.page.scss'],
   imports: [IonButtons, IonSearchbar,
     IonContent,
     IonHeader,
@@ -32,7 +32,7 @@ import { heartOutline, logOutOutline, personCircleOutline, searchOutline, settin
     IonList, IonMenuButton, RouterModule],
 
 })
-export class HomePagePage {
+export class HomePage {
   // Usiamo ViewChild per accedere al popover definito nel template con #profilePopover
   @ViewChild('profilePopover') popover: any;
 

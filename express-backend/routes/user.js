@@ -1,26 +1,55 @@
-require('dotenv').config();
-const auth = require('../middleware/auth');
 const express = require('express');
 const router = express.Router();
-const db = require("../db/db");
+const userController = require('../controllers/userController');
+const auth = require('../middleware/auth');
 
-router.get('/me', auth, async (req, res) => {
-    try {
-        const uid = req.user.id;
 
-        const sql = `SELECT UserID, Username, Email, isAdmin, isMod, isCataloguer FROM Users WHERE UserID = ?`;
-        const user = await db.getAsync(sql, [uid]);
+/**
+ * @swagger
+ * /api/user/me:
+ *   get:
+ *     summary: Recupera il profilo dell'utente corrente loggato
+ *     description: Utilizza il token JWT fornito nell'header Authorization per identificare l'utente e restituire i suoi dettagli e ruoli.
+ *     tags:
+ *       - Utenti
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dati del profilo recuperati con successo.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 UserID:
+ *                   type: integer
+ *                   example: 12
+ *                 Username:
+ *                   type: string
+ *                   example: StreamerGamer
+ *                 Email:
+ *                   type: string
+ *                   format: email
+ *                   example: utente@email.com
+ *                 isAdmin:
+ *                   type: integer
+ *                   example: 0
+ *                 isMod:
+ *                   type: integer
+ *                   example: 0
+ *                 isCataloguer:
+ *                   type: integer
+ *                   example: 0
+ *       401:
+ *         description: Token mancante o non valido.
+ *       404:
+ *         description: Utente non trovato nel database.
+ *       500:
+ *         description: Errore interno del server durante il recupero del profilo.
+ */
 
-        if (!user) {
-            return res.status(400).json({message: "L'utente non esiste."});
-        }
-        res.json(user);
 
-    } catch (err) {
-        if (err instanceof Error) {
-            res.status(500).json({ error: "Errore nel recupero del profilo." });
-        }
-    }
-});
+router.get('/me', auth, userController.getMyProfile);
 
 module.exports = router;

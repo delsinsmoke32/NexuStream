@@ -1,101 +1,90 @@
-require('dotenv').config();
 const express = require('express');
-const router = express.Router();
-const dbf = require("../db/db");
-const db = dbf.db;
+const router = express.Router({ mergeParams: true });
+const showController = require('../controllers/showController');
 const auth = require("../middleware/auth");
 const authOptional = require("../middleware/authOptional");
-const { body, param, validationResult } = require('express-validator');
+const { body, param } = require('express-validator');
 const seasonRoute = require("./season");
 
 
-//GET /api/shows/:id
+/**
+ * @swagger
+ * /api/shows/{showId}:
+ *   get:
+ *     summary: Recupera i dettagli di una singola serie TV
+ *     tags:
+ *       - Shows
+ *     parameters:
+ *       - in: path
+ *         name: showId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID numerico dello show
+ *     responses:
+ *       200:
+ *         description: Dati dello show recuperati con successo.
+ *       400:
+ *         description: ID serie non valido.
+ *       404:
+ *         description: Serie non trovata.
+ *       500:
+ *         description: Errore interno del server.
+ */
+
+
 router.get('/:showId', authOptional, [
-    param('showId').isInt({min: 1}).notEmpty().withMessage("ID serie non valido")
-],async (req, res) => {
-
-    const errors = validationResult(req);
-    if (!errors.isEmpty()){
-        return res.status(400).json({ errors: errors.array() });
-    }
-
-    const showId = req.params.showId;
-
-   
-    const user = req.user;
+    param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido")
+], showController.getShowDetails);
 
 
-    const sql = `SELECT * FROM Shows WHERE ShowID = ?`;
+/**
+ * @swagger
+ * /api/shows/{showId}/interact:
+ *   post:
+ *     summary: Aggiunge o rimuove una serie dai preferiti (Like)
+ *     tags:
+ *       - Shows
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: showId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID numerico dello show
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - isLiked
+ *             properties:
+ *               isLiked:
+ *                 type: integer
+ *                 enum: [0, 1]
+ *                 example: 1
+ *     responses:
+ *       200:
+ *         description: Stato dei preferiti aggiornato con successo.
+ *       400:
+ *         description: Dati in ingresso non validi.
+ *       401:
+ *         description: Token non fornito o non valido.
+ *       500:
+ *         description: Errore interno del server.
+ */
 
-    
 
-    try {
-        const show = await dbf.getAsync(sql, [showId]);
-        
-        if (!show) {
-            return res.status(404).json({message: "Serie non trovata."});
-        }
-
-        res.json(show);
-
-    } catch (err) {
-        console.error("Errore query serie: ", err);
-        return res.status(500).json({ error: "Errore interno del server" });
-    }
-
-
-});
-
-
-//POST /api/shows/:showId/interact
 router.post('/:showId/interact', auth, [
     param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido"),
-    param('userId').isInt({ min: 1 }).notEmpty().withMessage("ID utente non valido"),
-    body('isLiked').isInt({min: 0, max: 1}).notEmpty().withMessage("Il like è 0 o 1")
-], async (req, res) => {
+    body('isLiked').isInt({ min: 0, max: 1 }).notEmpty().withMessage("Il like deve essere 0 o 1")
+], showController.toggleShowLike);
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()){
-        return res.status(400).json({ errors: errors.array() });
-    }
-
-    const {showId} = req.params;
-    const userId = req.user.id;
-    const {isLiked} = req.body;
-
-    const sqlLiked = `INSERT OR IGNORE INTO LINKs_User_Likes_Show(REF_UserID, REF_ShowID)
-                      VALUES (?, ?)`;
-
-    const sqlNotLiked = `DELETE FROM LINKs_User_Likes_Show WHERE REF_UserID = ? AND REF_ShowID = ?`;
-
-    try {
-        if (isLiked === 1) {
-            //L'utente ha messo like
-            const result = await dbf.runAsync(sqlLiked, [userId, showId]);
-
-            //se esisteva già un record, non succede niente e questo non viene eseguito
-            if (result.changes > 0) {
-                await dbf.runAsync(`UPDATE Shows SET Favourited = Favourited + 1 WHERE ShowID = ?`, [showId]);
-            }
-
-            return res.status(200).json({ message: "Serie aggiunta ai preferiti!", isLiked: 1 });
-        } else {
-            const result = await dbf.runAsync(sqlNotLiked, [userId, showId]);
-
-            //se non esisteva già un record, non succede niente e questo non viene eseguito
-            if (result.changes > 0) {
-                await dbf.runAsync(`UPDATE Shows SET Favourited = Favourited - 1 WHERE ShowID = ?`, [showId]);
-            }
-
-            return res.status(200).json({ message: "Serie rimossa dai preferiti!", isLiked: 0 });
-        }
-    } catch (err) {
-        console.error("Errore gestione preferiti serie: ", err);
-        return res.status(500).json({ error: "Errore interno del server." });
-    }
-
-});
-
+// Sotto-rotta per agganciare le stagioni correlati
 router.use('/:showId/seasons', seasonRoute);
 
 module.exports = router;

@@ -58,7 +58,71 @@ const getHomeData = async (req, res) => {
     }
 };
 
+const getShowDetails = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { showId } = req.params;
+
+    try {
+        const show = await showModel.getShowById(showId);
+        
+        if (!show) {
+            return res.status(404).json({ message: "Serie non trovata." });
+        }
+
+        return res.json(show);
+    } catch (err) {
+        console.error("Errore query serie: ", err);
+        return res.status(500).json({ error: "Errore interno del server" });
+    }
+};
+
+
+const toggleShowLike = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { showId } = req.params;
+    const userId = req.user.id;
+    const { isLiked } = req.body;
+
+    try {
+        if (isLiked === 1) {
+            // L'utente vuole mettere Like
+            const result = await showModel.addLikeInteraction(userId, showId);
+
+            // Aggiorna il contatore globale solo se la riga è stata effettivamente inserita ora
+            if (result.changes > 0) {
+                await showModel.incrementFavorites(showId);
+            }
+
+            return res.status(200).json({ message: "Serie aggiunta ai preferiti!", isLiked: 1 });
+        } else {
+            // L'utente vuole rimuovere il Like
+            const result = await showModel.removeLikeInteraction(userId, showId);
+
+            // Aggiorna il contatore globale solo se una riga è stata effettivamente eliminata
+            if (result.changes > 0) {
+                await showModel.decrementFavorites(showId);
+            }
+
+            return res.status(200).json({ message: "Serie rimossa dai preferiti!", isLiked: 0 });
+        }
+    } catch (err) {
+        console.error("Errore gestione preferiti serie: ", err);
+        return res.status(500).json({ error: "Errore interno del server." });
+    }
+};
+
+
 module.exports = {
     search,
-    getHomeData
+    getHomeData,
+    getShowDetails,
+    toggleShowLike
 };

@@ -1,60 +1,113 @@
-require('dotenv').config();
 const express = require('express');
-const router = express.Router({mergeParams: true});
-const dbf = require("../db/db");
-const db = dbf.db;
+const router = express.Router({ mergeParams: true });
+const episodeController = require('../controllers/episodeController');
 const auth = require("../middleware/auth");
 const authOptional = require("../middleware/authOptional");
-const { body, param, validationResult, check } = require('express-validator');
+const { body, param } = require('express-validator');
 const commentsRoute = require("./comments");
 
-// router.get('/', (req, res) => {
-//     res.send('Lista completa degli episodi...');
-// });
-
-//GET /api/shows/:showId/seasons/:seasonId/episodes/:episodeId
+/**
+ * @swagger
+ * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}:
+ *   get:
+ *     summary: Recupera i dettagli di un singolo episodio
+ *     description: Restituisce le informazioni dell'episodio con i vettori delle lingue doppiate e dei sottotitoli già formattati in array.
+ *     tags:
+ *       - Episodes
+ *     parameters:
+ *       - in: path
+ *         name: showId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: seasonId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: episodeId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Dati dell'episodio estratti con successo.
+ *       400:
+ *         description: Uno o più parametri ID non sono validi.
+ *       404:
+ *         description: Episodio non trovato.
+ *       500:
+ *         description: Errore interno del server.
+ */
 router.get('/:episodeId', authOptional, [
     param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido"),
     param('seasonId').isInt({ min: 1 }).notEmpty().withMessage("ID stagione non valido"),
     param('episodeId').isInt({ min: 1 }).notEmpty().withMessage("ID episodio non valido"),
-], async (req, res) => {
+], episodeController.getEpisodeDetails);
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()){
-        return res.status(400).json({ errors: errors.array() });
-    }
-    const {showId, seasonId, episodeId} = req.params;
-
-    const sql = `SELECT e.*,
-            (SELECT GROUP_CONCAT(Language) FROM EpisodeLanguage AS el WHERE e.EpisodeID = el.REF_EpisodeID) AS DubLanguages,
-            (SELECT GROUP_CONCAT(Language) FROM EpisodeSub AS es WHERE e.EpisodeID = es.REF_EpisodeID) AS SubLanguages
-            FROM Episodes AS e WHERE e.EpisodeID = ?`;
-
-    try {
-        const episode = await dbf.getAsync(sql, [episodeId]);
-
-        if (!episode) {
-            return res.status(404).json({message: "Episodio non trovato."});
-        }
-
-
-        //trasformo dub e sub in array di stringhe per ionic
-        const response = {
-            ...episode,
-            DubLanguages: episode.DubLanguages ? episode.DubLanguages.split(',') : [],
-            SubLanguages: episode.SubLanguages ? episode.SubLanguages.split(',') : []
-        };
-
-        res.json(episode);
-
-    } catch (err) {
-        console.error("Errore query episodio: ", err);
-        return res.status(500).json({ error: "Errore interno del server" });
-    }
-});
-
-
-// POST /api/shows/:showId/seasons/:seasonId/episodes/:episodeId/interact
+/**
+ * @swagger
+ * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/interact:
+ *   post:
+ *     summary: Registra o aggiorna lo stato di visione e interazione dell'utente (Progress, Like, Completato)
+ *     tags:
+ *       - Episodes
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: showId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: seasonId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: episodeId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - progress
+ *               - isCompleted
+ *               - isDropped
+ *               - isLiked
+ *             properties:
+ *               progress:
+ *                 type: integer
+ *                 example: 450
+ *               isCompleted:
+ *                 type: integer
+ *                 enum: [0, 1]
+ *                 example: 0
+ *               isDropped:
+ *                 type: integer
+ *                 enum: [0, 1]
+ *                 example: 0
+ *               isLiked:
+ *                 type: integer
+ *                 enum: [0, 1]
+ *                 example: 1
+ *     responses:
+ *       200:
+ *         description: Interazione memorizzata e contatore aggiornato.
+ *       400:
+ *         description: Dati non conformi o vincoli del DB violati.
+ *       401:
+ *         description: Token mancante o scaduto.
+ *       500:
+ *         description: Errore del server.
+ */
 router.post('/:episodeId/interact', auth, [
     param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido"),
     param('seasonId').isInt({ min: 1 }).notEmpty().withMessage("ID stagione non valido"),
@@ -63,62 +116,9 @@ router.post('/:episodeId/interact', auth, [
     body('isCompleted').isInt({ min: 0, max: 1 }).withMessage("isCompleted deve essere 0 o 1"),
     body('isDropped').isInt({ min: 0, max: 1 }).withMessage("isDropped deve essere 0 o 1"),
     body('isLiked').isInt({ min: 0, max: 1 }).withMessage("isLiked deve essere 0 o 1")
-], async (req, res) => {
+], episodeController.interactWithEpisode);
 
-    const errors = validationResult(req);
-    if (!errors.isEmpty()){
-        return res.status(400).json({ errors: errors.array() });
-    }
-
-    const {showId, seasonId, episodeId} = req.params;
-    const {progress, isCompleted, isDropped, isLiked} = req.body;
-    const userId = req.user.id;
-
-    const sql = `INSERT INTO LINKs_User_Interacts_Episode
-                    (REF_UserID, REF_EpisodeID, LastWatchedDate, Progress, isCompleted, isDropped, isLiked)
-                VALUES
-                    (?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?)
-                ON CONFLICT(REF_UserID, REF_EpisodeID) DO UPDATE SET
-                    LastWatchedDate = CURRENT_TIMESTAMP,
-                    Progress = excluded.Progress,   -- aggiorna i secondi riprodotti
-                    isCompleted = excluded.isCompleted,   -- dice se l'ep è completato
-                    isDropped = excluded.isDropped,   -- toggle dell'utente
-                    isLiked = excluded.isLiked  -- like, gestito col delta`;
-
-    const checkSQL = 'SELECT isLiked FROM LINKs_User_Interacts_Episode WHERE REF_EpisodeID = ? AND REF_UserID = ?';
-
-    const params = [userId, episodeId, progress, isCompleted, isDropped, isLiked];
-
-    try {
-        const oldInteraction = await dbf.getAsync(checkSQL, [episodeId, userId]);
-
-        const oldLiked = oldInteraction ? oldInteraction.isLiked : 0;
-        
-        // Calcoliamo il delta (1, -1, o 0)
-        const likeDelta = isLiked - oldLiked;
-
-        const result = await dbf.runAsync(sql, params);
-
-        if (likeDelta !== 0) {
-            const updateEpisodeLikesSql = `UPDATE Episodes SET Likes = Likes + ? WHERE EpisodeID = ?`;
-            await dbf.runAsync(updateEpisodeLikesSql, [likeDelta, episodeId]);
-        }
-    
-        return res.status(200).json({ 
-            message: "Interazione memorizzata con successo!",
-            likeDelta: likeDelta
-        });
-
-    } catch (err) {
-        if (err.code === 'SQLITE_CONSTRAINT') {
-            return res.status(400).json({ message: "Impossibile interagire con l'episodio: riferimenti non validi." });
-        }
-        return res.status(500).json({ message: "Errore interno del server." });
-    }
-
-                
-});
-
+// Iniezione del sotto-router dei commenti
 router.use('/:episodeId/comments', commentsRoute);
 
 module.exports = router;

@@ -64,9 +64,58 @@ const getContinueWatching = async (userId) => {
     return await db.allAsync(sql, [userId]);
 };
 
+/**
+ * Recupera i dettagli di una singola serie TV
+ */
+
+const getShowById = async (showId) => {
+    const sql = `SELECT * FROM Shows WHERE ShowID = ?`;
+    return await db.getAsync(sql, [showId]);
+};
+
+/**
+ * Aggiunge il record di interazione "Like" (Ignora se già esistente)
+ */
+
+const addLikeInteraction = async (userId, showId) => {
+    const sql = `INSERT OR IGNORE INTO LINKs_User_Likes_Show(REF_UserID, REF_ShowID) VALUES (?, ?)`;
+    return await db.runAsync(sql, [userId, showId]);
+};
+
+/**
+ * Rimuove il record di interazione "Like"
+ */
+
+const removeLikeInteraction = async (userId, showId) => {
+    const sql = `DELETE FROM LINKs_User_Likes_Show WHERE REF_UserID = ? AND REF_ShowID = ?`;
+    return await db.runAsync(sql, [userId, showId]);
+};
+
+/**
+ * Incrementa il contatore dei preferiti di uno show
+ */
+
+const incrementFavorites = async (showId) => {
+    const sql = `UPDATE Shows SET Favourited = Favourited + 1 WHERE ShowID = ?`;
+    return await db.runAsync(sql, [showId]);
+};
+
+/**
+ * Decrementa il contatore dei preferiti di uno show
+ */
+
+const decrementFavorites = async (showId) => {
+    const sql = `UPDATE Shows SET Favourited = Favourited - 1 WHERE ShowID = ?`;
+    return await db.runAsync(sql, [showId]);
+};
+
 module.exports = {
     searchShows,
     getTopStreamed,
     getTopFavorited,
-    getContinueWatching
+    getContinueWatching,
+    getShowById,
+    addLikeInteraction,
+    removeLikeInteraction,
+    incrementFavorites
 };

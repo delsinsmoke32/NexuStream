@@ -102,7 +102,7 @@ CREATE TABLE IF NOT EXISTS "LINKs_User_Interacts_Comment" (
 CREATE TABLE IF NOT EXISTS "EpisodeLanguage" (
     "REF_EpisodeID" INTEGER PRIMARY KEY NOT NULL,
     "Language" TEXT NOT NULL,
-    FOREIGN KEY ("REF_EpisodeID") REFERENCES "Episodes" ("EpisodeID")
+    FOREIGN KEY ("REF_EpisodeID") REFERENCES "Episodes" ("EpisodeID") ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS "EpisodeTimes" (
@@ -111,11 +111,11 @@ CREATE TABLE IF NOT EXISTS "EpisodeTimes" (
     "StartTime" INTEGER NOT NULL,
     "EndTime" INTEGER NOT NULL,
     "Type" TEXT NOT NULL,
-    FOREIGN KEY ("REF_EpisodeID") REFERENCES "Episodes" ("EpisodeID")
+    FOREIGN KEY ("REF_EpisodeID") REFERENCES "Episodes" ("EpisodeID") ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS "EpisodeSub" (
     "REF_EpisodeID" INTEGER PRIMARY KEY NOT NULL,
     "Language" TEXT NOT NULL,
-    FOREIGN KEY ("REF_EpisodeID") REFERENCES "Episodes" ("EpisodeID")
+    FOREIGN KEY ("REF_EpisodeID") REFERENCES "Episodes" ("EpisodeID") ON DELETE CASCADE
 );

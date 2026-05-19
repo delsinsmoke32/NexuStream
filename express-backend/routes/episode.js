@@ -118,6 +118,15 @@ router.post('/:episodeId/interact', auth, [
     body('isLiked').isInt({ min: 0, max: 1 }).withMessage("isLiked deve essere 0 o 1")
 ], episodeController.interactWithEpisode);
 
+//===============================
+//CAMBIA AUTH, METTILO PRIVATO
+//===============================
+router.get('/:episodeId/stream', authOptional, [
+    param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido"),
+    param('seasonId').isInt({ min: 1 }).notEmpty().withMessage("ID stagione non valido"),
+    param('episodeId').isInt({ min: 1 }).withMessage("ID episodio non valido"),
+], episodeController.stream);
+
 // Iniezione del sotto-router dei commenti
 router.use('/:episodeId/comments', commentsRoute);
 

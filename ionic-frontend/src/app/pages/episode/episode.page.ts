@@ -84,7 +84,7 @@ export class EpisodePage implements OnInit {
                 fluid: true,
                 sources: [
                     {
-                        src: 'http://localhost:3000/stream/test',
+                        src: 'http://localhost:3000/api/shows/1/seasons/1/episodes/1/stream',
                         type: 'application/x-mpegURL',
                     },
                 ],

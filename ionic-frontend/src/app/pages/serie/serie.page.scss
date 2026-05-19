@@ -1,0 +1,167 @@
+// Palette Colori del Mockup
+$brand-red: #b22222;
+$dark-bg: #121212;
+$panel-red: #9e2424;
+$white: #ffffff;
+$border-light: rgba(255, 255, 255, 0.2);
+
+.main-toolbar {
+  --background: #{$brand-red};
+  --color: #{$white};
+  
+  .brand-title {
+    font-family: 'Georgia', serif; // Stile simile al logo NexuStream
+    font-weight: bold;
+    text-align: center;
+    font-size: 1.4rem;
+  }
+
+}
+.dark-content {
+  --background: #{$dark-bg};
+}
+
+.page-container {
+  padding: 12px;
+  max-width: 800px; // Ottimizzazione per tablet/desktop oltre che mobile
+  margin: 0 auto;
+
+  // Banner Titolo con Stellina
+  .title-banner {
+    background-color: $brand-red;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 12px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+
+    h2 {
+      color: $white;
+      font-size: 0.95rem;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .favorite-btn {
+      --padding-start: 0;
+      --padding-end: 0;
+      margin: 0;
+      ion-icon {
+        font-size: 1.3rem;
+        color: $white;
+        transition: transform 0.2s ease, color 0.2s ease;
+        
+        // Quando la stellina è attiva diventa gialla e fa un piccolo zoom
+        &.active {
+          color: #ffd700; 
+          transform: scale(1.15);
+        }
+      }
+    }
+  }
+
+  // Box Immagine
+  .cover-container {
+    width: 100%;
+    border: 1px solid $border-light;
+    margin-bottom: 8px;
+    background: #000;
+    
+    img {
+      width: 100%;
+      display: block;
+      object-fit: contain;
+      max-height: 400px;
+    }
+  }
+
+  // Griglia Informazioni / Trama
+  .info-grid {
+    background-color: $panel-red;
+    color: $white;
+    display: grid;
+    grid-template-columns: 1fr 1fr; // Divide equamente in due colonne come nell'immagine
+    gap: 16px;
+    padding: 12px;
+    font-size: 0.9rem;
+    line-height: 1.3;
+    border-bottom: 1px solid $border-light;
+
+    @media (max-width: 576px) {
+      grid-template-columns: 1fr; // Su schermi molto piccoli si incolonnano
+      gap: 8px;
+    }
+
+    p {
+      margin: 4px 0;
+    }
+
+    .info-left {
+      border-right: 1px solid $border-light;
+      padding-right: 8px;
+      @media (max-width: 576px) {
+        border-right: none;
+        border-bottom: 1px solid $border-light;
+        padding-bottom: 8px;
+      }
+    }
+  }
+
+  // Tabella Episodi
+  .episodes-container {
+    background-color: $panel-red;
+    border-left: 1px solid $border-light;
+    border-right: 1px solid $border-light;
+
+    .episode-row {
+      display: flex;
+      align-items: center;
+      color: $white;
+      border-bottom: 1px solid $border-light;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.08); // Effetto feedback al click/passaggio mouse
+      }
+
+      .ep-number {
+        width: 40px;
+        font-weight: bold;
+        border-right: 1px solid $border-light;
+        font-size: 0.95rem;
+      }
+
+      .ep-title {
+        flex: 1;
+        padding-left: 16px;
+        font-size: 0.9rem;
+      }
+
+      .ep-play {
+        display: flex;
+        align-items: center;
+        ion-icon {
+          font-size: 1.2rem;
+          color: $white;
+          background: #000;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+
+  // Footer Conclusa/In Corso
+  .status-footer {
+    background-color: $panel-red;
+    color: $white;
+    text-align: center;
+    padding: 6px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    border-radius: 0 0 4px 4px;
+    border-top: 1px solid $border-light;
+  }
+}

@@ -1,0 +1,91 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="main-toolbar">
+    <!-- Serve per la fare la freccia per tornare alla pagina precedente-->
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/" color="light"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="brand-title">Cerca su NexuStream</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="light" routerLink ="/search">
+        <ion-icon slot="icon-only" name="search-outline"></ion-icon>
+      </ion-button>
+      <ion-button color="light" (click)="openProfileMenu($event)">
+          <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+
+
+<ion-toolbar class="search-toolbar">
+    <ion-searchbar 
+      placeholder="Cerca anime..." 
+      animated="true"
+      debounce="300"
+      (ionInput)="onSearchChange($event)"
+      class="custom-searchbar">
+    </ion-searchbar>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="dark-content">
+  <div class="search-container">
+
+    <!--<div class="trending-section" *ngIf="searchQuery.trim() === ''">
+      <h3 class="section-title">Ricerche di Tendenza 🔥</h3>
+      <ion-list lines="none" class="transparent-list">
+        <ion-item *ngFor="let trend of trendingAnime" (click)="selectTrend(trend)">
+          <ion-icon name="trending-up-outline" slot="start" color="danger"></ion-icon>
+          <ion-label>
+            <h2>{{ trend }}</h2>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </div> -->
+
+    <div class="results-section" *ngIf="searchQuery.trim() !== ''">
+      <h3 class="section-title">Risultati della ricerca ({{ filteredResults.length }})</h3>
+      
+      <div class="no-results" *ngIf="filteredResults.length === 0">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <p>Nessun anime trovato per "{{ searchQuery }}"</p>
+      </div>
+
+      <div class="results-grid" *ngIf="filteredResults.length > 0">
+        <div class="result-card" *ngFor="let anime of filteredResults" (click)="goToSerie(anime)">
+          <div class="card-cover">
+            <img [src]="anime.copertina" alt="Cover">
+          </div>
+          <div class="card-info">
+            <h4>{{ anime.titolo }}</h4>
+            <div class="community-stats">
+              <ion-icon name="chatbubble-ellipses-outline"></ion-icon>
+              <span>{{ anime.numCommenti }} commenti</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</ion-content>
+
+<!-- Menu a tendina per il profilo -->
+<ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
+  <ng-template>
+    <ion-list color="dark">
+      <ion-item button (click)="openUserSettings()">
+        <ion-icon slot="start" name="settings-outline"></ion-icon>
+        Impostazioni
+      </ion-item>
+      <ion-item button (click)="openFavorites()">
+        <ion-icon slot="start" name="heart-outline"></ion-icon>
+        Lista Preferiti
+      </ion-item>
+      <ion-item button (click)="logout()">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Logout
+      </ion-item>
+    </ion-list>
+  </ng-template>
+</ion-popover>

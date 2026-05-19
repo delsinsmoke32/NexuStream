@@ -1,15 +1,5 @@
 <ion-header>
   <ion-toolbar color="dark">
-    <!-- SEZIONE RICERCA (Appare solo se isSearchbarVisible è true) -->
-    <ion-searchbar *ngIf="isSearchbarVisible" 
-                   showCancelButton="always" 
-                   (ionCancel)="toggleSearch()" 
-                   placeholder="Cerca anime..." 
-                   color="light">
-    </ion-searchbar>
-
-    <!-- HEADER NORMALE (Appare solo se isSearchbarVisible è false) -->
-    <ng-container *ngIf="!isSearchbarVisible">
       <ion-buttons slot="start">
         <ion-menu-button color="danger"></ion-menu-button>
       </ion-buttons>
@@ -17,14 +7,14 @@
       <ion-title color="danger" class="ion-text-center">NexuStream</ion-title>
 
       <ion-buttons slot="end">
-        <ion-button color="light" (click)="toggleSearch()">
+        <ion-button color="light" routerLink="/search">
           <ion-icon slot="icon-only" name="search-outline"></ion-icon>
         </ion-button>
         <ion-button color="light" (click)="openProfileMenu($event)">
           <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
         </ion-button>
       </ion-buttons>
-    </ng-container>
+    <!--</ng-container>-->
   </ion-toolbar>
 </ion-header>
 
@@ -67,6 +57,7 @@
     </ion-slides>
   </div> -->
   <!-- Menu laterale per i generi -->
+ <!-- 
 <ion-menu side="start" contentId="main-content" (ionDidOpen)="onMenuOpen()" (ionDidClose)="onMenuClose()">
   <ion-header>
     <ion-toolbar color="dark">
@@ -80,7 +71,7 @@
       </ion-item>
     </ion-list>
   </ion-content>
-</ion-menu>
+</ion-menu> -->
 
 <!-- Menu a tendina per il profilo -->
 <ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">

@@ -36,7 +36,6 @@ export class HomePagePage {
   // Usiamo ViewChild per accedere al popover definito nel template con #profilePopover
   @ViewChild('profilePopover') popover: any;
 
-  isSearchbarVisible = false;
 
   // Dati fittizi per popolare la tua home page come in watermarked_img_15529459739609634203.png
   popularAnimes = [
@@ -106,14 +105,12 @@ export class HomePagePage {
   }
 
   openFavorites() {
-    console.log('Apro le impostazioni...');
+    console.log('Apro i preferiti...');
     this.popover.dismiss();
   }
 
-  //Funzione per la ricerca
-  toggleSearch() {
-  this.isSearchbarVisible = !this.isSearchbarVisible;
-  }
+ 
+  
 
   logout() {
     console.log('Eseguo il logout...');

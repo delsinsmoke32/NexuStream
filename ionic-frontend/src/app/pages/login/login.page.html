@@ -2,15 +2,7 @@
     <ion-toolbar>
         <ion-title
             >Login on
-            <p
-                style="
-                    color: var(--ion-color-primary-tint);
-                    display: inline;
-                    font-weight: bolder;
-                "
-            >
-                NexuStream
-            </p></ion-title
+            <p id="nexus">NexuStream</p></ion-title
         >
     </ion-toolbar>
 </ion-header>
@@ -22,41 +14,53 @@
         </div>
 
         <ion-card class="form-log-in-card">
-            <ion-card-content>
-                <div class="input-group">
-                    <ion-label position="stacked">Email</ion-label>
-                    <ion-item lines="none" class="custom-input">
-                        <ion-input
-                            type="email"
-                            [(ngModel)]="loginData.email"
-                            errorText="Invalid email"
-                            placeholder="example@mail.com"
-                        ></ion-input>
-                    </ion-item>
-                </div>
+            <form [formGroup]="loginForm" (ngSubmit)="login()">
+                <ion-card-content>
+                    <div class="input-group">
+                        <ion-label position="stacked">Email</ion-label>
+                        <ion-item lines="none" class="custom-input">
+                            <ion-input
+                                type="email"
+                                formControlName="email"
+                                errorText="Invalid email"
+                                placeholder="example@mail.com"
+                            ></ion-input>
+                        </ion-item>
+                    </div>
 
-                <div class="input-group">
-                    <ion-label position="stacked">Password</ion-label>
-                    <ion-item lines="none" class="custom-input">
-                        <ion-input
-                            errorText="Wrong password"
-                            [(ngModel)]="loginData.password"
-                            type="password"
-                            placeholder="password"
-                        ></ion-input>
-                    </ion-item>
-                </div>
+                    <div class="input-group">
+                        <ion-label position="stacked">Password</ion-label>
+                        <ion-item lines="none" class="custom-input">
+                            <ion-input
+                                errorText="The password is required"
+                                formControlName="password"
+                                type="password"
+                                placeholder="password"
+                            >
+                                <ion-input-password-toggle
+                                    slot="end"
+                                    color="primary-contrast"
+                                ></ion-input-password-toggle
+                            ></ion-input>
+                        </ion-item>
+                    </div>
 
-                <div class="button-container">
-                    <ion-button expand="block" (click)="login()" class="login-button">
-                        Login
-                    </ion-button>
-                </div>
+                    <div class="button-container">
+                        <ion-button
+                            type="submit"
+                            expand="block"
+                            class="login-button"
+                            [disabled]="!loginForm.valid"
+                        >
+                            Login
+                        </ion-button>
+                    </div>
 
-                <div class="text-link">
-                    <a href="#">Forgot password?</a>
-                </div>
-            </ion-card-content>
+                    <div class="text-link">
+                        <a href="#">Forgot password?</a>
+                    </div>
+                </ion-card-content>
+            </form>
         </ion-card>
     </div>
 </ion-content>

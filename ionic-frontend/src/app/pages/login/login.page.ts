@@ -1,24 +1,31 @@
-import { Component, OnInit } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { FormsModule } from '@angular/forms'
+import { Component, inject, OnInit } from '@angular/core'
 import {
+    FormControl,
+    FormGroup,
+    FormsModule,
+    ReactiveFormsModule,
+    Validators,
+} from '@angular/forms'
+import { AuthService } from '@app/services/auth'
+import {
+    IonButton,
+    IonCard,
+    IonCardContent,
+    IonCardHeader,
+    IonCardTitle,
+    IonCol,
     IonContent,
     IonHeader,
-    IonTitle,
-    IonToolbar,
-    IonRow,
-    IonCol,
-    IonCard,
-    IonCardHeader,
-    IonCardContent,
-    IonCardTitle,
-    IonButton,
+    IonInput,
+    IonInputPasswordToggle,
     IonItem,
     IonLabel,
-    IonInput,
+    IonRow,
+    IonTitle,
+    IonToolbar,
 } from '@ionic/angular/standalone'
-import { AuthService } from '@app/services/auth';
-import { Router } from '@lib/@angular/router';
+import { Router } from '@lib/@angular/router'
 
 @Component({
     selector: 'app-login',
@@ -42,31 +49,40 @@ import { Router } from '@lib/@angular/router';
         FormsModule,
         IonLabel,
         IonInput,
+        IonInputPasswordToggle,
+        ReactiveFormsModule,
     ],
 })
 export class LoginPage implements OnInit {
+    loginForm = new FormGroup({
+        email: new FormControl('', {
+            nonNullable: true,
+            validators: [Validators.required, Validators.email],
+        }),
+        password: new FormControl('', {
+            nonNullable: true,
+            validators: [Validators.required, Validators.minLength(8)],
+        }),
+    })
 
-    loginData = {email: '', password: ''};
+    private authService = inject(AuthService)
+    private router = inject(Router)
 
-
-    constructor(
-        private authService: AuthService,
-        private router: Router, 
-    ) {}
+    constructor() {}
 
     login() {
-        this.authService.login(this.loginData).subscribe({
+        this.authService.login(this.loginForm.getRawValue()).subscribe({
             next: (res) => {
-                console.log('Login OK: ', res);
-                localStorage.setItem('user', JSON.stringify(res.user));
-                this.router.navigate(["/episode"]);
+                console.log('Login OK: ', res)
+                localStorage.setItem('user', JSON.stringify(res.user))
+                this.router.navigate(['/episode'])
             },
             error: (err) => {
-                console.error("Errore login: ", err);
-                alert(err.error.message || "Errore durante il login.");
-            }
-        });
-    };
+                console.error('Errore login: ', err)
+                alert(err.error.message || 'Errore durante il login.')
+            },
+        })
+    }
 
     ngOnInit() {}
 }

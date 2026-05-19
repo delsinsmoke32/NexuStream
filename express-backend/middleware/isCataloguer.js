@@ -10,7 +10,7 @@ module.exports = (req, res, next) => {
 
     try {
         const verified = jwt.verify(token, process.env.JWT_SECRET);
-        if (verified.isCataloguer !== 1) {
+        if (verified.isCat !== 1) {
             return res.status(403).json({message: "Permesso negato."});
         }
         req.user = verified;

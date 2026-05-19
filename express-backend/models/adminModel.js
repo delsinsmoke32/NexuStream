@@ -37,7 +37,7 @@ const filterUsers = async (search, role) => {
  * @param {number} userId 
  * @param {number|undefined} isMod 
  * @param {number|undefined} isCataloguer 
- * @returns {Promise<Object>} Oggetto con id e changes di db.runAsync
+ * @returns {Promise<{id: number, changes: number}>} Oggetto con id e changes di db.runAsync
  */
 
 const updateUserRoles = async (userId, isMod, isCataloguer) => {

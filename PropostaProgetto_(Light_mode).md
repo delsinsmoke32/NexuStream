@@ -46,9 +46,11 @@ Ogni episodio avrà una sezione commenti ad esso dedicata: i commenti supportera
 | Commento | Ha un autore e una data di scrittura. Può essere riferito a un commento genitore, creando così un thread. Ogni thread fa riferimento a uno specifico episodio. Può contenere timestamp dell'episodio, testo formattato, e tag spoiler. Il moderatore ne gestisce la visibilà e l'approvazione. |
 ---
 
+</br>
+
 ## Quali sono le relazioni tra i nostri attori?
 
 Di seguito, un diagramma ER che mostra le relazioni basilari presenti nel sito, in concordanza con quanto descritto sopra:
 
 
-![ERDiagram](src/ErDiagramma.png)
+![ERDiagram](src/ErDiagrammaWhite.png)

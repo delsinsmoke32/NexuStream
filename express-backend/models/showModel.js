@@ -3,6 +3,7 @@ const db = require("../db/db");
 /**
  * Cerca gli show in base al titolo o alla descrizione, calcolando un punteggio di rilevanza
  * @param {string} queryParam - Il termine di ricerca formattato con i % (es. "%breaking%")
+ * @returns {Promise<Array<Object>>}
  */
 
 const searchShows = async (queryParam) => {
@@ -17,7 +18,8 @@ const searchShows = async (queryParam) => {
 };
 
 /**
- * Recupera i 20 show con più preferiti
+ * Prende le 20 serie con più favorites
+ * @returns {Promise<Array<Object>>}
  */
 
 const getTopFavorited = async () => {
@@ -30,7 +32,8 @@ const getTopFavorited = async () => {
 };
 
 /**
- * Calcola i 20 show più visti sommando le riproduzioni di tutti gli episodi
+ * Prende le 20 serie con più stream
+ * @returns {Promise<Array<Object>>}
  */
 
 const getTopStreamed = async () => {
@@ -46,7 +49,9 @@ const getTopStreamed = async () => {
 };
 
 /**
- * Recupera la lista degli episodi lasciati a metà da un utente specifico
+ * Prende i 10 episodi più recenti che l'utente non ha finito di guardare, oltre a informazioni relative alle rispettive serie e stagioni
+ * @param {number} userId 
+ * @returns {Promise<Array<Object>>}
  */
 
 const getContinueWatching = async (userId) => {
@@ -65,7 +70,9 @@ const getContinueWatching = async (userId) => {
 };
 
 /**
- * Recupera i dettagli di una singola serie TV
+ * Trova uno show in base al suo id
+ * @param {number} showId 
+ * @returns {Promise<Object|null>}
  */
 
 const getShowById = async (showId) => {
@@ -74,7 +81,10 @@ const getShowById = async (showId) => {
 };
 
 /**
- * Aggiunge il record di interazione "Like" (Ignora se già esistente)
+ * Trova un'interazione di favorite fra utente e show basandosi sui rispettivi id
+ * @param {number} userId 
+ * @param {number} showId 
+ * @returns {Promise<{id: number, changes: number}>}
  */
 
 const addLikeInteraction = async (userId, showId) => {
@@ -83,7 +93,10 @@ const addLikeInteraction = async (userId, showId) => {
 };
 
 /**
- * Rimuove il record di interazione "Like"
+ * Rimuove un'interazione di favorite fra utente e show basandosi sui rispettivi id
+ * @param {number} userId 
+ * @param {number} showId 
+ * @returns {Promise<{id: number, changes: number}>}
  */
 
 const removeLikeInteraction = async (userId, showId) => {
@@ -92,7 +105,9 @@ const removeLikeInteraction = async (userId, showId) => {
 };
 
 /**
- * Incrementa il contatore dei preferiti di uno show
+ * Incrementa il contatore dei favorite di una serie
+ * @param {number} showId 
+ * @returns {Promise<{id: number, changes: number}>}
  */
 
 const incrementFavorites = async (showId) => {
@@ -101,7 +116,9 @@ const incrementFavorites = async (showId) => {
 };
 
 /**
- * Decrementa il contatore dei preferiti di uno show
+ * Decrementa il contatore dei favorite di una serie
+ * @param {number} showId 
+ * @returns {Promise<{id: number, changes: number}>}
  */
 
 const decrementFavorites = async (showId) => {
@@ -117,5 +134,6 @@ module.exports = {
     getShowById,
     addLikeInteraction,
     removeLikeInteraction,
-    incrementFavorites
+    incrementFavorites,
+    decrementFavorites
 };

@@ -1,7 +1,9 @@
 const db = require("../db/db");
 
 /**
- * Recupera i dettagli di un episodio includendo le lingue di doppiaggio e sottotitoli concatenate
+ * Trova un episodio nel database usando il suo id
+ * @param {number} episodeId 
+ * @returns {Promise<Object|null>}
  */
 
 const getEpisodeById = async (episodeId) => {
@@ -13,7 +15,10 @@ const getEpisodeById = async (episodeId) => {
 };
 
 /**
- * Recupera lo stato del 'Like' precedente di un utente su un episodio
+ * Controlla se un utente ha messo o meno like a un episodio in particolare
+ * @param {number} episodeId 
+ * @param {number} userId 
+ * @returns {Promise<Object|null>}
  */
 
 const getPreviousLikeStatus = async (episodeId, userId) => {
@@ -22,7 +27,14 @@ const getPreviousLikeStatus = async (episodeId, userId) => {
 };
 
 /**
- * Inserisce o aggiorna l'interazione dell'utente con l'episodio (Upsert)
+ * Inserisce o, se già presente nel database, aggiorna un'interazione fra utente ed episodio
+ * @param {number} userId 
+ * @param {number} episodeId 
+ * @param {number} progress (<= episode.Duration)
+ * @param {number} isCompleted (0 o 1)
+ * @param {number} isDropped (0 o 1)
+ * @param {number} isLiked (0 o 1)
+ * @returns {Promise<{id: number, changes: number}>}
  */
 
 const upsertEpisodeInteraction = async (userId, episodeId, progress, isCompleted, isDropped, isLiked) => {
@@ -41,7 +53,10 @@ const upsertEpisodeInteraction = async (userId, episodeId, progress, isCompleted
 };
 
 /**
- * Aggiorna il contatore dei Mi Piace di un episodio in base al delta calcolato
+ * Se il likeDelta è diverso da zero, aggiorna il numero di like dell'episodio (-1 o +1)
+ * @param {number} likeDelta (-1 o 1)
+ * @param {number} episodeId 
+ * @returns {Promise<{id: number, changes: number}>}
  */
 
 const updateEpisodeLikesCounter = async (likeDelta, episodeId) => {

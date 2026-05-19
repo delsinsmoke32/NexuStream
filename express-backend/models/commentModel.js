@@ -3,7 +3,7 @@ const db = require("../db/db");
 /**
  * Ottiene la lista dei commenti per un determinato episodio
  * @param {number} episodeId 
- * @param {boolean} isMod - Se true include anche i commenti nascosti
+ * @param {boolean} isMod (0 o 1)
  * @returns {Promise<Array<Object>>}
  */
 
@@ -22,7 +22,12 @@ const getCommentsByEpisode = async (episodeId, isMod) => {
 };
 
 /**
- * Inserisce un nuovo commento o una risposta nel database
+ * Crea un commento e lo aggiunge al database
+ * @param {number} parentCommentId 
+ * @param {number} userId 
+ * @param {number} episodeId 
+ * @param {string} text 
+ * @returns {Promise<{id: number, changes: number}>}
  */
 
 const createComment = async (parentCommentId, userId, episodeId, text) => {
@@ -32,7 +37,10 @@ const createComment = async (parentCommentId, userId, episodeId, text) => {
 };
 
 /**
- * Recupera l'interazione precedente di un utente su un commento
+ * Controlla se ha un utente ha messo like o reportato un commento
+ * @param {number} userId 
+ * @param {number} commentId 
+ * @returns {Promise<Object|null>}
  */
 
 const getCommentInteraction = async (userId, commentId) => {
@@ -41,7 +49,12 @@ const getCommentInteraction = async (userId, commentId) => {
 };
 
 /**
- * Registra o aggiorna l'interazione di un utente (Like/Report) su un commento
+ * Inserisce o, se già presente nel database, aggiorna un'interazione fra utente e commento
+ * @param {number} commentId 
+ * @param {number} userId 
+ * @param {number} isLiked (0 o 1)
+ * @param {number} isReported (0 o 1)
+ * @returns {Promise<{id: number, changes: number}>}
  */
 
 const upsertCommentInteraction = async (commentId, userId, isLiked, isReported) => {
@@ -53,7 +66,10 @@ const upsertCommentInteraction = async (commentId, userId, isLiked, isReported) 
 };
 
 /**
- * Cambia lo stato di visibilità (nascondi/mostra) di un commento
+ * Nasconde o mostra un commento
+ * @param {number} commentId 
+ * @param {number} isHidden (0 o 1)
+ * @returns {Promise<{id: number, changes: number}>}
  */
 
 const updateHiddenStatus = async (commentId, isHidden) => {
@@ -62,7 +78,10 @@ const updateHiddenStatus = async (commentId, isHidden) => {
 };
 
 /**
- * Cambia lo stato di approvazione di un commento
+ * Approva o disapprova un commento
+ * @param {number} commentId 
+ * @param {number} isApproved (0 o 1) 
+ * @returns {Promise<{id: number, changes: number}>}
  */
 
 const updateApprovalStatus = async (commentId, isApproved) => {

@@ -1,0 +1,168 @@
+$brand-red: #b31d1d;
+$dark-bg: #121212;
+$panel-red: #9e2424;
+$white: #ffffff;
+$grey-text: #aaaaaa;
+$border-light: rgba(255, 255, 255, 0.12);
+
+.main-toolbar {
+  --background: #{$brand-red};
+  --color: #{$white};
+  
+  .brand-title {
+    font-family: 'Georgia', serif;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+}
+
+// Stile per la toolbar che contiene la barra di ricerca
+.search-toolbar {
+  --background: #{$brand-red};
+  padding: 0 8px 8px 8px;
+
+  .custom-searchbar {
+    --background: #1a1a1a;
+    --color: #{$white};
+    --placeholder-color: #888888;
+    --icon-color: #888888;
+    --clear-button-color: #{$white};
+    border-radius: 8px;
+    padding: 0;
+  }
+}
+
+.dark-content {
+  --background: #{$dark-bg};
+}
+
+.search-container {
+  padding: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+
+  .section-title {
+    color: $white;
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+
+  // Lista delle tendenze trasparente
+  .transparent-list {
+    background: transparent;
+    ion-item {
+      --background: #1a1a1a;
+      --color: #{$white};
+      margin-bottom: 8px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+  }
+
+  // Box nessun risultato
+  .no-results {
+    text-align: center;
+    color: $grey-text;
+    padding: 40px 20px;
+    ion-icon {
+      font-size: 3rem;
+      color: $brand-red;
+      margin-bottom: 12px;
+    }
+  }
+
+  // Griglia dei risultati della ricerca
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); // 2 colonne su mobile
+    gap: 12px;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(3, 1fr); // 3 colonne su tablet
+    }
+
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(4, 1fr); // 4 colonne su desktop
+    }
+  }
+
+  // Card dei singoli anime trovati
+  .result-card {
+    background-color: #1a1a1a;
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 1px solid $border-light;
+    display: flex;
+    flex-direction: column;
+
+    .card-cover {
+      position: relative;
+      width: 100%;
+      padding-top: 140%; // Mantiene la proporzione verticale classica delle locandine (14:10)
+      background-color: #000;
+
+      img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .score-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: rgba(0, 0, 0, 0.75);
+        color: #ffd700;
+        padding: 4px 6px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        border-radius: 4px;
+      }
+    }
+
+    .card-info {
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+
+      h4 {
+        color: $white;
+        font-size: 0.9rem;
+        margin: 0 0 4px 0;
+        font-weight: 600;
+        // Tronca il testo se il titolo dell'anime è troppo lungo per la card
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .genres {
+        color: $grey-text;
+        font-size: 0.75rem;
+        margin: 0 0 8px 0;
+      }
+
+      .community-stats {
+        margin-top: auto; // Spinge le statistiche sempre in fondo alla card
+        display: flex;
+        align-items: center;
+        color: $brand-red;
+        font-size: 0.75rem;
+        font-weight: 500;
+
+        ion-icon {
+          margin-right: 4px;
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+}

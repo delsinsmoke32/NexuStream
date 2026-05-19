@@ -1,0 +1,83 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="main-toolbar">
+    <!-- Serve per la fare la freccia per tornare alla pagina precedente
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/" color="light"></ion-back-button>
+    </ion-buttons> -->
+    <ion-title class="brand-title">NexuStream</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="light" routerLink="/search">
+        <ion-icon slot="icon-only" name="search-outline"></ion-icon>
+      </ion-button>
+      <ion-button color="light" (click)="openProfileMenu($event)">
+          <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="dark-content">
+  <div class="page-container" *ngIf="animeData">
+    
+    <div class="title-banner">
+      <h2>Lista Completa Episodi {{ animeData.titolo }}</h2>
+      <ion-button fill="clear" (click)="togglePreferito()" class="favorite-btn">
+        <ion-icon 
+          slot="icon-only" 
+          [name]="animeData.isPreferito ? 'star' : 'star-outline'"
+          [class.active]="animeData.isPreferito">
+        </ion-icon>
+      </ion-button>
+    </div>
+
+    <div class="cover-container">
+      <img [src]="animeData.copertina" alt="Cover Image" />
+    </div>
+
+    <div class="info-grid">
+      <div class="info-left">
+        <p><strong>Titolo:</strong> {{ animeData.titolo }}</p>
+        <p><strong>Episodi:</strong> {{ animeData.numEpisodi }}</p>
+        <p><strong>Durata episodio:</strong> {{ animeData.durata }}</p>
+      </div>
+      <div class="info-right">
+        <p><strong>Trama:</strong> {{ animeData.trama }}</p>
+      </div>
+    </div>
+
+    <div class="episodes-container">
+      <div class="episode-row" *ngFor="let ep of animeData.episodi" (click)="playEpisodio(ep)">
+        <div class="ep-number">{{ ep.numero }}</div>
+        <div class="ep-title">{{ ep.titolo }}</div>
+        <div class="ep-play">
+          <ion-icon name="play-circle"></ion-icon>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-footer">
+      <span>{{ animeData.stato }}</span>
+    </div>
+
+  </div>
+</ion-content>
+
+<!-- Menu a tendina per il profilo -->
+<ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
+  <ng-template>
+    <ion-list color="dark">
+      <ion-item button (click)="openUserSettings()">
+        <ion-icon slot="start" name="settings-outline"></ion-icon>
+        Impostazioni
+      </ion-item>
+      <ion-item button (click)="openFavorites()">
+        <ion-icon slot="start" name="heart-outline"></ion-icon>
+        Lista Preferiti
+      </ion-item>
+      <ion-item button (click)="logout()">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Logout
+      </ion-item>
+    </ion-list>
+  </ng-template>
+</ion-popover>

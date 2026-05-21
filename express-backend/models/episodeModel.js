@@ -6,13 +6,20 @@ const db = require("../db/db");
  * @returns {Promise<Object|null>}
  */
 
-const getEpisodeById = async (episodeId) => {
-    const sql = `SELECT e.*,
-            (SELECT GROUP_CONCAT(Language) FROM EpisodeLanguage AS el WHERE e.EpisodeID = el.REF_EpisodeID) AS DubLanguages,
-            (SELECT GROUP_CONCAT(Language) FROM EpisodeSub AS es WHERE e.EpisodeID = es.REF_EpisodeID) AS SubLanguages
-            FROM Episodes AS e WHERE e.EpisodeID = ?`;
-    return await db.getAsync(sql, [episodeId]);
+const getEpisodeById = async (episodeId, applang = "it") => {
+    const sql = `
+        SELECT 
+            e.EpisodeID, e.ReleaseDate, e.REF_SeasonID, e.Duration, e.Likes, e.Streams, e.ThumbnailURI, e.EpisodeNumber,
+            COALESCE(e.Title->>?, e.Title->>'it') AS Title,
+            COALESCE(e.Description->>?, e.Description->>'it') AS Description,
+            (SELECT GROUP_CONCAT(REF_LanguageID) FROM EpisodeLanguage WHERE REF_EpisodeID = e.EpisodeID) AS DubLanguages,
+            (SELECT GROUP_CONCAT(REF_LanguageID) FROM EpisodeSubtitles WHERE REF_EpisodeID = e.EpisodeID) AS SubLanguages
+        FROM Episodes AS e
+        WHERE e.EpisodeID = ?`;
+        
+    return await db.getAsync(sql, [applang, applang, episodeId]);
 };
+
 
 /**
  * Controlla se un utente ha messo o meno like a un episodio in particolare

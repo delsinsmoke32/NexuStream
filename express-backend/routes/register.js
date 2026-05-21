@@ -21,7 +21,7 @@ const { body } = require('express-validator');
  *             required:
  *               - email
  *               - password
- *               - conf password
+ *               - conf_password
  *               - username
  *             properties:
  *               username:
@@ -38,15 +38,21 @@ const { body } = require('express-validator');
  *                 minLength: 8
  *                 maxLength: 24
  *                 example: Segreta123!
- *               conf password:
+ *               conf_password:
  *                 type: string
  *                 minLength: 8
  *                 maxLength: 24
  *                 example: Segreta123!
- *               languageId:
+ *               audioLanguageId:
  *                 type: string
  *                 example: "it"
- *               propicId:
+ *               textLanguageId:
+ *                 type: string
+ *                 example: "it"
+ *               appLanguageId:
+ *                 type: string
+ *                 example: "it"
+ *               propicURI:
  *                 type: string
  *                 example: /static/avatars/avatar-000.png
  *     responses:
@@ -74,7 +80,7 @@ const { body } = require('express-validator');
 router.post('/', [
     body('email').isEmail().notEmpty().withMessage("Email non valida"),
     body('password').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("La password deve essere composta da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri."),
-    body('conf password').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("La password deve essere composta da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri."),
+    body('conf_password').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("La password deve essere composta da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri."),
     body('username').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("L'username deve essere composto da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri.")
 ], authController.register);
 

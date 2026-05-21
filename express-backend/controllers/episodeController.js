@@ -7,9 +7,16 @@ const getEpisodeDetails = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
     const { episodeId } = req.params;
+    const user = req.user;
+
+    if (user) {
+        const applang = user.appLang;
+    } else {
+        const applang = req.language;
+    }
 
     try {
-        const episode = await episodeModel.getEpisodeById(episodeId);
+        const episode = await episodeModel.getEpisodeById(episodeId, applang);
 
         if (!episode) {
             return res.status(404).json({ message: "Episodio non trovato." });

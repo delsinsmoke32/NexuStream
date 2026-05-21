@@ -502,9 +502,9 @@ router.delete('/episodes/:id', [
  *           schema:
  *             type: object
  *             required:
- *               - propicPath
+ *               - propicURI
  *             properties:
- *               propicPath:
+ *               propicURI:
  *                 type: string
  *     responses:
  *       200:
@@ -513,7 +513,7 @@ router.delete('/episodes/:id', [
 
 
 router.post('/propic', [
-    body('propicPath').isString().trim().notEmpty().withMessage("Il path della propic non è valido")
+    body('propicURI').isString().trim().notEmpty().withMessage("L'URI della propic non è valido")
 ], cataloguerController.addPropic);
 
 
@@ -533,9 +533,9 @@ router.post('/propic', [
  *           schema:
  *             type: object
  *             required:
- *               - propicPath
+ *               - propicURI
  *             properties:
- *               propicPath:
+ *               propicURI:
  *                 type: string
  *     responses:
  *       200:
@@ -544,7 +544,7 @@ router.post('/propic', [
 
 
 router.delete('/propic', [
-    body('propicPath').isString().trim().notEmpty().withMessage("Il path della propic non è valido")
+    body('propicURI').isString().trim().notEmpty().withMessage("L'URI della propic non è valido")
 ], cataloguerController.removePropic);
 
 module.exports = router;

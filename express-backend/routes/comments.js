@@ -16,69 +16,134 @@ const commonParams = [
 /**
  * @swagger
  * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/comments:
- *   get:
- *     summary: Ottiene l'elenco dei commenti di un episodio
- *     tags:
- *       - Comments
- *     parameters:
- *       - in: path
- *         name: showId
- *         required: true
- *         schema:
- *           type: integer
- *       - in: path
- *         name: seasonId
- *         required: true
- *         schema:
- *           type: integer
- *       - in: path
- *         name: episodeId
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Lista dei commenti caricata con successo.
- *   post:
- *     summary: Inserisce un nuovo commento o una risposta (Richiede Auth)
- *     tags:
- *       - Comments
- *     security:
- *       - BearerAuth: []
- *     parameters:
- *       - in: path
- *         name: showId
- *         required: true
- *         schema:
- *           type: integer
- *       - in: path
- *         name: seasonId
- *         required: true
- *         schema:
- *           type: integer
- *       - in: path
- *         name: episodeId
- *         required: true
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - text
- *             properties:
- *               text:
- *                 type: string
- *                 example: "Episodio spettacolare!"
- *               parentCommentId:
- *                 type: integer
- *                 example: 45
- *     responses:
- *       201:
- *         description: Commento creato con successo.
+ *  get:
+ *    summary: Ottiene l'elenco dei commenti di un episodio
+ *    description: Restituisce la lista di tutti i commenti lasciati dagli utenti per lo specifico episodio, comprensivi di informazioni sull'autore e l'eventuale struttura ad albero (risposte).
+ *    tags:
+ *      - Comments
+ *    parameters:
+ *      - in: path
+ *        name: showId
+ *        required: true
+ *        schema:
+ *          type: integer
+ *        description: ID dello show di appartenenza
+ *      - in: path
+ *        name: seasonId
+ *        required: true
+ *        schema:
+ *          type: integer
+ *        description: ID della stagione di appartenenza
+ *      - in: path
+ *        name: episodeId
+ *        required: true
+ *        schema:
+ *          type: integer
+ *        description: ID dell'episodio da cui prelevare i commenti
+ *    responses:
+ *      200:
+ *        description: Lista dei commenti caricata con successo.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: array
+ *            items:
+ *              type: object
+ *              properties:
+ *                CommentID:
+ *                  type: integer
+ *                  example: 102
+ *                Text:
+ *                  type: string
+ *                  example: "Episodio spettacolare! La trama si fa interessante."
+ *                PublishDate:
+ *                  type: string
+ *                  format: date-time
+ *                  example: "2026-05-21T16:45:00Z"
+ *                REF ParentCommentID:
+ *                  type: integer
+ *                  nullable: true
+ *                  description: ID del commento padre, valorizzato solo se si tratta di una risposta di secondo livello
+ *                  example: null
+ *                User:
+ *                  type: object
+ *                  properties:
+ *                    UserID:
+ *                      type: integer
+ *                      example: 5
+ *                    Username:
+ *                      type: string
+ *                      example: "Zoro99"
+ *                    PropicURI:
+ *                      type: string
+ *                      example: "/static/avatars/avatar-002.png"
+ *      400:
+ *        description: Uno o più ID nel path non sono validi o i controlli formali sono falliti.
+ *      404:
+ *        description: Episodio non trovato.
+ *      500:
+ *        description: Errore del server durante il caricamento dei commenti.
+ *  post:
+ *    summary: Inserisce un nuovo commento o una risposta (Richiede Auth)
+ *    description: Permette a un utente autenticato di pubblicare un commento principale o di rispondere a un commento già esistente indicando il parentCommentId.
+ *    tags:
+ *      - Comments
+ *    security:
+ *      - BearerAuth: []
+ *    parameters:
+ *      - in: path
+ *        name: showId
+ *        required: true
+ *        schema:
+ *          type: integer
+ *      - in: path
+ *        name: seasonId
+ *        required: true
+ *        schema:
+ *          type: integer
+ *      - in: path
+ *        name: episodeId
+ *        required: true
+ *        schema:
+ *          type: integer
+ *    requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *          schema:
+ *            type: object
+ *            required:
+ *              - text
+ *            properties:
+ *              text:
+ *                type: string
+ *                example: "Sono d'accordo con te, bellissima scena!"
+ *              parentCommentId:
+ *                type: integer
+ *                description: ID del commento a cui si sta rispondendo. Omettere se si tratta di un commento principale.
+ *                example: 102
+ *    responses:
+ *      201:
+ *        description: Commento o risposta creati con successo.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                message:
+ *                  type: string
+ *                  example: "Commento inserito con successo!"
+ *                commentId:
+ *                  type: integer
+ *                  example: 103
+ *      400:
+ *        description: Testo mancante, ID non validi o controlli di validazione falliti.
+ *      401:
+ *        description: Non autenticato, token mancante o scaduto.
+ *      404:
+ *        description: Episodio o commento padre non trovati.
+ *      500:
+ *        description: Errore del server durante il salvataggio del commento.
  */
 
 

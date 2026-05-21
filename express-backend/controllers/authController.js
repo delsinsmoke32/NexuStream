@@ -34,7 +34,7 @@ const login = async (req, res) => {
 
         // 4. Generazione del Token JWT
         const token = jwt.sign(
-            { id: usr.UserID, username: usr.Username, isAdmin: usr.isAdmin, isMod: usr.isMod, isCat: usr.isCataloguer },
+            { id: usr.UserID, username: usr.Username, isAdmin: usr.isAdmin, isMod: usr.isMod, isCat: usr.isCataloguer, audioLang: usr.REF_Audio_Language, textLang: usr.REF_Text_Language, appLang: usr.REF_App_Language},
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
@@ -71,7 +71,7 @@ const register = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
     
-    const { email, password, username, conf_password, languageId, propicId } = req.body;
+    const { username, email, password, conf_password, audioLanguageId, textLanguageId, appLanguageId, propicURI } = req.body;
 
     // 2. Controllo logico della corrispondenza password
     if (password !== conf_password){
@@ -84,7 +84,7 @@ const register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, rounds);
 
         // 4. Chiamata al Model per l'inserimento
-        const result = await userModel.createUser(username, email, hashedPassword, languageId, propicId);
+        const result = await userModel.createUser(username, email, hashedPassword, audioLanguageId, textLanguageId, appLanguageId, propicURI);
 
         console.log("Utente creato con ID: ", result.id);
         return res.status(201).json({ message: "Registrazione completata!", userId: result.id });

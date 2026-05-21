@@ -10,28 +10,65 @@ const seasonRoute = require("./season");
 /**
  * @swagger
  * /api/shows/{showId}:
- *   get:
- *     summary: Recupera i dettagli di una singola serie TV
- *     tags:
- *       - Shows
- *     parameters:
- *       - in: path
- *         name: showId
- *         required: true
- *         schema:
- *           type: integer
- *         description: ID numerico dello show
- *     responses:
- *       200:
- *         description: Dati dello show recuperati con successo.
- *       400:
- *         description: ID serie non valido.
- *       404:
- *         description: Serie non trovata.
- *       500:
- *         description: Errore interno del server.
+ *  get:
+ *    summary: Recupera i dettagli di una singola serie TV
+ *    description: Restituisce le informazioni dettagliate di uno show con titolo e descrizione estratti dal JSON in base alla lingua dell'utente.
+ *    tags:
+ *      - Shows
+ *    parameters:
+ *      - in: path
+ *        name: showId
+ *        required: true
+ *        schema:
+ *          type: integer
+ *        description: ID numerico dello show da recuperare
+ *    responses:
+ *      200:
+ *        description: Dati dello show recuperati con successo.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                ShowID:
+ *                  type: integer
+ *                  example: 1
+ *                DateStarted:
+ *                  type: string
+ *                  format: date
+ *                  example: "2023-01-01"
+ *                hasEnded:
+ *                  type: integer
+ *                  example: 0
+ *                DateEnded:
+ *                  type: string
+ *                  format: date
+ *                  nullable: true
+ *                  example: null
+ *                Favourited:
+ *                  type: integer
+ *                  example: 150
+ *                ThumbnailURI:
+ *                  type: string
+ *                  example: "/static/thumbs/nebbia.jpg"
+ *                BannerURI:
+ *                  type: string
+ *                  example: "/static/banners/nebbia-banner.jpg"
+ *                Title:
+ *                  type: string
+ *                  description: Titolo dello show localizzato nella lingua dell'utente
+ *                  example: "Nebbia Urbana"
+ *                Description:
+ *                  type: string
+ *                  description: Descrizione dello show localizzata nella lingua dell'utente
+ *                  example: "Un thriller psicologico ambientato a Milano."
+ *      400:
+ *        description: ID serie non valido o controlli formali falliti.
+ *      404:
+ *        description: Serie non trouvata.
+ *      500:
+ *        description: Errore interno del server.
  */
-
 
 router.get('/:showId', authOptional, [
     param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido")

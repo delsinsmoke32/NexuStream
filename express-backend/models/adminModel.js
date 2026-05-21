@@ -9,7 +9,7 @@ const db = require("../db/db");
 
 const filterUsers = async (search, role) => {
     let sql = `
-        SELECT u.UserID, u.Username, u.Email, u.isMod, u.isCataloguer, u.isAdmin, u.REF_PropicID
+        SELECT u.UserID, u.Username, u.Email, u.isMod, u.isCataloguer, u.isAdmin, u.REF_PropicURI, u.REF_App_Language, u.REF_Text_Language, u.REF_Audio_Language, u.canComment
         FROM Users AS u
         WHERE 1=1`;
     

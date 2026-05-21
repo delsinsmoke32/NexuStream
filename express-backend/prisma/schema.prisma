@@ -1,0 +1,149 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Comments {
+  CommentID                    Int                            @id @default(autoincrement())
+  REF_UserID                   Int
+  REF_EpisodeID                Int
+  CommentText                  String
+  DateCommented                String                         @default("CURRENT_TIMESTAMP")
+  REF_CommentID                Int?
+  isHidden                     Int
+  Likes                        Int
+  isApproved                   Int
+  Comments                     Comments?                      @relation("CommentsToComments", fields: [REF_CommentID], references: [CommentID], onDelete: NoAction, onUpdate: NoAction)
+  other_Comments               Comments[]                     @relation("CommentsToComments")
+  Episodes                     Episodes                       @relation(fields: [REF_EpisodeID], references: [EpisodeID], onDelete: NoAction, onUpdate: NoAction)
+  Users                        Users                          @relation(fields: [REF_UserID], references: [UserID], onDelete: NoAction, onUpdate: NoAction)
+  LINKs_User_Interacts_Comment LINKs_User_Interacts_Comment[]
+}
+
+model EpisodeLanguage {
+  REF_EpisodeID Int      @id @default(autoincrement())
+  Language      String
+  Episodes      Episodes @relation(fields: [REF_EpisodeID], references: [EpisodeID], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model EpisodeSub {
+  REF_EpisodeID Int      @id @default(autoincrement())
+  Language      String
+  Episodes      Episodes @relation(fields: [REF_EpisodeID], references: [EpisodeID], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model EpisodeTimes {
+  EpisodeTimeID Int      @id @default(autoincrement())
+  REF_EpisodeID Int
+  StartTime     Int
+  EndTime       Int
+  Type          String
+  Episodes      Episodes @relation(fields: [REF_EpisodeID], references: [EpisodeID], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model Episodes {
+  EpisodeID                    Int                            @id @default(autoincrement())
+  ReleaseDate                  String
+  REF_SeasonID                 Int
+  Duration                     Int
+  Likes                        Int
+  Streams                      Int
+  Description                  String
+  Title                        String
+  Comments                     Comments[]
+  EpisodeLanguage              EpisodeLanguage?
+  EpisodeSub                   EpisodeSub?
+  EpisodeTimes                 EpisodeTimes[]
+  Seasons                      Seasons                        @relation(fields: [REF_SeasonID], references: [SeasonID], onDelete: Cascade, onUpdate: NoAction)
+  LINKs_User_Interacts_Episode LINKs_User_Interacts_Episode[]
+}
+
+model LINKs_User_Interacts_Comment {
+  REF_CommentID Int
+  REF_UserID    Int
+  isLiked       Int
+  isReported    Int
+  Users         Users    @relation(fields: [REF_UserID], references: [UserID], onDelete: NoAction, onUpdate: NoAction)
+  Comments      Comments @relation(fields: [REF_CommentID], references: [CommentID], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([REF_CommentID, REF_UserID])
+}
+
+model LINKs_User_Interacts_Episode {
+  REF_UserID      Int
+  REF_EpisodeID   Int
+  LastWatchedDate String
+  Progress        Int
+  isCompleted     Int
+  isDropped       Int
+  isLiked         Int
+  Episodes        Episodes @relation(fields: [REF_EpisodeID], references: [EpisodeID], onDelete: NoAction, onUpdate: NoAction)
+  Users           Users    @relation(fields: [REF_UserID], references: [UserID], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([REF_UserID, REF_EpisodeID])
+}
+
+model LINKs_User_Likes_Show {
+  REF_UserID Int
+  REF_ShowID Int
+  Shows      Shows @relation(fields: [REF_ShowID], references: [ShowID], onDelete: NoAction, onUpdate: NoAction)
+  Users      Users @relation(fields: [REF_UserID], references: [UserID], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([REF_UserID, REF_ShowID])
+}
+
+model Propics {
+  PropicPath String  @id
+  Users      Users[]
+}
+
+model Seasons {
+  SeasonID    Int        @id @default(autoincrement())
+  REF_ShowID  Int
+  DateStarted String
+  hasEnded    Int
+  DateEnded   String?
+  Description String
+  Title       String
+  Episodes    Episodes[]
+  Shows       Shows      @relation(fields: [REF_ShowID], references: [ShowID], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model Shows {
+  ShowID                Int                     @id @default(autoincrement())
+  DateStarted           String
+  hasEnded              Int
+  DateEnded             String?
+  Favourited            Int
+  Description           String
+  Title                 String
+  LINKs_User_Likes_Show LINKs_User_Likes_Show[]
+  Seasons               Seasons[]
+}
+
+model SupportedLanguages {
+  LanguageID String  @id
+  Users      Users[]
+}
+
+model Users {
+  UserID                       Int                            @id @default(autoincrement())
+  Email                        String                         @unique(map: "sqlite_autoindex_Users_1")
+  Password                     String
+  Username                     String
+  isMod                        Int
+  isCataloguer                 Int
+  isAdmin                      Int
+  REF_LanguageID               String
+  REF_PropicID                 String
+  Comments                     Comments[]
+  LINKs_User_Interacts_Comment LINKs_User_Interacts_Comment[]
+  LINKs_User_Interacts_Episode LINKs_User_Interacts_Episode[]
+  LINKs_User_Likes_Show        LINKs_User_Likes_Show[]
+  Propics                      Propics                        @relation(fields: [REF_PropicID], references: [PropicPath], onDelete: NoAction, onUpdate: NoAction)
+  SupportedLanguages           SupportedLanguages             @relation(fields: [REF_LanguageID], references: [LanguageID], onDelete: NoAction, onUpdate: NoAction)
+}

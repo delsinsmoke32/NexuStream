@@ -9,36 +9,88 @@ const commentsRoute = require("./comments");
 /**
  * @swagger
  * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}:
- *   get:
- *     summary: Recupera i dettagli di un singolo episodio
- *     description: Restituisce le informazioni dell'episodio con i vettori delle lingue doppiate e dei sottotitoli già formattati in array.
- *     tags:
- *       - Episodes
- *     parameters:
- *       - in: path
- *         name: showId
- *         required: true
- *         schema:
- *           type: integer
- *       - in: path
- *         name: seasonId
- *         required: true
- *         schema:
- *           type: integer
- *       - in: path
- *         name: episodeId
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Dati dell'episodio estratti con successo.
- *       400:
- *         description: Uno o più parametri ID non sono validi.
- *       404:
- *         description: Episodio non trovato.
- *       500:
- *         description: Errore interno del server.
+ *  get:
+ *    summary: Recupera i dettagli di un singolo episodio
+ *    description: Restituisce le informazioni dell'episodio localizzato tramite la lingua dell'interfaccia, con i vettori delle lingue doppiate e dei sottotitoli già formattati in array.
+ *    tags:
+ *      - Episodes
+ *    parameters:
+ *      - in: path
+ *        name: showId
+ *        required: true
+ *        schema:
+ *          type: integer
+ *        description: ID della serie TV di appartenenza
+ *      - in: path
+ *        name: seasonId
+ *        required: true
+ *        schema:
+ *          type: integer
+ *        description: ID della stagione di appartenenza
+ *      - in: path
+ *        name: episodeId
+ *        required: true
+ *        schema:
+ *          type: integer
+ *        description: ID dell'episodio da recuperare
+ *    responses:
+ *      200:
+ *        description: Dati dell'episodio estratti con successo.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                EpisodeID:
+ *                  type: integer
+ *                  example: 1
+ *                ReleaseDate:
+ *                  type: string
+ *                  format: date
+ *                  example: "2023-01-01"
+ *                REF SeasonID:
+ *                  type: integer
+ *                  example: 1
+ *                Duration:
+ *                  type: integer
+ *                  description: Durata dell'episodio in minuti
+ *                  example: 45
+ *                Likes:
+ *                  type: integer
+ *                  example: 120
+ *                Streams:
+ *                  type: integer
+ *                  example: 1500
+ *                ThumbnailURI:
+ *                  type: string
+ *                  example: "/static/thumbs/ep1.jpg"
+ *                EpisodeNumber:
+ *                  type: integer
+ *                  example: 1
+ *                Title:
+ *                  type: string
+ *                  description: Titolo dell'episodio estratto dal JSON in base alla lingua richiesta
+ *                  example: "Il Silenzio"
+ *                Description:
+ *                  type: string
+ *                  description: Trama dell'episodio estratta dal JSON in base alla lingua richiesta
+ *                  example: "Il ritrovamento del primo indizio."
+ *                DubLanguages:
+ *                  type: array
+ *                  items:
+ *                    type: string
+ *                  example: ["it", "en"]
+ *                SubLanguages:
+ *                  type: array
+ *                  items:
+ *                    type: string
+ *                  example: ["it", "en", "jp"]
+ *      400:
+ *        description: Uno o più parametri ID non sono validi o i controlli formali sono falliti.
+ *      404:
+ *        description: Episodio non trovato.
+ *      500:
+ *        description: Errore interno del server.
  */
 router.get('/:episodeId', authOptional, [
     param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido"),

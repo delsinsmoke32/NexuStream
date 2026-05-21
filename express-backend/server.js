@@ -12,6 +12,7 @@ const searchRoute = require("./routes/search");
 const adminRoute = require("./routes/adminPage");
 const cataloguerRoute = require("./routes/cataloguerPage");
 const showRoute = require("./routes/show");
+const detectLanguage = require("./middleware/detectLanguage");
 const resetDb = require('./db/db').resetDb;
 const db = require("./db/db").db;
 const initDb = require("./db/db").initDb;
@@ -51,6 +52,8 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 const PORT = process.env.PORT || 3000;
+
+app.use(detectLanguage);
 app.use(express.json());
 app.use(cors());
 app.use('/api/login', loginRoute);

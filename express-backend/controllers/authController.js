@@ -20,30 +20,30 @@ const login = async (req, res) => {
 
     try {
         // 2. Chiamata al Model per cercare l'utente
-        const usr = await userModel.getUserByEmail(email);
+        const user = await userModel.getUserByEmail(email);
 
-        if (!usr) {
+        if (!user) {
             return res.status(400).json({ message: "L'utente non esiste." });
         }
 
         // 3. Verifica della password
-        const isMatch = await bcrypt.compare(password, usr.Password);
+        const isMatch = await bcrypt.compare(password, user.Password);
         if (!isMatch){
             return res.status(400).json({ message: "Email o password errati." });
         }
 
         // 4. Generazione del Token JWT
         const token = jwt.sign(
-            { id: usr.UserID, username: usr.Username, isAdmin: usr.isAdmin, isMod: usr.isMod, isCat: usr.isCataloguer, audioLang: usr.REF_Audio_Language, textLang: usr.REF_Text_Language, appLang: usr.REF_App_Language},
+            { id: user.UserID, username: user.Username, isAdmin: user.isAdmin, isMod: user.isMod, isCat: user.isCataloguer, audioLang: user.REF_Audio_Language, textLang: user.REF_Text_Language, appLang: user.REF_App_Language},
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
 
         // 5. Risposta di successo (nascondendo la password)
-        delete usr.Password;
+        delete user.Password;
         return res.json({
-            message: "Welcome back, " + usr.Username,
-            usr,
+            message: "Welcome back, " + user.Username,
+            user,
             token,
         });
         

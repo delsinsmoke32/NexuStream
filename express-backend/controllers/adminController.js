@@ -9,8 +9,13 @@ const getUsersList = async (req, res) => {
     
     const { search, role } = req.query;
 
+    const page = parseInt(req.query.page) || 1; //quale pagina di utenti da caricare, le pagine sono blocchi di dimensione limit
+    const limit = parseInt(req.query.limit) || 50;
+
+    const offset = (1 - page) * limit; //offset calcolato
+ 
     try {
-        const users = await adminModel.filterUsers(search, role);
+        const users = await adminModel.filterUsers(search, role, offset, limit);
         return res.json(users);
     } catch (err) {
         console.error("Errore query admin users: ", err);

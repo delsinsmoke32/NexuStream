@@ -4,10 +4,12 @@ const db = require("../db/db");
  * Cerca gli utenti nel database applicando filtri dinamici di testo e di ruolo
  * @param {string|null} search - Testo da cercare in username o email
  * @param {string|null} role - Ruolo specifico ('mod', 'cataloguer', 'admin')
+ * @param {number} offset - Offset da usare (dimensione specificata da limit), default 1
+ * @param {number} limit - Limite di utenti da caricare in una query, default 50
  * @returns {Promise<Array<Object>>} Array degli utenti trovati (anche vuoto)
  */
 
-const filterUsers = async (search, role) => {
+const filterUsers = async (search, role, offset, limit) => {
     let sql = `
         SELECT u.UserID, u.Username, u.Email, u.isMod, u.isCataloguer, u.isAdmin, u.REF_PropicURI, u.REF_App_Language, u.REF_Text_Language, u.REF_Audio_Language, u.canComment
         FROM Users AS u
@@ -27,7 +29,11 @@ const filterUsers = async (search, role) => {
         if (role === 'admin') sql += ' AND u.isAdmin = 1';
     }
 
-    sql += ' ORDER BY u.Username ASC';
+    sql += ` ORDER BY u.Username ASC
+            LIMIT ?
+            OFFSET ?`;
+
+    params.push(limit, offset);
 
     return await db.allAsync(sql, params);
 };

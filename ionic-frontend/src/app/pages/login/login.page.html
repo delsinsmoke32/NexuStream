@@ -1,17 +1,11 @@
 <ion-header [translucent]="true">
-    <ion-toolbar>
-        <ion-title
-            >Login on
-            <p
-                style="
-                    color: var(--ion-color-primary-tint);
-                    display: inline;
-                    font-weight: bolder;
-                "
-            >
+    <ion-toolbar color="dark">
+        <ion-title>
+            Login on
+            <span style="color: var(--ion-color-primary-tint); font-weight: bolder;">
                 NexuStream
-            </p></ion-title
-        >
+            </span>
+        </ion-title>
     </ion-toolbar>
 </ion-header>
 
@@ -21,41 +15,41 @@
             <h1>Welcome to NexuStream</h1>
         </div>
 
-        <ion-card class="form-log-in-card">
+        <ion-card class="form-log-in-card" color="secondary">
             <ion-card-content>
+                
                 <div class="input-group">
                     <ion-label position="stacked">Email</ion-label>
                     <ion-item lines="none" class="custom-input">
                         <ion-input
                             type="email"
                             [(ngModel)]="loginData.email"
-                            errorText="Invalid email"
                             placeholder="example@mail.com"
                         ></ion-input>
                     </ion-item>
                 </div>
 
-                <div class="input-group">
+                <div class="input-group ion-margin-top">
                     <ion-label position="stacked">Password</ion-label>
                     <ion-item lines="none" class="custom-input">
                         <ion-input
-                            errorText="Wrong password"
-                            [(ngModel)]="loginData.password"
                             type="password"
+                            [(ngModel)]="loginData.password"
                             placeholder="password"
                         ></ion-input>
                     </ion-item>
                 </div>
 
-                <div class="button-container">
-                    <ion-button expand="block" (click)="login()" class="login-button">
+                <div class="button-container ion-margin-top">
+                    <ion-button expand="block" (click)="login()" class="login-button" color="var(--ion-color-dark)">
                         Login
                     </ion-button>
                 </div>
 
-                <div class="text-link">
-                    <a href="#">Forgot password?</a>
+                <div class="text-link ion-text-center ion-margin-top">
+                    <a href="#" style="color: var(--ion-secondary); text-decoration: none;">Forgot password?</a>
                 </div>
+                
             </ion-card-content>
         </ion-card>
     </div>

@@ -16,82 +16,94 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="login-content">
-    <div class="split-wrapper">
-        <div class="column left-column">
-            <h1 class="title">Welcome to NexuStream</h1>
+    <form [formGroup]="registerForm" (ngSubmit)="register()">
+        <div class="split-wrapper">
+            
+            <div class="column left-column">
+                <h1 class="title">Welcome to NexuStream</h1>
 
-            <ion-card class="form-log-in-card">
-                <ion-card-content>
-                    <div class="input-group">
-                        <ion-label position="stacked">Email</ion-label>
-                        <ion-item lines="none" class="custom-input">
-                            <ion-input
-                                [(ngModel)]="registerData.email"
-                                name="email"
-                                errorText="Invalid email"
-                                type="email"
-                                placeholder="example@mail.com"
-                            ></ion-input>
-                        </ion-item>
+                <ion-card class="form-log-in-card">
+                    <ion-card-content>
+                        <div class="input-group">
+                            <ion-label position="stacked">Email</ion-label>
+                            <ion-item lines="none" class="custom-input">
+                                <ion-input
+                                    formControlName="email"
+                                    errorText="Indirizzo email non valido"
+                                    type="email"
+                                    placeholder="example@mail.com"
+                                ></ion-input>
+                            </ion-item>
+                        </div>
+
+                        <div class="input-group" style="margin-top: 15px;">
+                            <ion-label position="stacked">Password</ion-label>
+                            <ion-item lines="none" class="custom-input">
+                                <ion-input
+                                    formControlName="password"
+                                    errorText="Minimo 8 caratteri richiesti"
+                                    type="password"
+                                    placeholder="password"
+                                >
+                                    <ion-input-password-toggle
+                                        slot="end"
+                                        color="primary-contrast"
+                                    ></ion-input-password-toggle>
+                                </ion-input>
+                            </ion-item>
+                        </div>
+
+                        <div class="input-group" style="margin-top: 15px;">
+                            <ion-label position="stacked">Conferma Password</ion-label>
+                            <ion-item lines="none" class="custom-input">
+                                <ion-input
+                                    formControlName="conf_password"
+                                    type="password"
+                                    placeholder="Ripeti la password"
+                                >
+                                    <ion-input-password-toggle
+                                        slot="end"
+                                        color="primary-contrast"
+                                    ></ion-input-password-toggle>
+                                </ion-input>
+                            </ion-item>
+                        </div>
+
+                        <div class="button-container" style="margin-top: 25px;">
+                            <ion-button type="submit" expand="block" class="register-button" [disabled]="registerForm.invalid">
+                                Register
+                            </ion-button>
+                        </div>
+                    </ion-card-content>
+                </ion-card>
+            </div>
+
+            <div class="column right-column">
+                <h1 class="title">What's your name?</h1>
+
+                <ion-card class="form-log-in-card">
+                    <ion-card-content>
+                        <div class="input-group">
+                            <ion-label position="stacked">Username</ion-label>
+                            <ion-item lines="none" class="custom-input">
+                                <ion-input
+                                    formControlName="username"
+                                    errorText="Lo username è obbligatorio (min 3 caratteri)"
+                                    type="text"
+                                    placeholder="username"
+                                ></ion-input>
+                            </ion-item>
+                        </div>
+                    </ion-card-content>
+                </ion-card>
+
+                <div class="red-sphere">
+                    <div class="smaller-sphere">
+                        <img [src]='"static/avatars/avatar-000.png" | backendUrl' alt="Avatar" />
                     </div>
-
-                    <div class="input-group">
-                        <ion-label position="stacked">Password</ion-label>
-                        <ion-item lines="none" class="custom-input">
-                            <ion-input
-                                [(ngModel)]="registerData.password"
-                                name="password"
-                                type="password"
-                                placeholder="password"
-                            ></ion-input>
-                        </ion-item>
-                    </div>
-
-                    <div class="input-group">
-                        <ion-label position="stacked">Conferma Password</ion-label>
-                        <ion-item lines="none" class="custom-input">
-                            <ion-input
-                                [(ngModel)]="registerData.conf_password"
-                                name="conf_password"
-                                type="password"
-                                placeholder="password"
-                            ></ion-input>
-                        </ion-item>
-                    </div>
-
-                    <div class="button-container">
-                        <ion-button expand="block" class="register-button" (click)="register()">
-                            Register
-                        </ion-button>
-                    </div>
-                </ion-card-content>
-            </ion-card>
-        </div>
-
-        <div class="column right-column">
-            <h1 class="title">What's your name?</h1>
-
-            <ion-card class="form-log-in-card">
-                <ion-card-content>
-                    <div class="input-group">
-                        <ion-label position="stacked">Username</ion-label>
-                        <ion-item lines="none" class="custom-input">
-                            <ion-input
-                                [(ngModel)]="registerData.username"
-                                name="username"
-                                type="text"
-                                placeholder="username"
-                            ></ion-input>
-                        </ion-item>
-                    </div>
-                </ion-card-content>
-            </ion-card>
-
-            <div class="red-sphere">
-                <div class="smaller-sphere">
-                    <img [src]='"static/avatars/avatar-000.png" | backendUrl' />
                 </div>
             </div>
+
         </div>
-    </div>
+    </form>
 </ion-content>

@@ -1,8 +1,14 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { 
+    FormControl, 
+    FormGroup, 
+    FormsModule, 
+    ReactiveFormsModule, 
+    Validators 
+} from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { AuthService } from '@app/services/auth';
 import {
     IonContent,
     IonHeader,
@@ -18,7 +24,8 @@ import {
     IonItem,
     IonLabel,
     IonInput,
-    ToastController
+    ToastController,
+    IonInputPasswordToggle
 } from '@ionic/angular/standalone';
 import { BackendUrlPipe } from '@app/pipes/backend-url-pipe';
 
@@ -42,64 +49,76 @@ import { BackendUrlPipe } from '@app/pipes/backend-url-pipe';
         IonButton,
         CommonModule,
         FormsModule,
+        ReactiveFormsModule,
         IonLabel,
         IonInput,
         BackendUrlPipe,
-        RouterModule // Inserito nel caso volessi aggiungere un link alla pagina di login
+        RouterModule,
+        IonInputPasswordToggle
     ],
 })
 export class RegisterPage implements OnInit {
-    private http = inject(HttpClient);
     private router = inject(Router);
     private toastController = inject(ToastController);
+    private authService = inject(AuthService);
 
-    // Modello dati per il form di registrazione
-    registerData = {
-        username: '',
-        email: '',
-        password: '',
-        conf_password: ''
-    };
-
-    private baseUrl = 'http://localhost:3000/api/register'; // Adatta l'URL al tuo backend
+    // Configurazione del Form Reattivo
+    registerForm = new FormGroup({
+        username: new FormControl('', {
+            nonNullable: true,
+            validators: [Validators.required, Validators.minLength(3)]
+        }),
+        email: new FormControl('', {
+            nonNullable: true,
+            validators: [Validators.required, Validators.email]
+        }),
+        password: new FormControl('', {
+            nonNullable: true,
+            validators: [Validators.required, Validators.minLength(8)]
+        }),
+        conf_password: new FormControl('', {
+            nonNullable: true,
+            validators: [Validators.required]
+        })
+    });
 
     constructor() {}
 
     ngOnInit() {}
 
     register() {
-        const { username, email, password, conf_password } = this.registerData;
-
-        // 1. Validazione locale dei campi vuoti
-        if (!username.trim() || !email.trim() || !password || !conf_password) {
-            this.presentToast("Tutti i campi sono obbligatori.", "danger");
+        // 1. Verifica validità form (campi vuoti, email malformate, password corte)
+        if (this.registerForm.invalid) {
+            this.presentToast("Compila tutti i campi correttamente. La password richiede almeno 8 caratteri.", "danger");
             return;
         }
 
-        // 2. Controllo coincidenza password
-        if (password !== conf_password) {
+        const formData = this.registerForm.getRawValue();
+
+        // 2. Controllo coincidenza password (unico controllo logico manuale necessario)
+        if (formData.password !== formData.conf_password) {
             this.presentToast("Le password inserite non coincidono.", "danger");
             return;
         }
 
-        // Costruiamo il payload pulito da inviare alle API Express
-        // NOTA: AGGIUNGERE MODO PER SELEZIONARE LINGUA AUDIO/TESTO/APP (menu a tendina?)
-        // NOTA: AGGIUNGERE MODO PER SELEZIONARE PROPICURI (cioè rendere funzionale l'immagine di mob in basso a destra)
+        // Costruiamo il payload finale unendo i dati del form ai tuoi fallback strutturali
+        // NOTA: AGGIUNGERE MODO PER SELEZIONARE LE LINGUE (menu a tendina?)
+        // NOTA: AGGIUNGERE MODO PER SELEZIONARE LA PROPIC (rendi mob funzionale)
         const payload = {
-            username: username.trim(),
-            email: email.trim(),
-            password: password,
+            username: formData.username.trim(),
+            email: formData.email.trim(),
+            password: formData.password,
             audioLanguageId: "it",
             textLanguageId: "it",
             appLanguageId: "it",
             propicURI: "/static/avatars/avatar-000.png"
         };
 
-        // 3. Chiamata HTTP POST verso l'endpoint di registrazione del server
-        this.http.post(`${this.baseUrl}`, payload).subscribe({
+        // 3. Invio della richiesta tramite AuthService
+        this.authService.register(payload).subscribe({
             next: () => {
                 this.presentToast("Registrazione completata con successo! Ora puoi accedere.", "success");
-                this.router.navigate(['/login']); // Sposta l'utente sulla pagina di login
+                this.router.navigate(['/login']);
             },
             error: (err) => {
                 console.error("Errore registrazione:", err);

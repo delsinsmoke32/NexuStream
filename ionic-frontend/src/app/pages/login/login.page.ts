@@ -1,13 +1,13 @@
-import { CommonModule } from '@angular/common'
-import { Component, inject, OnInit } from '@angular/core'
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
     FormControl,
     FormGroup,
     FormsModule,
     ReactiveFormsModule,
     Validators,
-} from '@angular/forms'
-import { AuthService } from '@app/services/auth'
+} from '@angular/forms';
+import { AuthService } from '@app/services/auth';
 import {
     IonButton,
     IonCard,
@@ -24,8 +24,9 @@ import {
     IonRow,
     IonTitle,
     IonToolbar,
-} from '@ionic/angular/standalone'
-import { Router } from '@lib/@angular/router'
+    ToastController
+} from '@ionic/angular/standalone';
+import { Router } from '@angular/router'; // 🚀 FIX: Import corretto da @angular/router
 
 @Component({
     selector: 'app-login',
@@ -54,6 +55,11 @@ import { Router } from '@lib/@angular/router'
     ],
 })
 export class LoginPage implements OnInit {
+    private authService = inject(AuthService);
+    private router = inject(Router);
+    private toastController = inject(ToastController);
+
+    // Form reattivo configurato correttamente
     loginForm = new FormGroup({
         email: new FormControl('', {
             nonNullable: true,
@@ -63,26 +69,73 @@ export class LoginPage implements OnInit {
             nonNullable: true,
             validators: [Validators.required, Validators.minLength(8)],
         }),
-    })
-
-    private authService = inject(AuthService)
-    private router = inject(Router)
+    });
 
     constructor() {}
 
+    ngOnInit() {}
+
     login() {
-        this.authService.login(this.loginForm.getRawValue()).subscribe({
-            next: (res) => {
-                console.log('Login OK: ', res)
-                localStorage.setItem('user', JSON.stringify(res.user))
-                this.router.navigate(['/episode'])
+        // Usiamo la validazione nativa dei Reactive Forms
+        if (this.loginForm.invalid) {
+            this.presentToast("Inserisci un'email valida e una password di almeno 8 caratteri.", "danger");
+            return;
+        }
+
+        // Estraiamo i dati in modo Type-Safe grazie a getRawValue()
+        const credentials = this.loginForm.getRawValue();
+
+        this.authService.login(credentials).subscribe({
+            next: (res: any) => {
+                console.log('Risposta esatta del server:', res);
+
+                localStorage.setItem('token', res.token);
+
+                // Se i dati dell'utente sono dentro res.user usa quello, altrimenti usa direttamente res
+                const userData = res.user ? res.user : res;
+                localStorage.setItem('user', JSON.stringify(userData));
+                
+                // Mappiamo i ruoli usando la funzione helper
+                const rolesArray = this.buildRolesArray(userData);
+                localStorage.setItem('user_roles', JSON.stringify(rolesArray));
+                
+                if (rolesArray.includes('admin')) {
+                    this.router.navigate(['/admin']);
+                } else {
+                    this.router.navigate(['/home']);
+                }
+                
             },
             error: (err) => {
-                console.error('Errore login: ', err)
-                alert(err.error.message || 'Errore durante il login.')
-            },
-        })
+                console.error("Errore HTTP Login:", err);
+                this.presentToast(err.error?.message || "Errore durante il login.", "danger");
+            }
+        });
     }
 
-    ngOnInit() {}
+    /**
+     * Helper per estrarre i ruoli dall'oggetto utente ed evitare i crash di undefined
+     */
+    private buildRolesArray(user: any): string[] {
+        const roles: string[] = [];
+        if (!user) return ['user'];
+
+        if (user.isAdmin || user.is_admin) roles.push('admin');
+        if (user.isMod || user.is_mod) roles.push('mod');
+        if (user.isCataloguer || user.is_cataloguer) roles.push('cataloguer');
+        
+        // Se non ha nessun ruolo specifico, è un utente base
+        if (roles.length === 0) roles.push('user');
+        return roles;
+    }
+
+    async presentToast(message: string, color: 'success' | 'danger') {
+        const toast = await this.toastController.create({
+            message: message,
+            duration: 3000,
+            position: 'bottom',
+            color: color
+        });
+        await toast.present();
+    }
 }

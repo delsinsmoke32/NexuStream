@@ -1,7 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 
-export const AdminGuard: CanActivateFn = (route, state) => {
+export const ModGuard: CanActivateFn = (route, state) => {
   const router = inject(Router);
   const token = localStorage.getItem('token');
   const rolesJson = localStorage.getItem('user_roles');
@@ -11,8 +11,8 @@ export const AdminGuard: CanActivateFn = (route, state) => {
     try {
       const roles: string[] = JSON.parse(rolesJson);
       
-      // Permetti l'accesso solo all'admin
-      if (roles.includes('admin')) {
+      // Permetti l'accesso solo all'admin e ai mod
+      if (roles.includes('admin') || roles.includes('mod')) {
         return true;
       }
     } catch (e) {

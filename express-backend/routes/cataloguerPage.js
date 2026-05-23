@@ -80,7 +80,8 @@ router.post('/shows/add', [
     body('description').isString().trim().notEmpty().withMessage("Descrizione non valida"),
     body('dateStarted').isDate({ format: 'YYYY-MM-DD' }).withMessage("La data d'inizio deve essere YYYY-MM-DD"),
     body('dateEnded').optional({ checkFalsy: true }).isDate({ format: 'YYYY-MM-DD' }).withMessage("La data di fine deve essere YYYY-MM-DD"),
-    body('hasEnded').optional().isInt({ min: 0, max: 1 }).withMessage("hasEnded deve essere 0 o 1")
+    body('thumbnailURI').optional().isString().trim().notEmpty().withMessage("L'URI deve essere una stringa"),
+    body('bannerURI').optional().isString().trim().notEmpty().withMessage("L'URI deve essere una stringa")
 ], cataloguerController.addShow);
 
 
@@ -127,7 +128,8 @@ router.patch('/shows/:id', [
     body('title').optional().isString().trim().notEmpty().withMessage("Titolo non valido"),
     body('description').optional().isString().trim().notEmpty().withMessage("Descrizione non valida"),
     body('dateEnded').optional({ checkFalsy: true }).isDate({ format: 'YYYY-MM-DD' }).withMessage("La data deve essere YYYY-MM-DD"),
-    body('hasEnded').optional().isInt({ min: 0, max: 1 }).withMessage("hasEnded deve essere 0 o 1")
+    body('thumbnailURI').optional().isString().trim().notEmpty().withMessage("L'URI deve essere una stringa"),
+    body('bannerURI').optional().isString().trim().notEmpty().withMessage("L'URI deve essere una stringa")
 ], cataloguerController.modifyShow);
 
 
@@ -234,8 +236,8 @@ router.post('/seasons/add', [
     body('description').isString().trim().notEmpty().withMessage("Descrizione non valida"),
     body('dateStarted').isDate({ format: 'YYYY-MM-DD' }).withMessage("La data d'inizio deve essere YYYY-MM-DD"),
     body('dateEnded').optional({ checkFalsy: true }).isDate({ format: 'YYYY-MM-DD' }).withMessage("La data di fine deve essere YYYY-MM-DD"),
-    body('hasEnded').optional().isInt({ min: 0, max: 1 }).withMessage("hasEnded deve essere 0 o 1"),
-    body('refShow').isInt({ min: 1 }).withMessage("ID della serie non valido")
+    body('refShow').isInt({ min: 1 }).withMessage("ID della serie non valido"),
+    body('seasonNumber').isInt({ min: 1 }).withMessage("Numero di stagione non valido")
 ], cataloguerController.addSeason);
 
 
@@ -398,8 +400,10 @@ router.post('/episodes/add', [
     body('releaseDate').isDate({ format: 'YYYY-MM-DD' }).withMessage("La data deve essere YYYY-MM-DD"),
     body('duration').isInt({ min: 1 }).withMessage("La durata deve essere un intero positivo"),
     body('refSeason').isInt({ min: 1 }).withMessage("ID stagione non valido"),
+    body('episodeNumber').isInt({ min: 1 }).withMessage("Numero di episodio non valido"),
     body('DubLanguages').optional().isArray().withMessage("DubLanguages deve essere un array"),
-    body('SubLanguages').optional().isArray().withMessage("SubLanguages deve essere un array")
+    body('SubLanguages').optional().isArray().withMessage("SubLanguages deve essere un array"),
+    body('thumbnailURI').optional().isString().trim().notEmpty().withMessage("L'URI deve essere una stringa")
 ], cataloguerController.addEpisode);
 
 
@@ -451,7 +455,8 @@ router.patch('/episodes/:id', [
     body('description').optional().isString().trim().notEmpty().withMessage("Descrizione non valida"),
     body('refSeason').optional().isInt({ min: 1 }).withMessage("ID stagione non valido"),
     body('DubLanguages').optional().isArray().withMessage("DubLanguages deve essere un array"),
-    body('SubLanguages').optional().isArray().withMessage("SubLanguages deve essere un array")
+    body('SubLanguages').optional().isArray().withMessage("SubLanguages deve essere un array"),
+    body('thumbnailURI').optional().isString().trim().notEmpty().withMessage("L'URI deve essere una stringa")
 ], cataloguerController.modifyEpisode);
 
 

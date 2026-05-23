@@ -51,8 +51,8 @@ const getAllEpisodes = async (refSeason) => {
  */
 
 
-const insertShow = async (titleObj, descriptionObj, dateStarted, dateEnded, hasEnded) => {
-    const sql = `INSERT INTO Shows (Title, Description, DateStarted, DateEnded, hasEnded, Favourited) VALUES (?, ?, ?, ?, ?, 0)`;
+const insertShow = async (titleObj, descriptionObj, dateStarted, dateEnded, hasEnded, thumbnailURI, bannerURI) => {
+    const sql = `INSERT INTO Shows (Title, Description, DateStarted, DateEnded, hasEnded, Favourited, ThumbnailURI, BannerURI) VALUES (?, ?, ?, ?, ?, 0, ?, ?)`;
     
     // Convertiamo gli oggetti JavaScript in stringhe JSON per il database
     return await db.runAsync(sql, [
@@ -60,7 +60,9 @@ const insertShow = async (titleObj, descriptionObj, dateStarted, dateEnded, hasE
         JSON.stringify(descriptionObj), 
         dateStarted, 
         dateEnded || null, 
-        hasEnded || 0
+        hasEnded || 0,
+        thumbnailURI,
+        bannerURI
     ]);
 };
 
@@ -113,8 +115,8 @@ module.exports = {
  */
 
 
-const insertSeason = async (titleObj, descriptionObj, dateStarted, dateEnded, hasEnded, refShow) => {
-    const sql = `INSERT INTO Seasons (Title, Description, DateStarted, DateEnded, hasEnded, REF_ShowID) VALUES (?, ?, ?, ?, ?, ?)`;
+const insertSeason = async (titleObj, descriptionObj, dateStarted, dateEnded, hasEnded, seasonNumber, refShow) => {
+    const sql = `INSERT INTO Seasons (Title, Description, DateStarted, DateEnded, hasEnded, SeasonNumber, REF_ShowID) VALUES (?, ?, ?, ?, ?, ?, ?)`;
     
     // Convertiamo gli oggetti JavaScript in stringhe JSON prima di inviarli a SQLite
     return await db.runAsync(sql, [
@@ -123,6 +125,7 @@ const insertSeason = async (titleObj, descriptionObj, dateStarted, dateEnded, ha
         dateStarted, 
         dateEnded || null, 
         hasEnded || 0, 
+        seasonNumber,
         refShow
     ]);
 };
@@ -169,8 +172,8 @@ const deleteSeason = async (seasonId) => {
  * @returns {Promise<Object>} Il risultato del runAsync della tabella principale (contiene l'id)
  */
 
-const insertEpisodeFull = async (titleObj, descriptionObj, releaseDate, duration, refSeason, dubs, subs) => {
-    const sql = `INSERT INTO Episodes (Title, Description, ReleaseDate, Duration, REF_SeasonID, Streams, Likes, EpisodeNumber) VALUES (?, ?, ?, ?, ?, 0, 0, 1)`;
+const insertEpisodeFull = async (titleObj, descriptionObj, releaseDate, duration, refSeason, episodeNumber, dubs, subs, thumbnailURI) => {
+    const sql = `INSERT INTO Episodes (Title, Description, ReleaseDate, Duration, REF_SeasonID, Streams, Likes, EpisodeNumber, ThumbnailURI) VALUES (?, ?, ?, ?, ?, 0, 0, ?, ?)`;
     
     // Convertiamo gli oggetti multilingua in stringhe JSON
     const result = await db.runAsync(sql, [
@@ -178,7 +181,9 @@ const insertEpisodeFull = async (titleObj, descriptionObj, releaseDate, duration
         JSON.stringify(descriptionObj), 
         releaseDate, 
         duration, 
-        refSeason
+        refSeason,
+        episodeNumber,
+        thumbnailURI
     ]);
     const newEpisodeId = result.id;
 

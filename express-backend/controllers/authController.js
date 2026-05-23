@@ -71,12 +71,7 @@ const register = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
     
-    const { username, email, password, conf_password, audioLanguageId, textLanguageId, appLanguageId, propicURI } = req.body;
-
-    // 2. Controllo logico della corrispondenza password
-    if (password !== conf_password){
-        return res.status(400).json({ message: "Le password non corrispondono." });
-    }
+    const { username, email, password, audioLanguageId, textLanguageId, appLanguageId, propicURI } = req.body;
 
     try {
         // 3. Hashing della password

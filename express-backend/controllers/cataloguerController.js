@@ -65,7 +65,7 @@ const addShow = async (req, res) => {
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
     
     // Ci aspettiamo che i testi arrivino divisi per lingua dal form del frontend
-    const { title_it, title_en, title_jp, description_it, description_en, description_jp, dateStarted, dateEnded, hasEnded } = req.body;
+    const { title_it, title_en, title_jp, description_it, description_en, description_jp, dateStarted, dateEnded, thumbnailURI, bannerURI } = req.body;
     
     // Creiamo gli oggetti puliti da passare al Model (l'italiano è sempre obbligatorio come fallback)
     const titleObj = {
@@ -80,8 +80,11 @@ const addShow = async (req, res) => {
         ...(description_jp && { jp: description_jp })
     };
 
+    //si calcola hasEnded anzichè passarla esplicitamente
+    const hasEnded = (dateEnded && dateEnded.trim() !== "") ? 1 : 0;
+
     try {
-        const result = await cataloguerModel.insertShow(titleObj, descriptionObj, dateStarted, dateEnded, hasEnded);
+        const result = await cataloguerModel.insertShow(titleObj, descriptionObj, dateStarted, dateEnded, hasEnded, thumbnailURI, bannerURI);
         return res.status(201).json({ message: "Serie creata con successo!", showId: result.id });
     } catch (err) {
         console.error(err);
@@ -95,7 +98,7 @@ const modifyShow = async (req, res) => {
 
     const showId = req.params.id;
     // 'lang' indica quale lingua si sta modificando (es. 'it', 'en', 'jp')
-    const { title, description, dateEnded, hasEnded, lang } = req.body;
+    const { title, description, dateEnded, lang } = req.body;
 
     let fields = [];
     let params = [];
@@ -115,8 +118,16 @@ const modifyShow = async (req, res) => {
     }
     
     // I campi non JSON rimangono esattamente come prima
-    if (dateEnded !== undefined) { fields.push('DateEnded = ?'); params.push(dateEnded); }
-    if (hasEnded !== undefined) { fields.push('hasEnded = ?'); params.push(hasEnded); }
+    if (dateEnded !== undefined) {
+        fields.push('DateEnded = ?'); 
+        params.push(dateEnded);
+
+        //calcolo della hasEnded
+        const hasEnded = (dateEnded && dateEnded.trim() !== "") ? 1 : 0;
+        fields.push('hasEnded = ?'); 
+        params.push(hasEnded);
+    }
+    
 
     if (fields.length === 0) return res.status(400).json({ message: "Inserisci qualche parametro da modificare." });
 
@@ -151,7 +162,7 @@ const addSeason = async (req, res) => {
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
     
     // Estraiamo i testi divisi per lingua dal body del form frontend
-    const { title_it, title_en, title_jp, description_it, description_en, description_jp, dateStarted, dateEnded, hasEnded, refShow } = req.body;
+    const { title_it, title_en, title_jp, description_it, description_en, description_jp, dateStarted, dateEnded, seasonNumber, refShow } = req.body;
     
     // Generiamo gli oggetti multilingua (con fallback obbligatorio su italiano 'it')
     const titleObj = {
@@ -166,8 +177,11 @@ const addSeason = async (req, res) => {
         ...(description_jp && { jp: description_jp })
     };
 
+    //si calcola hasEnded anzichè passarla esplicitamente
+    const hasEnded = (dateEnded && dateEnded.trim() !== "") ? 1 : 0;
+
     try {
-        const result = await cataloguerModel.insertSeason(titleObj, descriptionObj, dateStarted, dateEnded, hasEnded, refShow);
+        const result = await cataloguerModel.insertSeason(titleObj, descriptionObj, dateStarted, dateEnded, hasEnded, seasonNumber, refShow);
         return res.status(201).json({ message: "Stagione creata con successo!", seasonId: result.id });
     } catch (err) {
         console.error(err);
@@ -181,7 +195,7 @@ const modifySeason = async (req, res) => {
 
     const seasonId = req.params.id;
     // 'lang' indica quale chiave del JSON aggiornare (es. 'it', 'en', 'jp')
-    const { title, description, dateEnded, hasEnded, refShow, lang } = req.body;
+    const { title, description, dateEnded, refShow, lang } = req.body;
 
     let fields = [];
     let params = [];
@@ -199,8 +213,15 @@ const modifySeason = async (req, res) => {
     }
     
     // I campi relazionali e temporali standard mantengono la sintassi nativa
-    if (dateEnded !== undefined) { fields.push('DateEnded = ?'); params.push(dateEnded); }
-    if (hasEnded !== undefined) { fields.push('hasEnded = ?'); params.push(hasEnded); }
+    if (dateEnded !== undefined) { 
+        fields.push('DateEnded = ?'); 
+        params.push(dateEnded); 
+
+        //calcolo della hasEnded
+        const hasEnded = (dateEnded && dateEnded.trim() !== "") ? 1 : 0;
+        fields.push('hasEnded = ?'); 
+        params.push(hasEnded);
+    }
     if (refShow !== undefined) { fields.push('REF_ShowID = ?'); params.push(refShow); }
 
     if (fields.length === 0) return res.status(400).json({ message: "Inserisci qualche parametro da modificare." });
@@ -240,7 +261,9 @@ const addEpisode = async (req, res) => {
     const { 
         title_it, title_en, title_jp, 
         description_it, description_en, description_jp, 
-        releaseDate, duration, refSeason, DubLanguages, SubLanguages 
+        releaseDate, duration, refSeason, episodeNumber,
+        DubLanguages, SubLanguages,
+        thumbnailURI
     } = req.body;
 
     // Impacchettiamo gli oggetti JSON (con l'italiano sempre come base obbligatoria)
@@ -263,8 +286,10 @@ const addEpisode = async (req, res) => {
             releaseDate, 
             duration, 
             refSeason, 
+            episodeNumber,
             DubLanguages, 
-            SubLanguages
+            SubLanguages,
+            thumbnailURI
         );
         return res.status(201).json({ message: "Episodio creato con successo!", episodeId: result.id });
     } catch (err) {

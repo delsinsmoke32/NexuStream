@@ -1,5 +1,7 @@
 import { Routes } from '@angular/router';
 import { AdminGuard } from './guards/admin-guard'; // Assicurati che il percorso sia corretto
+import { CataloguerGuard } from './guards/cataloguer-guard';
+import { ModGuard } from './guards/mod-guard';
 
 export const routes: Routes = [
   // 1. Reindirizzamento iniziale: se l'utente apre l'app senza path, lo mandiamo alla login (o alla home se preferisci)
@@ -45,11 +47,17 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/episode/episode.page').then(m => m.EpisodePage)
   },
   
-  // 6. Pannello Admin Privato (Protetto dal Guard)
+  // 6. Pagine private (admin, mod, catalogatori)
   {
     path: 'admin',
-    loadComponent: () => import('./pages/admin/admin.page').then(m => m.AdminPage),
-    canActivate: [AdminGuard] // 👈 Protezione attiva
+    canActivate: [AdminGuard],
+    loadComponent: () => import('./pages/admin/admin.page').then(m => m.AdminPage)
+  },
+
+  {
+    path: 'cataloguer',
+    canActivate: [CataloguerGuard],
+    loadComponent: () => import('./pages/cataloguer/cataloguer.page').then( m => m.CataloguerPage)
   },
   
   // 7. Gestione Errori e Permessi
@@ -62,7 +70,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/notfound/notfound.page').then(m => m.NotfoundPage)
   },
   
-  // 8. Il Jolly (Wildcard): Cattura qualsiasi URL errato e lo lancia sulla 404 coerente
+  // QUESTA DEVE ESSERE L'ULTIMA ROUTE, ALTRIMENTI REDIRECTA A 404 ANCHE QUANDO NON DOVREBBE
   {
     path: '**',
     redirectTo: 'not-found',

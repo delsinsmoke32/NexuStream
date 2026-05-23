@@ -17,7 +17,6 @@
 
 <ion-content [fullscreen]="true" class="login-content">
     <div class="split-wrapper">
-        <!-- COLONNA SINISTRA -->
         <div class="column left-column">
             <h1 class="title">Welcome to NexuStream</h1>
 
@@ -27,6 +26,8 @@
                         <ion-label position="stacked">Email</ion-label>
                         <ion-item lines="none" class="custom-input">
                             <ion-input
+                                [(ngModel)]="registerData.email"
+                                name="email"
                                 errorText="Invalid email"
                                 type="email"
                                 placeholder="example@mail.com"
@@ -38,6 +39,8 @@
                         <ion-label position="stacked">Password</ion-label>
                         <ion-item lines="none" class="custom-input">
                             <ion-input
+                                [(ngModel)]="registerData.password"
+                                name="password"
                                 type="password"
                                 placeholder="password"
                             ></ion-input>
@@ -45,11 +48,11 @@
                     </div>
 
                     <div class="input-group">
-                        <ion-label position="stacked"
-                            >Conferma Password</ion-label
-                        >
+                        <ion-label position="stacked">Conferma Password</ion-label>
                         <ion-item lines="none" class="custom-input">
                             <ion-input
+                                [(ngModel)]="registerData.conf_password"
+                                name="conf_password"
                                 type="password"
                                 placeholder="password"
                             ></ion-input>
@@ -57,7 +60,7 @@
                     </div>
 
                     <div class="button-container">
-                        <ion-button expand="block" class="register-button">
+                        <ion-button expand="block" class="register-button" (click)="register()">
                             Register
                         </ion-button>
                     </div>
@@ -65,7 +68,6 @@
             </ion-card>
         </div>
 
-        <!-- COLONNA DESTRA -->
         <div class="column right-column">
             <h1 class="title">What's your name?</h1>
 
@@ -75,6 +77,8 @@
                         <ion-label position="stacked">Username</ion-label>
                         <ion-item lines="none" class="custom-input">
                             <ion-input
+                                [(ngModel)]="registerData.username"
+                                name="username"
                                 type="text"
                                 placeholder="username"
                             ></ion-input>

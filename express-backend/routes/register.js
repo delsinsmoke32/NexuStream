@@ -21,7 +21,6 @@ const { body } = require('express-validator');
  *             required:
  *               - email
  *               - password
- *               - conf_password
  *               - username
  *             properties:
  *               username:
@@ -34,11 +33,6 @@ const { body } = require('express-validator');
  *                 format: email
  *                 example: registrazione@email.com
  *               password:
- *                 type: string
- *                 minLength: 8
- *                 maxLength: 24
- *                 example: Segreta123!
- *               conf_password:
  *                 type: string
  *                 minLength: 8
  *                 maxLength: 24
@@ -80,8 +74,11 @@ const { body } = require('express-validator');
 router.post('/', [
     body('email').isEmail().notEmpty().withMessage("Email non valida"),
     body('password').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("La password deve essere composta da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri."),
-    body('conf_password').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("La password deve essere composta da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri."),
-    body('username').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("L'username deve essere composto da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri.")
+    body('username').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("L'username deve essere composto da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri."),
+    body("audioLanguageId").isString().isLength({ min: 2 , max: 2 }).withMessage("Id non valido"),
+    body("textLanguageId").isString().isLength({ min: 2 , max: 2 }).withMessage("Id non valido"),
+    body("appLanguageId").isString().isLength({ min: 2 , max: 2 }).withMessage("Id non valido"),
+    body("propicURI").isString().notEmpty().trim().withMessage("URI propic non valido")
 ], authController.register);
 
 module.exports = router;

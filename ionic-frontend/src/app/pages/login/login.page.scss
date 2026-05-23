@@ -6,6 +6,11 @@
 //   --background: var(--ion-color-secondary);
 // }
 
+#nexus {
+  color: var(--ion-color-primary-tint);
+  display: inline;
+  font-weight: bolder;
+}
 .login-container {
   display: flex;
   flex-direction: column;
@@ -75,5 +80,11 @@ ion-card-content {
     text-decoration: underline;
     font-size: 14px;
     font-weight: 500;
+  }
+}
+
+:host ::ng-deep ion-input { 
+  .error-text {
+    display: none !important;
   }
 }

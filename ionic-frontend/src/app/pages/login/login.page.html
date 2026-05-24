@@ -1,21 +1,31 @@
 <ion-header [translucent]="true">
     <ion-toolbar>
         <ion-title>
-            Login on <p id="nexus" style="display: inline; font-weight: bolder; color: var(--ion-color-primary-tint);">NexuStream</p>
+            Login on
+            <p
+                id="nexus"
+                style="
+                    display: inline;
+                    font-weight: bolder;
+                    color: var(--ion-color-primary-tint);
+                "
+            >
+                NexuStream
+            </p>
         </ion-title>
+        <app-language-switcher slot="end"></app-language-switcher>
     </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="login-content">
     <div class="login-container">
         <div class="text-heading">
-            <h1>Welcome to NexuStream</h1>
+            <h1 i18n="@@Welcome_to_NexuStream">Benvenuti a NexuStream</h1>
         </div>
 
         <ion-card class="form-log-in-card">
             <form [formGroup]="loginForm" (ngSubmit)="login()">
                 <ion-card-content>
-                    
                     <div class="input-group">
                         <ion-label position="stacked">Email</ion-label>
                         <ion-item lines="none" class="custom-input">
@@ -28,7 +38,7 @@
                         </ion-item>
                     </div>
 
-                    <div class="input-group" style="margin-top: 15px;">
+                    <div class="input-group" style="margin-top: 15px">
                         <ion-label position="stacked">Password</ion-label>
                         <ion-item lines="none" class="custom-input">
                             <ion-input
@@ -45,7 +55,7 @@
                         </ion-item>
                     </div>
 
-                    <div class="button-container" style="margin-top: 25px;">
+                    <div class="button-container" style="margin-top: 25px">
                         <ion-button
                             type="submit"
                             expand="block"
@@ -56,10 +66,16 @@
                         </ion-button>
                     </div>
 
-                    <div class="text-link" style="margin-top: 15px; text-align: center;">
-                        <a href="#" style="text-decoration: none; font-size: 0.9rem;">Forgot password?</a>
+                    <div
+                        class="text-link"
+                        style="margin-top: 15px; text-align: center"
+                    >
+                        <a
+                            href="#"
+                            style="text-decoration: none; font-size: 0.9rem"
+                            >Forgot password?</a
+                        >
                     </div>
-                    
                 </ion-card-content>
             </form>
         </ion-card>

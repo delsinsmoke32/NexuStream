@@ -1,0 +1,12 @@
+<ion-item lines="none" class="lang-selector-item">
+    <ion-icon name="globe-outline" slot="start" color="medium"></ion-icon>
+    <ion-select
+        [value]="currentLang"
+        (ionChange)="switchLanguage($event)"
+        interface="popover"
+        toggleIcon="chevron-down-outline"
+    >
+        <ion-select-option value="en">English</ion-select-option>
+        <ion-select-option value="it">Italiano</ion-select-option>
+    </ion-select>
+</ion-item>

@@ -1,13 +1,13 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core'
+import { CommonModule } from '@angular/common'
 import {
     FormControl,
     FormGroup,
     FormsModule,
     ReactiveFormsModule,
     Validators,
-} from '@angular/forms';
-import { AuthService } from '@app/services/auth';
+} from '@angular/forms'
+import { AuthService } from '@app/services/auth'
 import {
     IonButton,
     IonCard,
@@ -24,9 +24,10 @@ import {
     IonRow,
     IonTitle,
     IonToolbar,
-    ToastController
-} from '@ionic/angular/standalone';
-import { Router } from '@angular/router'; // 🚀 FIX: Import corretto da @angular/router
+    ToastController,
+} from '@ionic/angular/standalone'
+import { Router } from '@angular/router' // 🚀 FIX: Import corretto da @angular/router
+import { LanguageSwitcherComponent } from '@app/components/language-switcher/language-switcher.component'
 
 @Component({
     selector: 'app-login',
@@ -52,12 +53,13 @@ import { Router } from '@angular/router'; // 🚀 FIX: Import corretto da @angul
         IonInput,
         IonInputPasswordToggle,
         ReactiveFormsModule,
+        LanguageSwitcherComponent,
     ],
 })
 export class LoginPage implements OnInit {
-    private authService = inject(AuthService);
-    private router = inject(Router);
-    private toastController = inject(ToastController);
+    private authService = inject(AuthService)
+    private router = inject(Router)
+    private toastController = inject(ToastController)
 
     // Form reattivo configurato correttamente
     loginForm = new FormGroup({
@@ -69,7 +71,7 @@ export class LoginPage implements OnInit {
             nonNullable: true,
             validators: [Validators.required, Validators.minLength(8)],
         }),
-    });
+    })
 
     constructor() {}
 
@@ -78,55 +80,60 @@ export class LoginPage implements OnInit {
     login() {
         // Usiamo la validazione nativa dei Reactive Forms
         if (this.loginForm.invalid) {
-            this.presentToast("Inserisci un'email valida e una password di almeno 8 caratteri.", "danger");
-            return;
+            this.presentToast(
+                "Inserisci un'email valida e una password di almeno 8 caratteri.",
+                'danger'
+            )
+            return
         }
 
         // Estraiamo i dati in modo Type-Safe grazie a getRawValue()
-        const credentials = this.loginForm.getRawValue();
+        const credentials = this.loginForm.getRawValue()
 
         this.authService.login(credentials).subscribe({
             next: (res: any) => {
-                console.log('Risposta esatta del server:', res);
+                console.log('Risposta esatta del server:', res)
 
-                localStorage.setItem('token', res.token);
+                localStorage.setItem('token', res.token)
 
                 // Se i dati dell'utente sono dentro res.user usa quello, altrimenti usa direttamente res
-                const userData = res.user ? res.user : res;
-                localStorage.setItem('user', JSON.stringify(userData));
-                
+                const userData = res.user ? res.user : res
+                localStorage.setItem('user', JSON.stringify(userData))
+
                 // Mappiamo i ruoli usando la funzione helper
-                const rolesArray = this.buildRolesArray(userData);
-                localStorage.setItem('user_roles', JSON.stringify(rolesArray));
-                
+                const rolesArray = this.buildRolesArray(userData)
+                localStorage.setItem('user_roles', JSON.stringify(rolesArray))
+
                 if (rolesArray.includes('admin')) {
-                    this.router.navigate(['/admin']);
+                    this.router.navigate(['/admin'])
                 } else {
-                    this.router.navigate(['/home']);
+                    this.router.navigate(['/home'])
                 }
-                
             },
             error: (err) => {
-                console.error("Errore HTTP Login:", err);
-                this.presentToast(err.error?.message || "Errore durante il login.", "danger");
-            }
-        });
+                console.error('Errore HTTP Login:', err)
+                this.presentToast(
+                    err.error?.message || 'Errore durante il login.',
+                    'danger'
+                )
+            },
+        })
     }
 
     /**
      * Helper per estrarre i ruoli dall'oggetto utente ed evitare i crash di undefined
      */
     private buildRolesArray(user: any): string[] {
-        const roles: string[] = [];
-        if (!user) return ['user'];
+        const roles: string[] = []
+        if (!user) return ['user']
 
-        if (user.isAdmin || user.is_admin) roles.push('admin');
-        if (user.isMod || user.is_mod) roles.push('mod');
-        if (user.isCataloguer || user.is_cataloguer) roles.push('cataloguer');
-        
+        if (user.isAdmin || user.is_admin) roles.push('admin')
+        if (user.isMod || user.is_mod) roles.push('mod')
+        if (user.isCataloguer || user.is_cataloguer) roles.push('cataloguer')
+
         // Se non ha nessun ruolo specifico, è un utente base
-        if (roles.length === 0) roles.push('user');
-        return roles;
+        if (roles.length === 0) roles.push('user')
+        return roles
     }
 
     async presentToast(message: string, color: 'success' | 'danger') {
@@ -134,8 +141,8 @@ export class LoginPage implements OnInit {
             message: message,
             duration: 3000,
             position: 'bottom',
-            color: color
-        });
-        await toast.present();
+            color: color,
+        })
+        await toast.present()
     }
 }

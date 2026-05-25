@@ -1,5 +1,5 @@
+import { CommonModule, NgIfContext } from '@angular/common'
 import { Component, OnInit, inject } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import {
     FormControl,
     FormGroup,
@@ -7,27 +7,24 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms'
+import { Router } from '@angular/router' // 🚀 FIX: Import corretto da @angular/router
+import { LanguageSwitcherComponent } from '@app/components/language-switcher/language-switcher.component'
 import { AuthService } from '@app/services/auth'
 import {
     IonButton,
     IonCard,
     IonCardContent,
-    IonCardHeader,
-    IonCardTitle,
-    IonCol,
     IonContent,
     IonHeader,
     IonInput,
     IonInputPasswordToggle,
     IonItem,
     IonLabel,
-    IonRow,
     IonTitle,
     IonToolbar,
     ToastController,
+    IonText,
 } from '@ionic/angular/standalone'
-import { Router } from '@angular/router' // 🚀 FIX: Import corretto da @angular/router
-import { LanguageSwitcherComponent } from '@app/components/language-switcher/language-switcher.component'
 
 @Component({
     selector: 'app-login',
@@ -40,12 +37,8 @@ import { LanguageSwitcherComponent } from '@app/components/language-switcher/lan
         IonTitle,
         IonToolbar,
         IonCard,
-        IonRow,
-        IonCol,
         IonItem,
-        IonCardHeader,
         IonCardContent,
-        IonCardTitle,
         IonButton,
         CommonModule,
         FormsModule,
@@ -54,6 +47,7 @@ import { LanguageSwitcherComponent } from '@app/components/language-switcher/lan
         IonInputPasswordToggle,
         ReactiveFormsModule,
         LanguageSwitcherComponent,
+        IonText,
     ],
 })
 export class LoginPage implements OnInit {

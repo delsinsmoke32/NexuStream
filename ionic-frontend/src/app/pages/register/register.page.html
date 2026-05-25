@@ -1,24 +1,18 @@
 <ion-header [translucent]="true">
     <ion-toolbar>
-        <ion-title
-            >Register on
-            <p
-                style="
-                    color: var(--ion-color-primary-tint);
-                    display: inline;
-                    font-weight: bolder;
-                "
-            >
-                NexuStream
-            </p></ion-title
-        >
+        <ion-title slot="start">
+            Register on
+            <ion-text color="primary">
+                <strong> NexuStream </strong>
+            </ion-text>
+        </ion-title>
+        <app-language-switcher slot="end"></app-language-switcher>
     </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="login-content">
     <form [formGroup]="registerForm" (ngSubmit)="register()">
         <div class="split-wrapper">
-            
             <div class="column left-column">
                 <h1 class="title">Welcome to NexuStream</h1>
 
@@ -36,7 +30,7 @@
                             </ion-item>
                         </div>
 
-                        <div class="input-group" style="margin-top: 15px;">
+                        <div class="input-group" style="margin-top: 15px">
                             <ion-label position="stacked">Password</ion-label>
                             <ion-item lines="none" class="custom-input">
                                 <ion-input
@@ -53,8 +47,10 @@
                             </ion-item>
                         </div>
 
-                        <div class="input-group" style="margin-top: 15px;">
-                            <ion-label position="stacked">Conferma Password</ion-label>
+                        <div class="input-group" style="margin-top: 15px">
+                            <ion-label position="stacked"
+                                >Conferma Password</ion-label
+                            >
                             <ion-item lines="none" class="custom-input">
                                 <ion-input
                                     formControlName="conf_password"
@@ -69,8 +65,13 @@
                             </ion-item>
                         </div>
 
-                        <div class="button-container" style="margin-top: 25px;">
-                            <ion-button type="submit" expand="block" class="register-button" [disabled]="registerForm.invalid">
+                        <div class="button-container" style="margin-top: 25px">
+                            <ion-button
+                                type="submit"
+                                expand="block"
+                                class="register-button"
+                                [disabled]="registerForm.invalid"
+                            >
                                 Register
                             </ion-button>
                         </div>
@@ -99,11 +100,13 @@
 
                 <div class="red-sphere">
                     <div class="smaller-sphere">
-                        <img [src]='"static/avatars/avatar-000.png" | backendUrl' alt="Avatar" />
+                        <img
+                            [src]='"static/avatars/avatar-000.png" | backendUrl'
+                            alt="Avatar"
+                        />
                     </div>
                 </div>
             </div>
-
         </div>
     </form>
 </ion-content>

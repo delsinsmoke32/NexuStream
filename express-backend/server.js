@@ -20,6 +20,9 @@ const populateDb = require("./db/populateDb").populateDb
 const fs = require('fs');
 const path = require('path');
 
+const HOST = process.env.HOST || "localhost"
+const PORT = process.env.PORT || 3000;
+
 // Configurazione di Swagger
 const swaggerOptions = {
     swaggerDefinition: {
@@ -31,7 +34,7 @@ const swaggerOptions = {
         },
         servers: [
             {
-                url: 'http://localhost:3000',
+                url: `http://${HOST}:${PORT}`,
             },
         ],
         components: {
@@ -51,7 +54,6 @@ const swaggerOptions = {
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
-const PORT = process.env.PORT || 3000;
 
 app.use(detectLanguage);
 app.use(express.json());
@@ -83,6 +85,6 @@ app.use((req, res) => {
 })
 
 
-app.listen(PORT, () => {
-    console.log(`Server in ascolto su http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+    console.log(`Server in ascolto su http://${HOST}:${PORT}`);
 });

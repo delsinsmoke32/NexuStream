@@ -77,16 +77,44 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true,
-              "namedChunks": true
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
             },
             "ci": {
-              "progress": false
+              "progress": false,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.ci.ts"
+                }
+              ]
             },
             "it": {
-              "localize": ["it"]
+              "localize": [
+                "it"
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.it.ts"
+                }
+              ]
             },
             "en": {
-              "localize": ["en"]
+              "localize": [
+                "en"
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.en.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"

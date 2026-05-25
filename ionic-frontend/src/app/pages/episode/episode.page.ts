@@ -1,35 +1,25 @@
-import { Component, ElementRef, OnInit, viewChild } from '@angular/core'
 import { CommonModule } from '@angular/common'
+import { Component, ElementRef, inject, OnInit, viewChild } from '@angular/core'
 import { FormsModule } from '@angular/forms'
-import {
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    IonRow,
-    IonCol,
-    IonCard,
-    IonCardHeader,
-    IonCardContent,
-    IonCardTitle,
-    IonButton,
-    IonItem,
-    IonLabel,
-    IonInput,
-    IonIcon,
-    IonSkeletonText,
-} from '@ionic/angular/standalone'
-import { addIcons } from 'ionicons'
 import { CommentsComponent } from '@app/components/comments/comments.component'
 import { Episode, EpisodeApi } from '@app/services/episode-api'
-import { Observable } from '@lib/rxjs/dist/types'
 import {
+    IonButton,
+    IonCard,
+    IonCardContent,
+    IonContent,
+    IonIcon,
+} from '@ionic/angular/standalone'
+import {
+    addCircleOutline,
     playCircle,
     shareSocialOutline,
-    addCircleOutline,
 } from '@lib/ionicons/icons'
+import { Observable } from '@lib/rxjs/dist/types'
+import { addIcons } from 'ionicons'
 import videojs from 'video.js'
 //import 'videojs-theme-kit' aggiunto alla angular.json in styles
+import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
 
 @Component({
     selector: 'app-episode',
@@ -38,27 +28,18 @@ import videojs from 'video.js'
     standalone: true,
     imports: [
         IonContent,
-        IonHeader,
-        IonTitle,
-        IonToolbar,
         IonCard,
-        IonRow,
-        IonCol,
-        IonItem,
-        IonCardHeader,
         IonCardContent,
-        IonCardTitle,
         IonButton,
         CommonModule,
         FormsModule,
-        IonLabel,
-        IonInput,
         IonIcon,
         CommentsComponent,
-        IonSkeletonText,
     ],
+    providers: [BackendUrlPipe],
 })
 export class EpisodePage implements OnInit {
+    backendUrl = inject(BackendUrlPipe)
     videoElement =
         viewChild.required<ElementRef<HTMLVideoElement>>('videoPlayer')
     player: any
@@ -84,7 +65,9 @@ export class EpisodePage implements OnInit {
                 fluid: true,
                 sources: [
                     {
-                        src: 'http://localhost:3000/api/shows/1/seasons/1/episodes/1/stream',
+                        src: this.backendUrl.transform(
+                            'api/shows/1/seasons/1/episodes/1/stream'
+                        ),
                         type: 'application/x-mpegURL',
                     },
                 ],

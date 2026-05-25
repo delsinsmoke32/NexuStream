@@ -1,5 +1,9 @@
 const episodeModel = require('../models/episodeModel');
 const { validationResult } = require('express-validator');
+// TEMP per stream
+require('dotenv').config();
+const HOST = process.env.HOST || "localhost"
+const PORT = process.env.PORT || 3000;
 
 const getEpisodeDetails = async (req, res) => {
     const errors = validationResult(req);
@@ -83,7 +87,7 @@ const stream = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
     let id = "test"
-    let baseUri = `http://localhost:3000/static/videos/${id}/`;
+    let baseUri = `http://${HOST}:${PORT}/static/videos/${id}/`;
     const audios = [
         { name: 'Japanese (Original)', lang: 'jp', uri: 'audio1/audio1.m3u8', default: 'YES' },
         { name: 'English', lang: 'en', uri: 'audio2/audio2.m3u8', default: 'NO' }

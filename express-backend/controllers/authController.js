@@ -20,30 +20,30 @@ const login = async (req, res) => {
 
     try {
         // 2. Chiamata al Model per cercare l'utente
-        const usr = await userModel.getUserByEmail(email);
+        const user = await userModel.getUserByEmail(email);
 
-        if (!usr) {
+        if (!user) {
             return res.status(400).json({ message: "L'utente non esiste." });
         }
 
         // 3. Verifica della password
-        const isMatch = await bcrypt.compare(password, usr.Password);
+        const isMatch = await bcrypt.compare(password, user.Password);
         if (!isMatch){
             return res.status(400).json({ message: "Email o password errati." });
         }
 
         // 4. Generazione del Token JWT
         const token = jwt.sign(
-            { id: usr.UserID, username: usr.Username, isAdmin: usr.isAdmin, isMod: usr.isMod, isCat: usr.isCataloguer },
+            { id: user.UserID, username: user.Username, isAdmin: user.isAdmin, isMod: user.isMod, isCat: user.isCataloguer, audioLang: user.REF_Audio_Language, textLang: user.REF_Text_Language, appLang: user.REF_App_Language},
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
 
         // 5. Risposta di successo (nascondendo la password)
-        delete usr.Password;
+        delete user.Password;
         return res.json({
-            message: "Welcome back, " + usr.Username,
-            usr,
+            message: "Welcome back, " + user.Username,
+            user,
             token,
         });
         
@@ -71,12 +71,7 @@ const register = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
     
-    const { email, password, username, conf_password, languageId, propicId } = req.body;
-
-    // 2. Controllo logico della corrispondenza password
-    if (password !== conf_password){
-        return res.status(400).json({ message: "Le password non corrispondono." });
-    }
+    const { username, email, password, audioLanguageId, textLanguageId, appLanguageId, propicURI } = req.body;
 
     try {
         // 3. Hashing della password
@@ -84,7 +79,7 @@ const register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, rounds);
 
         // 4. Chiamata al Model per l'inserimento
-        const result = await userModel.createUser(username, email, hashedPassword, languageId, propicId);
+        const result = await userModel.createUser(username, email, hashedPassword, audioLanguageId, textLanguageId, appLanguageId, propicURI);
 
         console.log("Utente creato con ID: ", result.id);
         return res.status(201).json({ message: "Registrazione completata!", userId: result.id });

@@ -11,38 +11,67 @@ router.use(isAdmin);
 /**
  * @swagger
  * /api/admin/users:
- *   get:
- *     summary: Recupera la lista degli utenti con filtri avanzati (Solo Admin)
- *     description: Permette agli amministratori di scorrere gli utenti registrati, cercando per username/email o filtrando per ruolo amministrativo.
- *     tags:
- *       - Admin Panel
- *     security:
- *       - BearerAuth: []
- *     parameters:
- *       - in: query
- *         name: search
- *         required: false
- *         schema:
- *           type: string
- *           description: Testo per cercare parzialmente in username o email
- *       - in: query
- *         name: role
- *         required: false
- *         schema:
- *           type: string
- *           enum: [mod, cataloguer, admin]
- *           description: Filtro per mostrare solo utenti con uno specifico ruolo
- *     responses:
- *       200:
- *         description: Array di utenti estratto con successo.
- *       400:
- *         description: Filtri o parametri non validi.
- *       403:
- *         description: Accesso negato, l'utente corrente non è un amministratore.
- *       500:
- *         description: Errore del server.
+ *  get:
+ *    summary: Recupera la lista degli utenti con filtri avanzati (Solo Admin)
+ *    description: Permette agli amministratori di scorrere gli utenti registrati, cercando per username/email o filtrando per ruolo amministrativo.
+ *    tags:
+ *      - Admin Panel
+ *    security:
+ *      - BearerAuth: []
+ *    parameters:
+ *      - in: query
+ *        name: search
+ *        required: false
+ *        schema:
+ *          type: string
+ *        description: Testo per cercare parzialmente in username o email
+ *      - in: query
+ *        name: role
+ *        required: false
+ *        schema:
+ *          type: string
+ *          enum: [mod, cataloguer, admin]
+ *        description: Filtro per mostrare solo utenti con uno specifico ruolo
+ *    responses:
+ *      200:
+ *        description: Array di utenti estratto con successo.
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: array
+ *            items:
+ *              type: object
+ *              properties:
+ *                UserID:
+ *                  type: integer
+ *                  example: 12
+ *                Username:
+ *                  type: string
+ *                  example: "ModMaster99"
+ *                Email:
+ *                  type: string
+ *                  format: email
+ *                  example: "mod@nexustream.com"
+ *                RegistrationDate:
+ *                  type: string
+ *                  format: date-time
+ *                  example: "2026-01-15T14:32:01Z"
+ *                isAdmin:
+ *                  type: integer
+ *                  example: 0
+ *                isMod:
+ *                  type: integer
+ *                  example: 1
+ *                isCataloguer:
+ *                  type: integer
+ *                  example: 0
+ *      400:
+ *        description: Filtri o parametri di query non validi o controlli formali falliti.
+ *      403:
+ *        description: Accesso negato, token mancante o l'utente corrente non ha i primi privilegi di amministratore.
+ *      500:
+ *        description: Errore del server durante l'estrazione o il filtraggio degli utenti.
  */
-
 
 router.get('/', [
     query('search').optional().isString().trim().notEmpty().withMessage("Termine di ricerca non valido"),

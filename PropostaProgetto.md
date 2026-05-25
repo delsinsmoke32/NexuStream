@@ -23,20 +23,28 @@ Per casi particolari, si può prevedere in futuro il blocco o sblocco manuale de
 
 Ogni episodio avrà una sezione commenti ad esso dedicata: i commenti supporteranno i timestamp del video, e **diversi** *stili* di **_formattazione_**. I commenti verranno gestiti come thread: sarà possibile quindi commentare l'episodio stesso o rispondere ad un commento particolare. L'intera thread farà sempre riferimento all'episodio.
 
-Si prevede in futuro l'implementazione di una feature di traduzione automatica dei commenti, per esempio facendo uso delle tier gratis dell'API di Google Translate, per permettere una maggior interazione fra utenti di paesi diversi.
-
 
 ## Quali sono gli attori dell'applicazione?
 
 
 | Attore | Ruolo |
 |---|---|
-| Utente | Crea e gestisce il proprio profilo.  registrazione e login. Una feature per il recupero password è prevista, utilizzando un API per le mail. Inoltre, l'utente visualizza contenuti streaming e le discussioni ad essi annesse: a queste ultime potrà partecipare nelle rispettive sezioni commenti. Oltre a ciò, è prevista una funzione di ricerca per trovare anime specifici in base al titolo o - possibilmente - tag, nonchè la possibilità di mettere like ai commenti e di inserire le serie nei propri preferiti, con appositi pulsanti. L'utente ha i privilegi più bassi di tutta l'applicazione. Si può prevedere eventualmente l'implementazione di diversi tier di utenti, e l'introduzione di abbonamenti che permettono l'accesso a diversi contenuti e funzionalità. |
-| Moderatore | Gestisce l'interazione tra gli utenti, specificamente nelle sezioni commenti. Qualora un utente infranga i ToS della piattaforma, il Moderatore ha il diritto (e il dovere) di impedirgli di commentare, e di nascondere commenti offensivi. Qualora lasci un commento sotto qualche episodio, avrà un flair speciale accanto allo username. Può visualizzare tutti i commenti, compresi quelli nascosti, e sono previste funzionalità per facilitare l'operazione di moderazione, per esempio permettendogli di contrassegnare i commenti già approvati. Svolgerà le sue funzioni all'interno della sezione commenti stessa. |
-| Gestore Catalogo | Il principale compito del Gestore Catalogo è mantenere aggiornato il catalogo delle serie - che sia aggiungendone di nuove o caricando episodi con qualità più alta o lingue diverse. Come il Moderatore, anche il Gestore Catalogo ha un flair speciale. Per svolgere le sue funzioni avrà accesso a schermate particolari, contenenti per esempio form per l'inserimento di nuovi contenuti. |
-| Admin | L'admin si occupa di supervisionare Moderatori e Gestori Catalogo, che sono selezionati da lui personalmente. Può modificare lo status di ciascun utente a suo piacimento, avendo i privilegi più alti. Condivide le funzionalità di Moderatore e Gestore Catalogo. Inoltre, ha il flair più speciale di tutti. |
+| Utente | L'Utente crea e gestisce il proprio profilo, visualizza contenuti e interagisce con le discussioni. </br> Sono disponibili funzionalità di registrazione, di login, di recupero e di modifica password. L'Utente può partecipare alle discussioni nelle rispettive sezioni commenti. Può cercare show specifici in base al titolo o genere, mettere like a commenti ed episodi e di inserire le serie nei propri preferiti, con appositi pulsanti. </br> L'Utente può interrompere la visione dei contenuti in ogni momento, e riprendere facilmente la visione attraverso la funzionalità di "Continua a guardare". </br> Può scegliere una foto di profilo tra opzioni predeterminate, un username e una lingua preferita. Questa influenzerà la lingua predefinita per i contenuti, se disponibile. </br> L'Utente ha i privilegi più bassi di tutta l'applicazione, dopo il Guest. |
+| Moderatore | Il Moderatore gestisce l'interazione tra gli utenti, specificamente nelle sezioni commenti. </br> Qualora un utente infranga i ToS della piattaforma, il Moderatore ha il diritto (e il dovere) di impedirgli di commentare, e di nascondere commenti offensivi. Qualora lasci un commento sotto qualche episodio, avrà un flair speciale accanto allo username. Può visualizzare tutti i commenti, compresi quelli nascosti. </br> Sono disponibili funzionalità per facilitare l'operazione di moderazione, per esempio quella di contrassegnare i commenti già approvati. Svolgerà le sue funzioni all'interno della sezione commenti stessa, con un interfaccia modificata appositamente. |
+| Gestore Catalogo | Il Gestore Catalogo mantiene aggiornato il catalogo delle serie. </br> Per svolgere le sue funzioni avrà accesso a schermate particolari, contenenti per esempio form per l'inserimento di nuovi contenuti. Può aggiungere, modificare, rimuovere episodi, stagioni e serie, nonché rispettive descrizioni. Può aggiungere lingue e sottotitoli ad episodi. Ha anche il compito di aggiornare il catalogo delle foto profilo. Come il Moderatore, anche il Gestore Catalogo ha un flair speciale. |
+| Admin | L'Admin si occupa di supervisionare Moderatori e Gestori Catalogo, che sono selezionati da lui personalmente. Può visualizzare e modificare lo status di ciascun utente a suo piacimento, avendo i privilegi più alti. Condivide le funzionalità di Moderatore e Gestore Catalogo. Inoltre, ha il flair più speciale di tutti. |
+| Guest | Può visualizzare tutte le pagine che non richiedono alcuna autorizzazione, come la lista degli episodi di uno show. Non può visualizzare contenuti streaming, personalizzare il profilo, o visualizzare o pubblicare commenti. |
 ---
 
+## Quali sono le entità principali?
+
+| Entità | Descrizione |
+|---|---|
+| Show | Ha un titolo, una descrizione, un thumbnail, e diverse stagioni. Ha una data di inizio e di fine. Può avere uno o più generi. Può essere aggiunto ai preferiti. |
+| Stagione | Ha un titolo, una descrizione, data di inizio e di fine. Contiene più episodi.  |
+| Episodio | Ha un titolo, una descrizione, e data di uscita. Può essere visualizzato in più lingue e con più sottotitoli, se presenti. L'utente può mettere like a un episodio. Viene mantenuta la cronologia di visione. |
+| Commento | Ha un autore e una data di scrittura. Può essere riferito a un commento genitore, creando così un thread. Ogni thread fa riferimento a uno specifico episodio. Può contenere timestamp dell'episodio, testo formattato, e tag spoiler. Il moderatore ne gestisce la visibilà e l'approvazione. |
+---
 
 ## Quali sono le relazioni tra i nostri attori?
 
@@ -44,15 +52,3 @@ Di seguito, un diagramma ER che mostra le relazioni basilari presenti nel sito, 
 
 
 ![ERDiagram](src/ErDiagramma.png)
-
-## Terms of Service
-Di seguito, le regole del sito:
-- Trattare gli altri utenti con rispetto. In altre parole, trattare il prossimo come si vorrebbe essere trattati.
-
-- Qualunque tipo di spam sarà rimosso e, qualora un utente infranga questa regola più volte, sarà a rischio ban.
-
-- Evitare di scrivere COMMENTI IN CAPS.
-
-- Insulti contro lo staff del sito o altri utenti non saranno tollerati, e comporteranno azioni disciplinari.
-
-- Usare un linguaggio consono, riducendo al minimo improperie e imprecazioni varie. Cercare di attenersi al topic attuale.

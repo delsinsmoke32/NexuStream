@@ -12,6 +12,7 @@ const searchRoute = require("./routes/search");
 const adminRoute = require("./routes/adminPage");
 const cataloguerRoute = require("./routes/cataloguerPage");
 const showRoute = require("./routes/show");
+const detectLanguage = require("./middleware/detectLanguage");
 const resetDb = require('./db/db').resetDb;
 const db = require("./db/db").db;
 const initDb = require("./db/db").initDb;
@@ -51,6 +52,8 @@ const swaggerOptions = {
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 const PORT = process.env.PORT || 3000;
+
+app.use(detectLanguage);
 app.use(express.json());
 app.use(cors());
 app.use('/api/login', loginRoute);
@@ -64,17 +67,6 @@ app.use("/api/shows", showRoute);
 app.use('/static', express.static(path.join(__dirname, 'public')));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
-// app.use('/static/videos', (req, res, next) => {
-//   if (req.path.endsWith('.m4s')) {
-//     res.set('Content-Type', 'video/iso.segment');
-//   } else if (req.path.endsWith('.mp4')) {
-//     res.set('Content-Type', 'video/mp4');
-//   } else if (req.path.endsWith('.m3u8')) {
-//     res.set('Content-Type', 'application/x-mpegURL');
-//   }
-//   next();
-// }, express.static('public/videos'));
-
 BigInt.prototype.toJSON = function() { return this.toString() }; //fixgpt
 
 resetDb();
@@ -84,17 +76,6 @@ populateDb();
 app.get('/', (req, res) => {
     res.send('Server attivo');
 });
-
-app.get('/keys', (req, res) => { 
-    res.status(200).send(atob(process.env.VIDEO_KEY))
- })
-
-// app.get('/api/episodes', (req, res) => {
-//     res.json([
-//         {id: 4, title: 'Il più forte', duration: '24:00'},
-//         {id: 5, title: 'End of Za Warudo', duration: '24:00'},
-//     ]);
-// });
 
 //LASCIARE SEMPRE PER ULTIMA, ALTRIMENTI OGNI RICHIESTA DIVENTA 404
 app.use((req, res) => {

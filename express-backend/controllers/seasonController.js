@@ -2,19 +2,26 @@ const seasonModel = require('../models/seasonModel');
 const { validationResult } = require('express-validator');
 
 const getSeasonDetails = async (req, res) => {
-    // 1. Controllo errori dei validatori di Express
+    // Controllo errori dei validatori di Express
     const errors = validationResult(req);
     if (!errors.isEmpty()){
         return res.status(400).json({ errors: errors.array() });
     }
 
     const { seasonId } = req.params;
+    const user = req.user;
+
+    if (user) {
+        const applang = user.appLang;
+    } else {
+        const applang = req.language;
+    }
 
     try {
-        // 2. Chiamata al Model per estrarre la stagione
-        const season = await seasonModel.getSeasonById(seasonId);
+        // Chiamata al Model per estrarre la stagione
+        const season = await seasonModel.getSeasonById(seasonId, applang);
         
-        // 3. Controllo esistenza
+        // Controllo esistenza
         if (!season) {
             return res.status(404).json({ message: "Stagione non trovata." });
         }

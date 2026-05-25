@@ -1,4 +1,5 @@
 const showModel = require('../models/showModel');
+const userController = require('../controllers/userController');
 const { validationResult } = require('express-validator');
 
 const search = async (req, res) => {
@@ -27,16 +28,22 @@ const search = async (req, res) => {
 const getHomeData = async (req, res) => {
     const user = req.user;
 
+    if (user) {
+        const applang = user.appLang;
+    } else {
+        const applang = req.language;
+    }
+
     try {
         // 1. Prepariamo le query base obbligatorie per tutti (anonimi e loggati)
         const promises = [
-            showModel.getTopFavorited(),
-            showModel.getTopStreamed()
+            showModel.getTopFavorited(applang),
+            showModel.getTopStreamed(applang)
         ];
 
         // 2. Se l'utente è loggato, aggiungiamo la promessa per il "Continua a guardare"
         if (user) {
-            promises.push(showModel.getContinueWatching(user.id));
+            promises.push(showModel.getContinueWatching(user.id, applang));
         }
 
         // 3. Eseguiamo tutto in parallelo
@@ -67,7 +74,12 @@ const getShowDetails = async (req, res) => {
     const { showId } = req.params;
 
     try {
-        const show = await showModel.getShowById(showId);
+        if (req.user) {
+            const applang = req.user.appLang;
+        } else {
+            const applang = req.language;
+        }
+        const show = await showModel.getShowById(showId, applang);
         
         if (!show) {
             return res.status(404).json({ message: "Serie non trovata." });

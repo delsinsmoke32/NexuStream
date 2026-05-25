@@ -1,0 +1,17 @@
+<ion-content class="ion-padding ion-text-center flex-center">
+  <div class="error-container">
+    <ion-icon name="compass-outline" color="primary" style="font-size: 6rem;"></ion-icon>
+    
+    <h1 style="font-size: 4rem; font-weight: 900; margin: 10px 0 0 0; color: var(--ion-color-primary);">404</h1>
+    <h2 style="font-weight: bold; margin-bottom: 20px;">PAGINA NON TROVATA</h2>
+    
+    <p style="color: #aaa; max-width: 280px; margin: 0 auto 30px auto;">
+      La risorsa che stai cercando potrebbe essere stata rimossa, aver cambiato nome o essere temporaneamente non disponibile.
+    </p>
+
+    <ion-button color="primary" (click)="goToHome()" expand="block" fill="solid" routerLink="/home">
+      <ion-icon slot="start" name="home-outline"></ion-icon>
+      Torna alla Home
+    </ion-button>
+  </div>
+</ion-content>

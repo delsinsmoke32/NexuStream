@@ -1,0 +1,69 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="dark" style="border-bottom: 2px solid var(--ion-color-primary);">
+    <ion-title color="primary">Gestione Utenti & Ruoli</ion-title>
+    <ion-buttons slot="end">
+      <ion-button color="primary" (click)="logout()">
+        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-searchbar 
+    placeholder="Cerca utente..." 
+    color="secondary" 
+    [debounce]="500"
+    (ionInput)="onSearch($event)"> </ion-searchbar>
+
+  <ion-list lines="none" class="ion-no-padding ion-margin-top">
+    
+    @for (user of users(); track user.UserID) {
+      <ion-item color="secondary" class="ion-margin-bottom" style="border-radius: 8px;">
+        <ion-avatar slot="start" style="border: 1px solid var(--ion-color-primary);">
+          <img [src]="user.PropicURI ? (user.PropicURI | backendUrl) : 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
+        </ion-avatar>
+        
+        <ion-label>
+          <h2 style="font-weight: bold; color: var(--ion-text-color);">{{ user.Username }}</h2>
+          <p style="color: #999;">{{ user.Email }}</p>
+          
+          <div class="ion-margin-top">
+            @if (user.isAdmin === 1) { <ion-badge color="danger" class="ion-margin-end">Admin</ion-badge> }
+            @if (user.isMod === 1) { <ion-badge color="primary" class="ion-margin-end">Mod</ion-badge> }
+            @if (user.isCataloguer === 1) { <ion-badge color="tertiary" class="ion-margin-end">Catalogatore</ion-badge> }
+            
+            @if (user.isAdmin !== 1 && user.isMod !== 1 && user.isCataloguer !== 1) {
+              <ion-badge color="medium">Utente Base</ion-badge>
+            }
+          </div>
+        </ion-label>
+
+        <ion-select 
+          slot="end" 
+          [value]="getUserRolesArray(user)" 
+          multiple="true"
+          interface="alert" 
+          okText="Salva Ruoli"
+          cancelText="Annulla"
+          (ionChange)="changeRole(user.UserID, $event)">
+          <ion-select-option value="mod">Moderatore</ion-select-option>
+          <ion-select-option value="cataloguer">Catalogatore</ion-select-option>
+        </ion-select>
+      </ion-item>
+    } @empty {
+      <div class="ion-text-center ion-padding" style="color: #666;">
+        <ion-icon name="people-outline" style="font-size: 3rem; color: var(--ion-color-primary);"></ion-icon>
+        <p>Nessun utente trovato nel database.</p>
+      </div>
+    }
+
+  </ion-list>
+
+  <ion-infinite-scroll threshold="150px" (ionInfinite)="loadMoreData($event)"> <ion-infinite-scroll-content 
+      loadingSpinner="bubbles" 
+      loadingText="Caricamento altri utenti...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+  
+</ion-content>

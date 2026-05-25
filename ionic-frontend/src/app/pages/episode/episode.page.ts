@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core'
+import { Component, ElementRef, OnInit, viewChild } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import {
@@ -59,7 +59,8 @@ import videojs from 'video.js'
     ],
 })
 export class EpisodePage implements OnInit {
-    @ViewChild('videoPlayer', { static: true }) videoElement!: ElementRef
+    videoElement =
+        viewChild.required<ElementRef<HTMLVideoElement>>('videoPlayer')
     player: any
 
     id = 1
@@ -75,7 +76,7 @@ export class EpisodePage implements OnInit {
     initPlayer() {
         // Configura il player
         this.player = videojs(
-            this.videoElement.nativeElement,
+            this.videoElement().nativeElement,
             {
                 autoplay: false,
                 controls: true,
@@ -83,7 +84,7 @@ export class EpisodePage implements OnInit {
                 fluid: true,
                 sources: [
                     {
-                        src: 'http://localhost:3000/static/videos/test/master.m3u8',
+                        src: 'http://localhost:3000/api/shows/1/seasons/1/episodes/1/stream',
                         type: 'application/x-mpegURL',
                     },
                 ],

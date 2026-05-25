@@ -1,47 +1,79 @@
 import { Routes } from '@angular/router';
+import { AdminGuard } from './guards/admin-guard'; // Assicurati che il percorso sia corretto
+import { CataloguerGuard } from './guards/cataloguer-guard';
+import { ModGuard } from './guards/mod-guard';
 
 export const routes: Routes = [
+  // 1. Reindirizzamento iniziale: se l'utente apre l'app senza path, lo mandiamo alla login (o alla home se preferisci)
   {
     path: '',
-    loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
+    redirectTo: 'login',
+    pathMatch: 'full'
   },
+  
+  // 2. Rotte di Autenticazione
   {
     path: 'login',
-    loadComponent: () => import('./pages/login/login.page').then( m => m.LoginPage)
+    loadComponent: () => import('./pages/login/login.page').then(m => m.LoginPage)
   },
   {
     path: 'register',
     loadComponent: () => import('./pages/register/register.page').then(m => m.RegisterPage)
   },
+  
+  // 3. Struttura a Tab (se decidi di usarla per la navigazione principale)
   {
-    path: 'episode',
-    loadComponent: () => import('./pages/episode/episode.page').then( m => m.EpisodePage)
+    path: 'tabs',
+    loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
   },
-  {
-    path: 'episode',
-    loadComponent: () => import('./pages/episode/episode.page').then( m => m.EpisodePage)
-  },
+  
+  // 4. Pagine Principali Full-Screen (se esterne alle Tabs)
   {
     path: 'home',
-    loadComponent: () => import('./pages/home-page/home-page.page').then( m => m.HomePagePage)
-  },
-  {
-    path: 'serie',
-    loadComponent: () => import('./pages/serie/shows.page').then( m => m.SeriePage)
+    loadComponent: () => import('./pages/home/home.page').then(m => m.HomePage)
   },
   {
     path: 'search',
-    loadComponent: () => import('./pages/search/search.page').then( m => m.SearchPage)
+    loadComponent: () => import('./pages/search/search.page').then(m => m.SearchPage)
+  },
+  
+  // 5. Pagine di Dettaglio con ID dinamico (fondamentali per caricare i dati corretti dal DB)
+  {
+    path: 'serie/:showId',
+    loadComponent: () => import('./pages/serie/serie.page').then(m => m.SeriePage)
   },
   {
-    path: 'user',
-    loadComponent: () => import('./pages/user/user.page').then( m => m.UserPage)
+    path: 'episode/:episodeId',
+    loadComponent: () => import('./pages/episode/episode.page').then(m => m.EpisodePage)
+  },
+  
+  // 6. Pagine private (admin, mod, catalogatori)
+  {
+    path: 'admin',
+    canActivate: [AdminGuard],
+    loadComponent: () => import('./pages/admin/admin.page').then(m => m.AdminPage)
+  },
+
+  {
+    path: 'cataloguer',
+    canActivate: [CataloguerGuard],
+    loadComponent: () => import('./pages/cataloguer/cataloguer.page').then( m => m.CataloguerPage)
+  },
+  
+  // 7. Gestione Errori e Permessi
+  {
+    path: 'forbidden',
+    loadComponent: () => import('./pages/forbidden/forbidden.page').then(m => m.ForbiddenPage)
   },
   {
-    path: 'favourites',
-    loadComponent: () => import('./pages/favourites/favourites.page').then( m => m.FavouritesPage)
+    path: 'not-found', // Standardizzato con il trattino
+    loadComponent: () => import('./pages/notfound/notfound.page').then(m => m.NotfoundPage)
   },
-
-
-
+  
+  // QUESTA DEVE ESSERE L'ULTIMA ROUTE, ALTRIMENTI REDIRECTA A 404 ANCHE QUANDO NON DOVREBBE
+  {
+    path: '**',
+    redirectTo: 'not-found',
+    pathMatch: 'full'
+  }
 ];

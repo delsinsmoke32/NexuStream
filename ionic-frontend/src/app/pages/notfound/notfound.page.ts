@@ -1,0 +1,28 @@
+import { Component, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { IonContent, IonHeader, IonButton, IonIcon, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+
+@Component({
+  selector: 'app-notfound',
+  templateUrl: './notfound.page.html',
+  styleUrls: ['./notfound.page.scss'],
+  standalone: true,
+  imports: [IonContent, IonHeader, IonTitle, IonButton, IonIcon, IonToolbar, CommonModule, FormsModule]
+})
+export class NotfoundPage implements OnInit {
+
+  private router = inject(Router);
+  
+  constructor() { }
+
+  ngOnInit() {
+  }
+
+  goToHome() {
+    console.log('Ritorno alla home avviato...');
+    this.router.navigate(['/home']);
+  }
+
+}

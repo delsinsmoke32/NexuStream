@@ -27,11 +27,19 @@ export const routes: Routes = [
   },
   {
     path: 'serie',
-    loadComponent: () => import('./pages/serie/serie.page').then( m => m.SeriePage)
+    loadComponent: () => import('./pages/serie/shows.page').then( m => m.SeriePage)
   },
   {
     path: 'search',
     loadComponent: () => import('./pages/search/search.page').then( m => m.SearchPage)
+  },
+  {
+    path: 'user',
+    loadComponent: () => import('./pages/user/user.page').then( m => m.UserPage)
+  },
+  {
+    path: 'favourites',
+    loadComponent: () => import('./pages/favourites/favourites.page').then( m => m.FavouritesPage)
   },
 
 

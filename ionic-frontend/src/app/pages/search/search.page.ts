@@ -30,7 +30,7 @@ export class SearchPage implements OnInit {
     
   }
   cercaSerie(testoDigitato:any){
-    const url = `http://localhost:8100/api/search?q=${testoDigitato}`
+    const url = `api/search?q=${testoDigitato}`
     return this.http.get<any[]>(url);
   }
 
@@ -54,7 +54,7 @@ export class SearchPage implements OnInit {
   }
 
   goToSerie(anime:any){
-    this.router.navigate(['/serie', anime.id]);
+    this.router.navigate(['/shows', anime.id]);
 
   }
 

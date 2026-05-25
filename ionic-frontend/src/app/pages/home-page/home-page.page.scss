@@ -43,3 +43,11 @@
   }
 }
 }
+.titolo-cliccabile {
+  cursor: pointer;
+  text-align: center;
+  /* Opzionale: un leggero effetto visivo quando l'utente ci passa sopra con il mouse */
+  &:hover {
+    opacity: 0.8;
+  }
+}

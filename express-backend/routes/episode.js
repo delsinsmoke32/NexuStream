@@ -4,7 +4,7 @@ const episodeController = require('../controllers/episodeController');
 const auth = require("../middleware/auth");
 const authOptional = require("../middleware/authOptional");
 const { body, param } = require('express-validator');
-const commentsRoute = require("./comments");
+const discussionsRoute = require("./discussion");
 
 /**
  * @swagger
@@ -179,7 +179,7 @@ router.get('/:episodeId/stream', authOptional, [
     param('episodeId').isInt({ min: 1 }).withMessage("ID episodio non valido"),
 ], episodeController.stream);
 
-// Iniezione del sotto-router dei commenti
-router.use('/:episodeId/comments', commentsRoute);
+// Iniezione del sotto-router delle discussioni
+router.use('/:episodeId/discussions', discussionsRoute);
 
 module.exports = router;

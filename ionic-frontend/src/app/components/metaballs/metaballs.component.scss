@@ -1,0 +1,30 @@
+.easter-egg-container {
+  position: absolute; // 🚀 Si sovrappone perfettamente al video
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.75); // Sfondo nero semi-trasparente per intravedere il video sotto
+  overflow: hidden;
+  z-index: 10; // Sta sopra al video, ma sotto i controlli di Play/Pause se vuoi
+  pointer-events: none; // I click passano attraverso, così toccando lo schermo il video riparte
+}
+
+canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+
+  // IMPOSTAZIONI DESKTOP (Monitor e TV)
+  filter: blur(18px) contrast(25);
+
+  // xIMPOSTAZIONI MOBILE (Sotto i 768px di larghezza)
+  @media (max-width: 767px) {
+    // Su schermi piccoli riduciamo il blur per evitare che la sfera evapori,
+    // e alziamo il contrasto per mantenere i bordi taglienti e liquidi.
+    filter: blur(8px) contrast(22);
+  }
+}

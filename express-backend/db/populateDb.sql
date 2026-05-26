@@ -63,8 +63,9 @@ INSERT INTO "Episodes" ("ReleaseDate", "REF_SeasonID", "Duration", "Likes", "Str
 
 -- 7. Discussioni (Discussions - per i thread degli episodi)
 INSERT INTO "Discussions" ("REF_EpisodeID", "OpenDate", "CloseDate", "ForceClosed", "Type") VALUES 
-(1, '2023-01-01 00:00', '2023-01-08 00:00', 0, 'standard'),
-(3, '2021-03-01 00:00', '2021-03-15 00:00', 1, 'archive');
+(1, '2026-01-01 00:00', '2027-01-08 00:00', 0, 'standard'),
+(2, '2026-01-01 00:00', '2027-01-01 00:00', 0, 'standard'),
+(2, '2021-03-01 00:00', '2021-03-15 00:00', 1, 'archive');
 
 -- 8. Associazioni Serie -> Generi (LINKs_Show_Has_Genre)
 INSERT INTO "LINKs_Show_Has_Genre" ("REF_GenreID", "REF_ShowID") VALUES 

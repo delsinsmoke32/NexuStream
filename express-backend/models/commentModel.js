@@ -1,39 +1,39 @@
 const db = require("../db/db");
 
 /**
- * Ottiene la lista dei commenti per un determinato episodio
- * @param {number} episodeId 
+ * Ottiene la lista dei commenti per una determinata discussione
+ * @param {number} discussionId 
  * @param {boolean} isMod (0 o 1)
  * @returns {Promise<Array<Object>>}
  */
 
-const getCommentsByEpisode = async (episodeId, isMod) => {
-    let sql = `SELECT c.*, u.Username, u.isAdmin, u.isMod
+const getCommentsByDiscussion = async (discussionId, isMod) => {
+    let sql = `SELECT c.*, u.Username, u.isAdmin, u.isMod, u.isCataloguer
                FROM Comments c
                JOIN Users AS u ON c.REF_UserID = u.UserID
-               WHERE c.REF_EpisodeID = ?`;
+               WHERE c.REF_DiscussionID = ?`;
 
     if (!isMod) {
         sql += ` AND c.isHidden = 0`;
     }
 
     sql += ` ORDER BY c.DateCommented DESC`;
-    return await db.allAsync(sql, [episodeId]);
+    return await db.allAsync(sql, [discussionId]);
 };
 
 /**
  * Crea un commento e lo aggiunge al database
  * @param {number} parentCommentId 
  * @param {number} userId 
- * @param {number} episodeId 
+ * @param {number} discussionId 
  * @param {string} text 
  * @returns {Promise<{id: number, changes: number}>}
  */
 
-const createComment = async (parentCommentId, userId, episodeId, text) => {
-    const sql = `INSERT INTO Comments (REF_CommentID, REF_UserID, REF_EpisodeID, CommentText, isHidden, Likes, isApproved)
+const createComment = async (parentCommentId, userId, discussionId, text) => {
+    const sql = `INSERT INTO Comments (REF_CommentID, REF_UserID, REF_DiscussionID, CommentText, isHidden, Likes, isApproved)
                  VALUES (?, ?, ?, ?, 0, 0, 0)`;
-    return await db.runAsync(sql, [parentCommentId || null, userId, episodeId, text]);
+    return await db.runAsync(sql, [parentCommentId || null, userId, discussionId, text]);
 };
 
 /**
@@ -90,7 +90,7 @@ const updateApprovalStatus = async (commentId, isApproved) => {
 };
 
 module.exports = {
-    getCommentsByEpisode,
+    getCommentsByDiscussion,
     createComment,
     getCommentInteraction,
     upsertCommentInteraction,

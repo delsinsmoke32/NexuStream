@@ -11,5 +11,11 @@
     "express": "^5.2.1",
     "express-validator": "^7.3.2",
     "jsonwebtoken": "^9.0.3"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "scripts": {
+    "start:all": "concurrently -n \"BACKEND,FRONTEND\" -c \"green,blue\" \"cd express-backend && npm run dev\" \"cd ionic-frontend && ionic serve\""
   }
 }

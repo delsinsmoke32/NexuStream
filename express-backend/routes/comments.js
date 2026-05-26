@@ -9,16 +9,17 @@ const { body, param } = require('express-validator');
 const commonParams = [
     param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido"),
     param('seasonId').isInt({ min: 1 }).notEmpty().withMessage("ID stagione non valido"),
-    param('episodeId').isInt({ min: 1 }).notEmpty().withMessage("ID episodio non valido")
+    param('episodeId').isInt({ min: 1 }).notEmpty().withMessage("ID episodio non valido"),
+    param('discussionId').isInt( { min: 1 }).notEmpty().withMessage("ID discussione non valido")
 ];
 
 
 /**
  * @swagger
- * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/comments:
+ * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/discussions/{discussionId}/comments:
  *  get:
- *    summary: Ottiene l'elenco dei commenti di un episodio
- *    description: Restituisce la lista di tutti i commenti lasciati dagli utenti per lo specifico episodio, comprensivi di informazioni sull'autore e l'eventuale struttura ad albero (risposte).
+ *    summary: Ottiene l'elenco dei commenti di una discussione
+ *    description: Restituisce la lista di tutti i commenti lasciati dagli utenti per la specifica discussione, comprensivi di informazioni sull'autore e l'eventuale struttura ad albero (risposte).
  *    tags:
  *      - Comments
  *    parameters:
@@ -39,7 +40,13 @@ const commonParams = [
  *        required: true
  *        schema:
  *          type: integer
- *        description: ID dell'episodio da cui prelevare i commenti
+ *        description: ID dell'episodio di appartenenza
+ *      - in: path
+ *        name: discussionId
+ *        required: true
+ *        schema:
+ *          type: integer
+ *        description: ID della discussione da cui prelevare i commenti 
  *    responses:
  *      200:
  *        description: Lista dei commenti caricata con successo.
@@ -80,7 +87,7 @@ const commonParams = [
  *      400:
  *        description: Uno o più ID nel path non sono validi o i controlli formali sono falliti.
  *      404:
- *        description: Episodio non trovato.
+ *        description: Discussione non trovata.
  *      500:
  *        description: Errore del server durante il caricamento dei commenti.
  *  post:
@@ -103,6 +110,11 @@ const commonParams = [
  *          type: integer
  *      - in: path
  *        name: episodeId
+ *        required: true
+ *        schema:
+ *          type: integer
+ *      - in: path
+ *        name: discussionId
  *        required: true
  *        schema:
  *          type: integer
@@ -147,7 +159,7 @@ const commonParams = [
  */
 
 
-router.get('/', authOptional, commonParams, commentController.getEpisodeComments);
+router.get('/', authOptional, commonParams, commentController.getDiscussionComments);
 
 router.post('/', auth, [
     ...commonParams,
@@ -158,7 +170,7 @@ router.post('/', auth, [
 
 /**
  * @swagger
- * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/comments/{commentId}/interact:
+ * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/discussions/{discussionId}/comments/{commentId}/interact:
  *   post:
  *     summary: Gestisce i Like e i Report su un commento (Richiede Auth)
  *     tags:
@@ -178,6 +190,11 @@ router.post('/', auth, [
  *           type: integer
  *       - in: path
  *         name: episodeId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: discussionId
  *         required: true
  *         schema:
  *           type: integer
@@ -217,7 +234,7 @@ router.post('/:commentId/interact', auth, [
 
 /**
  * @swagger
- * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/comments/{commentId}/hide:
+ * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/discussions/{discussionId}/comments/{commentId}/hide:
  *   patch:
  *     summary: Nasconde o mostra un commento (Solo Moderatori)
  *     tags:
@@ -237,6 +254,11 @@ router.post('/:commentId/interact', auth, [
  *           type: integer
  *       - in: path
  *         name: episodeId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: discussionId
  *         required: true
  *         schema:
  *           type: integer
@@ -273,7 +295,7 @@ router.patch('/:commentId/hide', isMod, [
 
 /**
  * @swagger
- * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/comments/{commentId}/approve:
+ * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/discussions/{discussionId}/comments/{commentId}/approve:
  *   patch:
  *     summary: Approva o disapprova un commento (Solo Moderatori)
  *     tags:
@@ -293,6 +315,11 @@ router.patch('/:commentId/hide', isMod, [
  *           type: integer
  *       - in: path
  *         name: episodeId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: discussionId
  *         required: true
  *         schema:
  *           type: integer

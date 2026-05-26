@@ -1,16 +1,16 @@
 const commentModel = require('../models/commentModel');
 const { validationResult } = require('express-validator');
 
-const getEpisodeComments = async (req, res) => {
+const getDiscussionComments = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-    const { episodeId } = req.params;
+    const { discussionId } = req.params;
     const user = req.user;
     const isMod = !!(user && user.isMod);
 
     try {
-        const comments = await commentModel.getCommentsByEpisode(episodeId, isMod);
+        const comments = await commentModel.getCommentsByDiscussion(discussionId, isMod);
         return res.json(comments);
     } catch (err) {
         console.error("Errore recupero commenti: ", err);
@@ -22,12 +22,12 @@ const postComment = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-    const { episodeId } = req.params;
+    const { discussionId } = req.params;
     const { text, parentCommentId } = req.body;
     const userId = req.user.id;
 
     try {
-        const result = await commentModel.createComment(parentCommentId, userId, episodeId, text);
+        const result = await commentModel.createComment(parentCommentId, userId, discussionId, text);
         return res.status(201).json({
             message: "Commento postato con successo!",
             commentId: result.id
@@ -105,7 +105,7 @@ const approveComment = async (req, res) => {
 };
 
 module.exports = {
-    getEpisodeComments,
+    getDiscussionComments,
     postComment,
     interactWithComment,
     hideComment,

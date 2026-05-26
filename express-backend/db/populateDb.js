@@ -52,7 +52,7 @@ const populateDb = async () => {
 
     // Tabella: Comments (Incluso commento padre e risposta)
     const commentsSql = `
-            INSERT INTO "Comments" ("REF_UserID", "REF_EpisodeID", "DateCommented", "CommentText", "REF_CommentID", "isHidden", "Likes", "isApproved", "ReportCount") 
+            INSERT INTO "Comments" ("REF_UserID", "REF_DiscussionID", "DateCommented", "CommentText", "REF_CommentID", "isHidden", "Likes", "isApproved", "ReportCount") 
             VALUES 
             (2, 1, '2023-05-10 14:30', "Questo primo episodio è stupendo!", NULL, 0, 10, 1, 0),
             (1, 1, '2023-05-10 15:00', "Concordo con te Marco!", 1, 0, 2, 1, 0),

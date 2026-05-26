@@ -69,11 +69,17 @@ export const routes: Routes = [
     path: 'not-found', // Standardizzato con il trattino
     loadComponent: () => import('./pages/notfound/notfound.page').then(m => m.NotfoundPage)
   },
+
+  // 8. Metaballs!
+  {
+    path: 'metaballs',
+    loadComponent: () => import('./pages/metaballs/metaballs.page').then( m => m.MetaballsPage)
+  },
   
   // QUESTA DEVE ESSERE L'ULTIMA ROUTE, ALTRIMENTI REDIRECTA A 404 ANCHE QUANDO NON DOVREBBE
   {
     path: '**',
     redirectTo: 'not-found',
     pathMatch: 'full'
-  }
+  },
 ];

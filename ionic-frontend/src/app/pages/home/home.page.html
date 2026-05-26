@@ -77,11 +77,11 @@
 <ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
   <ng-template>
     <ion-list color="dark">
-      <ion-item button (click)="openUserSettings()">
+      <ion-item button routerLink="/settings" (click)="openUserSettings()">
         <ion-icon slot="start" name="settings-outline"></ion-icon>
         Impostazioni
       </ion-item>
-      <ion-item button (click)="openFavorites()">
+      <ion-item button routerLink="/favourites" (click)="openFavorites()">
         <ion-icon slot="start" name="heart-outline"></ion-icon>
         Lista Preferiti
       </ion-item>

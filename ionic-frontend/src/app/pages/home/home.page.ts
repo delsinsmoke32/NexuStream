@@ -3,13 +3,15 @@ import { MenuController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { IonContent, IonHeader, IonTitle, IonToolbar, IonRow, IonCol, IonCard, IonCardHeader, IonCardContent,IonMenu, IonCardTitle, IonButton, IonItem, IonLabel, IonInput, IonIcon, IonList, IonPopover, IonSearchbar, IonButtons, IonMenuButton } from '@ionic/angular/standalone'
 import { addIcons } from 'ionicons';
-import { RouterModule } from '@angular/router';
+import { RouterModule,Router } from '@angular/router';
 import { heartOutline, logOutOutline, personCircleOutline, searchOutline, settingsOutline } from '@lib/ionicons/icons';
+import { AlertController, ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
+  standalone: true,
   imports: [IonButtons, IonSearchbar,
     IonContent,
     IonHeader,
@@ -29,7 +31,7 @@ import { heartOutline, logOutOutline, personCircleOutline, searchOutline, settin
     IonIcon,
     IonPopover,
     IonMenu,
-    IonList, IonMenuButton, RouterModule],
+    IonList, IonMenuButton,RouterModule ],
 
 })
 export class HomePage {
@@ -64,7 +66,9 @@ export class HomePage {
     { id: 5, name: 'Horror' }
   ];
 
-  constructor(
+  constructor(private router: Router,
+    private alertController: AlertController,
+    private toastController: ToastController,
     private menuController: MenuController,
   ) {
     
@@ -101,6 +105,7 @@ export class HomePage {
   // Azioni del menu profilo
   openUserSettings() {
     console.log('Apro le impostazioni...');
+   
     this.popover.dismiss();
   }
 
@@ -112,8 +117,40 @@ export class HomePage {
  
   
 
-  logout() {
-    console.log('Eseguo il logout...');
+ 
+    async logout() {
+    const alert = await this.alertController.create({
+      header: 'Disconnetti',
+      message: 'Sei sicuro di voler uscire da NexuStream?',
+      cssClass: 'custom-logout-alert', // Classe personalizzabile nel CSS globale
+      buttons: [
+        {
+          text: 'Annulla',
+          role: 'cancel',
+          handler: () => { console.log('Logout annullato'); }
+        },
+        {
+          text: 'Esci',
+          role: 'destructive',
+          handler: async () => {
+            console.log('Eseguo il logout...');
+            
+            // Mostra un piccolo feedback di conferma
+            const toast = await this.toastController.create({
+              message: 'Sessione chiusa correttamente',
+              duration: 2000,
+              color: 'dark'
+            });
+            await toast.present();
+
+            // Reindirizza l'utente alla pagina di login (o home per ora)
+            this.router.navigate(['/home']);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
     this.popover.dismiss();
   }
 }

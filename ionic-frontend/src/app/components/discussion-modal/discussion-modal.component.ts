@@ -1,14 +1,48 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonicModule, ModalController } from '@ionic/angular';
+
+// 🚀 IMPORTAZIONI STANDALONE CHIRURGICHE DI IONIC
+import { 
+  IonHeader, 
+  IonToolbar, 
+  IonTitle, 
+  IonButtons, 
+  IonButton, 
+  IonContent, 
+  IonItem, 
+  IonLabel, 
+  IonInput, 
+  IonSelect, 
+  IonSelectOption, 
+  IonToggle, 
+  IonIcon, 
+  ModalController 
+} from '@ionic/angular/standalone';
 
 @Component({
   selector: 'app-discussion-modal',
   templateUrl: './discussion-modal.component.html',
   styleUrls: ['./discussion-modal.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, ReactiveFormsModule]
+  imports: [
+    CommonModule, 
+    ReactiveFormsModule,
+    // 🚀 Registriamo singolarmente i componenti Ionic usati nell'HTML della modale
+    IonHeader, 
+    IonToolbar, 
+    IonTitle, 
+    IonButtons, 
+    IonButton, 
+    IonContent, 
+    IonItem, 
+    IonLabel, 
+    IonInput, 
+    IonSelect, 
+    IonSelectOption, 
+    IonToggle, 
+    IonIcon
+  ]
 })
 export class DiscussionModalComponent implements OnInit {
   @Input() discussion: any; // Riceve i dati se siamo in modalità modifica

@@ -1,164 +1,133 @@
-<ion-header [translucent]="true">
-  <ion-toolbar color="dark" style="border-bottom: 2px solid var(--ion-color-primary);">
-    
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark" class="main-header">
     @if (currentLevel() !== 'shows') {
       <ion-buttons slot="start">
-        <ion-button color="primary" (click)="navigateBack()">
-          <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
-        </ion-button>
+        <button class="header-back-btn" (click)="navigateBack()">
+          <svg viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M328 112L184 256l144 144"/></svg>
+        </button>
       </ion-buttons>
     }
 
-    <ion-title color="primary">
+    <ion-title>
       @if (currentLevel() === 'shows') { Catalogo Serie TV }
       @if (currentLevel() === 'seasons') { Gestione Stagioni }
       @if (currentLevel() === 'episodes') { Elenco Episodi }
     </ion-title>
 
     <ion-buttons slot="end">
-      <ion-button color="primary" (click)="managePropics()" title="Gestisci Propic">
-        <ion-icon slot="icon-only" name="image-outline"></ion-icon>
-      </ion-button>
+      <button class="header-action-btn propic-btn" (click)="managePropics()" title="Gestisci Propic">
+        <svg viewBox="0 0 512 512"><path d="M432 112H80a48 48 0 00-48 48v256a48 48 0 0048 48h352a48 48 0 0048-48V160a48 48 0 00-48-48zM96 432a32 32 0 1132-32 32 32 0 01-32 32zm272-128a48 48 0 1148-48 48 48 0 01-48 48z"/><path d="M432 432H192a16 16 0 01-14-8.2l-40-68.5a16 16 0 010-15.6l24-41.1a16 16 0 0128 0l16 27.4 112 112a16 16 0 01-14 26z"/></svg>
+      </button>
       
-      <ion-button color="primary" (click)="
-        currentLevel() === 'shows' ? openAddShowModal() : 
-        currentLevel() === 'seasons' ? openAddSeasonModal() : openAddEpisodeModal()
-      ">
-        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
-      </ion-button>
-      <ion-button color="primary" (click)="logout()">
-        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
-      </ion-button>
+      <button class="create-btn-native" (click)="openAddModal()">
+        <svg viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M256 112v288M400 256H112"/></svg>
+        Aggiungi
+      </button>
+
+      <button class="header-action-btn logout-btn" (click)="logout()" title="Logout">
+        <svg viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M304 336v40a40 40 0 01-40 40H104a40 40 0 01-40-40V136a40 40 0 01-40-40h160a40 40 0 0140 40v40M392 256H112M328 192l64 64-64 64"/></svg>
+      </button>
     </ion-buttons>
   </ion-toolbar>
+
+  @if (currentLevel() === 'shows') {
+    <ion-toolbar color="dark" class="search-bar-container">
+      <ion-searchbar 
+        placeholder="Cerca serie per titolo..." 
+        mode="md"
+        [debounce]="500"
+        (ionInput)="onSearch($event)">
+      </ion-searchbar>
+    </ion-toolbar>
+  }
 </ion-header>
 
 <ion-content class="ion-padding">
-  
-  @if (currentLevel() === 'shows') {
-    <ion-searchbar 
-      placeholder="Cerca serie TV per titolo..." 
-      color="secondary" 
-      [debounce]="500"
-      (ionInput)="onSearch($event)">
-    </ion-searchbar>
-  }
-
-  @switch (currentLevel()) {
+  <div class="cataloguer-grid">
     
-    @case ('shows') {
-      <ion-list lines="none" class="ion-no-padding ion-margin-top">
-        @for (show of shows(); track show.ShowID) {
-          <ion-item color="secondary" class="ion-margin-bottom" style="border-radius: 8px;">
-            <ion-icon slot="start" name="tv-outline" color="primary" style="font-size: 2rem;"></ion-icon>
-            <ion-label>
-              <h2 style="font-weight: bold; color: var(--ion-text-color);">
-                {{ getLangText(show.Title, 'it') }}
-              </h2>
-              <p style="color: #a3a3a3; font-size: 0.85rem;">
-                {{ getLangText(show.Description, 'it') }}
-              </p>
-              <p style="font-size: 0.75rem; color: #666; margin-top: 5px;">
-                Inizio: {{ show.DateStarted }} | Conclusa: {{ show.hasEnded ? 'Sì' : 'No' }}
-              </p>
-            </ion-label>
-            
-            <ion-buttons slot="end">
-              <ion-button fill="clear" color="primary" (click)="navigateToSeasons(show.ShowID)">
-                <ion-icon slot="icon-only" name="layers-outline"></ion-icon>
-              </ion-button>
-              <ion-button fill="clear" color="primary" (click)="openEditShowModal(show)">
-                <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-              </ion-button>
-              <ion-button fill="clear" color="danger" (click)="deleteShow(show.ShowID)">
-                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-              </ion-button>
-            </ion-buttons>
-          </ion-item>
-        } @empty {
-          <div class="ion-text-center ion-padding" style="color: #666; margin-top: 15vh;">
-            <ion-icon name="film-outline" style="font-size: 4rem; color: var(--ion-color-primary);"></ion-icon>
-            <p>Nessuna serie TV trovata nel catalogo.</p>
+    @if (currentLevel() === 'shows') {
+      @for (show of shows(); track show.ShowID) {
+        <div class="catalog-card edge-primary">
+          <div class="card-body">
+            <h2 class="card-main-title">{{ getLangText(show.Title, 'it') }}</h2>
+            <p class="card-description">{{ getLangText(show.Description, 'it') }}</p>
+            <div class="card-metadata">
+              <span>Inizio: <strong>{{ show.DateStarted }}</strong></span>
+              <span class="badge" [class.badge-ended]="show.hasEnded">{{ show.hasEnded ? 'Conclusa' : 'In Corso' }}</span>
+            </div>
           </div>
-        }
-      </ion-list>
+          <div class="card-actions-row">
+            <button class="card-action-btn btn-explore" (click)="navigateToSeasons(show.ShowID)">
+              <svg viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M48 320h416M48 256h416M48 192h416M48 128h416"/></svg> Sfoglia Stagioni
+            </button>
+            <button class="card-action-btn btn-edit" (click)="openEditModalData(show)">
+              Edit
+            </button>
+            <button class="card-action-btn btn-delete" (click)="deleteShow(show.ShowID)">
+              Elimina
+            </button>
+          </div>
+        </div>
+      } @empty { <div class="empty-state"><p>Nessuna serie TV in archivio.</p></div> }
     }
 
-    @case ('seasons') {
-      <ion-list lines="none" class="ion-no-padding ion-margin-top">
-        @for (season of seasons(); track season.SeasonID) {
-          <ion-item color="secondary" class="ion-margin-bottom" style="border-radius: 8px;">
-            <ion-icon slot="start" name="layers-outline" color="tertiary" style="font-size: 2rem;"></ion-icon>
-            <ion-label>
-              <h2 style="font-weight: bold; color: var(--ion-text-color);">
-                {{ getLangText(season.Title, 'it') }}
-              </h2>
-              <p style="color: #a3a3a3; font-size: 0.85rem;">
-                {{ getLangText(season.Description, 'it') }}
-              </p>
-              <p style="font-size: 0.75rem; color: #666; margin-top: 5px;">
-                Inizio: {{ season.DateStarted }} | Conclusa: {{ season.hasEnded ? 'Sì' : 'No' }}
-              </p>
-            </ion-label>
-            
-            <ion-buttons slot="end">
-              <ion-button fill="clear" color="primary" (click)="navigateToEpisodes(season.SeasonID)">
-                <ion-icon slot="icon-only" name="film-outline"></ion-icon>
-              </ion-button>
-              <ion-button fill="clear" color="primary" (click)="openEditSeasonModal(season)">
-                <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-              </ion-button>
-              <ion-button fill="clear" color="danger" (click)="deleteSeason(season.SeasonID)">
-                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-              </ion-button>
-            </ion-buttons>
-          </ion-item>
-        } @empty {
-          <div class="ion-text-center ion-padding" style="color: #666; margin-top: 15vh;">
-            <p>Nessuna stagione inserita per questa serie TV.</p>
+    @if (currentLevel() === 'seasons') {
+      @for (season of seasons(); track season.SeasonID) {
+        <div class="catalog-card edge-secondary">
+          <div class="card-body">
+            <h2 class="card-main-title">{{ getLangText(season.Title, 'it') }}</h2>
+            <p class="card-description">{{ getLangText(season.Description, 'it') }}</p>
+            <div class="card-metadata">
+              <span>Rilascio: <strong>{{ season.DateStarted }}</strong></span>
+              <span class="badge badge-season">Stagione {{ season.SeasonNumber }}</span>
+            </div>
           </div>
-        }
-      </ion-list>
+          <div class="card-actions-row">
+            <button class="card-action-btn btn-explore" (click)="navigateToEpisodes(season.SeasonID)">
+              <svg viewBox="0 0 512 512"><path d="M440 424V88a40 40 0 00-40-40H112a40 40 0 00-40 40v336M120 424h272M72 144h368M72 336h368M224 216l80 40-80 40v-80z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/></svg> Vedi Episodi
+            </button>
+            <button class="card-action-btn btn-edit" (click)="openEditModalData(season)">
+              Edit
+            </button>
+            <button class="card-action-btn btn-delete" (click)="deleteSeason(season.SeasonID)">
+              Elimina
+            </button>
+          </div>
+        </div>
+      } @empty { <div class="empty-state"><p>Nessuna stagione inserita.</p></div> }
     }
 
-    @case ('episodes') {
-      <ion-list lines="none" class="ion-no-padding ion-margin-top">
-        @for (episode of episodes(); track episode.EpisodeID) {
-          <ion-item color="secondary" class="ion-margin-bottom" style="border-radius: 8px;">
-            <ion-label>
-              <h2 style="font-weight: bold; color: var(--ion-text-color);">
-                {{ getLangText(episode.Title, 'it') }}
-              </h2>
-              <p style="color: #a3a3a3; font-size: 0.85rem;">
-                {{ getLangText(episode.Description, 'it') }}
-              </p>
-              <p style="font-size: 0.75rem; color: #666; margin-top: 5px;">
-                Rilascio: {{ episode.ReleaseDate }} | Durata: {{ episode.Duration }} min
-              </p>
-            </ion-label>
-            
-            <ion-buttons slot="end">
-              <ion-button fill="clear" color="primary" (click)="openEditEpisodeModal(episode)">
-                <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-              </ion-button>
-              <ion-button fill="clear" color="danger" (click)="deleteEpisode(episode.EpisodeID)">
-                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-              </ion-button>
-            </ion-buttons>
-          </ion-item>
-        } @empty {
-          <div class="ion-text-center ion-padding" style="color: #666; margin-top: 15vh;">
-            <p>Nessun episodio inserito in questa stagione.</p>
+    @if (currentLevel() === 'episodes') {
+      @for (episode of episodes(); track episode.EpisodeID) {
+        <div class="catalog-card edge-episode">
+          <div class="card-body">
+            <div class="episode-header-row">
+              <span class="ep-number">EPISODIO {{ episode.EpisodeNumber }}</span>
+              <span class="ep-duration">{{ episode.Duration }} min</span>
+            </div>
+            <h2 class="card-main-title">"{{ getLangText(episode.Title, 'it') }}"</h2>
+            <p class="card-description">{{ getLangText(episode.Description, 'it') }}</p>
+            <div class="card-metadata">
+              <span>Uscita: <strong>{{ episode.ReleaseDate }}</strong></span>
+            </div>
           </div>
-        }
-      </ion-list>
+          <div class="card-actions-row split-two">
+            <button class="card-action-btn btn-edit" (click)="openEditModalData(episode)">
+              Modifica Dettagli
+            </button>
+            <button class="card-action-btn btn-delete" (click)="deleteEpisode(episode.EpisodeID)">
+              Elimina
+            </button>
+          </div>
+        </div>
+      } @empty { <div class="empty-state"><p>Nessun episodio in questa stagione.</p></div> }
     }
-  }
+
+  </div>
 
   @if (currentLevel() === 'shows') {
     <ion-infinite-scroll threshold="150px" (ionInfinite)="loadMoreData($event)">
-      <ion-infinite-scroll-content loadingSpinner="bubbles" loadingText="Caricamento altre serie..."></ion-infinite-scroll-content>
+      <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
     </ion-infinite-scroll>
   }
-
 </ion-content>

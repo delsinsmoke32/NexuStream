@@ -1,7 +1,23 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { IonicModule, ModalController, ToastController } from '@ionic/angular';
+
+// 🚀 IMPORTAZIONI STANDALONE CHIRURGICHE
+import { 
+  IonHeader, 
+  IonToolbar, 
+  IonTitle, 
+  IonButtons, 
+  IonButton, 
+  IonContent, 
+  IonItem, 
+  IonLabel, 
+  IonToggle, 
+  IonIcon,
+  ModalController, 
+  ToastController 
+} from '@ionic/angular/standalone';
+
 import { DiscussionModalComponent } from '../../components/discussion-modal/discussion-modal.component';
 import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
 
@@ -10,7 +26,22 @@ import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
   templateUrl: './mod.page.html',
   styleUrls: ['./mod.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, DiscussionModalComponent, BackendUrlPipe]
+  imports: [
+    CommonModule, 
+    DiscussionModalComponent, 
+    BackendUrlPipe,
+    // 🚀 Registriamo singolarmente i componenti Ionic usati nell'HTML
+    IonHeader, 
+    IonToolbar, 
+    IonTitle, 
+    IonButtons, 
+    IonButton, 
+    IonContent, 
+    IonItem, 
+    IonLabel, 
+    IonToggle, 
+    IonIcon
+  ]
 })
 export class ModPage implements OnInit {
   private http = inject(HttpClient);

@@ -1,0 +1,204 @@
+// Griglia fluida responsive
+.cataloguer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+// Struttura Toolbar Header
+.main-header {
+  border-bottom: 2px solid var(--ion-color-primary, #b22222);
+}
+
+.search-bar-container {
+  --background: #181818 !important;
+  padding: 4px 8px;
+  
+  ion-searchbar {
+    --background: #121212 !important;
+    --color: #ffffff;
+    --placeholder-color: #666666;
+  }
+}
+
+// Bottoni di Controllo Header Nativi
+.header-back-btn, .header-action-btn {
+  background: transparent;
+  border: none;
+  color: var(--ion-color-primary, #b22222);
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.logout-btn { color: #666666; &:hover { color: #ff4d4d; } }
+
+.create-btn-native {
+  background-color: var(--ion-color-primary, #b22222);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    stroke: currentColor;
+  }
+  &:hover { background-color: var(--ion-color-primary-shade, #a21818); }
+}
+
+// Le Nuove Card di Catalogo NexuStream
+.catalog-card {
+  background: var(--ion-color-secondary, #181818);
+  border: 1px solid #232323;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  }
+
+  // Neon-Borders personalizzati per livello logico
+  &.edge-primary { border-top: 4px solid var(--ion-color-primary, #b22222); }
+  &.edge-secondary { border-top: 4px solid #32cd32; } // Neon Verde per stagioni
+  &.edge-episode { border-top: 4px solid #1e90ff; }   // Neon Blu per episodi
+}
+
+.card-body {
+  padding: 18px;
+  flex-grow: 1;
+
+  .episode-header-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    .ep-number { color: #1e90ff; }
+    .ep-duration { color: #666666; }
+  }
+
+  .card-main-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 8px 0;
+  }
+
+  .card-description {
+    font-size: 0.85rem;
+    color: #a3a3a3;
+    line-height: 1.4;
+    margin: 0 0 14px 0;
+    display: -webkit-box;
+    line-clamp: 3;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+.card-metadata {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #666666;
+  border-top: 1px solid #232323;
+  padding-top: 10px;
+
+  strong { color: #b3b3b3; }
+}
+
+// Sistema dei Badge
+.badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  background: rgba(50, 205, 50, 0.15);
+  color: #32cd32;
+
+  &.badge-ended {
+    background: rgba(178, 34, 34, 0.15);
+    color: #b22222;
+  }
+  &.badge-season {
+    background: rgba(255, 165, 0, 0.15);
+    color: orange;
+  }
+}
+
+// Struttura Bottoni delle Card
+.card-actions-row {
+  border-top: 1px solid #232323;
+  padding: 10px 14px;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 8px;
+
+  &.split-two {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.card-action-btn {
+  background: #232323;
+  border: none;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  svg { width: 14px; height: 14px; stroke: currentColor; }
+  &:hover { background: #303030; }
+}
+
+.btn-explore {
+  background-color: rgba(var(--ion-color-primary-rgb), 0.12);
+  color: var(--ion-color-primary, #b22222);
+  &:hover { background-color: rgba(var(--ion-color-primary-rgb), 0.2); }
+}
+
+.btn-delete {
+  color: #ff4d4d;
+  background: rgba(255, 77, 77, 0.08);
+  &:hover { background: rgba(255, 77, 77, 0.18); }
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 100px 20px;
+  color: #555555;
+  font-size: 1.1rem;
+}

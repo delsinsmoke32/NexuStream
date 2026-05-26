@@ -1,0 +1,219 @@
+// Griglia fluida responsive
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+// Struttura Toolbar Header NexuStream
+.main-header {
+  border-bottom: 2px solid var(--ion-color-primary, #b22222);
+}
+
+.search-bar-container {
+  --background: #181818 !important;
+  padding: 4px 8px;
+  
+  ion-searchbar {
+    --background: #121212 !important;
+    --color: #ffffff;
+    --placeholder-color: #666666;
+  }
+}
+
+// Bottone di Logout nell'Header
+.header-action-btn {
+  background: transparent;
+  border: none;
+  color: #666666;
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: color 0.2s ease;
+
+  svg {
+    width: 22px;
+    height: 22px;
+  }
+  &:hover { color: #ff4d4d; }
+}
+
+// Card Utente Dark/Neon
+.user-card {
+  background: var(--ion-color-secondary, #181818);
+  border: 1px solid #232323;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  }
+
+  // Bordo neon se l'utente è un amministratore di sistema
+  border-top: 4px solid #555555;
+  &.edge-admin { border-top: 4px solid var(--ion-color-danger, #d32f2f); }
+}
+
+.card-body {
+  padding: 20px;
+  flex-grow: 1;
+}
+
+// Profilo Utente (Avatar + Testi)
+.user-profile-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+
+  .avatar-container {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #2b2b2b;
+    flex-shrink: 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .user-info {
+    overflow: hidden;
+    
+    .username {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0 0 4px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .email {
+      font-size: 0.85rem;
+      color: #888888;
+      margin: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
+
+// Indicatori dei Ruoli Correnti (Badge)
+.roles-indicator-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-top: 1px solid #232323;
+  padding-top: 12px;
+}
+
+.badge {
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  &-admin { background: rgba(211, 47, 47, 0.15); color: #d32f2f; }
+  &-mod { background: rgba(var(--ion-color-primary-rgb, 178, 34, 34), 0.15); color: var(--ion-color-primary); }
+  &-cataloguer { background: rgba(0, 191, 255, 0.15); color: #00bfff; }
+  &-base { background: #262626; color: #777777; }
+}
+
+// Pannello di Modifica Privilegi Inferiore
+.card-actions-panel {
+  border-top: 1px solid #232323;
+  background: #141414;
+  padding: 12px 16px;
+  border-bottom-left-radius: 12px;
+  border-bottom-right-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .panel-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #555555;
+    text-transform: uppercase;
+  }
+}
+
+.chips-container {
+  display: flex;
+  gap: 10px;
+}
+
+// Chips Interattive (Pulsanti di scelta rapida)
+.role-chip {
+  flex: 1;
+  background: #1c1c1c;
+  border: 1px solid #2b2b2b;
+  color: #666666;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+
+  &:hover:not(:disabled) {
+    border-color: #444444;
+    color: #999999;
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  // Stati Attivi con illuminazione neon personalizzata
+  &.chip-mod.active {
+    background: rgba(var(--ion-color-primary-rgb), 0.12);
+    border-color: var(--ion-color-primary);
+    color: var(--ion-color-primary);
+    box-shadow: 0 0 8px rgba(var(--ion-color-primary-rgb), 0.3);
+  }
+
+  &.chip-cataloguer.active {
+    background: rgba(0, 191, 255, 0.12);
+    border-color: #00bfff;
+    color: #00bfff;
+    box-shadow: 0 0 8px rgba(0, 191, 255, 0.3);
+  }
+}
+
+// Schermata di Stato Vuoto
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 100px 20px;
+  color: #555555;
+
+  .empty-icon {
+    width: 64px;
+    height: 64px;
+    fill: var(--ion-color-primary);
+    margin-bottom: 16px;
+  }
+  h3 { color: #ffffff; font-size: 1.3rem; margin-bottom: 6px; }
+  p { font-size: 0.95rem; margin: 0; }
+}

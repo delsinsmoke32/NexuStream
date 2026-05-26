@@ -1,69 +1,84 @@
-<ion-header [translucent]="true">
-  <ion-toolbar color="dark" style="border-bottom: 2px solid var(--ion-color-primary);">
-    <ion-title color="primary">Gestione Utenti & Ruoli</ion-title>
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark" class="main-header">
+    <ion-title>Gestione Utenti & Ruoli</ion-title>
     <ion-buttons slot="end">
-      <ion-button color="primary" (click)="logout()">
-        <ion-icon slot="icon-only" name="log-out-outline"></ion-icon>
-      </ion-button>
+      <button class="header-action-btn logout-btn" (click)="logout()" title="Logout">
+        <svg viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M304 336v40a40 40 0 01-40 40H104a40 40 0 01-40-40V136a40 40 0 0140-40h160a40 40 0 0140 40v40M392 256H112M328 192l64 64-64 64"/></svg>
+      </button>
     </ion-buttons>
+  </ion-toolbar>
+
+  <ion-toolbar color="dark" class="search-bar-container">
+    <ion-searchbar 
+      placeholder="Cerca utente per username o email..." 
+      mode="md"
+      [debounce]="500"
+      (ionInput)="onSearch($event)">
+    </ion-searchbar>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <ion-searchbar 
-    placeholder="Cerca utente..." 
-    color="secondary" 
-    [debounce]="500"
-    (ionInput)="onSearch($event)"> </ion-searchbar>
-
-  <ion-list lines="none" class="ion-no-padding ion-margin-top">
+  <div class="admin-grid">
     
     @for (user of users(); track user.UserID) {
-      <ion-item color="secondary" class="ion-margin-bottom" style="border-radius: 8px;">
-        <ion-avatar slot="start" style="border: 1px solid var(--ion-color-primary);">
-          <img [src]="user.PropicURI ? (user.PropicURI | backendUrl) : 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
-        </ion-avatar>
-        
-        <ion-label>
-          <h2 style="font-weight: bold; color: var(--ion-text-color);">{{ user.Username }}</h2>
-          <p style="color: #999;">{{ user.Email }}</p>
+      <div class="user-card" [class.edge-admin]="user.isAdmin === 1">
+        <div class="card-body">
           
-          <div class="ion-margin-top">
-            @if (user.isAdmin === 1) { <ion-badge color="danger" class="ion-margin-end">Admin</ion-badge> }
-            @if (user.isMod === 1) { <ion-badge color="primary" class="ion-margin-end">Mod</ion-badge> }
-            @if (user.isCataloguer === 1) { <ion-badge color="tertiary" class="ion-margin-end">Catalogatore</ion-badge> }
+          <div class="user-profile-row">
+            <div class="avatar-container">
+              <img [src]="user.PropicURI ? (user.PropicURI | backendUrl) : 'https://ionicframework.com/docs/img/demos/avatar.svg'" alt="Avatar" />
+            </div>
+            <div class="user-info">
+              <h2 class="username">{{ user.Username }}</h2>
+              <p class="email">{{ user.Email }}</p>
+            </div>
+          </div>
+
+          <div class="roles-indicator-row">
+            @if (user.isAdmin === 1) { <span class="badge badge-admin">Admin</span> }
+            @if (user.isMod === 1) { <span class="badge badge-mod">Mod</span> }
+            @if (user.isCataloguer === 1) { <span class="badge badge-cataloguer">Catalogatore</span> }
             
             @if (user.isAdmin !== 1 && user.isMod !== 1 && user.isCataloguer !== 1) {
-              <ion-badge color="medium">Utente Base</ion-badge>
+              <span class="badge badge-base">Utente Base</span>
             }
           </div>
-        </ion-label>
+        </div>
 
-        <ion-select 
-          slot="end" 
-          [value]="getUserRolesArray(user)" 
-          multiple="true"
-          interface="alert" 
-          okText="Salva Ruoli"
-          cancelText="Annulla"
-          (ionChange)="changeRole(user.UserID, $event)">
-          <ion-select-option value="mod">Moderatore</ion-select-option>
-          <ion-select-option value="cataloguer">Catalogatore</ion-select-option>
-        </ion-select>
-      </ion-item>
+        <div class="card-actions-panel">
+          <span class="panel-label">Assegna Privilegi:</span>
+          <div class="chips-container">
+            <button 
+              type="button" 
+              class="role-chip chip-mod" 
+              [class.active]="user.isMod === 1"
+              [disabled]="user.isAdmin === 1"
+              (click)="toggleRoleDirectly(user, 'mod')">
+              Moderatore
+            </button>
+            <button 
+              type="button" 
+              class="role-chip chip-cataloguer" 
+              [class.active]="user.isCataloguer === 1"
+              [disabled]="user.isAdmin === 1"
+              (click)="toggleRoleDirectly(user, 'cataloguer')">
+              Catalogatore
+            </button>
+          </div>
+        </div>
+      </div>
     } @empty {
-      <div class="ion-text-center ion-padding" style="color: #666;">
-        <ion-icon name="people-outline" style="font-size: 3rem; color: var(--ion-color-primary);"></ion-icon>
-        <p>Nessun utente trovato nel database.</p>
+      <div class="empty-state">
+        <svg viewBox="0 0 512 512" class="empty-icon"><path d="M402 168c-2.93 40.67-33.1 72-73.16 72s-70.23-31.33-73.16-72c-4.24-58.32 35.66-104 86.43-104s90.67 45.68 86.43 104zM141.67 168c-2.93 40.67-33.1 72-73.16 72S-1.72 208.67-4.65 168c-4.24-58.32 35.66-104 86.43-104s90.67 45.68 86.43 104zM496 464v-56c0-61.17-48.4-112-108-112H236c-26.31 0-51.1 9.53-70.62 26.54A142.14 142.14 0 00124 296H80c-61.17 0-112 48.4-112 108v56z"/></svg>
+        <h3>Nessun utente trovato</h3>
+        <p>Nessun record corrisponde ai criteri di ricerca impostati.</p>
       </div>
     }
 
-  </ion-list>
+  </div>
 
-  <ion-infinite-scroll threshold="150px" (ionInfinite)="loadMoreData($event)"> <ion-infinite-scroll-content 
-      loadingSpinner="bubbles" 
-      loadingText="Caricamento altri utenti...">
-    </ion-infinite-scroll-content>
+  <ion-infinite-scroll threshold="150px" (ionInfinite)="loadMoreData($event)">
+    <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
   </ion-infinite-scroll>
-  
 </ion-content>

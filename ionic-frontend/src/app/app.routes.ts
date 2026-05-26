@@ -59,6 +59,11 @@ export const routes: Routes = [
     canActivate: [CataloguerGuard],
     loadComponent: () => import('./pages/cataloguer/cataloguer.page').then( m => m.CataloguerPage)
   },
+  {
+    path: 'mod',
+    canActivate: [ModGuard],
+    loadComponent: () => import('./pages/mod/mod.page').then( m => m.ModPage)
+  },
   
   // 7. Gestione Errori e Permessi
   {

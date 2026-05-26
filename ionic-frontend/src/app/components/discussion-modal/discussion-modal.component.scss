@@ -1,0 +1,37 @@
+ion-item {
+  // Sfrutta il grigio scuro secondario del tema per gli input
+  --background: var(--ion-color-secondary);
+  --color: var(--ion-color-secondary-contrast);
+  --border-radius: 8px;
+  --border-color: #2b2b2b;
+  margin-bottom: 20px;
+
+  ion-label {
+    // Evidenzia le label con il rosso ufficiale NexuStream
+    color: var(--ion-color-primary) !important;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  ion-input, ion-select {
+    --color: var(--ion-color-secondary-contrast);
+    font-size: 0.95rem;
+  }
+}
+
+// Stile specifico di avviso per il blocco forzato del canale
+.toggle-item {
+  --background: rgba(var(--ion-color-danger-rgb, 211, 47, 47), 0.1);
+  border: 1px solid var(--ion-color-danger, #d32f2f);
+  border-radius: 8px;
+  margin-top: 10px;
+  
+  ion-label {
+    color: var(--ion-color-danger, #d32f2f) !important;
+  }
+}
+
+ion-content {
+  // Sfondo ufficiale dell'applicazione
+  --background: var(--ion-background-color);
+}

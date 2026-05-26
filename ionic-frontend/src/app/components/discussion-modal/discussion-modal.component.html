@@ -1,0 +1,47 @@
+<ion-header>
+  <ion-toolbar color="dark">
+    <ion-title>{{ isEditMode ? 'Modifica' : 'Nuova' }} Discussione</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">Annulla</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" color="secondary">
+  <form [formGroup]="discussionForm" (ngSubmit)="save()">
+    
+    @if (!isEditMode) {
+      <ion-item fill="outline" mode="md">
+        <ion-label position="stacked">ID Episodio Target</ion-label>
+        <ion-input type="number" formControlName="REF_EpisodeID" placeholder="Es. 2"></ion-input>
+      </ion-item>
+
+      <ion-item fill="outline" mode="md">
+        <ion-label position="stacked">Tipo Discussione</ion-label>
+        <ion-select formControlName="type" placeholder="Seleziona tipo">
+          <ion-select-option value="standard">Standard</ion-select-option>
+          <ion-select-option value="spoiler">Spoiler Zone</ion-select-option>
+          <ion-select-option value="archive">Archivio</ion-select-option>
+        </ion-select>
+      </ion-item>
+    }
+
+    <ion-item fill="outline" mode="md">
+      <ion-label position="stacked">Data di Chiusura (YYYY-MM-DD HH:MM)</ion-label>
+      <ion-input type="text" formControlName="closeDate" placeholder="2027-01-01 00:00"></ion-input>
+    </ion-item>
+
+    @if (isEditMode) {
+      <ion-item lines="none" class="toggle-item">
+        <ion-label>Forza Chiusura Canale (forceClosed)</ion-label>
+        <ion-toggle formControlName="forceClosed" color="danger"></ion-toggle>
+      </ion-item>
+    }
+
+    <ion-button expand="block" type="submit" [disabled]="discussionForm.invalid" color="primary" class="ion-margin-top">
+      <ion-icon name="save-outline" slot="start"></ion-icon>
+      {{ isEditMode ? 'Aggiorna Discussione' : 'Crea Discussione' }}
+    </ion-button>
+    
+  </form>
+</ion-content>

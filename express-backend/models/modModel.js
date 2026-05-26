@@ -15,10 +15,10 @@ const getDiscussions = async (showClosed) => {
 };
 
 // POST - Inserisce una nuova discussione attiva (ForceClosed = 0 di default)
-const createDiscussion = async ({ REF_EpisodeID, OpenDate, CloseDate, Type }) => {
+const createDiscussion = async ({ REF_EpisodeID, openDate, closeDate, type }) => {
     const sql = `INSERT INTO Discussions (REF_EpisodeID, OpenDate, CloseDate, ForceClosed, Type)
                  VALUES (?, ?, ?, 0, ?)`;
-    return await db.runAsync(sql, [REF_EpisodeID, OpenDate, CloseDate, Type]);
+    return await db.runAsync(sql, [REF_EpisodeID, openDate, closeDate, type]);
 };
 
 // PATCH - Costruisce dinamicamente la query di aggiornamento
@@ -26,19 +26,19 @@ const updateDiscussion = async (discussionId, fields) => {
     const assignments = [];
     const params = [];
 
-    if (fields.CloseDate !== undefined) {
+    if (fields.closeDate !== undefined) {
         assignments.push(`CloseDate = ?`);
-        params.push(fields.CloseDate);
+        params.push(fields.closeDate);
     }
 
-    if (fields.ForceClosed !== undefined) {
+    if (fields.forceClosed !== undefined) {
         assignments.push(`ForceClosed = ?`);
-        params.push(fields.ForceClosed);
+        params.push(fields.forceClosed);
     }
 
-    if (fields.Type !== undefined) {
+    if (fields.type !== undefined) {
         assignments.push(`Type = ?`);
-        params.push(fields.Type);
+        params.push(fields.type);
     }
 
     // Se non è stato passato alcun campo valido, usciamo senza fare query

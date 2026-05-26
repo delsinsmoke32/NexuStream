@@ -1,0 +1,271 @@
+// Layout a griglia fluida stile catalogo NexuStream
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-top: 10px;
+}
+
+.create-btn-native {
+  background-color: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-right: 12px;
+  
+  // Allineamento interno impeccabile per Icona + Testo
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+
+  .svg-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    display: block;
+    stroke: currentColor;
+  }
+
+  &:hover {
+    background-color: var(--ion-color-primary-shade);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+// Sfondo della barra superiore dei filtri della dashboard
+.filter-bar {
+  --background: var(--ion-color-dark, #181818) !important;
+  border-bottom: 1px solid #232323;
+  
+  ion-item {
+    --padding-start: 16px;
+    font-size: 0.9rem;
+    color: #a0a0a0;
+  }
+}
+
+// Struttura principale delle card di moderazione Dark/Neon
+.discussion-card {
+  background: var(--ion-color-secondary, #181818);
+  border: 1px solid #232323;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+  }
+
+  // Stato attivo: Bordo superiore con il rosso primario di NexuStream
+  &:not(.is-closed) {
+    border-top: 4px solid var(--ion-color-primary);
+  }
+
+  // Stato bloccato forzatamente: Bordo rosso di errore e opacizzato
+  &.is-closed {
+    border-top: 4px solid var(--ion-color-danger, #d32f2f);
+    opacity: 0.75;
+    background: #141414;
+  }
+}
+
+// Parte superiore della card (Titolo serie e badge)
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+
+  .show-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--ion-color-secondary-contrast);
+    margin: 0;
+    padding-right: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+// Parte centrale della card (Dettagli stagione, episodio e titolo puntata)
+.card-middle {
+  margin-bottom: 16px;
+
+  .episode-details {
+    font-size: 0.8rem;
+    color: var(--ion-color-primary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .episode-title {
+    font-size: 0.95rem;
+    color: #b3b3b3;
+    font-weight: 500;
+    margin: 4px 0 0 0;
+    font-style: italic;
+  }
+}
+
+// Righe descrittive interne della card (Tipologia e Scadenza)
+.card-info-rows {
+  flex-grow: 1;
+  border-top: 1px solid #232323;
+  padding-top: 12px;
+  margin-bottom: 16px;
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+
+    .label {
+      color: #666666;
+    }
+
+    .value {
+      color: var(--ion-color-secondary-contrast);
+      font-weight: 500;
+    }
+
+    .type-highlight {
+      background: #232323;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+}
+
+// Allineamento inferiore dei bottoni e centraggio perfetto rispetto alla card
+.card-buttons {
+  border-top: 1px solid #232323;
+  margin-top: 12px;
+  padding-top: 14px;
+  
+  // Raggruppa i bottoni al centro spaccato della card
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+  gap: 16px; 
+  width: 100%;
+}
+
+// Struttura dei pulsanti di moderazione nativi (Zero interferenze Ionic)
+.mod-btn {
+  width: 130px;        
+  height: 38px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  
+  // Allineamento orizzontale nativo millimetrico
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px; 
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+
+  // Gestione dell'icona vettoriale nativa
+  .svg-icon {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    display: block;
+    // Rende il colore del contorno dinamico in base al testo del bottone
+    stroke: currentColor; 
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+}
+
+// Pulsante GESTISCI - Testo bianco nitido e sfondo grigio scuro
+.btn-manage {
+  color: #ffffff; 
+  background-color: #2b2b2b;
+
+  &:hover {
+    background-color: #383838;
+  }
+}
+
+// Pulsante ELIMINA - Rosso ufficiale NexuStream soft
+.btn-delete {
+  color: var(--ion-color-danger, #d32f2f);
+  background-color: rgba(var(--ion-color-danger-rgb, 211, 47, 47), 0.15);
+
+  &:hover {
+    background-color: rgba(var(--ion-color-danger-rgb, 211, 47, 47), 0.25);
+  }
+}
+
+// Status badge (Attiva / Chiusa)
+.status-badge {
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+
+  &.active { 
+    background: rgba(var(--ion-color-primary-rgb), 0.15); 
+    color: var(--ion-color-primary); 
+  }
+  &.closed { 
+    background: rgba(var(--ion-color-danger-rgb, 211, 47, 47), 0.15); 
+    color: var(--ion-color-danger, #d32f2f); 
+  }
+}
+
+// Schermata di stato vuoto (Nessuna discussione)
+.empty-dashboard {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 80px 20px;
+  color: #555555;
+
+  ion-icon {
+    font-size: 4.5rem;
+    color: var(--ion-color-primary);
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    color: var(--ion-text-color);
+    font-size: 1.4rem;
+    margin-bottom: 6px;
+  }
+
+  p {
+    font-size: 0.95rem;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+}

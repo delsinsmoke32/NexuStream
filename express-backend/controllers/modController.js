@@ -6,7 +6,7 @@ const getDiscussions = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-    const { showClosed } = req.body;
+    const { showClosed } = req.query;
     try {
         const discussions = await modModel.getDiscussions(showClosed);
         return res.json(discussions);
@@ -19,7 +19,10 @@ const getDiscussions = async (req, res) => {
 // POST - Creazione discussione
 const createDiscussion = async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()) {
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
 
     const { REF_EpisodeID, closeDate, type } = req.body;
     // Generiamo automaticamente la data di apertura in formato ISO string o simile locale
@@ -37,7 +40,10 @@ const createDiscussion = async (req, res) => {
 // PATCH - Modifica parziale (ForceClosed, CloseDate)
 const updateDiscussion = async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()) {
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() })
+    };
 
     const { discussionId } = req.params;
     const { closeDate, forceClosed, type } = req.body;

@@ -1,0 +1,82 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar color="dark">
+    <ion-title>Dashboard Moderazione</ion-title>
+    <ion-buttons slot="end">
+      <button type="button" class="create-btn-native" (click)="openCreateModal()">
+        <svg viewBox="0 0 512 512" class="svg-icon">
+          <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M256 112v288M400 256H112"/>
+        </svg>
+        Nuova Discussione
+      </button>
+    </ion-buttons>
+  </ion-toolbar>
+  
+  <ion-toolbar color="dark" class="filter-bar">
+    <ion-item lines="none" color="none">
+      <ion-label>Mostra anche discussioni chiuse o scadute (Archivio)</ion-label>
+      <ion-toggle (ionChange)="toggleFilter($event)" color="primary"></ion-toggle>
+    </ion-item>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding" color="secondary">
+  <div class="dashboard-grid">
+    
+    @for (disc of discussions(); track disc.DiscussionID) {
+      <div class="discussion-card" [class.is-closed]="disc.ForceClosed">
+        
+        <div class="card-top">
+          <h2 class="show-title">{{ parseLang(disc.ShowTitle) }}</h2>
+          <span class="status-badge" [class.active]="!disc.ForceClosed" [class.closed]="disc.ForceClosed">
+            {{ disc.ForceClosed ? 'Chiusa' : 'Attiva' }}
+          </span>
+        </div>
+
+        <div class="card-middle">
+          <span class="episode-details">
+            Stagione {{ disc.SeasonNumber }} • Episodio {{ disc.EpisodeNumber }}
+          </span>
+          <h3 class="episode-title">"{{ parseLang(disc.EpisodeTitle) }}"</h3>
+        </div>
+
+        <div class="card-info-rows">
+          <div class="info-row">
+            <span class="label">Tipologia Stanza:</span>
+            <span class="value type-highlight">{{ disc.Type }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Data Scadenza:</span>
+            <span class="value">{{ disc.CloseDate }}</span>
+          </div>
+        </div>
+
+        <div class="card-buttons">
+          <button type="button" class="mod-btn btn-manage" (click)="openEditModal(disc)">
+            <svg viewBox="0 0 512 512" class="svg-icon">
+              <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M368 128h80M64 128h240M368 384h80M64 384h240M208 256h240M64 256h80"/>
+              <circle cx="336" cy="128" r="32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+              <circle cx="176" cy="256" r="32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+              <circle cx="336" cy="384" r="32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+            </svg>
+            Gestisci
+          </button>
+          
+          <button type="button" class="mod-btn btn-delete" (click)="deleteDiscussion(disc.DiscussionID)">
+            <svg viewBox="0 0 512 512" class="svg-icon">
+              <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M112 112l20 320c1.2 19.3 17.3 34 36.7 34h174.6c19.3 0 35.5-14.7 36.7-34l20-320M336 64v32H176V64a16 16 0 0116-16h128a16 16 0 0116 16zM448 112H64M256 176v224M184 176l8 224M328 176l-8 224"/>
+            </svg>
+            Elimina
+          </button>
+        </div>
+
+      </div>
+    } @empty {
+      <div class="empty-dashboard">
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
+        <h3>Tutto Specchiato!</h3>
+        <p>Non ci sono discussioni attive da moderare corrispondenti ai filtri impostati.</p>
+      </div>
+    }
+
+  </div>
+</ion-content>

@@ -54,8 +54,8 @@ router.use(isMod);
  *        description: Errore interno del server
  */
 
-router.get('/discussions', [
-    body('showClosed').optional().isInt({ min: 0, max: 1 }).withMessage("Lo show closed deve essere 0 o 1")
+router.get('/', [
+    query('showClosed').optional().isInt({ min: 0, max: 1 }).withMessage("Lo show closed deve essere 0 o 1")
 ], modController.getDiscussions);
 
 /**
@@ -93,8 +93,8 @@ router.get('/discussions', [
  *      500:
  *        description: Errore interno del server
  */
-router.post('/discussions', [
-    body('REF EpisodeID').isInt({ min: 1 }).notEmpty().withMessage("ID episodio non valido"),
+router.post('/', [
+    body('REF_EpisodeID').isInt({ min: 1 }).notEmpty().withMessage("ID episodio non valido"),
     body('closeDate').isString().notEmpty().withMessage("Data di chiusura richiesta"),
     body('type').isString().notEmpty().withMessage("Tipo discussione richiesto")
 ], modController.createDiscussion);
@@ -137,7 +137,7 @@ router.post('/discussions', [
  *      500:
  *        description: Errore interno del server
  */
-router.patch('/discussions/:discussionId', [
+router.patch('/:discussionId', [
     param('discussionId').isInt({ min: 1 }).notEmpty().withMessage("ID discussione non valido"),
     body('closeDate').optional().isString().withMessage("La data deve essere una stringa"),
     body('forceClosed').optional().isInt({ min: 0, max: 1 }).withMessage("ForceClosed deve essere 0 o 1"),
@@ -168,7 +168,7 @@ router.patch('/discussions/:discussionId', [
  *      500:
  *        description: Errore interno del server
  */
-router.delete('/discussions/:discussionId', [
+router.delete('/:discussionId', [
     param('discussionId').isInt({ min: 1 }).notEmpty().withMessage("ID discussione non valido")
 ], modController.deleteDiscussion);
 

@@ -1,24 +1,17 @@
-<ion-header [translucent]="true">
+<ion-header translucent>
     <ion-toolbar>
-        <ion-title>
+        <ion-title slot="start">
             Login on
-            <p
-                id="nexus"
-                style="
-                    display: inline;
-                    font-weight: bolder;
-                    color: var(--ion-color-primary-tint);
-                "
-            >
-                NexuStream
-            </p>
+            <ion-text color="primary">
+                <strong> NexuStream </strong>
+            </ion-text>
         </ion-title>
         <app-language-switcher slot="end"></app-language-switcher>
     </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="login-content">
-    <div class="login-container">
+<ion-content fullscreen class="login-content">
+    <div class="login-container flex-centered">
         <div class="text-heading">
             <h1 i18n="@@Welcome_to_NexuStream">Benvenuti a NexuStream</h1>
         </div>

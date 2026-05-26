@@ -6,7 +6,7 @@ import {
     IonSelectOption,
 } from '@ionic/angular/standalone'
 import { addIcons } from 'ionicons'
-import { globeOutline } from 'ionicons/icons'
+import { globeOutline, chevronDownOutline } from 'ionicons/icons'
 
 @Component({
     selector: 'app-language-switcher',
@@ -19,12 +19,14 @@ export class LanguageSwitcherComponent {
     currentLang: string
 
     constructor() {
-        addIcons({ globeOutline })
+        addIcons({ globeOutline, chevronDownOutline })
         // Extract language code from the current URL path (e.g., /en/dashboard)
-        this.currentLang =
-            window.location.pathname.split('/')[1] in ['it', 'en']
-                ? window.location.pathname.split('/')[1]
-                : 'it'
+        const langs = ['it', 'en']
+        this.currentLang = langs.includes(
+            window.location.pathname.split('/')[1]
+        )
+            ? window.location.pathname.split('/')[1]
+            : 'it'
     }
 
     switchLanguage(event: Event) {
@@ -35,6 +37,7 @@ export class LanguageSwitcherComponent {
         const segments = window.location.pathname.split('/')
         segments[1] = nextLang
 
+        console.log(segments)
         // Reload the page with the new language bundle
         window.location.href = window.location.origin + segments.join('/')
     }

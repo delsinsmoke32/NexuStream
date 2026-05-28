@@ -4,7 +4,7 @@
         <ion-menu-button color="danger"></ion-menu-button>
       </ion-buttons>
 
-      <ion-title color="danger" class="ion-text-center">NexuStream</ion-title>
+      <ion-title routerLink="/home" color="danger" class="titolo-cliccabile">NexuStream</ion-title>
 
       <ion-buttons slot="end">
         <ion-button color="light" routerLink="/search">
@@ -77,11 +77,11 @@
 <ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
   <ng-template>
     <ion-list color="dark">
-      <ion-item button (click)="openUserSettings()">
+      <ion-item button routerLink="/settings" (click)="openUserSettings()">
         <ion-icon slot="start" name="settings-outline"></ion-icon>
         Impostazioni
       </ion-item>
-      <ion-item button (click)="openFavorites()">
+      <ion-item button routerLink="/favourites" (click)="openFavorites()">
         <ion-icon slot="start" name="heart-outline"></ion-icon>
         Lista Preferiti
       </ion-item>

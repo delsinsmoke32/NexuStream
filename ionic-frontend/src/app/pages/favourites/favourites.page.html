@@ -1,0 +1,74 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/" color="primary"></ion-back-button>
+    </ion-buttons>
+    <ion-title>La Mia Lista</ion-title>
+    <ion-buttons slot="end">
+        <ion-button color="light" (click)="openProfileMenu($event)">
+          <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+
+  <div *ngIf="favorites.length > 0">
+    <p class="results-count">Hai salvato {{ favorites.length }} anime</p>
+    
+    <ion-grid class="ion-no-padding">
+      <ion-row>
+        <ion-col size="6" size-sm="4" size-md="3" *ngFor="let anime of favorites" class="ion-padding-tiny">
+          <div class="anime-card">
+            
+            <div class="poster-container"> 
+              <ion-button routerLink="['/anime-details', anime.id]"></ion-button>
+              <img [src]="anime.posterUrl" alt="{{ anime.title }}" />
+              <div class="gradient-overlay"></div>
+            </div>
+
+            <button class="remove-btn" (click)="removeFromFavorites(anime.id, $event)" aria-label="Rimuovi dai preferiti">
+              <ion-icon name="trash"></ion-icon>
+            </button>
+
+            <div class="anime-info">
+              <h4>{{ anime.title }}</h4>
+            </div>
+
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <div *ngIf="favorites.length === 0" class="empty-state">
+    <div class="icon-container">
+      <ion-icon name="heart-dislike-outline"></ion-icon>
+    </div>
+    <h2>La tua lista è vuota</h2>
+    <p>Esplora la home page per aggiungere i tuoi anime preferiti e non perderti nessun aggiornamento.</p>
+    <ion-button color="primary" expand="block" routerLink="/home" class="explore-btn">
+      Esplora Anime
+    </ion-button>
+  </div>
+
+</ion-content>
+<ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
+  <ng-template>
+    <ion-list color="dark">
+      <ion-item button (click)="openUserSettings()">
+        <ion-icon color="light" slot="start" name="settings-outline"></ion-icon>
+        Impostazioni
+      </ion-item>
+      <ion-item button routerLink="/favourites" (click)="openFavorites()">
+        <ion-icon slot="start" name="heart-outline"></ion-icon>
+        Lista Preferiti
+      </ion-item>
+      <ion-item button (click)="logout()">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Logout
+      </ion-item>
+    </ion-list>
+  </ng-template>
+</ion-popover>

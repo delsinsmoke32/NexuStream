@@ -1,48 +1,38 @@
-import { CommonModule } from '@angular/common'
-import { Component, ViewChild } from '@angular/core'
-import { RouterModule } from '@angular/router'
-import { MenuController } from '@ionic/angular'
-import {
-    IonButton,
-    IonButtons,
-    IonContent,
-    IonHeader,
-    IonIcon,
-    IonItem,
-    IonList,
-    IonMenuButton,
-    IonPopover,
-    IonTitle,
-    IonToolbar,
-} from '@ionic/angular/standalone'
-import {
-    heartOutline,
-    logOutOutline,
-    personCircleOutline,
-    searchOutline,
-    settingsOutline,
-} from '@lib/ionicons/icons'
-import { addIcons } from 'ionicons'
+import { Component, ViewChild, OnInit } from '@angular/core';
+import { MenuController } from '@ionic/angular';
+import { CommonModule } from '@angular/common';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonRow, IonCol, IonCard, IonCardHeader, IonCardContent,IonMenu, IonCardTitle, IonButton, IonItem, IonLabel, IonInput, IonIcon, IonList, IonPopover, IonSearchbar, IonButtons, IonMenuButton } from '@ionic/angular/standalone'
+import { addIcons } from 'ionicons';
+import { RouterModule,Router } from '@angular/router';
+import { heartOutline, logOutOutline, personCircleOutline, searchOutline, settingsOutline } from '@lib/ionicons/icons';
+import { AlertController, ToastController } from '@ionic/angular';
 
 @Component({
-    selector: 'app-home',
-    templateUrl: './home.page.html',
-    styleUrls: ['./home.page.scss'],
-    imports: [
-        IonButtons,
-        IonContent,
-        IonHeader,
-        IonTitle,
-        IonToolbar,
-        IonItem,
-        IonButton,
-        CommonModule,
-        IonIcon,
-        IonPopover,
-        IonList,
-        IonMenuButton,
-        RouterModule,
-    ],
+  selector: 'app-home',
+  templateUrl: './home.page.html',
+  styleUrls: ['./home.page.scss'],
+  standalone: true,
+  imports: [IonButtons, IonSearchbar,
+    IonContent,
+    IonHeader,
+    IonTitle,
+    IonToolbar,
+    IonCard,
+    IonRow,
+    IonCol,
+    IonItem,
+    IonCardHeader,
+    IonCardContent,
+    IonCardTitle,
+    IonButton,
+    CommonModule,
+    IonLabel,
+    IonInput,
+    IonIcon,
+    IonPopover,
+    IonMenu,
+    IonList, IonMenuButton,RouterModule ],
+
 })
 export class HomePage {
     // Usiamo ViewChild per accedere al popover definito nel template con #profilePopover
@@ -75,62 +65,99 @@ export class HomePage {
         },
     ]
 
-    genres = [
-        { id: 1, name: 'Azione' },
-        { id: 2, name: 'Avventura' },
-        { id: 3, name: 'Shonen' },
-        { id: 4, name: 'Seinen' },
-        { id: 5, name: 'Horror' },
-    ]
+  genres = [
+    { id: 1, name: 'Azione' },
+    { id: 2, name: 'Avventura' },
+    { id: 3, name: 'Shonen' },
+    { id: 4, name: 'Seinen' },
+    { id: 5, name: 'Horror' }
+  ];
 
-    constructor(private menuController: MenuController) {
-        addIcons({
-            searchOutline,
-            personCircleOutline,
-            settingsOutline,
-            heartOutline,
-            logOutOutline,
-        })
-    }
+  constructor(private router: Router,
+    private alertController: AlertController,
+    private toastController: ToastController,
+    private menuController: MenuController,
+  ) {
+    
+    addIcons({searchOutline, personCircleOutline, settingsOutline, heartOutline, logOutOutline});
+  }
 
-    // Funzione per aprire il menu a tendina del profilo
-    async openProfileMenu(ev: any) {
-        // Passiamo l'evento 'ev' così il popover sa di dover apparire vicino al tasto cliccato
-        this.popover.event = ev
-        await this.popover.present()
-    }
+  // Funzione per aprire il menu a tendina del profilo
+  async openProfileMenu(ev: any) {
+    // Passiamo l'evento 'ev' così il popover sa di dover apparire vicino al tasto cliccato
+    this.popover.event = ev;
+    await this.popover.present();
+  }
 
-    onMenuOpen() {
-        console.log('Menu generi aperto')
-    }
+  onMenuOpen(){
+      console.log("Menu generi aperto");
+  }
+  
+  onMenuClose(){
+      console.log("Menu generi chiuso");
+  }
 
-    onMenuClose() {
-        console.log('Menu generi chiuso')
-    }
+
 
     // Funzioni per gestire il menu dei generi
     closeMenu() {
         this.menuController.close()
     }
 
-    // Funzione chiamata dal (didDismiss)
-    onPopoverDismiss() {
-        console.log('Il menu profilo è stato chiuso')
-    }
+  // Funzione chiamata dal (didDismiss)
+  onPopoverDismiss() {
+    console.log('Il menu profilo è stato chiuso');
+  }
 
-    // Azioni del menu profilo
-    openUserSettings() {
-        console.log('Apro le impostazioni...')
-        this.popover.dismiss()
-    }
+  // Azioni del menu profilo
+  openUserSettings() {
+    console.log('Apro le impostazioni...');
+   
+    this.popover.dismiss();
+  }
 
-    openFavorites() {
-        console.log('Apro i preferiti...')
-        this.popover.dismiss()
-    }
+  openFavorites() {
+    console.log('Apro i preferiti...');
+    this.popover.dismiss();
+  }
 
-    logout() {
-        console.log('Eseguo il logout...')
-        this.popover.dismiss()
-    }
+ 
+  
+
+ 
+    async logout() {
+    const alert = await this.alertController.create({
+      header: 'Disconnetti',
+      message: 'Sei sicuro di voler uscire da NexuStream?',
+      cssClass: 'custom-logout-alert', // Classe personalizzabile nel CSS globale
+      buttons: [
+        {
+          text: 'Annulla',
+          role: 'cancel',
+          handler: () => { console.log('Logout annullato'); }
+        },
+        {
+          text: 'Esci',
+          role: 'destructive',
+          handler: async () => {
+            console.log('Eseguo il logout...');
+            
+            // Mostra un piccolo feedback di conferma
+            const toast = await this.toastController.create({
+              message: 'Sessione chiusa correttamente',
+              duration: 2000,
+              color: 'dark'
+            });
+            await toast.present();
+
+            // Reindirizza l'utente alla pagina di login (o home per ora)
+            this.router.navigate(['/home']);
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+    this.popover.dismiss();
+  }
 }

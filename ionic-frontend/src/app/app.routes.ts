@@ -39,12 +39,20 @@ export const routes: Routes = [
   
   // 5. Pagine di Dettaglio con ID dinamico (fondamentali per caricare i dati corretti dal DB)
   {
-    path: 'serie/:showId',
-    loadComponent: () => import('./pages/serie/serie.page').then(m => m.SeriePage)
+    path: 'shows/:showId',
+    loadComponent: () => import('./pages/shows/shows.page').then(m => m.ShowsPage)
   },
   {
     path: 'episode/:episodeId',
     loadComponent: () => import('./pages/episode/episode.page').then(m => m.EpisodePage)
+  },
+  {
+    path: 'favourites',
+    loadComponent: () => import('./pages/favourites/favourites.page').then(m => m.FavouritesPage)
+  },
+  {
+    path: 'settings',
+    loadComponent: () => import('./pages/settings/settings.page').then(m => m.SettingsPage)
   },
   
   // 6. Pagine private (admin, mod, catalogatori)

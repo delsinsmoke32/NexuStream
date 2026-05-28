@@ -4,7 +4,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/" color="light"></ion-back-button>
     </ion-buttons> -->
-    <ion-title class="brand-title">NexuStream</ion-title>
+    <ion-title routerLink="/home" class="brand-title">NexuStream</ion-title>
     <ion-buttons slot="end">
       <ion-button color="light" routerLink="/search">
         <ion-icon slot="icon-only" name="search-outline"></ion-icon>
@@ -34,6 +34,11 @@
       <img [src]="animeData.copertina" alt="Cover Image" />
     </div>
 
+    <div *ngIf="!animeData" class="ion-text-center ion-padding">
+    <ion-spinner color="danger"></ion-spinner>
+    <p style="color: white;">Caricamento serie...</p>
+    </div>
+
     <div class="info-grid">
       <div class="info-left">
         <p><strong>Titolo:</strong> {{ animeData.titolo }}</p>
@@ -45,8 +50,25 @@
       </div>
     </div>
 
-    <div class="episodes-container">
-      <div class="episode-row" *ngFor="let ep of animeData.episodi" (click)="playEpisodio(ep)">
+    <div class="season-selector-container" *ngIf="animeData.stagioni && animeData.stagioni.length > 0">
+      <ion-item lines="none" class="custom-select-item">
+        <ion-select 
+          interface="popover" 
+          [value]="seasonSelected?.numeroStagione" 
+          (ionChange)="cambiaStagione($event)"
+          toggleIcon="chevron-down-outline"
+          placeholder="Seleziona Stagione">
+          
+          <ion-select-option *ngFor="let st of animeData.stagioni" [value]="st.numeroStagione">
+            {{ st.nome }}
+          </ion-select-option>
+          
+        </ion-select>
+      </ion-item>
+    </div>
+
+    <div class="episodes-container" *ngIf="seasonSelected">
+      <div class="episode-row" *ngFor="let ep of seasonSelected.episodi" (click)="playEpisodio(ep)">
         <div class="ep-number">{{ ep.numero }}</div>
         <div class="ep-title">{{ ep.titolo }}</div>
         <div class="ep-play">
@@ -54,6 +76,8 @@
         </div>
       </div>
     </div>
+
+    
 
     <div class="status-footer">
       <span>{{ animeData.stato }}</span>

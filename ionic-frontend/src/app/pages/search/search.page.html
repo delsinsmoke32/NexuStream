@@ -51,7 +51,7 @@
       </div>
 
       <div class="results-grid" *ngIf="filteredResults.length > 0">
-        <div class="result-card" *ngFor="let anime of filteredResults" (click)="goToSerie(anime)">
+        <div class="result-card" *ngFor="let anime of filteredResults" (click)="goToShows(anime)">
           <div class="card-cover">
             <img [src]="anime.copertina" alt="Cover">
           </div>

@@ -53,9 +53,66 @@ const getUserProfileById = async (userId) => {
                  WHERE UserID = ?`;
     return await db.getAsync(sql, [userId]);
 };
+/**
+ * Salva un token di ripristino password nel database, associandolo a un utente specifico.
+ * Il token viene memorizzato con una validità temporale limitata a 15 minuti.
+ * @param {number} userId - L'ID univoco dell'utente che ha richiesto il ripristino della password.
+ * @param {string} token - Il token alfanumerico univoco crittografato generato per il reset.
+ * @returns {Promise<Object>} Una Promise che si risolve con l'oggetto di risultato del database (es. contenente lastID e changes).
+ * @throws {Error} Se si verifica un errore durante l'esecuzione della query SQL.
+ */
+const saveResetToken = async (userId, token) => {
+    let sql = `INSERT INTO PasswordResets (REF_UserID, Token, ExpiresAt)
+               VALUES (?, ?, datetime('now', '+15 minutes'))`
+    
+    return await db.runAsync(sql, [userId, token]);
+}
 
+/**
+ * Verifica se un token di ripristino è presente nel database ed è ancora all'interno del suo ciclo di validità.
+ * Controlla che la data di scadenza sia successiva all'orario attuale del server.
+ * @param {string} token - Il token alfanumerico da convalidare.
+ * @returns {Promise<Object|undefined>} Una Promise che si risolve con un oggetto contenente l'ID utente `{ REF_UserID: number }` se il token è valido, oppure `undefined` se il token è inesistente o scaduto.
+ * @throws {Error} Se si verifica un errore durante l'esecuzione della query SQL.
+ */
+const validateResetToken = async (token) => {
+    let sql = `SELECT REF_UserID FROM PasswordResets
+               WHERE Token = ? AND ExpiresAt > datetime('now')`;
+            
+    return await db.getAsync(sql, [token]);
+}
+
+/**
+ * Aggiorna la password di un determinato utente nel database sostituendola con il nuovo hash calcolato.
+ * @param {number} userId - L'ID univoco dell'utente di cui aggiornare le credenziali.
+ * @param {string} hashedPassword - Il nuovo hash sicuro della password (generato preventivamente con bcrypt).
+ * @returns {Promise<Object>} Una Promise che si risolve con l'oggetto di stato del database (es. verifica delle righe modificate tramite `changes`).
+ * @throws {Error} Se si verifica un errore durante l'esecuzione della query SQL.
+ */
+const updatePassword = async (userId, hashedPassword) => {
+    const sql = `UPDATE Users SET Password = ? WHERE UserID = ?`;
+
+    return await db.runAsync(sql, [hashedPassword, userId]);
+}
+
+/**
+ * Rimuove in modo permanente un token di ripristino dalla tabella d'appoggio per invalidarlo.
+ * Questo metodo viene invocato subito dopo un cambio password andato a buon fine per impedire il riutilizzo del link.
+ * @param {string} token - Il token alfanumerico da eliminare dal database.
+ * @returns {Promise<Object>} Una Promise che si risolve con l'oggetto di stato della cancellazione sul database.
+ * @throws {Error} Se si verifica un errore durante l'esecuzione della query SQL.
+ */
+const deleteResetToken = async (token) => {
+    const sql = `DELETE FROM PasswordResets WHERE Token = ?`;
+
+    return await db.runAsync(sql, [token]);
+}
 module.exports = {
     getUserByEmail,
     createUser,
-    getUserProfileById
+    getUserProfileById,
+    saveResetToken,
+    validateResetToken,
+    updatePassword,
+    deleteResetToken
 };

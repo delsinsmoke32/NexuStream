@@ -2,6 +2,9 @@ const userModel = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
+const crypto = require('crypto');
+const EmailService = require('../utils/emailService');
+const rounds = 10; //round di hashing
 
 /**
  * Gestisce la logica di login dell'utente.
@@ -75,7 +78,6 @@ const register = async (req, res) => {
 
     try {
         // 3. Hashing della password
-        const rounds = 10;
         const hashedPassword = await bcrypt.hash(password, rounds);
 
         // 4. Chiamata al Model per l'inserimento
@@ -97,7 +99,76 @@ const register = async (req, res) => {
     }
 };
 
+const forgotPassword = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email } = req.body;
+
+    try {
+
+    const user = await userModel.getUserByEmail(email);
+
+    if (!user) {
+        return res.json({ message: "Se l'email è presente nel sistema, riceverai un link di reset, valido per 15 minuti." });
+    }
+
+    const userId = user.UserID;
+
+    const token = crypto.randomBytes(32).toString('hex');
+
+    const result = await userModel.saveResetToken(userId, token);
+
+    await EmailService.sendPasswordResetEmail(email, token);
+
+    return res.json({ message: "Se l'email è presente nel sistema, riceverai un link di reset, valido per 15 minuti." })
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Errore interno del server.' });
+    }
+
+}
+
+const resetPassword = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { token, newPassword } = req.body;
+
+    try {
+        const isTokenValid = await userModel.validateResetToken(token);
+
+        if (!isTokenValid) {
+            return res.status(400).json({ message: "Il token di reset è invalido o scaduto." });
+        }
+
+        const userId = isTokenValid.REF_UserID;
+
+        const hashedPassword = await bcrypt.hash(newPassword, rounds);
+
+        await userModel.updatePassword(userId, hashedPassword);
+
+        await userModel.deleteResetToken(token);
+
+        return res.json({ message: "Password aggiornata con successo!" });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: 'Errore interno del server.' });
+    }
+
+}
+
 module.exports = {
     login,
-    register
+    register,
+    forgotPassword,
+    resetPassword
 };

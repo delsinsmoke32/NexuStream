@@ -99,8 +99,8 @@ export class SearchPage implements OnInit {
         })
     }
 
-    goToSerie(anime: any) {
-        this.router.navigate(['/serie', anime.id])
+    goToShows(anime: any) {
+        this.router.navigate(['/shows', anime.id])
     }
 
     // Funzione per aprire il menu a tendina del profilo

@@ -25,8 +25,8 @@ import {
   ActionSheetController
 } from '@ionic/angular/standalone';
 
-import { DiscussionModalComponent } from '../../components/discussion-modal/discussion-modal.component';
-import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
+import { DiscussionModalComponent } from '../../components/discussion-modal/discussion-modal.component'
+import { BackendUrlPipe } from '../../pipes/backend-url-pipe'
 
 @Component({
   selector: 'app-mod',
@@ -77,9 +77,9 @@ export class ModPage implements OnInit {
   userPage = signal<number>(1);
   userLimit = signal<number>(50);
 
-  ngOnInit() {
-    this.loadDiscussions();
-  }
+    ngOnInit() {
+        this.loadDiscussions()
+    }
 
   // Switch dei Segment/Tab
   segmentChanged(event: any) {
@@ -101,10 +101,10 @@ export class ModPage implements OnInit {
       });
   }
 
-  toggleFilter(event: any) {
-    this.showClosed.set(event.detail.checked ? 1 : 0);
-    this.loadDiscussions();
-  }
+    toggleFilter(event: any) {
+        this.showClosed.set(event.detail.checked ? 1 : 0)
+        this.loadDiscussions()
+    }
 
   async openCreateModal() {
     const modal = await this.modalCtrl.create({
@@ -267,8 +267,13 @@ export class ModPage implements OnInit {
     }
   }
 
-  private async showToast(message: string, color: 'success' | 'danger') {
-    const toast = await this.toastCtrl.create({ message, duration: 2000, color, position: 'bottom' });
-    await toast.present();
-  }
+    private async showToast(message: string, color: 'success' | 'danger') {
+        const toast = await this.toastCtrl.create({
+            message,
+            duration: 2000,
+            color,
+            position: 'bottom',
+        })
+        await toast.present()
+    }
 }

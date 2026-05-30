@@ -18,5 +18,9 @@ app.get("/*splat", (req, res) => {
   res.redirect('/it');
 });
 
+app.get("", (req, res) => {
+  res.redirect('/it');
+});
+
 const PORT = 8101;
 app.listen(PORT, () => console.log(`Frontend in esecuzione sulla porta ${PORT}`));

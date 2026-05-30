@@ -66,7 +66,7 @@ app.use('/api/home', homeRoute);
 app.use('/api/search', searchRoute);
 app.use('/api/admin/users', adminRoute);
 app.use('/api/cataloguer', cataloguerRoute);
-app.use('/api/mod/discussions', modRoute);
+app.use('/api/mod', modRoute);
 app.use("/api/shows", showRoute);
 app.use('/static', express.static(path.join(__dirname, 'public')));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));

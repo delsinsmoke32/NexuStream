@@ -26,7 +26,7 @@ const EmailService = {
      * Invia l'email con il link di reset all'utente
      */
     sendPasswordResetEmail: async (userEmail, token) => {
-        const resetLink = `https://nexustream.it/reset-password?token=${token}`;
+        const resetLink = `http://localhost:8100/reset-password?token=${token}`;
 
         // Configurazione del messaggio
         const mailOptions = {

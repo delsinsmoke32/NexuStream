@@ -1,271 +1,505 @@
-// Layout a griglia fluida stile catalogo NexuStream
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 24px;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding-top: 10px;
-}
+:host {
+  // ==========================================
+  // STILI GLOBALI E HEADER
+  // ==========================================
 
-.create-btn-native {
-  background-color: var(--ion-color-primary);
-  color: var(--ion-color-primary-contrast);
-  border: none;
-  border-radius: 6px;
-  padding: 8px 16px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-right: 12px;
-  
-  // Allineamento interno impeccabile per Icona + Testo
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-
-  .svg-icon {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-    display: block;
-    stroke: currentColor;
-  }
-
-  &:hover {
-    background-color: var(--ion-color-primary-shade);
-  }
-
-  &:active {
-    transform: scale(0.97);
-  }
-}
-
-// Sfondo della barra superiore dei filtri della dashboard
-.filter-bar {
-  --background: var(--ion-color-dark, #181818) !important;
-  border-bottom: 1px solid #232323;
-  
-  ion-item {
-    --padding-start: 16px;
+  .create-btn-native {
+    background-color: var(--ion-color-primary);
+    color: var(--ion-color-primary-contrast);
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
     font-size: 0.9rem;
-    color: #a0a0a0;
-  }
-}
-
-// Struttura principale delle card di moderazione Dark/Neon
-.discussion-card {
-  background: var(--ion-color-secondary, #181818);
-  border: 1px solid #232323;
-  border-radius: 12px;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-  &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
-  }
-
-  // Stato attivo: Bordo superiore con il rosso primario di NexuStream
-  &:not(.is-closed) {
-    border-top: 4px solid var(--ion-color-primary);
-  }
-
-  // Stato bloccato forzatamente: Bordo rosso di errore e opacizzato
-  &.is-closed {
-    border-top: 4px solid var(--ion-color-danger, #d32f2f);
-    opacity: 0.75;
-    background: #141414;
-  }
-}
-
-// Parte superiore della card (Titolo serie e badge)
-.card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 6px;
-
-  .show-title {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--ion-color-secondary-contrast);
-    margin: 0;
-    padding-right: 10px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
-
-// Parte centrale della card (Dettagli stagione, episodio e titolo puntata)
-.card-middle {
-  margin-bottom: 16px;
-
-  .episode-details {
-    font-size: 0.8rem;
-    color: var(--ion-color-primary);
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    margin-right: 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+  
+    .svg-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      display: block;
+      stroke: currentColor;
+    }
+  
+    &:hover {
+      background-color: var(--ion-color-primary-shade);
+    }
+    &:active {
+      transform: scale(0.97);
+    }
   }
 
-  .episode-title {
-    font-size: 0.95rem;
-    color: #b3b3b3;
-    font-weight: 500;
-    margin: 4px 0 0 0;
-    font-style: italic;
+  .tab-segment-bar {
+    --background: var(--ion-color-dark, #181818) !important;
+    border-bottom: 1px solid #232323;
+    padding: 0 10px;
+
+    ion-segment {
+      --background: transparent;
+      background: transparent;
+    }
   }
-}
 
-// Righe descrittive interne della card (Tipologia e Scadenza)
-.card-info-rows {
-  flex-grow: 1;
-  border-top: 1px solid #232323;
-  padding-top: 12px;
-  margin-bottom: 16px;
+  .filter-bar {
+    --background: var(--ion-color-dark, #181818) !important;
+    border-bottom: 1px solid #232323;
+    
+    ion-item {
+      --padding-start: 16px;
+      font-size: 0.9rem;
+      color: #a0a0a0;
+    }
+  }
 
-  .info-row {
+  .empty-dashboard {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 20px;
+    color: #555555;
+  
+    ion-icon {
+      font-size: 4.5rem;
+      color: var(--ion-color-primary);
+      margin-bottom: 16px;
+    }
+  
+    h3 {
+      color: var(--ion-text-color, #ffffff);
+      font-size: 1.4rem;
+      margin-bottom: 6px;
+    }
+  
+    p {
+      font-size: 0.95rem;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+  }
+
+  // ==========================================
+  // TAB 1: DASHBOARD DISCUSSIONI
+  // ==========================================
+
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-top: 10px;
+  }
+
+  .discussion-card {
+    background: var(--ion-color-secondary, #181818);
+    border: 1px solid #232323;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+    }
+  
+    &:not(.is-closed) {
+      border-top: 4px solid var(--ion-color-primary);
+    }
+  
+    &.is-closed {
+      border-top: 4px solid var(--ion-color-danger, #d32f2f);
+      opacity: 0.75;
+      background: #141414;
+    }
+  }
+
+  .card-top {
     display: flex;
     justify-content: space-between;
-    font-size: 0.85rem;
-    margin-bottom: 8px;
-
-    .label {
-      color: #666666;
+    align-items: flex-start;
+    margin-bottom: 6px;
+  
+    .show-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--ion-color-secondary-contrast, #ffffff);
+      margin: 0;
+      padding-right: 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
+  }
 
-    .value {
-      color: var(--ion-color-secondary-contrast);
-      font-weight: 500;
-    }
-
-    .type-highlight {
-      background: #232323;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 0.75rem;
+  .card-middle {
+    margin-bottom: 16px;
+  
+    .episode-details {
+      font-size: 0.8rem;
+      color: var(--ion-color-primary);
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-  }
-}
-
-// Allineamento inferiore dei bottoni e centraggio perfetto rispetto alla card
-.card-buttons {
-  border-top: 1px solid #232323;
-  margin-top: 12px;
-  padding-top: 14px;
   
-  // Raggruppa i bottoni al centro spaccato della card
-  display: flex;
-  justify-content: center; 
-  align-items: center;
-  gap: 16px; 
-  width: 100%;
-}
-
-// Struttura dei pulsanti di moderazione nativi (Zero interferenze Ionic)
-.mod-btn {
-  width: 130px;        
-  height: 38px;
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  
-  // Allineamento orizzontale nativo millimetrico
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px; 
-  cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-
-  // Gestione dell'icona vettoriale nativa
-  .svg-icon {
-    width: 16px;
-    height: 16px;
-    flex-shrink: 0;
-    display: block;
-    // Rende il colore del contorno dinamico in base al testo del bottone
-    stroke: currentColor; 
+    .episode-title {
+      font-size: 0.95rem;
+      color: #b3b3b3;
+      font-weight: 500;
+      margin: 4px 0 0 0;
+      font-style: italic;
+    }
   }
 
-  &:active {
-    transform: scale(0.96);
-  }
-}
-
-// Pulsante GESTISCI - Testo bianco nitido e sfondo grigio scuro
-.btn-manage {
-  color: #ffffff; 
-  background-color: #2b2b2b;
-
-  &:hover {
-    background-color: #383838;
-  }
-}
-
-// Pulsante ELIMINA - Rosso ufficiale NexuStream soft
-.btn-delete {
-  color: var(--ion-color-danger, #d32f2f);
-  background-color: rgba(var(--ion-color-danger-rgb, 211, 47, 47), 0.15);
-
-  &:hover {
-    background-color: rgba(var(--ion-color-danger-rgb, 211, 47, 47), 0.25);
-  }
-}
-
-// Status badge (Attiva / Chiusa)
-.status-badge {
-  padding: 3px 8px;
-  border-radius: 20px;
-  font-size: 0.75rem;
-  font-weight: bold;
-  text-transform: uppercase;
-
-  &.active { 
-    background: rgba(var(--ion-color-primary-rgb), 0.15); 
-    color: var(--ion-color-primary); 
-  }
-  &.closed { 
-    background: rgba(var(--ion-color-danger-rgb, 211, 47, 47), 0.15); 
-    color: var(--ion-color-danger, #d32f2f); 
-  }
-}
-
-// Schermata di stato vuoto (Nessuna discussione)
-.empty-dashboard {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 80px 20px;
-  color: #555555;
-
-  ion-icon {
-    font-size: 4.5rem;
-    color: var(--ion-color-primary);
+  .card-info-rows {
+    flex-grow: 1;
+    border-top: 1px solid #232323;
+    padding-top: 12px;
     margin-bottom: 16px;
+  
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+  
+      .label {
+        color: #666666;
+      }
+      .value {
+        color: var(--ion-color-secondary-contrast, #ffffff);
+        font-weight: 500;
+      }
+      .type-highlight {
+        background: #232323;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
   }
 
-  h3 {
-    color: var(--ion-text-color);
-    font-size: 1.4rem;
-    margin-bottom: 6px;
+  .card-buttons {
+    border-top: 1px solid #232323;
+    margin-top: 12px;
+    padding-top: 14px;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    gap: 16px; 
+    width: 100%;
   }
 
-  p {
-    font-size: 0.95rem;
-    max-width: 400px;
+  .mod-btn {
+    width: 130px;        
+    height: 38px;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px; 
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+  
+    .svg-icon {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+      display: block;
+      stroke: currentColor; 
+    }
+    &:active {
+      transform: scale(0.96);
+    }
+  }
+
+  .btn-manage {
+    color: #ffffff; 
+    background-color: #2b2b2b;
+    &:hover { background-color: #383838; }
+  }
+
+  .btn-delete {
+    color: var(--ion-color-danger, #d32f2f);
+    background-color: rgba(var(--ion-color-danger-rgb, 211, 47, 47), 0.15);
+    &:hover { background-color: rgba(var(--ion-color-danger-rgb, 211, 47, 47), 0.25); }
+  }
+
+  .status-badge {
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+  
+    &.active { 
+      background: rgba(var(--ion-color-primary-rgb), 0.15); 
+      color: var(--ion-color-primary); 
+    }
+    &.closed { 
+      background: rgba(var(--ion-color-danger-rgb, 211, 47, 47), 0.15); 
+      color: var(--ion-color-danger, #d32f2f); 
+    }
+  }
+
+  // ==========================================
+  // TAB 2: DASHBOARD UTENTI E MODERAZIONE
+  // ==========================================
+
+  .users-dashboard-container {
+    max-width: 1000px;
     margin: 0 auto;
+    padding-top: 12px;
+  }
+
+  .user-mod-accordion {
+    background: var(--ion-color-secondary, #181818);
+    border: 1px solid #232323;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    transition: border-color 0.2s ease;
+
+    &:hover {
+      border-color: #3d3d3d;
+    }
+
+    &::part(header) {
+      background: transparent;
+      padding: 6px 0;
+    }
+
+    // Forza lo sfondo trasparente sull'ion-item in caso di conflitti Shadow DOM
+    ion-item {
+      --background: transparent;
+      --border-color: transparent;
+    }
+  }
+
+  .user-accordion-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+
+    .user-avatar-wrapper {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 2px solid #2d2d2d;
+      margin-right: 14px;
+      flex-shrink: 0;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .user-meta-label {
+      h2 {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: #ffffff;
+        margin: 0 0 2px 0;
+      }
+      p {
+        font-size: 0.8rem;
+        color: #888888;
+        margin: 0;
+      }
+    }
+  }
+
+  .user-status-tag {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(var(--ion-color-success-rgb, 45, 211, 111), 0.15);
+    color: var(--ion-color-success, #2dd36f);
+    margin-right: 10px;
+
+    &.banned {
+      background: rgba(var(--ion-color-danger-rgb, 211, 47, 47), 0.15);
+      color: var(--ion-color-danger, #d32f2f);
+    }
+  }
+
+  .user-accordion-inner {
+    background: #131313;
+    border-top: 1px solid #232323;
+    padding: 16px;
+  }
+
+  .control-actions-panel {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    background: #1a1a1a;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #252525;
+
+    .action-trigger {
+      height: 36px;
+      padding: 0 16px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: opacity 0.2s ease, transform 0.1s ease;
+
+      &:active {
+        transform: scale(0.98);
+      }
+
+      &.btn-ban {
+        background-color: var(--ion-color-danger, #d32f2f);
+        color: #ffffff;
+        &:hover { opacity: 0.9; }
+      }
+
+      &.btn-unban {
+        background-color: var(--ion-color-success, #2dd36f);
+        color: #ffffff;
+        &:hover { opacity: 0.9; }
+      }
+    }
+
+    .ban-expiration-info {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--ion-color-warning, #ffc409);
+      font-weight: 600;
+
+      .mini-svg {
+        width: 14px;
+        height: 14px;
+        stroke: currentColor;
+      }
+
+      &.status-permanent {
+        color: var(--ion-color-danger, #d32f2f);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+  }
+
+  .section-divider-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #666666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 12px 4px;
+  }
+
+  .lazy-spinner-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 10px;
+    color: #666666;
+
+    p {
+      font-size: 0.85rem;
+      margin: 10px 0 0 0;
+    }
+  }
+
+  .comments-scroller-list {
+    max-height: 350px;
+    overflow-y: auto;
+    padding-right: 4px;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: #2c2c2c;
+      border-radius: 4px;
+    }
+  }
+
+  .mod-comment-row {
+    background: #181818;
+    border: 1px solid #222222;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 10px;
+
+    .comment-row-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+
+      .comment-timestamp {
+        font-size: 0.75rem;
+        color: #555555;
+      }
+
+      .comment-report-badge {
+        background: rgba(var(--ion-color-warning-rgb, 255, 196, 9), 0.12);
+        color: var(--ion-color-warning, #ffc409);
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 4px;
+        border: 1px solid rgba(var(--ion-color-warning-rgb, 255, 196, 9), 0.25);
+      }
+    }
+
+    .comment-row-text {
+      font-size: 0.9rem;
+      color: #cccccc;
+      margin: 0 0 8px 0;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .comment-row-footer {
+      display: flex;
+      gap: 16px;
+      font-size: 0.75rem;
+      color: #444444;
+      font-weight: 500;
+    }
+  }
+
+  .empty-comments-state {
+    text-align: center;
+    padding: 24px 10px;
+    color: #444444;
+    font-size: 0.85rem;
+    border: 1px dashed #222222;
+    border-radius: 6px;
   }
 }

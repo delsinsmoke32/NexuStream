@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 
-// 🚀 IMPORTAZIONI STANDALONE CHIRURGICHE
+// IMPORTAZIONI STANDALONE
 import { 
   IonHeader, 
   IonToolbar, 

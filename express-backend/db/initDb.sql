@@ -73,6 +73,7 @@ CREATE TABLE IF NOT EXISTS "Users" (
     "REF_App_Language" TEXT NOT NULL,
     "REF_PropicURI" TEXT NOT NULL,
     "canComment" INTEGER NOT NULL,
+    "BannedUntil", TEXT NULL,
     FOREIGN KEY ("REF_Audio_Language") REFERENCES "SupportedLanguages" ("LanguageID"),
     FOREIGN KEY ("REF_Text_Language") REFERENCES "SupportedLanguages" ("LanguageID"),
     FOREIGN KEY ("REF_App_Language") REFERENCES "SupportedLanguages" ("LanguageID"),

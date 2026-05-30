@@ -9,7 +9,7 @@ const search = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
     
-    const searchTerm = req.query.searchTerm;
+    const { searchTerm } = req.query;
 
     try {
         // 2. Prepariamo il parametro per la ricerca parziale (LIKE)

@@ -1,0 +1,38 @@
+ion-content {
+  --background: var(--ion-background-color, #121212) !important;
+}
+
+.form-section-title {
+  color: #777777;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 16px 0 8px 4px;
+}
+
+ion-item {
+  --background: var(--ion-color-secondary, #181818);
+  --color: #ffffff;
+  --border-radius: 8px;
+  --border-color: #2b2b2b;
+  margin-bottom: 14px;
+
+  ion-label {
+    color: var(--ion-color-primary, #b22222) !important;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  
+  ion-input, ion-textarea {
+    --color: #ffffff;
+    font-size: 0.95rem;
+  }
+}
+
+.btn-svg {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  stroke: currentColor;
+}

@@ -9,14 +9,15 @@ const search = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
     
-    const { searchTerm } = req.query;
+    const { q, genre } = req.query;
 
     try {
         // 2. Prepariamo il parametro per la ricerca parziale (LIKE)
-        const queryParam = `%${searchTerm}%`;
+        const searchParam = q ? `%${q}%` : '%';
+        const genreParam = genre ? genre : null;
 
         // 3. Chiamata al Model
-        const results = await showModel.searchShows(queryParam);
+        const results = await showModel.searchShows(searchParam, genreParam);
         
         return res.json(results);
     } catch (err) {
@@ -28,11 +29,7 @@ const search = async (req, res) => {
 const getHomeData = async (req, res) => {
     const user = req.user;
 
-    if (user) {
-        const applang = user.appLang;
-    } else {
-        const applang = req.language;
-    }
+    const applang = user ? user.appLang : req.language;
 
     try {
         // 1. Prepariamo le query base obbligatorie per tutti (anonimi e loggati)
@@ -51,8 +48,8 @@ const getHomeData = async (req, res) => {
 
         // 4. Costruiamo il JSON di risposta in modo sicuro
         const homeData = {
-            topLiked: results[0],
-            topViewed: results[1],
+            mostLiked: results[0],
+            mostViewed: results[1],
             // Se l'utente esiste i dati sono in results[2], altrimenti restituiamo un array vuoto
             continueWatching: user ? results[2] : [] 
         };
@@ -74,11 +71,7 @@ const getShowDetails = async (req, res) => {
     const { showId } = req.params;
 
     try {
-        if (req.user) {
-            const applang = req.user.appLang;
-        } else {
-            const applang = req.language;
-        }
+       const applang = user ? user.appLang : req.language;
         const show = await showModel.getShowById(showId, applang);
         
         if (!show) {

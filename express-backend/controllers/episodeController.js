@@ -12,12 +12,7 @@ const getEpisodeDetails = async (req, res) => {
     }
     const { episodeId } = req.params;
     const user = req.user;
-
-    if (user) {
-        const applang = user.appLang;
-    } else {
-        const applang = req.language;
-    }
+    const applang = user ? user.appLang : req.language; 
 
     try {
         const episode = await episodeModel.getEpisodeById(episodeId, applang);

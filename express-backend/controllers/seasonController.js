@@ -11,11 +11,7 @@ const getSeasonDetails = async (req, res) => {
     const { seasonId } = req.params;
     const user = req.user;
 
-    if (user) {
-        const applang = user.appLang;
-    } else {
-        const applang = req.language;
-    }
+    const applang = user ? user.appLang : req.language;
 
     try {
         // Chiamata al Model per estrarre la stagione

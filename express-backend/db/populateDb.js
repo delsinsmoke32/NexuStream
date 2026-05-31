@@ -13,19 +13,24 @@ const populateDb = async () => {
         try{
             db.serialize(() => {
                 db.exec(sqlContent);
-                console.log("Struttura base e dati statici inseriti.");
+                console.log("Struttura base e catalogo anime inseriti.");
             });
         } catch (err) {
             console.error("L'errore è avvenuto dentro populateDb.sql!");
             console.error(err);
         }
 
-        // 2. Inseriamo gli utenti (Tabella: Users)
+        // 2. Inseriamo gli utenti (Tabella: Users) con i path in '/static/avatars/'
         const users = [
-            { email: 'admin@stream.it', pass: 'admin123', user: 'SuperAdmin', mod: 1, cat: 1, adm: 1, audio: 'it', text: 'it', app: 'it', pic: '/static/avatars/avatar-000.png', canComment: 1 },
-            { email: 'marco@email.com', pass: 'marco88', user: 'MarcoRossi', mod: 0, cat: 0, adm: 0, audio: 'it', text: 'it', app: 'it', pic: '/static/avatars/avatar-001.png', canComment: 1 },
-            { email: 'gino@email.com', pass: 'gino99', user: 'GinoRossi', mod: 1, cat: 0, adm: 0, audio: 'it', text: 'it', app: 'it', pic: '/static/avatars/avatar-001.png', canComment: 1 },
-            { email: 'guest@test.com', pass: 'guest99', user: 'GuestUser', mod: 0, cat: 1, adm: 0, audio: 'en', text: 'en', app: 'en', pic: '/static/avatars/avatar-002.png', canComment: 1 }
+            { email: 'admin@stream.it', pass: 'admin123', user: 'SuperAdmin', mod: 1, cat: 1, adm: 1, audio: 'jp', text: 'it', app: 'it', pic: '/static/avatars/avatar-000.png', canComment: 1 },
+            { email: 'marco@email.com', pass: 'marco888', user: 'MarcoRossi', mod: 0, cat: 0, adm: 0, audio: 'it', text: 'it', app: 'it', pic: '/static/avatars/avatar-001.png', canComment: 1 },
+            { email: 'gino@email.com', pass: 'gino9999', user: 'GinoRossi', mod: 1, cat: 0, adm: 0, audio: 'jp', text: 'it', app: 'it', pic: '/static/avatars/avatar-001.png', canComment: 1 },
+            { email: 'guest@test.com', pass: 'guest999', user: 'GuestUser', mod: 0, cat: 1, adm: 0, audio: 'en', text: 'en', app: 'en', pic: '/static/avatars/avatar-002.png', canComment: 1 },
+            
+            // Nuovi Utenti Aggiunti per popolare il Database
+            { email: 'luigi@anime.it', pass: 'luigi999', user: 'LuigiOtaku', mod: 0, cat: 0, adm: 0, audio: 'jp', text: 'it', app: 'it', pic: '/static/avatars/avatar-002.png', canComment: 1 },
+            { email: 'giulia@stream.it', pass: 'giulia22', user: 'GiuliaWeeb', mod: 0, cat: 0, adm: 0, audio: 'jp', text: 'it', app: 'it', pic: '/static/avatars/avatar-003.png', canComment: 1 },
+            { email: 'hater@web.com', pass: 'hater123', user: 'AnimeHater', mod: 0, cat: 0, adm: 0, audio: 'it', text: 'it', app: 'it', pic: '/static/avatars/avatar-000.png', canComment: 0 } // Utente Bannato
         ];
 
         console.log("Hash delle password in corso...");
@@ -39,7 +44,7 @@ const populateDb = async () => {
             await dbf.runAsync(sql, [u.email, hash, u.user, u.mod, u.cat, u.adm, u.audio, u.text, u.app, u.pic, u.canComment]);
         }
 
-        console.log("Tutti gli utenti sono stati inseriti con successo.");
+        console.log("Tutti gli 7 utenti sono stati inseriti con successo.");
 
     } catch (error) {
         console.error("Errore durante la popolazione iniziale:", error);
@@ -47,54 +52,64 @@ const populateDb = async () => {
     }
 
     // ==========================================
-    // 3. DATI DIPENDENTI (Richiedono che gli utenti esistano)
+    // 3. DATI DIPENDENTI (Richiedono che gli utenti e gli episodi esistano)
     // ==========================================
 
-    // Tabella: Comments (Incluso commento padre e risposta)
     const commentsSql = `
             INSERT INTO "Comments" ("REF_UserID", "REF_DiscussionID", "DateCommented", "CommentText", "REF_CommentID", "isHidden", "Likes", "isApproved", "ReportCount") 
             VALUES 
-            (2, 1, '2023-05-10 14:30', "Questo primo episodio è stupendo!", NULL, 0, 10, 1, 0),
-            (1, 1, '2023-05-10 15:00', "Concordo con te Marco!", 1, 0, 2, 1, 0),
-            (3, 2, '2023-05-12 18:22', "Il secondo episodio si fa un po' lento.", NULL, 0, 1, 1, 1)
+            (2, 1, '2026-05-10 14:30', "Questa opening di Attack on Titan mi fa venire i brividi ogni volta!", NULL, 0, 45, 1, 0),
+            (5, 1, '2026-05-10 15:00', "Assolutamente d'accordo, capolavoro indiscusso.", 1, 0, 12, 1, 0),
+            
+            (6, 3, '2026-05-12 18:22', "Gojo Satoru è semplicemente il miglior personaggio mai creato.", NULL, 0, 110, 1, 0),
+            (7, 3, '2026-05-12 18:40', "Ma perfavore, è solo un anime sopravvalutato per ragazzini.", NULL, 0, 0, 1, 5),
+            
+            (2, 9, '2026-05-15 21:10', "Ho appena iniziato One Piece... ci vediamo tra 2 anni quando sarò in pari!", NULL, 0, 300, 1, 0),
+            
+            (5, 7, '2026-05-18 10:05', "L'animazione di Frieren è fuori di testa, lo studio Madhouse non delude mai.", NULL, 0, 85, 1, 0)
     `;
 
-    // Tabella: LINKs_User_Interacts_Episode (Cronologia visiva e progressi)
     const userInteractsEpisode = `
             INSERT INTO "LINKs_User_Interacts_Episode" ("REF_UserID", "REF_EpisodeID", "LastWatchedDate", "Progress", "isCompleted", "isDropped", "isLiked")
             VALUES 
-            (2, 1, '2023-06-01', 100, 1, 0, 1), -- Completato e piaciuto
-            (2, 2, '2023-06-02', 45, 0, 0, 0),  -- In corso di visione
-            (3, 1, '2023-06-02', 20, 0, 1, 0)   -- Droppato
+            (2, 1, '2026-05-20 20:00', 100, 1, 0, 1),
+            (2, 2, '2026-05-21 21:00', 45, 0, 0, 0),
+            (2, 8, '2026-05-25 18:30', 80, 0, 0, 1), 
+            
+            (5, 3, '2026-05-28 14:15', 30, 0, 0, 1),
+            (5, 9, '2026-05-29 16:00', 100, 1, 0, 1),
+            (5, 10, '2026-05-30 22:45', 15, 0, 0, 0),
+
+            (6, 12, '2026-05-22 19:10', 90, 0, 0, 1)
     `;
 
-    // Tabella: LINKs_User_Likes_Show (Preferiti delle Serie)
     const userLikesShow = `
             INSERT INTO "LINKs_User_Likes_Show" ("REF_UserID", "REF_ShowID") 
             VALUES 
-            (2, 1), 
-            (2, 2),
-            (3, 2)
+            (2, 1), (2, 7), (2, 8),
+            (5, 2), (5, 8), (5, 4),
+            (6, 10), (6, 6)
     `;
 
-    // Tabella: LINKs_User_Interacts_Comment (Like e Segnalazioni ai Commenti)
     const userInteractsComment = `
             INSERT INTO "LINKs_User_Interacts_Comment" ("REF_CommentID", "REF_UserID", "isLiked", "isReported")
             VALUES
-            (1, 2, 1, 0), -- Marco ha messo like al suo stesso commento
-            (1, 3, 1, 0), -- Gino ha messo like al commento 1
-            (3, 1, 0, 1)  -- Admin ha segnalato il commento 3
+            (1, 5, 1, 0),
+            (3, 2, 1, 0),
+            (4, 1, 0, 1),
+            (4, 2, 0, 1),
+            (4, 5, 0, 1)
     `;
 
     try {
-        console.log("Inserimento dei dati dipendenti e delle tabelle pivot...");
+        console.log("Inserimento dei dati dipendenti (Commenti, Progressi, Preferiti)...");
         
         await dbf.runAsync(commentsSql, []);
         await dbf.runAsync(userInteractsEpisode, []);
         await dbf.runAsync(userLikesShow, []);
         await dbf.runAsync(userInteractsComment, []);
 
-        console.log("Database interamente popolato! Tutte le 19 tabelle hanno dati pronti.");
+        console.log("Database interamente popolato! Il tuo catalogo Anime Netflix è pronto all'uso.");
     } catch (err) {
         console.error("Errore nell'inserimento dei dati relazionali: ", err);
     }

@@ -1,53 +1,334 @@
-/* Stili per le liste di categorie, i poster, il testo, ecc. */
-.category-list {
-  h3 {
-    margin-left: 10px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: white; /* O il colore che preferisci */
-  }
-
-  .horizontal-scroll {
-  display: flex;             // Mette gli elementi uno accanto all'altro
-  overflow-x: auto;          // Abilita lo scorrimento orizzontale
-  scroll-snap-type: x mandatory; // Fa sì che i poster si "aggancino" quando scorri
-  padding: 10px;
-  gap: 15px;                 // Spazio tra i poster
-  
-  // Nasconde la barra di scorrimento brutta su alcuni browser
-  &::-webkit-scrollbar {
-    display: none;
-  }
+:host {
+  --ion-background-color: var(--ion-color-dark, #121212);
 }
 
-.anime-card {
-  flex: 0 0 auto;            // Impedisce ai poster di rimpicciolirsi
-  width: 140px;              // Larghezza del poster (simile a Immagine 2026-05-14 110108.jpg)
-  scroll-snap-align: start;  // Punto di aggancio per lo scorrimento
+.netflix-toolbar {
+  --background: linear-gradient(to bottom, rgba(10, 10, 10, 0.9) 0%, rgba(10, 10, 10, 0.4) 100%);
+  --border-width: 0;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  position: absolute; /* Fondamentale per far andare la hero sotto l'header */
+}
+
+.brand-title {
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  text-align: center;
+  font-family: 'Arial Black', sans-serif;
+  cursor: pointer;
+}
+
+.btn-icon-red {
+  --color: var(--ion-color-primary, #b22222) !important;
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+
+/* ===================================
+   HERO BANNER
+   =================================== */
+.hero-container {
+  position: relative;
+  width: 100%;
+  height: 70vh; /* Prende una buona parte dello schermo */
+  max-height: 800px;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.hero-slide {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+  pointer-events: none;
+  z-index: 1;
+
+  &.active {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 2;
+  }
 
   img {
     width: 100%;
-    height: 200px;
+    height: 100%;
     object-fit: cover;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    object-position: top center; /* Evita di tagliare le teste nell'immagine */
   }
 
-  p {
-    color: white;
-    font-size: 0.9rem;
-    margin-top: 5px;
-    white-space: nowrap;     // Evita che il titolo vada a capo
-    overflow: hidden;
-    text-overflow: ellipsis; // Aggiunge i puntini sospensivi se il titolo è lungo
+  .hero-gradient {
+    position: absolute;
+    bottom: -2px; left: 0; right: 0;
+    height: 60%;
+    background: linear-gradient(to top, var(--ion-background-color) 0%, rgba(18,18,18,0.7) 40%, transparent 100%);
+  }
+
+  .hero-content {
+    position: absolute;
+    bottom: 40px;
+    left: 20px;
+    right: 20px;
+    z-index: 3;
+
+    @media (min-width: 768px) {
+      left: 60px;
+      bottom: 80px;
+      max-width: 50%;
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #fff;
+      margin: 0 0 10px 0;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+    }
+
+    .hero-description {
+      font-size: 1rem;
+      color: #e5e5e5;
+      margin: 0 0 20px 0;
+      line-height: 1.4;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+      /* Limita a 3 righe con i puntini */
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+
+      button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 1rem;
+        font-weight: 700;
+        padding: 10px 24px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.1s ease, filter 0.2s ease;
+
+        ion-icon { font-size: 1.4rem; }
+        &:active { transform: scale(0.95); }
+      }
+
+      .btn-hero-play {
+        background-color: #ffffff;
+        color: #000000;
+        &:hover { filter: brightness(0.8); }
+      }
+
+      .btn-hero-info {
+        background-color: rgba(109, 109, 110, 0.7);
+        color: #ffffff;
+        &:hover { background-color: rgba(109, 109, 110, 0.9); }
+      }
+    }
   }
 }
+
+/* ===================================
+   MAIN CONTAINER CARDS
+   =================================== */
+.main-container {
+  padding-top: 80px; /* Padding standard se non c'è hero */
+  padding-bottom: 60px;
+
+  &.has-hero {
+    padding-top: 0;
+    margin-top: -20px; /* Fa "salire" le card leggermente sopra la sfumatura */
+    position: relative;
+    z-index: 10;
+  }
 }
-.titolo-cliccabile {
-  cursor: pointer;
-  text-align: center;
-  /* Opzionale: un leggero effetto visivo quando l'utente ci passa sopra con il mouse */
-  &:hover {
-    opacity: 0.8;
+
+.category-row {
+  margin-bottom: 30px;
+
+  .row-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ion-text-color, #ffffff);
+    margin: 0 0 12px 16px;
+    letter-spacing: 0.5px;
+  }
+}
+
+.horizontal-scroll {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 0 16px 20px 16px; 
+  gap: 14px;
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  
+  &::-webkit-scrollbar { display: none; }
+}
+
+/* ===================================
+   BASE CARD E INTERAZIONI
+   =================================== */
+.netflix-card {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  position: relative;
+  background-color: #222;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+
+  img {
+    width: 100%; height: 100%;
+    object-fit: cover; display: block;
+    transition: filter 0.3s ease;
+  }
+
+  .card-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 40%, rgba(0,0,0,0.2) 100%);
+    opacity: 0; 
+    transition: opacity 0.3s ease;
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    .play-icon-center {
+      font-size: 3.5rem;
+      color: #ffffff;
+      cursor: pointer;
+      transition: transform 0.2s ease, color 0.2s ease;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.8));
+
+      &:hover {
+        transform: scale(1.1);
+        color: var(--ion-color-primary, #b22222);
+      }
+      &:active { transform: scale(0.9); }
+    }
+
+    .meta-bottom-row {
+      position: absolute;
+      bottom: 12px; left: 12px; right: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      transform: translateY(10px);
+      transition: transform 0.3s ease;
+
+      .show-title {
+        display: block;
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #fff;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .ep-title {
+        display: block;
+        font-size: 0.75rem;
+        color: #aaaaaa;
+        margin-top: 2px;
+      }
+
+      .info-icon {
+        font-size: 1.6rem;
+        color: #aaaaaa;
+        cursor: pointer;
+        transition: color 0.2s ease;
+        flex-shrink: 0;
+        margin-left: 8px;
+
+        &:hover { color: #ffffff; }
+      }
+    }
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      transform: scale(1.06);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.8);
+      z-index: 10;
+      img { filter: brightness(0.6); }
+      .card-overlay { opacity: 1; }
+      .card-overlay .meta-bottom-row { transform: translateY(0); }
+    }
+  }
+}
+
+/* ===================================
+   DIMENSIONI CARD
+   =================================== */
+.landscape {
+  width: 240px;
+  aspect-ratio: 16 / 9;
+  @media (min-width: 768px) { width: 300px; }
+
+  .progress-bar-bg {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    z-index: 2; 
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background-color: var(--ion-color-primary, #b22222);
+  }
+  
+  .meta-text {
+    overflow: hidden;
+    width: 80%;
+  }
+}
+
+.portrait {
+  width: 130px;
+  aspect-ratio: 2 / 3;
+  @media (min-width: 768px) { width: 160px; }
+  
+  .play-icon-center { font-size: 2.8rem !important; }
+}
+
+/* ===================================
+   POPOVER
+   =================================== */
+.dark-popover {
+  background: var(--ion-background-color);
+  
+  ion-item {
+    --background: var(--ion-background-color);
+    --color: var(--ion-color-primary, #b22222); 
+    --border-color: var(--ion-color-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: opacity 0.2s ease;
+
+    &:hover { opacity: 0.8; }
+  }
+
+  .logout-item {
+    font-weight: 800;
+    letter-spacing: 0.5px;
   }
 }

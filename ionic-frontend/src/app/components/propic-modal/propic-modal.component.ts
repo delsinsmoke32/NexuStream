@@ -45,7 +45,6 @@ import { cameraOutline } from '@lib/ionicons/icons'
     imports: [
         CommonModule,
         ReactiveFormsModule,
-        // Registriamo singolarmente i componenti Ionic usati nell'HTML della modale
         IonHeader,
         IonToolbar,
         IonTitle,
@@ -68,7 +67,6 @@ export class PropicModalComponent implements OnInit {
 
     http = inject(HttpClient)
     constructor() {
-        // Required to register icons manually in Ionic Standalone model
         addIcons({ cameraOutline })
     }
 
@@ -92,7 +90,7 @@ export class PropicModalComponent implements OnInit {
         formData.append('picture', file, file.name)
 
         // Replace with your active API endpoint URL
-        this.http.post('api/upload/propic', formData).subscribe({
+        this.http.post('api/cataloguer/propic/add', formData).subscribe({
             next: (response: any) => {
                 console.log('Upload success', response)
                 this.selectedFile.set(null)
@@ -120,14 +118,14 @@ export class PropicModalComponent implements OnInit {
     }
 
     private initForm() {
-        const getLangText = (jsonStr: string, lang: string) => {
-            try {
-                const obj = JSON.parse(jsonStr)
-                return obj[lang] || ''
-            } catch {
-                return jsonStr || ''
-            }
-        }
+        // const getLangText = (jsonStr: string, lang: string) => {
+        //     try {
+        //         const obj = JSON.parse(jsonStr)
+        //         return obj[lang] || ''
+        //     } catch {
+        //         return jsonStr || ''
+        //     }
+        // }
 
         this.propicForm = this.fb.group({
             bundle: [
@@ -135,7 +133,7 @@ export class PropicModalComponent implements OnInit {
                 [Validators.required],
             ],
             img: [
-                this.isEditMode ? getLangText(this.propic.img, 'it') : '',
+                this.isEditMode ? this.propic.img : '',
                 [Validators.required],
             ],
         })

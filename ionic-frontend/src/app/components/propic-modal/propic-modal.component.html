@@ -21,6 +21,7 @@
         <div class="upload-container">
             <input
                 type="file"
+                formControllerName="file"
                 #fileInput
                 (change)="onFileSelect($event)"
                 accept="image/*"
@@ -47,7 +48,7 @@
             </ion-button>
         </div>
 
-        <ion-button
+        <!-- <ion-button
             expand="block"
             type="submit"
             [disabled]="propicForm.invalid"
@@ -65,6 +66,6 @@
                 />
             </svg>
             {{ isEditMode ? 'Aggiorna Dati' : 'Salva nel Catalogo' }}
-        </ion-button>
+        </ion-button> -->
     </form>
 </ion-content>

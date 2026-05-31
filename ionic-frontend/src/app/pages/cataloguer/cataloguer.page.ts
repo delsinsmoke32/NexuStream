@@ -461,31 +461,31 @@ export class CataloguerPage implements OnInit {
         const { data } = await modal.onWillDismiss()
         if (!data) return
 
-        let endpoint = ''
-        let payload = {}
+        // let endpoint = ''
+        // let payload = {}
 
-        endpoint = `${this.baseUrl}/propic/add`
-        payload = {
-            bundle: data.payload.bundle,
-            img: data.payload.image,
-        }
+        // endpoint = `${this.baseUrl}/propic/add`
+        // payload = {
+        //     bundle: data.payload.bundle,
+        //     img: data.payload.image,
+        // }
 
-        this.http
-            .post(endpoint, payload, { headers: this.getAuthHeaders() })
-            .subscribe({
-                next: () => {
-                    this.presentToast(
-                        'Elemento aggiunto con successo!',
-                        'success'
-                    )
-                    this.refreshCurrentLevel()
-                },
-                error: () =>
-                    this.presentToast(
-                        'Errore durante il salvataggio.',
-                        'danger'
-                    ),
-            })
+        // this.http
+        //     .post(endpoint, payload, { headers: this.getAuthHeaders() })
+        //     .subscribe({
+        //         next: () => {
+        //             this.presentToast(
+        //                 'Elemento aggiunto con successo!',
+        //                 'success'
+        //             )
+        //             this.refreshCurrentLevel()
+        //         },
+        //         error: () =>
+        //             this.presentToast(
+        //                 'Errore durante il salvataggio.',
+        //                 'danger'
+        //             ),
+        //     })
     }
 
     navigateBack() {

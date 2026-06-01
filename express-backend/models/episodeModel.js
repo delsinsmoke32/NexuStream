@@ -1,5 +1,20 @@
 const db = require("../db/db");
 
+const getEpisodesBySeason = async (seasonId, applang = "it") => {
+    const sql = `
+        SELECT 
+            EpisodeID, ReleaseDate, Duration, Likes, Streams, ThumbnailURI, EpisodeNumber,
+            -- Aggiunta la virgola sopra e rimossa la virgola prima del FROM
+            COALESCE(Title->>?, Title->>'it') AS Title,
+            COALESCE(Description->>?, Description->>'it') AS Description
+        FROM Episodes
+        WHERE REF_SeasonID = ?
+        ORDER BY EpisodeNumber ASC`;
+    
+    // NOTA: Come sopra, servono 3 parametri per riempire i 3 punti interrogativi
+    return await db.allAsync(sql, [applang, applang, seasonId]);
+}
+
 /**
  * Trova un episodio nel database usando il suo id
  * @param {number} episodeId 
@@ -72,6 +87,7 @@ const updateEpisodeLikesCounter = async (likeDelta, episodeId) => {
 };
 
 module.exports = {
+    getEpisodesBySeason,
     getEpisodeById,
     getPreviousLikeStatus,
     upsertEpisodeInteraction,

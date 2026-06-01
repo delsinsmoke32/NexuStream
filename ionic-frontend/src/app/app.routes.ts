@@ -47,7 +47,7 @@ export const routes: Routes = [
   
   // 5. Pagine di Dettaglio con ID dinamico (fondamentali per caricare i dati corretti dal DB)
   {
-    path: 'shows/:showId',
+    path: 'shows/:id',
     loadComponent: () => import('./pages/shows/shows.page').then(m => m.ShowsPage)
   },
   {

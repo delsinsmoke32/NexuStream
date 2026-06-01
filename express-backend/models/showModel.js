@@ -95,6 +95,40 @@ const getTopFavorited = async (applang = 'it') => {
     return await db.allAsync(sql, [applang, applang]);
 };
 
+// Recupera i generi della serie
+const getShowGenres = async (showId) => {
+    const sql = `
+        SELECT g.Name 
+        FROM Genres g
+        JOIN LINKs_Show_Has_Genre l ON g.GenreID = l.REF_GenreID
+        WHERE l.REF_ShowID = ?`;
+    return await db.allAsync(sql, [showId]);
+};
+
+// Trova l'ID del primissimo episodio in assoluto
+const getFirstEpisodeOfShow = async (showId) => {
+    const sql = `
+        SELECT e.EpisodeID 
+        FROM Episodes e
+        JOIN Seasons s ON e.REF_SeasonID = s.SeasonID
+        WHERE s.REF_ShowID = ?
+        ORDER BY s.SeasonNumber ASC, e.EpisodeNumber ASC
+        LIMIT 1`;
+    return await db.getAsync(sql, [showId]);
+};
+
+// Recupera le tracce audio (DUB)
+const getEpisodeAudio = async (episodeId) => {
+    return await db.allAsync(`SELECT REF_LanguageID FROM EpisodeLanguage WHERE REF_EpisodeID = ?`, [episodeId]);
+};
+
+// Recupera i sottotitoli (SUB)
+const getEpisodeSubs = async (episodeId) => {
+    return await db.allAsync(`SELECT REF_LanguageID FROM EpisodeSubtitles WHERE REF_EpisodeID = ?`, [episodeId]);
+};
+
+
+
 /**
  * Prende le 20 serie con più stream calcolando la somma degli episodi e localizzando lo show
  * @param {string} applang - La lingua rilevata (es. "en")
@@ -204,6 +238,10 @@ const decrementFavorites = async (showId) => {
 
 module.exports = {
     searchShows,
+    getShowGenres,
+    getFirstEpisodeOfShow,
+    getEpisodeSubs,
+    getEpisodeAudio,
     getTopStreamed,
     getTopFavorited,
     getContinueWatching,

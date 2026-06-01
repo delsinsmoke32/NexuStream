@@ -1,0 +1,146 @@
+:host {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.episode-card {
+  display: flex;
+  gap: 16px;
+  background: var(--ion-color-secondary, #181818);
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  border: 1px solid transparent;
+
+  &:hover {
+    background: #222222;
+    border-color: #333333;
+    transform: translateX(4px);
+
+    .thumb-container .play-overlay {
+      opacity: 1;
+    }
+  }
+}
+
+.thumb-container {
+  position: relative;
+  width: 140px;
+  flex-shrink: 0;
+  aspect-ratio: 16 / 9;
+  border-radius: 6px;
+  overflow: hidden;
+  background-color: #000;
+
+  @media (min-width: 768px) {
+    width: 200px;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: filter 0.2s;
+  }
+
+  .play-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+
+    ion-icon {
+      font-size: 2.5rem;
+      color: var(--ion-text-color, #ffffff);
+    }
+  }
+
+  .duration-badge {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    font-size: 0.7rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  .progress-bar-bg {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.2);
+    z-index: 2;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background-color: var(--ion-color-primary, #b22222);
+
+    &.completed {
+      background-color: #aaaaaa; /* Grigio se già finito */
+    }
+  }
+}
+
+.ep-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+
+  .ep-number {
+    font-size: 0.8rem;
+    color: var(--ion-color-primary, #b22222);
+    margin: 0 0 4px 0;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .ep-title {
+    font-size: 1rem;
+    color: var(--ion-text-color, #ffffff);
+    margin: 0 0 6px 0;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .ep-desc {
+    font-size: 0.85rem;
+    color: #aaaaaa;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+  }
+  
+  .ep-bottom-row {
+    display: flex;
+    justify-content: flex-end; /* Allinea l'icona a destra */
+    margin-top: 8px;
+
+    .info-btn {
+      font-size: 1.6rem;
+      color: #888888;
+      padding: 4px;
+      margin: -4px; /* Aumenta l'area cliccabile senza spostare l'icona */
+      border-radius: 50%;
+      transition: color 0.2s, transform 0.1s;
+
+      &:hover { color: #ffffff; }
+      &:active { transform: scale(0.9); }
+    }
+  }
+}

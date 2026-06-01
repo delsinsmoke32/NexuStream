@@ -1,5 +1,5 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar class="netflix-toolbar">
+  <ion-toolbar class="show-toolbar">
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home" class="btn-icon-red"></ion-back-button>
     </ion-buttons>
@@ -19,7 +19,7 @@
       animated="true"
       debounce="400"
       (ionInput)="onSearchChange($event)"
-      class="netflix-searchbar">
+      class="show-searchbar">
     </ion-searchbar>
 
     <div class="genres-scroll">
@@ -59,16 +59,20 @@
       @if (filteredResults().length > 0) {
         <div class="results-grid">
           @for (show of filteredResults(); track show.ShowID) {
-            <div class="netflix-card portrait">
-              <img [src]="show.ThumbnailURI ? (show.ThumbnailURI | backendUrl) : 'assets/placeholder-poster.png'" [alt]="show.Title" />
-              
-              <div class="card-overlay">
-                <ion-icon name="play-circle" class="play-icon-center" (click)="goToShows(show, $event)"></ion-icon>
-                <div class="meta-bottom-row">
-                  <span class="show-title">{{ show.Title }}</span>
-                  <ion-icon name="information-circle-outline" class="info-icon" (click)="goToShows(show, $event)"></ion-icon>
+            <div class="show-card portrait">
+                
+                <div class="poster-container" (click)="openSeriesInfo(show.ShowID, $event)">
+                  <img [src]="show.ThumbnailURI ? (show.ThumbnailURI | backendUrl) : 'assets/placeholder-poster.png'" [alt]="show.Title" />
+                  
+                  <div class="play-overlay">
+                    <ion-icon name="play-circle"></ion-icon>
+                  </div>
                 </div>
-              </div>
+                
+                <div class="card-info-bottom" (click)="openSeriesInfo(show.ShowID, $event)">
+                  <ion-icon name="information-circle-outline" mode="md" class="info-btn"></ion-icon>
+                </div>
+
             </div>
           }
         </div>

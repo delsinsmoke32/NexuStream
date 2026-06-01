@@ -1,7 +1,7 @@
 -- 1. Lingue Supportate
 INSERT INTO "SupportedLanguages" ("LanguageID") VALUES ('it'), ('en'), ('jp');
 
--- 2. Generi cinematografici (Espansi per gli anime)
+-- 2. Generi cinematografici
 INSERT INTO "Genres" ("Name") VALUES 
 ('Sci-Fi'), ('Fantasy'), ('Thriller'), ('Drama'), 
 ('Action'), ('Comedy'), ('Romance'), ('Adventure'), 
@@ -14,7 +14,7 @@ INSERT INTO "Propics" ("PropicURI", "Bundle") VALUES
 ('/static/avatars/avatar-002.png', 'Anime Pack'),
 ('/static/avatars/avatar-003.png', 'Premium Pack');
 
--- 4. Serie TV (Shows) - 20 Anime in stile Netflix con path su /static/
+-- 4. Serie TV (Shows)
 INSERT INTO "Shows" ("DateStarted", "hasEnded", "DateEnded", "Favourited", "Title", "Description", "ThumbnailURI", "BannerURI") VALUES 
 ('2013-04-07', 1, '2023-11-04', 15400, '{"it":"L''Attacco dei Giganti","en":"Attack on Titan"}', '{"it":"L''umanità combatte per la sopravvivenza contro i temibili Giganti.","en":"Humanity fights for survival against the terrifying Titans."}', '/static/show_thumbnails/aot.png', '/static/banners/aot.png'),
 ('2020-10-03', 0, NULL, 12300, '{"it":"Jujutsu Kaisen","en":"Jujutsu Kaisen"}', '{"it":"Yuji Itadori si unisce a un''organizzazione segreta di stregoni.","en":"Yuji Itadori joins a secret organization of Jujutsu Sorcerers."}', '/static/show_thumbnails/jjk.png', '/static/banners/jjk.png'),
@@ -37,7 +37,7 @@ INSERT INTO "Shows" ("DateStarted", "hasEnded", "DateEnded", "Favourited", "Titl
 ('2016-04-04', 0, NULL, 11800, '{"it":"Re:Zero","en":"Re:Zero"}', '{"it":"Un ragazzo viene trasportato in un mondo magico con il potere di rinascere.","en":"A boy is transported to a magical world with the power to respawn."}', '/static/show_thumbnails/rezero.png', '/static/banners/rezero.png'),
 ('2019-01-12', 1, '2022-06-25', 9600, '{"it":"Kaguya-sama: Love is War","en":"Kaguya-sama: Love is War"}', '{"it":"Due geni troppo orgogliosi per confessare il loro amore.","en":"Two geniuses too proud to confess their love."}', '/static/show_thumbnails/kaguya.png', '/static/banners/kaguya.png');
 
--- 5. Associazioni Serie -> Generi (LINKs_Show_Has_Genre)
+-- 5. Associazioni Serie -> Generi
 INSERT INTO "LINKs_Show_Has_Genre" ("REF_ShowID", "REF_GenreID") VALUES 
 (1, 5), (1, 4), (2, 5), (2, 2), (3, 5), (3, 2), (4, 5), (4, 11),
 (5, 5), (5, 1), (6, 8), (6, 4), (7, 5), (7, 2), (8, 5), (8, 8),
@@ -45,11 +45,39 @@ INSERT INTO "LINKs_Show_Has_Genre" ("REF_ShowID", "REF_GenreID") VALUES
 (13, 5), (13, 8), (14, 5), (14, 8), (15, 5), (15, 1), (16, 5), (16, 8),
 (17, 5), (17, 2), (18, 10), (18, 5), (19, 10), (19, 3), (20, 6), (20, 7);
 
--- 6. Stagioni (Seasons)
+-- ==========================================
+-- 6. STAGIONI (Seasons)
+-- ==========================================
+
+-- A. Inseriamo dinamicamente la Stagione 1 per TUTTE le 20 serie (Genera gli ID da 1 a 20)
 INSERT INTO "Seasons" ("REF_ShowID", "DateStarted", "hasEnded", "DateEnded", "Title", "Description", "SeasonNumber") 
 SELECT ShowID, DateStarted, 0, NULL, '{"it":"Stagione 1","en":"Season 1"}', '{"it":"L''inizio dell''avventura","en":"The beginning of the adventure"}', 1 FROM "Shows";
 
--- 7. Episodi (Episodes) - Con immagini su /static/
+-- B. Inseriamo le stagioni successive per le serie più famose (Genererà gli ID dal 21 in poi)
+INSERT INTO "Seasons" ("REF_ShowID", "DateStarted", "hasEnded", "DateEnded", "Title", "Description", "SeasonNumber") VALUES 
+-- Attack on Titan (ShowID: 1)
+(1, '2017-04-01', 1, '2017-06-17', '{"it":"Stagione 2","en":"Season 2"}', '{"it":"Nuovi misteri si celano all''interno delle mura.","en":"New mysteries lie within the walls."}', 2), -- ID: 21
+(1, '2018-07-23', 1, '2019-07-01', '{"it":"Stagione 3","en":"Season 3"}', '{"it":"Scontri politici e la riconquista del Wall Maria.","en":"Political clashes and the retaking of Wall Maria."}', 3), -- ID: 22
+(1, '2020-12-07', 1, '2023-11-04', '{"it":"Stagione 4 (Final Season)","en":"Season 4 (Final Season)"}', '{"it":"La guerra totale oltre l''oceano.","en":"The all-out war across the ocean."}', 4), -- ID: 23
+
+-- Jujutsu Kaisen (ShowID: 2)
+(2, '2023-07-06', 1, '2023-12-28', '{"it":"Stagione 2 (L''Incidente di Shibuya)","en":"Season 2 (Shibuya Incident)"}', '{"it":"Il piano maledetto entra nel vivo nel cuore di Tokyo.","en":"The cursed plan enters its climax in the heart of Tokyo."}', 2), -- ID: 24
+
+-- Demon Slayer (ShowID: 3)
+(3, '2021-10-10', 1, '2022-02-13', '{"it":"Stagione 2 (Il Quartiere a Luci Rosse)","en":"Season 2 (Entertainment District)"}', '{"it":"Tanjiro e Uzui in missione segreta.","en":"Tanjiro and Uzui on a secret mission."}', 2), -- ID: 25
+(3, '2023-04-09', 1, '2023-06-18', '{"it":"Stagione 3 (Il Villaggio dei Forgiatori)","en":"Season 3 (Swordsmith Village)"}', '{"it":"La forgia delle nuove spade viene attaccata.","en":"The forge of new swords is under attack."}', 3), -- ID: 26
+
+-- One Piece (ShowID: 8)
+(8, '2001-03-21', 1, '2002-09-01', '{"it":"Stagione 2 (Saga di Alabasta)","en":"Season 2 (Alabasta Saga)"}', '{"it":"La ciurma sbarca nel regno del deserto per fermare la Baroque Works.","en":"The crew lands in the desert kingdom to stop Baroque Works."}', 2), -- ID: 27
+
+-- My Hero Academia (ShowID: 15)
+(15, '2017-04-01', 1, '2017-09-30', '{"it":"Stagione 2 (Festival dello Sport)","en":"Season 2 (Sports Festival)"}', '{"it":"Gli studenti del liceo Yuei mostrano i loro poteri in diretta TV.","en":"U.A. High students show off their powers on live TV."}', 2); -- ID: 28
+
+-- ==========================================
+-- 7. EPISODI (Episodes)
+-- ==========================================
+
+-- A. Episodi della Stagione 1 (Per tutte le 20 serie originali, ID Stagioni 1-20)
 INSERT INTO "Episodes" ("ReleaseDate", "REF_SeasonID", "Duration", "Likes", "Streams", "Title", "Description", "ThumbnailURI", "EpisodeNumber") VALUES 
 ('2013-04-07', 1, 24, 8500, 150000, '{"it":"A te, tra 2000 anni","en":"To You, in 2000 Years"}', '{"it":"I giganti sfondano il Wall Maria.","en":"The Titans break through Wall Maria."}', '/static/episode_thumbnails/aot_01.png', 1),
 ('2013-04-14', 1, 24, 7800, 140000, '{"it":"Quel giorno","en":"That Day"}', '{"it":"Il caos regna a Shiganshina.","en":"Chaos reigns in Shiganshina."}', '/static/episode_thumbnails/aot_01.png', 2),
@@ -74,13 +102,41 @@ INSERT INTO "Episodes" ("ReleaseDate", "REF_SeasonID", "Duration", "Likes", "Str
 ('2016-04-04', 19, 24, 7600, 102000, '{"it":"La fine dell''inizio","en":"The End of the Beginning"}', '{"it":"Subaru muore per la prima volta.","en":"Subaru dies for the first time."}', '/static/episode_thumbnails/rezero.png', 1),
 ('2019-01-12', 20, 24, 6900, 98000,  '{"it":"Mi farò invitare al cinema","en":"I Will Make Him Invite Me"}', '{"it":"Inizia la guerra psicologica.","en":"The psychological war begins."}', '/static/episode_thumbnails/kaguya.png', 1);
 
+-- B. Episodi Aggiuntivi per le Stagioni successive (ID Stagioni 21 - 28)
+INSERT INTO "Episodes" ("ReleaseDate", "REF_SeasonID", "Duration", "Likes", "Streams", "Title", "Description", "ThumbnailURI", "EpisodeNumber") VALUES 
+-- AOT Stagione 2 (SeasonID 21)
+('2017-04-01', 21, 24, 9800, 160000, '{"it":"Il gigante bestia","en":"Beast Titan"}', '{"it":"Una nuova anomala minaccia si profila all''orizzonte.","en":"A new anomalous threat appears on the horizon."}', '/static/episode_thumbnails/aot_01.png', 1),
+('2017-04-08', 21, 24, 8900, 155000, '{"it":"Sono a casa","en":"I''m Home"}', '{"it":"Sasha corre per salvare il suo villaggio natale.","en":"Sasha races to save her home village."}', '/static/episode_thumbnails/aot_01.png', 2),
+
+-- AOT Stagione 3 (SeasonID 22)
+('2018-07-23', 22, 24, 12000, 180000, '{"it":"Segnali di fumo","en":"Smoke Signal"}', '{"it":"La squadra Levi inizia una nuova e pericolosa missione.","en":"Levi squad begins a new dangerous mission."}', '/static/episode_thumbnails/aot_01.png', 1),
+
+-- AOT Stagione 4 (SeasonID 23)
+('2020-12-07', 23, 24, 25000, 300000, '{"it":"Al di là del mare","en":"The Other Side of the Sea"}', '{"it":"I guerrieri di Marley in azione sul campo di battaglia.","en":"Marley warriors in action on the battlefield."}', '/static/episode_thumbnails/aot_01.png', 1),
+
+-- JJK Stagione 2 (SeasonID 24)
+('2023-07-06', 24, 24, 15000, 210000, '{"it":"Talento Nascosto","en":"Hidden Inventory"}', '{"it":"Il passato di Satoru Gojo e Suguru Geto.","en":"The past of Satoru Gojo and Suguru Geto."}', '/static/episode_thumbnails/jjk.png', 1),
+
+-- Demon Slayer Stagione 2 (SeasonID 25)
+('2021-12-05', 25, 46, 14000, 190000, '{"it":"Il Pilastro del Suono, Tengen Uzui","en":"Sound Hashira Tengen Uzui"}', '{"it":"Tanjiro e i ragazzi si infiltrano nel quartiere dei piaceri.","en":"Tanjiro and the boys infiltrate the entertainment district."}', '/static/episode_thumbnails/ds.png', 1),
+
+-- Demon Slayer Stagione 3 (SeasonID 26)
+('2023-04-09', 26, 45, 18000, 250000, '{"it":"Il sogno di qualcuno","en":"Someone''s Dream"}', '{"it":"Tanjiro si risveglia nel villaggio dei forgiatori di spade.","en":"Tanjiro wakes up in the swordsmith village."}', '/static/episode_thumbnails/ds.png', 1),
+
+-- One Piece Stagione 2 - Alabasta (SeasonID 27)
+('2001-03-21', 27, 24, 11000, 230000, '{"it":"Verso Alabasta!","en":"Towards Alabasta!"}', '{"it":"La ciurma sbarca per aiutare la principessa Bibi.","en":"The crew lands to help Princess Vivi."}', '/static/episode_thumbnails/op.png', 1),
+
+-- My Hero Academia Stagione 2 (SeasonID 28)
+('2017-04-01', 28, 24, 15000, 190000, '{"it":"L''inizio del festival!","en":"That''s the Idea, Ochaco"}', '{"it":"Gli eroi della Yuei si preparano per il torneo sportivo.","en":"U.A. heroes prepare for the sports tournament."}', '/static/episode_thumbnails/mha.png', 1);
+
 -- 8. Discussioni (Discussions)
 INSERT INTO "Discussions" ("REF_EpisodeID", "OpenDate", "CloseDate", "ForceClosed", "Type") 
 SELECT EpisodeID, '2026-01-01 00:00', '2028-01-01 00:00', 0, 'standard' FROM "Episodes";
 
--- 9. Setup Lingue, Sub, e Tempi per i primi episodi
+-- 9. Setup Lingue, Sub, e Tempi (Allargato ai nuovi episodi)
 INSERT INTO "EpisodeLanguage" ("REF_EpisodeID", "REF_LanguageID") SELECT EpisodeID, 'jp' FROM "Episodes";
-INSERT INTO "EpisodeLanguage" ("REF_EpisodeID", "REF_LanguageID") SELECT EpisodeID, 'it' FROM "Episodes" WHERE EpisodeID IN (1, 3, 5, 8, 12);
+-- Mettiamo l'italiano per i primi episodi delle varie serie, così da testare i metadata
+INSERT INTO "EpisodeLanguage" ("REF_EpisodeID", "REF_LanguageID") SELECT EpisodeID, 'it' FROM "Episodes" WHERE EpisodeID IN (1, 3, 5, 8, 12, 23, 24, 25, 27);
 
 INSERT INTO "EpisodeSubtitles" ("REF_EpisodeID", "REF_LanguageID") SELECT EpisodeID, 'it' FROM "Episodes";
 INSERT INTO "EpisodeSubtitles" ("REF_EpisodeID", "REF_LanguageID") SELECT EpisodeID, 'en' FROM "Episodes";

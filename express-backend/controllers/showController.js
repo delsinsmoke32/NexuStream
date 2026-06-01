@@ -6,6 +6,7 @@ const search = async (req, res) => {
     // 1. Controllo errori di validazione formale
     const errors = validationResult(req);
     if (!errors.isEmpty()){
+        console.error(errors.array());
         return res.status(400).json({ errors: errors.array() });
     }
     
@@ -27,6 +28,12 @@ const search = async (req, res) => {
 };
 
 const getHomeData = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     const user = req.user;
 
     const applang = user ? user.appLang : req.language;
@@ -65,30 +72,47 @@ const getHomeData = async (req, res) => {
 const getShowDetails = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()){
+        console.error(errors.array());
         return res.status(400).json({ errors: errors.array() });
     }
 
     const { showId } = req.params;
+    const applang = req.user ? req.user.appLang : 'it'; // O req.language a seconda di come l'hai impostato
 
     try {
-       const applang = user ? user.appLang : req.language;
+        // 1. Dettagli base dello show
         const show = await showModel.getShowById(showId, applang);
-        
-        if (!show) {
-            return res.status(404).json({ message: "Serie non trovata." });
+        if (!show) return res.status(404).json({ error: "Show non trovato" });
+
+        // 2. Aggiungiamo i Generi (trasformiamo [{Name: 'Action'}, {Name: 'Fantasy'}] in ['Action', 'Fantasy'])
+        const genres = await showModel.getShowGenres(showId);
+        show.genres = genres.map(g => g.Name); 
+
+        // 3. Aggiungiamo Audio e Sottotitoli leggendoli dal primo episodio
+        const firstEp = await showModel.getFirstEpisodeOfShow(showId);
+        if (firstEp) {
+            const audio = await showModel.getEpisodeAudio(firstEp.EpisodeID);
+            const subs = await showModel.getEpisodeSubs(firstEp.EpisodeID);
+            
+            show.audio = audio.map(a => a.REF_LanguageID); // es. ['jp', 'it']
+            show.subs = subs.map(s => s.REF_LanguageID);   // es. ['it', 'en']
+        } else {
+            show.audio = [];
+            show.subs = [];
         }
 
+        // Restituiamo l'oggetto completo!
         return res.json(show);
     } catch (err) {
-        console.error("Errore query serie: ", err);
+        console.error("Errore recupero dettagli show: ", err);
         return res.status(500).json({ error: "Errore interno del server" });
     }
 };
 
-
 const toggleShowLike = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()){
+        console.error(errors.array());
         return res.status(400).json({ errors: errors.array() });
     }
 

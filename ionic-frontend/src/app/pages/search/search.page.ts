@@ -117,9 +117,11 @@ export class SearchPage implements OnInit {
   }
 
   // Navigazione
-  goToShows(anime: any, event?: Event) {
+  openSeriesInfo(showId: string | number, event?: Event) {
     if(event) event.stopPropagation();
-    this.router.navigate(['/shows', anime.ShowID]); // Usa ShowID restituito dal Model!
+    
+    // Usa direttamente lo showId passato dall'HTML!
+    this.router.navigate(['/shows', showId]); 
   }
 
   // Menu Profilo

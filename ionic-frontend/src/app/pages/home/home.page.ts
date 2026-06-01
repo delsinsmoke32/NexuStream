@@ -38,6 +38,7 @@ export class HomePage implements OnInit, OnDestroy {
   private toastCtrl = inject(ToastController);
 
   isLoading = signal<boolean>(true);
+  isLoggedIn = signal<boolean>(false);
   
   // Dati
   mostViewed = signal<any[]>([]);
@@ -57,6 +58,8 @@ export class HomePage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    const token = localStorage.getItem('token');
+    this.isLoggedIn.set(!!token);
     this.loadHomeData();
   }
 
@@ -117,10 +120,12 @@ export class HomePage implements OnInit, OnDestroy {
 
   openSeriesInfo(showId: number, event?: Event) {
     if (event) event.stopPropagation();
-    console.log("ℹ️ Apro Scheda Dettaglio per lo show: ", showId);
-    // TODO: this.router.navigate(['/series', showId]);
-    this.showToast('Apertura scheda serie in sviluppo', 'success');
+    console.log("Apro Scheda Dettaglio per lo show: ", showId);
+    
+    // Viaggia verso la rotta configurata passando l'ID!
+    this.router.navigate(['/shows', showId]); 
   }
+  
 
   // --- GESTIONE MENU E PROFILO ---
   async openProfileMenu(ev: any) {

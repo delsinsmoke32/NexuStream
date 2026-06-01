@@ -5,6 +5,24 @@ require('dotenv').config();
 const HOST = process.env.HOST || "localhost"
 const PORT = process.env.PORT || 3000;
 
+const getEpisodes = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
+    const { showId, seasonId } = req.params;
+    const user = req.user;
+    const applang = user ? user.appLang : req.language;
+    try {
+        const episodes = await episodeModel.getEpisodesBySeason(seasonId, applang);
+        return res.json(episodes);
+    } catch (err) {
+        console.error("Errore query episodi: ", err);
+        return res.status(500).json({ error: "Errore interno del server" });
+    }
+}
+
 const getEpisodeDetails = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()){
@@ -116,6 +134,7 @@ const stream = async (req, res) => {
 };
 
 module.exports = {
+    getEpisodes,
     getEpisodeDetails,
     interactWithEpisode,
     stream

@@ -2,7 +2,7 @@
   --ion-background-color: var(--ion-color-dark, #121212);
 }
 
-.netflix-toolbar {
+.show-toolbar {
   --background: rgba(18, 18, 18, 0.95);
   --border-width: 0;
   backdrop-filter: blur(12px);
@@ -29,7 +29,7 @@
   padding: 0;
   --border-width: 0;
 
-  .netflix-searchbar {
+  .show-searchbar {
     --background: #222222;
     --color: #ffffff;
     --placeholder-color: #888888;
@@ -50,6 +50,7 @@
   &::-webkit-scrollbar { display: none; }
 
   ion-chip {
+    flex: 0 0 auto; /* impedisce che si schiaccino su mobile! */
     --background: #2a2a2a;
     --color: #aaaaaa;
     font-weight: 600;
@@ -65,6 +66,13 @@
     }
 
     &:active { transform: scale(0.95); }
+
+    /* Ottimizzazioni per schermi piccoli */
+    @media (max-width: 480px) {
+      font-size: 0.8rem;     /* Testo leggermente più piccolo */
+      height: 30px;          /* Chip un po' più bassi e proporzionati */
+      padding: 0 10px;       /* Riduce un po' l'ingombro laterale */
+    }
   }
 }
 
@@ -106,6 +114,7 @@
 .results-grid {
   display: grid;
   // Griglia flessibile: si adatta automaticamente per far stare locandine larghe minimo 110px
+  align-items: start;
   grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   gap: 12px;
   padding: 16px;
@@ -115,91 +124,131 @@
     gap: 16px;
   }
 }
-
-.netflix-card {
-  position: relative;
-  background-color: #222;
+/* ===================================
+   BASE CARD (STILE CRUNCHYROLL / MOBILE)
+   =================================== */
+.show-card {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  
+  /* 1. Sfondo Grigio e Bordi Arrotondati sull'INTERA card */
+  background-color: var(--ion-color-secondary-tint, #242424); 
   border-radius: 8px;
-  overflow: hidden;
-  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
+  overflow: hidden; /* Taglia l'immagine in alto e la barra in basso per farle seguire i bordi */
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-  aspect-ratio: 2 / 3;
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
 
-  img {
-    width: 100%; height: 100%;
-    object-fit: cover; display: block;
-    transition: filter 0.3s ease;
-  }
-
-  .card-overlay {
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 40%, rgba(0,0,0,0.2) 100%);
-    opacity: 0; 
-    transition: opacity 0.3s ease;
-    
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-    .play-icon-center {
-      font-size: 3rem;
-      color: #ffffff;
-      cursor: pointer;
-      transition: transform 0.2s ease, color 0.2s ease;
-      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.8));
-
-      &:hover {
-        transform: scale(1.1);
-        color: var(--ion-color-primary, #b22222);
-      }
-      &:active { transform: scale(0.9); }
-    }
-
-    .meta-bottom-row {
-      position: absolute;
-      bottom: 10px; left: 10px; right: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      transform: translateY(10px);
-      transition: transform 0.3s ease;
-
-      .show-title {
-        display: block;
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #fff;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      .info-icon {
-        font-size: 1.4rem;
-        color: #aaaaaa;
-        cursor: pointer;
-        transition: color 0.2s ease;
-        flex-shrink: 0;
-        margin-left: 6px;
-
-        &:hover { color: #ffffff; }
-      }
-    }
-  }
-
+  /* 2. Spostiamo l'effetto Zoom sull'intera card, così si alza tutta insieme! */
   @media (hover: hover) {
     &:hover {
-      transform: scale(1.06);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.8);
-      z-index: 10;
-      img { filter: brightness(0.6); }
-      .card-overlay { opacity: 1; }
-      .card-overlay .meta-bottom-row { transform: translateY(0); }
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+    }
+    
+    /* Quando la card è in hover, scuriamo l'immagine */
+    &:hover .poster-container img { 
+      filter: brightness(0.5); 
+    }
+    
+    /* Quando la card è in hover, facciamo apparire il Play */
+    &:hover .play-overlay { 
+      opacity: 1 !important; 
+    }
+  }
+
+  .poster-container {
+    flex: 0 0 auto;
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+    /* Rimosse ombre e bordi da qui, ora li gestisce la card padre */
+
+    img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transition: filter 0.3s ease;
+    }
+
+    .play-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0; 
+      z-index: 5;
+      transition: opacity 0.3s ease;
+      
+      ion-icon {
+        font-size: 3.5rem;
+        color: #ffffff;
+        filter: drop-shadow(0 2px 8px rgba(0,0,0,0.8));
+        transition: color 0.2s ease, transform 0.2s ease; 
+
+        &:hover {
+          color: var(--ion-color-primary, #b22222); 
+          transform: scale(1.15);
+        }
+      }
+
+      /* FIX MOBILE: Nasconde totalmente l'overlay sugli schermi touch/piccoli */
+      @media (max-width: 768px) {
+        display: none !important;
+      }
+    }
+  }
+
+  /* RIGA INFORMAZIONI IN BASSO */
+  .card-info-bottom {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    width: 100%;
+    cursor: pointer;
+
+    /* 🚀 Icona a riposo */
+    ion-icon.info-btn {
+      font-size: 2rem !important; 
+      color: #aaaaaa !important; /* Grigio chiaro elegante */
+      /* Transizione fluida su colore e grandezza */
+      transition: transform 0.2s ease, color 0.2s ease;
+      padding: 8px;
+      margin: -8px;
+
+      /* 🚀 Effetto Hover: Zoom e Colore Rosso NexuStream! */
+      &:hover {
+        transform: scale(1.25); 
+        color: var(--ion-color-primary, #b22222) !important; 
+      }
+
+      /* Effetto tap su mobile */
+      &:active { 
+        transform: scale(0.85); 
+      }
     }
   }
 }
+
+/* ===================================
+   VARIANTI DI DIMENSIONE (SOLO PER SEARCH)
+   =================================== */
+
+/* FIX GRIGLIA: Nella ricerca la larghezza DEVE essere 100%, non 130px! */
+.portrait {
+  width: 100% !important; 
+
+  .poster-container {
+    width: 100%;
+    flex: 0 0 auto;
+    aspect-ratio: 2 / 3;
+  }
+}
+
 
 /* ===================================
    POPOVER

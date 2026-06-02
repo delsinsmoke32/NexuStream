@@ -8,7 +8,7 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-    <form [formGroup]="propicForm" (ngSubmit)="save()">
+    <form [formGroup]="propicForm" (ngSubmit)="uploadPicture()">
         <ion-item fill="outline" mode="md">
             <ion-label position="stacked">Bundle</ion-label>
             <ion-input
@@ -21,7 +21,6 @@
         <div class="upload-container">
             <input
                 type="file"
-                formControllerName="file"
                 #fileInput
                 (change)="onFileSelect($event)"
                 accept="image/*"
@@ -41,8 +40,10 @@
 
             <ion-button
                 expand="block"
-                [disabled]="!selectedFile() || isUploading()"
-                (click)="uploadPicture()"
+                type="submit"
+                [disabled]="
+                    propicForm.invalid || !selectedFile() || isUploading()
+                "
             >
                 {{ isUploading() ? 'Uploading...' : 'Upload to Server' }}
             </ion-button>

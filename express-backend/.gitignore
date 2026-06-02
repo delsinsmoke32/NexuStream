@@ -19,3 +19,5 @@ yarn-error.log
 /generated/prisma
 
 /generated/prisma
+
+ffmpeg_installation/*

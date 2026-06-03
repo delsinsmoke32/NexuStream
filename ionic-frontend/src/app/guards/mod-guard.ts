@@ -27,7 +27,7 @@ export const ModGuard: CanActivateFn = (route, state) => {
  * Helper nativo per decodificare il payload di un JWT senza librerie esterne.
  * Estrae la sezione centrale del token (payload) e la decodifica da Base64Url a JSON.
  */
-function jwtDecodeHelper(token: string): any {
+export function jwtDecodeHelper(token: string): any {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) return null; // Struttura JWT non valida

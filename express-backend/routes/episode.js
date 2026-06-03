@@ -58,8 +58,8 @@ router.get('/', authOptional, [
  *                  example: 1
  *                Duration:
  *                  type: integer
- *                  description: Durata dell'episodio in minuti
- *                  example: 45
+ *                  description: Durata dell'episodio in secondi
+ *                  example: 1440
  *                Likes:
  *                  type: integer
  *                  example: 120

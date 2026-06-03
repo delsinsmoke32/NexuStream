@@ -14,8 +14,13 @@ const getEpisodes = async (req, res) => {
     const { showId, seasonId } = req.params;
     const user = req.user;
     const applang = user ? user.appLang : req.language;
+    let episodes = null;
     try {
-        const episodes = await episodeModel.getEpisodesBySeason(seasonId, applang);
+        if (user) {
+            episodes = await episodeModel.getEpisodesBySeasonAuth(req.user.id, seasonId, applang);
+        } else {
+            episodes = await episodeModel.getEpisodesBySeasonNoAuth(seasonId, applang);
+        }
         return res.json(episodes);
     } catch (err) {
         console.error("Errore query episodi: ", err);
@@ -39,11 +44,24 @@ const getEpisodeDetails = async (req, res) => {
             return res.status(404).json({ message: "Episodio non trovato." });
         }
 
-        //Si trasformano Dub e Sub in array che json accetti
+        let userInteraction = null;
+        
+        // Se c'è un utente loggato, cerchiamo a che punto era arrivato e se aveva messo like
+        if (user) {
+            userInteraction = await episodeModel.getUserEpisodeInteraction(episodeId, user.id);
+        }
+
         const response = {
             ...episode,
             DubLanguages: episode.DubLanguages ? episode.DubLanguages.split(',') : [],
-            SubLanguages: episode.SubLanguages ? episode.SubLanguages.split(',') : []
+            SubLanguages: episode.SubLanguages ? episode.SubLanguages.split(',') : [],
+            // Iniettiamo i dati dell'utente (se esistono, altrimenti null o default)
+            userInteraction: userInteraction || {
+                Progress: 0,
+                isCompleted: 0,
+                isDropped: 0,
+                isLiked: 0
+            }
         };
 
         return res.json(response);
@@ -68,6 +86,9 @@ const interactWithEpisode = async (req, res) => {
         // 1. Recuperiamo lo stato del like precedente
         const oldInteraction = await episodeModel.getPreviousLikeStatus(episodeId, userId);
         const oldLiked = oldInteraction ? oldInteraction.isLiked : 0;
+
+        // Se isLiked non viene mandato dal frontend, per sicurezza si usa quello vecchio
+        const safeIsLiked = (isLiked !== undefined && isLiked !== null) ? isLiked : oldLiked;
         
         // 2. Calcoliamo il delta (1, -1, o 0)
         const likeDelta = isLiked - oldLiked;

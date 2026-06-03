@@ -21,15 +21,18 @@ export class EpisodeCardComponent {
     addIcons({ playCircle, informationCircleOutline });
   }
 
-  onPlay() {
+  onPlay(event: Event) {
+    event.preventDefault();
+    event.stopPropagation();
+
     if (this.episode && this.episode.EpisodeID) {
       this.play.emit(this.episode.EpisodeID);
     }
   }
 
   onInfo(event: Event) {
-    // FONDAMENTALE: Impedisce al click di "bucare" l'icona e attivare onPlay()
-    event.stopPropagation(); 
+    event.preventDefault();
+    event.stopPropagation();
     
     if (this.episode && this.episode.EpisodeID) {
       this.info.emit(this.episode.EpisodeID);

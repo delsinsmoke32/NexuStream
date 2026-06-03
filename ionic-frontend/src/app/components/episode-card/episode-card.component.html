@@ -1,4 +1,4 @@
-<div class="episode-card" (click)="onPlay()">
+<div class="episode-card" (click)="onPlay($event)">
   <div class="thumb-container">
     <img [src]="episode.ThumbnailURI ? (episode.ThumbnailURI | backendUrl) : 'assets/placeholder-episode.png'" [alt]="episode.Title">
     
@@ -16,7 +16,7 @@
       <ion-icon name="play-circle"></ion-icon>
     </div>
     
-    <span class="duration-badge">{{ episode.Duration }} min</span>
+    <span class="duration-badge">{{ episode.Duration / 60 }} min</span>
   </div>
 
   <div class="ep-info">

@@ -1,69 +1,156 @@
+:host {
+  --ion-background-color: #121212; // Coerente con la ShowsPage
+}
+
 .streaming-content {
-  --background: #0a0a0a; // Più scuro per risaltare il video
+  --background: var(--ion-background-color);
+}
+
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
 }
 
 .video-layout-wrapper {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  padding: 20px;
+  padding: 16px;
   min-height: 100%;
+  max-width: 1400px;
+  margin: 0 auto; // Centra i contenuti su schermi giganti
 
   @media (min-width: 992px) {
     flex-direction: row;
-    padding: 40px;
+    padding: 30px;
     align-items: flex-start;
   }
 }
 
 // --- PLAYER SECTION ---
 .main-video-section {
-  flex: 3; // Occupa più spazio
+  flex: 3;
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
+.player-container {
+  position: relative;
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+  background: #000;
+}
+
 .video-placeholder {
   width: 100%;
   aspect-ratio: 16 / 9;
-  background: var(--ion-color-secondary);
-  border-radius: 16px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: inset 0px 4px 10px rgba(0, 0, 0, 0.8), 0px 10px 30px rgba(0, 0, 0, 0.5);
-  overflow: hidden;
-
-  .play-hint {
-    font-size: 80px;
-    color: var(--ion-color-primary);
-    opacity: 0.8;
-  }
-
-  .video-overlay-bottom {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    padding: 20px;
-    background: linear-gradient(transparent, rgba(0,0,0,0.9));
-    color: white;
-  }
 }
 
+// --- EPISODE DETAILS ---
 .episode-details {
-  h1 {
-    color: white;
-    font-size: 32px;
-    font-weight: 700;
-    margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+
+    .ep-number {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--ion-color-primary, #b22222);
+      margin: 0 0 4px 0;
+    }
+
+    .ep-title {
+      color: white;
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin: 0;
+    }
   }
+
+  .action-buttons {
+    display: flex;
+    gap: 16px;
+
+    .btn-icon-secondary {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      background: transparent;
+      border: none;
+      color: #aaaaaa;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.2s ease, transform 0.1s ease;
+
+      ion-icon {
+        font-size: 1.8rem;
+      }
+
+      &:hover { color: #ffffff; }
+      &:active { transform: scale(0.9); }
+    }
+  }
+
+  .meta-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+
+    .meta-chip {
+      background: rgba(255, 255, 255, 0.1);
+      color: #e5e5e5;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+
+      &.views { background: rgba(var(--ion-color-primary-rgb, 178, 34, 34), 0.2); color: var(--ion-color-primary, #ff4444); }
+    }
+
+    .lang-info {
+      color: #888888;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+
+      strong { color: #aaaaaa; }
+      .separator { margin: 0 8px; opacity: 0.5; }
+    }
+  }
+
+  .uppercase-lang {
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
   .description {
     color: #b3b3b3;
     line-height: 1.6;
-    max-width: 800px;
+    font-size: 0.95rem;
+    margin: 8px 0 0 0;
   }
+}
+
+.divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 10px 0;
 }
 
 // --- SIDEBAR SECTION ---
@@ -72,58 +159,177 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
+
+  .sidebar-title {
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+  }
+
+  .sidebar-ep-card {
+    background: transparent;
+    border-radius: 8px;
+    margin: 0 0 10px 0;
+    cursor: pointer;
+    box-shadow: none;
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: background 0.2s;
+
+    ion-card-content {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 12px;
+    }
+
+    &.active {
+      border: 1px solid var(--ion-color-primary, #b22222);
+      background: rgba(var(--ion-color-primary-rgb, 178, 34, 34), 0.1);
+      
+      .ep-num { color: var(--ion-color-primary, #b22222); }
+    }
+
+    .ep-num {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #888;
+      min-width: 30px;
+      text-align: center;
+    }
+
+    h3 {
+      color: #ffffff;
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    p {
+      color: #888;
+      margin: 4px 0 0 0;
+      font-size: 0.8rem;
+    }
+
+    @media (hover: hover) {
+      &:hover:not(.active) { background: rgba(255,255,255,0.05); }
+    }
+  }
 }
 
-.sidebar-title {
-  color: white;
-  font-size: 20px;
-  margin-bottom: 10px;
-}
+// --- DISCUSSIONS SECTION ---
+.discussions-section {
+  margin-top: 10px;
 
-.episode-card {
-  background: var(--ion-color-secondary);
-  border-radius: 12px;
-  margin: 0 0 10px 0;
-  cursor: pointer;
-  transition: transform 0.2s;
-
-  ion-card-content {
+  .discussions-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 15px;
-    padding: 15px;
+    margin-bottom: 16px;
+
+    h2 {
+      color: white;
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .btn-new-discussion {
+      --border-color: rgba(255, 255, 255, 0.2);
+      --border-radius: 6px;
+      --color: white;
+      font-weight: 600;
+      font-size: 0.85rem;
+      text-transform: none;
+
+      &:hover {
+        --border-color: var(--ion-color-primary, #b22222);
+        --color: var(--ion-color-primary, #b22222);
+      }
+    }
   }
 
-  &.active {
-    border: 2px solid var(--ion-color-primary);
-    background: #251010;
+  .no-discussions {
+    background: rgba(255, 255, 255, 0.03);
+    padding: 24px;
+    border-radius: 8px;
+    text-align: center;
+    border: 1px dashed rgba(255, 255, 255, 0.15);
+
+    p {
+      color: #888;
+      font-size: 0.95rem;
+      margin: 0;
+    }
   }
 
-  .ep-num {
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--ion-color-primary);
-    min-width: 30px;
-  }
+  .discussions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 
-  h3 {
-    color: var(--ion-color-primary-contrast);
-    margin: 0;
-    font-size: 16px;
-  }
+    .discussion-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255, 255, 255, 0.04);
+      padding: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+      border: 1px solid transparent;
 
-  p {
-    color: #666;
-    margin: 5px 0 0 0;
-    font-size: 14px;
-  }
+      .disc-info {
+        h3 {
+          color: white;
+          font-size: 1.05rem;
+          font-weight: 600;
+          margin: 0 0 6px 0;
+        }
+        p {
+          color: #888;
+          font-size: 0.85rem;
+          margin: 0;
+        }
+      }
 
-  &:hover {
-    transform: translateX(5px);
-  }
-}
+      // SPOSTATO QUI DENTRO: Stile per la pulsantiera
+      .disc-actions {
+        display: flex;
+        align-items: center;
+        gap: 4px; // Spazio tra i pulsanti
 
-.btn-secondary {
-  --color: #b3b3b3;
-  font-weight: 500;
-}
+        ion-button {
+          --padding-start: 4px;
+          --padding-end: 4px;
+          margin: 0;
+          height: 32px;
+          
+          ion-icon { font-size: 1.3rem; }
+        }
+
+        .nav-arrow {
+          color: #666;
+          font-size: 1.4rem;
+          margin-left: 8px; // Distanza dai pulsanti edit/delete
+          transition: color 0.2s ease, transform 0.2s ease;
+        }
+      }
+
+      // UNIFICATO QUI DENTRO: Hover della singola card
+      @media (hover: hover) {
+        &:hover {
+          background: rgba(255, 255, 255, 0.08);
+          border-color: rgba(var(--ion-color-primary-rgb, 178, 34, 34), 0.5);
+          
+          .nav-arrow { 
+            color: var(--ion-color-primary, #b22222);
+            transform: translateX(4px); 
+          }
+        }
+      }
+
+      &:active { transform: scale(0.98); }
+    }
+  }
+} 

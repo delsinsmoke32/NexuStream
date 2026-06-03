@@ -27,15 +27,18 @@
           <h1 class="shows-title">{{ show().Title }}</h1>
           
           <div class="action-buttons">
-            <button class="btn-play-primary" (click)="playEpisode(resumeEpisode()?.EpisodeID || episodes()[0]?.EpisodeID)">
+            <button class="btn-play-primary" (click)="playEpisode(resumeEpisode()?.EpisodeID, $event)">
               <ion-icon name="play"></ion-icon>
               <div class="btn-text">
+                
                 <span class="action">
-                  {{ resumeEpisode() ? 'Continua a guardare' : 'Inizia a guardare' }}
+                  {{ (resumeEpisode()?.progress > 5) ? 'Continua a guardare' : 'Inizia a guardare' }}
                 </span>
+                
                 <span class="ep-ref">
-                  {{ resumeEpisode() ? 'Episodio ' + (resumeEpisode().EpisodeNumber || 1) : 'Episodio 1' }}
+                  Episodio {{ resumeEpisode()?.EpisodeNumber || 1 }}
                 </span>
+                
               </div>
             </button>
             

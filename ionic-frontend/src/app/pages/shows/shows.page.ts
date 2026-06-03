@@ -1,7 +1,7 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router} from '@angular/router';
 import { 
   IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton,
   IonIcon, IonSpinner, IonSelect, IonSelectOption, ToastController 
@@ -26,7 +26,7 @@ import { EpisodeCardComponent } from '../../components/episode-card/episode-card
     IonIcon, IonSpinner, IonSelect, IonSelectOption
   ]
 })
-export class ShowsPage implements OnInit {
+export class ShowsPage {
   private http = inject(HttpClient);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
@@ -50,11 +50,13 @@ export class ShowsPage implements OnInit {
     addIcons({ play, heartOutline, heart, shareSocialOutline });
   }
 
-  ngOnInit() {
+  ionViewWillEnter() {
     // Legge l'ID dello show dall'URL (es. /shows/5)
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
       this.showId.set(id);
+      
+      // Ora ogni volta che torni alla lista episodi, scaricherà i secondi aggiornati!
       this.loadShowsData(id);
     }
   }
@@ -102,7 +104,14 @@ export class ShowsPage implements OnInit {
       next: (eps) => {
         this.episodes.set(eps || []);
         if (eps && eps.length > 0) {
-          this.resumeEpisode.set(eps[0]);
+          
+          // 🚀 CERCA L'EPISODIO INIZIATO MA NON FINITO
+          const inProgressEp = eps.find(ep => ep.progress > 5 && ep.isCompleted === 0);
+          
+          // Imposta l'episodio da riprendere (se non c'è, usa il primo della lista)
+          this.resumeEpisode.set(inProgressEp || eps[0]);
+        } else {
+          this.resumeEpisode.set(null);
         }
         
         // Spegniamo entrambi i caricamenti
@@ -117,20 +126,42 @@ export class ShowsPage implements OnInit {
     });
   }
 
+  openEpisodeInfo(episodeId: number) {
+    if (!episodeId) return;
+
+    this.router.navigate(['/episode', episodeId], {
+      queryParams: { 
+        showId: this.showId(), 
+        seasonId: this.selectedSeasonId() 
+      }
+    });
+  }
+
+  playEpisode(episodeId: number, event?: Event) {
+    if (event && event.target) {
+      // Toglie il focus dal bottone prima di cambiare pagina
+      (event.target as HTMLElement).blur(); 
+    }
+    if (!episodeId) return;
+    
+    // 1. Troviamo l'episodio cliccato
+    const targetEpisode = this.episodes().find(ep => ep.EpisodeID === episodeId);
+    
+    // 2. Estraiamo il progresso salvato
+    const savedProgress = targetEpisode?.progress || 0;
+
+    // 3. Navighiamo passando lo startAt!
+    this.router.navigate(['/episode', episodeId], {
+      queryParams: { 
+        showId: this.showId(), 
+        seasonId: this.selectedSeasonId(),
+        startAt: savedProgress // 🚀 INIETTIAMO I SECONDI NELL'URL
+      }
+    });
+  }
+
   getSelectedSeason() {
     return this.seasons().find(s => s.SeasonID === this.selectedSeasonId());
-  }
-
-  playEpisode(episodeId: number) {
-    console.log("▶️ Avvio player per l'episodio ID:", episodeId);
-    // TODO: Aggiungi il routing al tuo player video
-    // this.router.navigate(['/player', episodeId]);
-  }
-
-  openEpisodeInfo(episodeId: number) {
-    console.log("ℹ️ Apro la pagina dettagli dell'episodio ID:", episodeId);
-    // this.router.navigate(['/episode', episodeId]);
-    this.showToast('Pagina episodio in sviluppo', 'success');
   }
 
   toggleFavorite() {
@@ -140,30 +171,23 @@ export class ShowsPage implements OnInit {
     const userToken = localStorage.getItem('token'); 
     
     if (!userToken) {
-      // L'utente non è loggato: mostra errore e interrompi la funzione
       this.showToast('Devi accedere per aggiungere ai preferiti!', 'danger');
       return; 
     }
 
-    // 1. Calcoliamo lo stato futuro (se era preferito diventa 0, altrimenti 1)
-    // Assumiamo che il backend ci passi "isFavorited" come flag per l'utente loggato
     const wasFavorited = currentShow.isFavorited;
     const newStatus = wasFavorited ? 0 : 1;
 
-    // 2. Aggiornamento Ottimistico della UI (Sembra istantaneo all'utente)
     this.show.update(s => ({ ...s, isFavorited: newStatus }));
 
-    // 3. Chiamata API per il salvataggio reale
     const payload = { isLiked: newStatus };
     
     this.http.post(`api/shows/${this.showId()}/interact`, payload).subscribe({
       next: () => {
-        // Mostriamo la conferma
         this.showToast(newStatus ? 'Aggiunto ai Preferiti' : 'Rimosso dai Preferiti', 'success');
       },
       error: (err) => {
         console.error("Errore salvataggio preferito: ", err);
-        // Rollback: se il server dà errore, rimettiamo il segnalibro come prima
         this.show.update(s => ({ ...s, isFavorited: wasFavorited }));
         this.showToast('Errore di connessione. Riprova.', 'danger');
       }

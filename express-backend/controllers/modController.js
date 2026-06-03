@@ -1,10 +1,17 @@
 const modModel = require('../models/modModel');
 const { validationResult } = require('express-validator');
 
+//-----------------------
+// GESTIONE DISCUSSIONI
+//-----------------------
+
 // GET - Già presente nel tuo codice, mantenuto per coerenza
 const getDiscussions = async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()) {
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() })
+    }
 
     const { showClosed } = req.query;
     try {
@@ -43,7 +50,7 @@ const updateDiscussion = async (req, res) => {
     if (!errors.isEmpty()) {
         console.error(errors.array());
         return res.status(400).json({ errors: errors.array() })
-    };
+    }
 
     const { discussionId } = req.params;
     const { closeDate, forceClosed, type } = req.body;
@@ -63,7 +70,10 @@ const updateDiscussion = async (req, res) => {
 // DELETE - Cancellazione a cascata
 const deleteDiscussion = async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()) {
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() })
+    }
 
     const { discussionId } = req.params;
 
@@ -79,9 +89,162 @@ const deleteDiscussion = async (req, res) => {
     }
 };
 
+//-----------------------
+// GESTIONE UTENTI
+//-----------------------
+
+const getUsersList = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() })
+    }
+
+    const { search } = req.query;
+
+    const page = parseInt(req.query.page) || 1; //quale pagina di utenti da caricare, le pagine sono blocchi di dimensione limit
+    const limit = parseInt(req.query.limit) || 50;
+
+    const offset = (page - 1) * limit; //offset calcolato
+    
+    try {
+        const users = await modModel.filterUsers(search, offset, limit);
+        return res.json(users);
+    } catch (err) {
+        console.error("Errore query mod users: ", err);
+        return res.status(500).json({ error: "Errore interno del server" });
+    }
+}
+
+const getUserComments = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() })
+    }
+
+    const { userId } = req.params;
+
+    try {
+        const comments = await modModel.getUserCommentsById(userId);
+        return res.json(comments);
+    } catch (err) {
+        console.error("Errore query mod users: ", err);
+        return res.status(500).json({ error: "Errore interno del server" });
+    }
+}
+
+//----------------
+// GESTIONE BAN
+//----------------
+
+const handleUserBan = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() })
+    };
+
+    const { targetUserId, durationDays } = req.body;
+    const moderatorId = req.user.id;
+
+    try {
+        if (parseInt(targetUserId) === parseInt(moderatorId)) {
+            return res.status(400).json({ error: "Non puoi bannare te stesso." });
+        }
+
+        // Check dei permessi dell'utente, also se al momento è bannato
+        const targetUser = await modModel.getTargetUserStatus(targetUserId);
+        if (!targetUser) {
+            return res.status(404).json({ error: "Utente non trovato." });
+        }
+
+        if (targetUser.isAdmin || targetUser.isMod || targetUser.isCataloguer) {
+            return res.status(403).json({ error: "Non puoi bannare un membro dello staff." });
+        }
+
+        if (!targetUser.canComment) {
+            // Il ban ha una scadenza memorizzata
+            if (targetUser.BannedUntil) {
+                const expireDate = new Date(targetUser.BannedUntil);
+                const now = new Date();
+
+                if (expireDate > now) {
+                    return res.status(409).json({ error: "L'utente è già bannato a tempo." });
+                } 
+            } else {
+                return res.status(409).json({ error: "L'utente è già bannato indefinitamente." });
+            }
+        }
+
+        let bannedUntil = null;
+        if (durationDays && parseInt(durationDays) > 0) {
+            const date = new Date();
+            date.setDate(date.getDate() + parseInt(durationDays));
+            bannedUntil = date.toISOString();
+        }
+
+        // Utilizzo del modModel per eseguire l'aggiornamento
+        await modModel.banUser(targetUserId, bannedUntil);
+
+        return res.json({ 
+            message: bannedUntil 
+                ? `Utente bannato con successo fino al ${new Date(bannedUntil).toLocaleDateString()}`
+                : "Utente bannato a tempo indefinito." 
+        });
+
+    } catch (err) {
+        console.error("Errore nel controller di moderazione:", err);
+        return res.status(500).json({ error: "Errore interno del server." });
+    }
+};
+
+const handleUserUnban = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() })
+    }
+
+    const { targetUserId } = req.body;
+    const moderatorId = req.user.id;
+
+    try {
+        if (parseInt(targetUserId) === parseInt(moderatorId)) {
+            return res.status(400).json({ error: "Non puoi sbannare te stesso." });
+        }
+
+        // Check dei permessi dell'utente, also se al momento è bannato
+        const targetUser = await modModel.getTargetUserStatus(targetUserId);
+        if (!targetUser) {
+            return res.status(404).json({ error: "Utente non trovato." });
+        }
+
+        if (targetUser.isAdmin || targetUser.isMod || targetUser.isCataloguer) {
+            return res.status(403).json({ error: "Non puoi sbannare un membro dello staff." });
+        }
+
+        if (targetUser.canComment) {
+            return res.status(409).json({ error: "L'utente non è bannato." });
+        }
+
+        await modModel.unbanUser(targetUserId);
+
+        return res.json({ message: "L'utente è stato sbannato!" });
+
+    } catch (err) {
+        console.error("Errore nel controller di moderazione:", err);
+        return res.status(500).json({ error: "Errore interno del server." });
+    }
+}   
+
 module.exports = {
     getDiscussions,
     createDiscussion,
     updateDiscussion,
-    deleteDiscussion
+    deleteDiscussion,
+    getUsersList,
+    getUserComments,
+    handleUserBan,
+    handleUserUnban
 };

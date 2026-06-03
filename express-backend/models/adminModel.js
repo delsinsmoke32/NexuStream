@@ -11,7 +11,7 @@ const db = require("../db/db");
 
 const filterUsers = async (search, role, offset, limit) => {
     let sql = `
-        SELECT u.UserID, u.Username, u.Email, u.isMod, u.isCataloguer, u.isAdmin, u.REF_PropicURI, u.REF_App_Language, u.REF_Text_Language, u.REF_Audio_Language, u.canComment
+        SELECT u.UserID, u.Username, u.Email, u.isMod, u.isCataloguer, u.isAdmin, u.REF_PropicURI, u.REF_App_Language, u.REF_Text_Language, u.REF_Audio_Language, u.canComment, u.BannedUntil
         FROM Users AS u
         WHERE 1=1`;
     

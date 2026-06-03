@@ -7,8 +7,19 @@ const db = require("../db/db");
  * @param {string} applang - La lingua rilevata (es. "en")
  * @returns {Promise<Array<Object>>}
  */
-const searchShows = async (queryParam, applang = 'it') => {
-    const sql = `
+/**
+ * Cerca gli show in base al titolo, alla descrizione e/o al genere
+ * @param {string} searchParam - Il termine di ricerca formattato con i % (es. "%breaking%"). Passa "%" (o null) per prendere tutto.
+ * @param {number|string|null} genreParam - L'ID del genere o il suo Nome (opzionale)
+ * @param {string} applang - La lingua rilevata (es. "it")
+ * @returns {Promise<Array<Object>>}
+ */
+const searchShows = async (searchParam, genreParam, applang = 'it') => {
+    // Garantiamo un fallback di ricerca globale se il parametro di ricerca è vuoto
+    const safeSearch = searchParam || '%';
+
+    // 1. Costruiamo la SELECT di base
+    let sql = `
     SELECT s.ShowID, s.DateStarted, s.hasEnded, s.DateEnded, s.Favourited, s.ThumbnailURI, s.BannerURI,
         
         -- Il titolo e la descrizione mostrati all'utente saranno RIGIDAMENTE nella sua lingua (o italiano fallback)
@@ -26,27 +37,47 @@ const searchShows = async (queryParam, applang = 'it') => {
         ) AS RelevanceScore
 
     FROM Shows AS s
-    WHERE s.Title LIKE ? OR s.Description LIKE ?   
-    GROUP BY s.ShowID -- evita duplicati
-    ORDER BY RelevanceScore DESC, Title ASC`;
+    `;
     
-    // Mappatura ordinata dei parametri per i segnaposto '?'
+    // Array dei parametri della SELECT (vanno sempre inseriti)
     const params = [
-        applang, applang,       // Per la SELECT (Mostra i testi nella lingua dell'utente)
-        
-        applang, queryParam,    // CASE WHEN Titolo lingua utente (10 punti)
-        queryParam,             // CASE WHEN Titolo qualsiasi altra lingua (7 punti)
-        
-        applang, queryParam,    // CASE WHEN Descrizione lingua utente (2 punti)
-        queryParam,             // CASE WHEN Descrizione qualsiasi altra lingua (1 punto)
-        
-        queryParam,             // WHERE: Cerca in tutto il JSON del Titolo
-        queryParam              // WHERE: Cerca in tutto il JSON della Descrizione
+        applang, applang,       // Per estrarre Titolo e Descrizione nella lingua giusta
+        applang, safeSearch,    // CASE WHEN Titolo lingua utente (10 punti)
+        safeSearch,             // CASE WHEN Titolo qualsiasi altra lingua (7 punti)
+        applang, safeSearch,    // CASE WHEN Descrizione lingua utente (2 punti)
+        safeSearch              // CASE WHEN Descrizione qualsiasi altra lingua (1 punto)
     ];
+
+    // 2. Aggiungiamo le JOIN solo se abbiamo bisogno di filtrare per genere
+    if (genreParam) {
+        sql += `
+        JOIN LINKs_Show_Has_Genre AS link ON s.ShowID = link.REF_ShowID
+        JOIN Genres AS g ON link.REF_GenreID = g.GenreID
+        `;
+    }
+
+    // 3. Applichiamo i filtri WHERE dinamici
+    sql += ` WHERE (s.Title LIKE ? OR s.Description LIKE ?) `;
+    params.push(safeSearch, safeSearch);
+
+    // Se esiste il parametro genere, aggiungiamo la condizione
+    if (genreParam) {
+        // Riconosce automaticamente se hai passato un ID numerico (es. 5) o una Stringa (es. "Action")
+        if (!isNaN(genreParam)) {
+            sql += ` AND g.GenreID = ? `;
+        } else {
+            sql += ` AND g.Name = ? `;
+        }
+        params.push(genreParam);
+    }
+
+    // 4. Chiudiamo la query
+    sql += `
+    GROUP BY s.ShowID
+    ORDER BY RelevanceScore DESC, Title ASC`;
     
     return await db.allAsync(sql, params);
 };
-
 /**
  * Prende le 20 serie con più favorites estraendo titolo e descrizione localizzati
  * @param {string} applang - La lingua rilevata (es. "en")
@@ -63,6 +94,40 @@ const getTopFavorited = async (applang = 'it') => {
         LIMIT 20`;
     return await db.allAsync(sql, [applang, applang]);
 };
+
+// Recupera i generi della serie
+const getShowGenres = async (showId) => {
+    const sql = `
+        SELECT g.Name 
+        FROM Genres g
+        JOIN LINKs_Show_Has_Genre l ON g.GenreID = l.REF_GenreID
+        WHERE l.REF_ShowID = ?`;
+    return await db.allAsync(sql, [showId]);
+};
+
+// Trova l'ID del primissimo episodio in assoluto
+const getFirstEpisodeOfShow = async (showId) => {
+    const sql = `
+        SELECT e.EpisodeID 
+        FROM Episodes e
+        JOIN Seasons s ON e.REF_SeasonID = s.SeasonID
+        WHERE s.REF_ShowID = ?
+        ORDER BY s.SeasonNumber ASC, e.EpisodeNumber ASC
+        LIMIT 1`;
+    return await db.getAsync(sql, [showId]);
+};
+
+// Recupera le tracce audio (DUB)
+const getEpisodeAudio = async (episodeId) => {
+    return await db.allAsync(`SELECT REF_LanguageID FROM EpisodeLanguage WHERE REF_EpisodeID = ?`, [episodeId]);
+};
+
+// Recupera i sottotitoli (SUB)
+const getEpisodeSubs = async (episodeId) => {
+    return await db.allAsync(`SELECT REF_LanguageID FROM EpisodeSubtitles WHERE REF_EpisodeID = ?`, [episodeId]);
+};
+
+
 
 /**
  * Prende le 20 serie con più stream calcolando la somma degli episodi e localizzando lo show
@@ -95,7 +160,7 @@ const getTopStreamed = async (applang = 'it') => {
 const getContinueWatching = async (userId, applang = 'it') => {
     const sql = `
         SELECT 
-            sh.ShowID, 
+            sh.ShowID, sh.ThumbnailURI, sh.BannerURI,
             COALESCE(sh.Title->>?, sh.Title->>'it') AS ShowTitle,
             e.EpisodeID, 
             COALESCE(e.Title->>?, e.Title->>'it') AS EpisodeTitle,
@@ -173,6 +238,10 @@ const decrementFavorites = async (showId) => {
 
 module.exports = {
     searchShows,
+    getShowGenres,
+    getFirstEpisodeOfShow,
+    getEpisodeSubs,
+    getEpisodeAudio,
     getTopStreamed,
     getTopFavorited,
     getContinueWatching,

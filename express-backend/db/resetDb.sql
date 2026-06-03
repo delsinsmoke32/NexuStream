@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS "LINKs_Show_Has_Genre";
 DROP TABLE IF EXISTS "LINKs_User_Interacts_Episode";
 DROP TABLE IF EXISTS "Discussions";
 DROP TABLE IF EXISTS "Comments";
+DROP TABLE IF EXISTS "PasswordResets";
 DROP TABLE IF EXISTS "EpisodeLanguage";
 DROP TABLE IF EXISTS "EpisodeTimes";
 DROP TABLE IF EXISTS "EpisodeSubtitles";

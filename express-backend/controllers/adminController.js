@@ -12,7 +12,7 @@ const getUsersList = async (req, res) => {
     const page = parseInt(req.query.page) || 1; //quale pagina di utenti da caricare, le pagine sono blocchi di dimensione limit
     const limit = parseInt(req.query.limit) || 50;
 
-    const offset = (1 - page) * limit; //offset calcolato
+    const offset = (page - 1) * limit; //offset calcolato
  
     try {
         const users = await adminModel.filterUsers(search, role, offset, limit);

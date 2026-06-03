@@ -17,7 +17,7 @@ const commonParams = [
 
 /**
  * @swagger
- * /shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/discussions:
+ * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/discussions:
  *  get:
  *    summary: Recupera la lista delle discussioni per un determinato episodio
  *    tags: [Discussions]
@@ -73,7 +73,7 @@ router.get('/', authOptional, commonParams, discussionController.getDiscussions)
 
 /**
  * @swagger
- * /shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/discussions/{discussionId}:
+ * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/discussions/{discussionId}:
  *  get:
  *    summary: Recupera i dettagli di una specifica discussione tramite ID
  *    tags: [Discussions]
@@ -132,7 +132,7 @@ router.get('/:discussionId', authOptional, [
 
 /**
  * @swagger
- * api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/discussions/{discussionId}/add:
+ * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/discussions/{discussionId}/add:
  *  post:
  *    summary: Crea una nuova discussione per un episodio
  *    tags: [Moderation]
@@ -175,7 +175,7 @@ router.post('/:discussionId/add', isMod, [
 
 /**
  * @swagger
- * api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/discussions/{discussionId}/modify:
+ * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/discussions/{discussionId}/modify:
  *  patch:
  *    summary: Modifica una discussione esistente (data chiusura o stato bloccato)
  *    tags: [Moderation]
@@ -222,7 +222,7 @@ router.patch('/:discussionId/modify', isMod, [
 
 /**
  * @swagger
- * api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/discussions/{discussionId}/delete:
+ * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}/discussions/{discussionId}/delete:
  *  delete:
  *    summary: Elimina una discussione e i relativi commenti a cascata
  *    tags: [Moderation]

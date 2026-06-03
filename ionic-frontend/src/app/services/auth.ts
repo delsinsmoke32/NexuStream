@@ -1,10 +1,9 @@
-import { Injectable } from '@angular/core'
-import { HttpClient } from '@angular/common/http'
-import { Observable } from 'rxjs'
-import { User } from '../models/interfaces'
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: 'root'
 })
 export class AuthService {
     constructor(private http: HttpClient) {}
@@ -23,5 +22,23 @@ export class AuthService {
         propicURI: string
     }): Observable<any> {
         return this.http.post<any>(`api/register`, credentials)
+    }
+
+    /**
+     * Invia una richiesta al backend per generare un token temporaneo 
+     * e recapitare il link di sblocco all'indirizzo email specificato.
+     * * @param payload Oggetto contenente l'email dell'utente compilata nel form.
+     */
+    forgotPassword(payload: { email: string }): Observable<any> {
+        return this.http.post<any>(`api/login/forgot-password`, payload);
+    }
+
+    /**
+     * Trasmette al backend il token recuperato dall'URL del browser 
+     * e la nuova password sanificata per finalizzare il ripristino dell'account.
+     * * @param payload Oggetto composto dal token di verifica e dalla nuova password scelta.
+     */
+    resetPassword(payload: { token: string; newPassword: string }): Observable<any> {
+        return this.http.post<any>(`api/login/reset-password`, payload);
     }
 }

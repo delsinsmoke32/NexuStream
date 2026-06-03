@@ -73,10 +73,19 @@ CREATE TABLE IF NOT EXISTS "Users" (
     "REF_App_Language" TEXT NOT NULL,
     "REF_PropicURI" TEXT NOT NULL,
     "canComment" INTEGER NOT NULL,
+    "BannedUntil", TEXT NULL,
     FOREIGN KEY ("REF_Audio_Language") REFERENCES "SupportedLanguages" ("LanguageID"),
     FOREIGN KEY ("REF_Text_Language") REFERENCES "SupportedLanguages" ("LanguageID"),
     FOREIGN KEY ("REF_App_Language") REFERENCES "SupportedLanguages" ("LanguageID"),
     FOREIGN KEY ("REF_PropicURI") REFERENCES "Propics" ("PropicURI")
+);
+
+CREATE TABLE PasswordResets (
+    "ResetID" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "REF_UserID" INTEGER NOT NULL,
+    "Token" TEXT NOT NULL UNIQUE,
+    "ExpiresAt" DATETIME NOT NULL,
+    FOREIGN KEY("REF_UserID") REFERENCES "Users" ("UserID") ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS "Comments" (

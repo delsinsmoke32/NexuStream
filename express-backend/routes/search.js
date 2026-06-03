@@ -6,7 +6,7 @@ const authOptional = require("../middleware/authOptional");
 const { query } = require('express-validator');
 
 
-// Abbinato lo schema Swagger protetto dai trattini bassi
+
 /**
  * @swagger
  * /api/search:
@@ -18,11 +18,18 @@ const { query } = require('express-validator');
  *    parameters:
  *      - in: query
  *        name: searchTerm
- *        required: true
+ *        required: false
  *        schema:
  *          type: string
  *        description: Il testo da cercare nel titolo o nella descrizione delle serie TV
  *        example: pixel
+ *      - in: query
+ *        name: genre
+ *        required: false
+ *        schema:
+ *          type: string
+ *        description: Genere secondo cui filtrare
+ *        example: Fantasy
  *    responses:
  *      200:
  *        description: Ricerca completata con successo. Restituisce l'array dei risultati ordinati per punteggio.
@@ -76,7 +83,8 @@ const { query } = require('express-validator');
 
 
 router.get('/', authOptional, [
-    query('searchTerm').isString().notEmpty().trim().withMessage("Il termine di ricerca deve essere una stringa")
+    query('q').optional().isString().trim().withMessage("Il termine di ricerca deve essere una stringa"),
+    query('genre').optional().isString().trim().withMessage("Genere non valido")
 ], showController.search);
 
 module.exports = router;

@@ -1,0 +1,121 @@
+<ion-header class="ion-no-border absolute-header">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home" color="primary"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  
+  @if (isLoading()) {
+    <div class="loading-state">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+    </div>
+  } @else if (show()) {
+    
+    <div class="hero-banner">
+      <img class="banner-img" [src]="show().BannerURI ? (show().BannerURI | backendUrl) : 'assets/placeholder-banner.png'" alt="Banner">
+      <div class="hero-gradient-overlay"></div>
+    </div>
+
+    <div class="shows-content-container">
+      
+      <div class="top-info-section">
+        
+        <div class="main-details">
+          <h1 class="shows-title">{{ show().Title }}</h1>
+          
+          <div class="action-buttons">
+            <button class="btn-play-primary" (click)="playEpisode(resumeEpisode()?.EpisodeID || episodes()[0]?.EpisodeID)">
+              <ion-icon name="play"></ion-icon>
+              <div class="btn-text">
+                <span class="action">
+                  {{ resumeEpisode() ? 'Continua a guardare' : 'Inizia a guardare' }}
+                </span>
+                <span class="ep-ref">
+                  {{ resumeEpisode() ? 'Episodio ' + (resumeEpisode().EpisodeNumber || 1) : 'Episodio 1' }}
+                </span>
+              </div>
+            </button>
+            
+            <button class="btn-icon-secondary" (click)="toggleFavorite()">
+              <ion-icon [name]="show().isFavorited ? 'heart' : 'heart-outline'"></ion-icon>
+            </button>
+          </div>
+          
+          <p class="shows-description">{{ show().Description }}</p>
+        </div>
+
+        <div class="meta-sidebar">
+          
+          <div class="meta-block">
+            <span class="meta-label">Generi:</span>
+            <div class="chip-container">
+              @for (genre of show().genres; track $index) {
+                <span class="meta-chip">{{ genre }}</span>
+              } @empty {
+                <span class="meta-text">N/D</span>
+              }
+            </div>
+          </div>
+          
+          <div class="meta-block">
+            <span class="meta-label">Audio:</span>
+            <span class="meta-text uppercase-lang">
+              {{ show().audio?.length > 0 ? show().audio.join(', ') : 'N/D' }}
+            </span>
+          </div>
+          
+          <div class="meta-block">
+            <span class="meta-label">Sottotitoli:</span>
+            <span class="meta-text uppercase-lang">
+              {{ show().subs?.length > 0 ? show().subs.join(', ') : 'N/D' }}
+            </span>
+          </div>
+
+        </div>
+      </div> <div class="divider"></div>
+
+      <div class="episodes-section">
+        
+        <div class="season-header">
+          <ion-select 
+            class="season-selector" 
+            [value]="selectedSeasonId()" 
+            (ionChange)="onSeasonChange($event)"
+            interface="popover">
+            @for (season of seasons(); track season.SeasonID) {
+              <ion-select-option [value]="season.SeasonID">
+                {{ season.Title }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </div>
+
+        @if (getSelectedSeason()?.Description) {
+          <p class="season-description">{{ getSelectedSeason().Description }}</p>
+        }
+
+        <div class="episodes-list">
+          @if (isEpisodesLoading()) {
+            <div class="local-spinner">
+              <ion-spinner name="crescent" color="primary"></ion-spinner>
+            </div>
+          } @else {
+            @for (ep of episodes(); track ep.EpisodeID) {
+              <app-episode-card 
+                [episode]="ep" 
+                (play)="playEpisode($event)"
+                (info)="openEpisodeInfo($event)">
+              </app-episode-card>
+            } @empty {
+              <div class="no-episodes">Nessun episodio trovato per questa stagione.</div>
+            }
+          }
+        </div>
+
+      </div>
+    </div> }
+
+</ion-content>

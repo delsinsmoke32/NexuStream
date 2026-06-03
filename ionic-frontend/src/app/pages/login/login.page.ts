@@ -7,7 +7,8 @@ import {
     ReactiveFormsModule,
     Validators,
 } from '@angular/forms'
-import { Router } from '@angular/router' // 🚀 FIX: Import corretto da @angular/router
+
+import { Router, RouterLink } from '@angular/router'
 import { LanguageSwitcherComponent } from '@app/components/language-switcher/language-switcher.component'
 import { AuthService } from '@app/services/auth'
 import {
@@ -48,6 +49,7 @@ import {
         ReactiveFormsModule,
         LanguageSwitcherComponent,
         IonText,
+        RouterLink
     ],
 })
 export class LoginPage implements OnInit {

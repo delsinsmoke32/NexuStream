@@ -31,5 +31,9 @@
   },
   "overrides": {
     "@hono/node-server": "^1.19.13"
+  },
+  "devDependencies": {
+    "crypto": "^1.0.1",
+    "nodemailer": "^8.0.9"
   }
 }

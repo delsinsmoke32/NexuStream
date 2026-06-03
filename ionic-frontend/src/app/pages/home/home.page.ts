@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnInit, OnDestroy, signal, inject } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
@@ -12,7 +12,7 @@ import { addIcons } from 'ionicons';
 import { 
   searchOutline, personCircleOutline, settingsOutline, 
   heartOutline, logOutOutline, playCircle, informationCircleOutline,
-  play
+  play, chevronBackOutline, chevronForwardOutline // 🚀 Aggiunte icone frecce
 } from 'ionicons/icons';
 
 import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
@@ -29,8 +29,13 @@ import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
     IonSpinner, IonList
   ]
 })
-export class HomePage implements OnInit, OnDestroy {
+export class HomePage implements OnDestroy {
   @ViewChild('profilePopover') popover: any;
+  
+  // 🚀 Riferimenti alle 3 righe a scorrimento
+  @ViewChild('continueWatchingScroll') continueWatchingScroll!: ElementRef;
+  @ViewChild('mostViewedScroll') mostViewedScroll!: ElementRef;
+  @ViewChild('mostLikedScroll') mostLikedScroll!: ElementRef;
   
   private http = inject(HttpClient);
   private router = inject(Router);
@@ -53,18 +58,18 @@ export class HomePage implements OnInit, OnDestroy {
   constructor() {
     addIcons({ 
       searchOutline, personCircleOutline, settingsOutline, 
-      heartOutline, logOutOutline, playCircle, informationCircleOutline, play 
+      heartOutline, logOutOutline, playCircle, informationCircleOutline, 
+      play, chevronBackOutline, chevronForwardOutline // 🚀 Registrate icone
     });
   }
 
-  ngOnInit() {
+  ionViewWillEnter() {
     const token = localStorage.getItem('token');
     this.isLoggedIn.set(!!token);
     this.loadHomeData();
   }
-
+  
   ngOnDestroy() {
-    // Pulizia del timer quando si esce dalla pagina
     this.stopHeroCarousel();
   }
 
@@ -78,7 +83,6 @@ export class HomePage implements OnInit, OnDestroy {
         this.mostLiked.set(res.mostLiked || []);
         this.continueWatching.set(res.continueWatching || []);
         
-        // Estraiamo i primi 5 anime più visti per il grande Banner in cima
         if (viewed.length > 0) {
           this.heroList.set(viewed.slice(0, 5));
           this.startHeroCarousel();
@@ -94,6 +98,23 @@ export class HomePage implements OnInit, OnDestroy {
     });
   }
 
+  // 🚀 Funzione universale per scorrere qualsiasi riga!
+  scrollRow(rowType: 'continueWatching' | 'mostViewed' | 'mostLiked', direction: 'left' | 'right') {
+    let containerRef: ElementRef | undefined;
+    
+    if (rowType === 'continueWatching') containerRef = this.continueWatchingScroll;
+    else if (rowType === 'mostViewed') containerRef = this.mostViewedScroll;
+    else if (rowType === 'mostLiked') containerRef = this.mostLikedScroll;
+
+    if (containerRef && containerRef.nativeElement) {
+      const scrollAmount = window.innerWidth > 768 ? 600 : 300; // Scorre di più su PC
+      containerRef.nativeElement.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  }
+
   // --- LOGICA CAROSELLO HERO ---
   startHeroCarousel() {
     this.stopHeroCarousel();
@@ -101,7 +122,7 @@ export class HomePage implements OnInit, OnDestroy {
       const current = this.activeHeroIndex();
       const max = this.heroList().length - 1;
       this.activeHeroIndex.set(current >= max ? 0 : current + 1);
-    }, 7000); // Cambia immagine ogni 7 secondi
+    }, 7000); 
   }
 
   stopHeroCarousel() {
@@ -110,24 +131,16 @@ export class HomePage implements OnInit, OnDestroy {
     }
   }
 
-  // --- LOGICA ROTTE (PLAY & INFO) ---
   playAnime(showId: number, event?: Event) {
     if (event) event.stopPropagation();
-    console.log("▶️ Avvio Player per lo show: ", showId);
-    // TODO: this.router.navigate(['/player', showId]);
-    this.showToast('Avvio riproduzione...', 'success');
+    this.router.navigate(['/shows', showId]); 
   }
 
   openSeriesInfo(showId: number, event?: Event) {
     if (event) event.stopPropagation();
-    console.log("Apro Scheda Dettaglio per lo show: ", showId);
-    
-    // Viaggia verso la rotta configurata passando l'ID!
     this.router.navigate(['/shows', showId]); 
   }
   
-
-  // --- GESTIONE MENU E PROFILO ---
   async openProfileMenu(ev: any) {
     this.popover.event = ev;
     await this.popover.present();
@@ -136,6 +149,22 @@ export class HomePage implements OnInit, OnDestroy {
   onPopoverDismiss() {}
   openUserSettings() { this.popover.dismiss(); }
   openFavorites() { this.popover.dismiss(); }
+
+  resumeEpisode(item: any) {
+    if (!item || !item.EpisodeID) return;
+    this.router.navigate(['/episode', item.EpisodeID], {
+      queryParams: { 
+        showId: item.ShowID, 
+        seasonId: item.SeasonID,
+        startAt: item.Progress 
+      }
+    });
+  }
+
+  private async showToast(message: string, color: 'success' | 'danger') {
+    const toast = await this.toastCtrl.create({ message, duration: 2500, color, position: 'bottom' });
+    await toast.present();
+  }
 
   async logout() {
     const alert = await this.alertCtrl.create({
@@ -162,8 +191,4 @@ export class HomePage implements OnInit, OnDestroy {
     this.popover.dismiss();
   }
 
-  private async showToast(message: string, color: 'success' | 'danger') {
-    const toast = await this.toastCtrl.create({ message, duration: 2500, color, position: 'bottom' });
-    await toast.present();
-  }
 }

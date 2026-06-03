@@ -94,7 +94,8 @@
 .ep-info {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  // 1. RIMUOVI justify-content: center; (così il testo parte dall'alto)
+  flex: 1; // 2. ASSICURATI che prenda tutto lo spazio orizzontale e verticale
   overflow: hidden;
 
   .ep-number {
@@ -128,14 +129,17 @@
   
   .ep-bottom-row {
     display: flex;
-    justify-content: flex-end; /* Allinea l'icona a destra */
-    margin-top: 8px;
+    justify-content: flex-end; 
+    
+    // 3. LA MAGIA: margin-top: auto spinge questo div verso il basso
+    margin-top: auto; 
+    padding-top: 8px; // Messo come padding anziché margin per mantenere la spinta fluida
 
     .info-btn {
       font-size: 1.6rem;
       color: #888888;
       padding: 4px;
-      margin: -4px; /* Aumenta l'area cliccabile senza spostare l'icona */
+      margin: -4px; 
       border-radius: 50%;
       transition: color 0.2s, transform 0.1s;
 

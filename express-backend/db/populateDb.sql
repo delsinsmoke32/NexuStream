@@ -79,55 +79,55 @@ INSERT INTO "Seasons" ("REF_ShowID", "DateStarted", "hasEnded", "DateEnded", "Ti
 
 -- A. Episodi della Stagione 1 (Per tutte le 20 serie originali, ID Stagioni 1-20)
 INSERT INTO "Episodes" ("ReleaseDate", "REF_SeasonID", "Duration", "Likes", "Streams", "Title", "Description", "ThumbnailURI", "EpisodeNumber") VALUES 
-('2013-04-07', 1, 24, 8500, 150000, '{"it":"A te, tra 2000 anni","en":"To You, in 2000 Years"}', '{"it":"I giganti sfondano il Wall Maria.","en":"The Titans break through Wall Maria."}', '/static/episode_thumbnails/aot_01.png', 1),
-('2013-04-14', 1, 24, 7800, 140000, '{"it":"Quel giorno","en":"That Day"}', '{"it":"Il caos regna a Shiganshina.","en":"Chaos reigns in Shiganshina."}', '/static/episode_thumbnails/aot_01.png', 2),
-('2020-10-03', 2, 24, 6200, 110000, '{"it":"Il dito di Ryomen Sukuna","en":"Ryomen Sukuna''s Finger"}', '{"it":"Yuji ingoia una reliquia maledetta.","en":"Yuji swallows a cursed relic."}', '/static/episode_thumbnails/jjk.png', 1),
-('2019-04-06', 3, 24, 9100, 180000, '{"it":"Crudeltà","en":"Cruelty"}', '{"it":"Tanjiro torna a casa e trova la tragedia.","en":"Tanjiro returns home to a tragedy."}', '/static/episode_thumbnails/ds.png', 1),
-('2022-10-12', 4, 24, 5400, 95000,  '{"it":"Cane e motosega","en":"Dog & Chainsaw"}', '{"it":"Denji fa un patto con Pochita.","en":"Denji makes a pact with Pochita."}', '/static/episode_thumbnails/csm.png', 1),
-('2024-04-13', 5, 24, 3200, 80000,  '{"it":"L''uomo diventato Kaiju","en":"The Man Who Became a Kaiju"}', '{"it":"Kafka Hibino ottiene poteri mostruosi.","en":"Kafka Hibino gets monster powers."}', '/static/episode_thumbnails/kaiju.png', 1),
-('2023-09-29', 6, 24, 6700, 105000, '{"it":"La fine del viaggio","en":"The Journey''s End"}', '{"it":"Il gruppo degli eroi si scioglie.","en":"The hero party disbands."}', '/static/episode_thumbnails/frieren.png', 1),
-('2024-01-07', 7, 24, 8800, 120000, '{"it":"Sono abituato a essere debole","en":"I''m Used to Being Weak"}', '{"it":"Sung Jinwoo entra nel doppio dungeon.","en":"Sung Jinwoo enters the double dungeon."}', '/static/episode_thumbnails/solo.png', 1),
-('1999-10-20', 8, 24, 12000, 250000, '{"it":"Sono Rufy! Diventerò il Re dei Pirati!","en":"I''m Luffy! The Man Who Will Become the Pirate King!"}', '{"it":"Inizia il viaggio verso la Rotta Maggiore.","en":"The journey to the Grand Line begins."}', '/static/episode_thumbnails/op.png', 1),
-('1999-10-27', 8, 24, 11500, 230000, '{"it":"Appare il cacciatore di pirati Zoro","en":"Enter Zoro: Pirate Hunter"}', '{"it":"Rufy incontra il suo primo compagno.","en":"Luffy meets his first crewmate."}', '/static/episode_thumbnails/op.png', 2),
-('2022-04-09', 9, 24, 4500, 88000,  '{"it":"Operazione Strix","en":"Operation Strix"}', '{"it":"Twilight adotta Anya.","en":"Twilight adopts Anya."}', '/static/episode_thumbnails/spy.png', 1),
-('2006-10-04', 10, 24, 15000, 190000,'{"it":"Rinascita","en":"Rebirth"}', '{"it":"Light Yagami trova il Death Note.","en":"Light Yagami finds the Death Note."}', '/static/episode_thumbnails/deathnote.png', 1),
-('2011-04-06', 11, 24, 7300, 92000,  '{"it":"Il Prologo del Principio e della Fine","en":"Turning Point"}', '{"it":"Okabe scopre una cospirazione temporale.","en":"Okabe discovers a time conspiracy."}', '/static/episode_thumbnails/steins.png', 1),
-('1995-10-04', 12, 24, 11000, 140000,'{"it":"L''Attacco dell''Angelo","en":"Angel Attack"}', '{"it":"Shinji viene chiamato a Neo Tokyo-3.","en":"Shinji is summoned to Neo Tokyo-3."}', '/static/episode_thumbnails/eva.png', 1),
-('2009-04-05', 13, 24, 14500, 185000,'{"it":"L''Alchimista d''Acciaio","en":"Fullmetal Alchemist"}', '{"it":"Ed e Al arrivano a Liore.","en":"Ed and Al arrive in Liore."}', '/static/episode_thumbnails/fmab.png', 1),
-('2011-10-02', 14, 24, 13200, 175000,'{"it":"Partenza e Amici","en":"Departure x And x Friends"}', '{"it":"Gon lascia l''Isola Balena.","en":"Gon leaves Whale Island."}', '/static/episode_thumbnails/hxh.png', 1),
-('2016-04-03', 15, 24, 9500, 130000, '{"it":"Izuku Midoriya: Origini","en":"Izuku Midoriya: Origin"}', '{"it":"Izuku incontra il suo idolo All Might.","en":"Izuku meets his idol All Might."}', '/static/episode_thumbnails/mha.png', 1),
-('2002-10-03', 16, 24, 16000, 210000,'{"it":"Arriva Naruto Uzumaki!","en":"Enter: Naruto Uzumaki!"}', '{"it":"Il ninja ribelle ruba il rotolo segreto.","en":"The rebel ninja steals the secret scroll."}', '/static/episode_thumbnails/naruto.png', 1),
-('2004-10-05', 17, 24, 12500, 165000,'{"it":"Il giorno in cui divenni Shinigami","en":"The Day I Became a Shinigami"}', '{"it":"Ichigo incontra Rukia.","en":"Ichigo meets Rukia."}', '/static/episode_thumbnails/bleach.png', 1),
-('2012-07-08', 18, 24, 8200, 115000, '{"it":"Il mondo delle spade","en":"The World of Swords"}', '{"it":"Il log-out è sparito dal menu.","en":"The log-out button is missing."}', '/static/episode_thumbnails/sao.png', 1),
-('2016-04-04', 19, 24, 7600, 102000, '{"it":"La fine dell''inizio","en":"The End of the Beginning"}', '{"it":"Subaru muore per la prima volta.","en":"Subaru dies for the first time."}', '/static/episode_thumbnails/rezero.png', 1),
-('2019-01-12', 20, 24, 6900, 98000,  '{"it":"Mi farò invitare al cinema","en":"I Will Make Him Invite Me"}', '{"it":"Inizia la guerra psicologica.","en":"The psychological war begins."}', '/static/episode_thumbnails/kaguya.png', 1);
+('2013-04-07', 1, 1440, 8500, 150000, '{"it":"A te, tra 2000 anni","en":"To You, in 2000 Years"}', '{"it":"I giganti sfondano il Wall Maria.","en":"The Titans break through Wall Maria."}', '/static/episode_thumbnails/aot_01.png', 1),
+('2013-04-14', 1, 1440, 7800, 140000, '{"it":"Quel giorno","en":"That Day"}', '{"it":"Il caos regna a Shiganshina.","en":"Chaos reigns in Shiganshina."}', '/static/episode_thumbnails/aot_01.png', 2),
+('2020-10-03', 2, 1440, 6200, 110000, '{"it":"Il dito di Ryomen Sukuna","en":"Ryomen Sukuna''s Finger"}', '{"it":"Yuji ingoia una reliquia maledetta.","en":"Yuji swallows a cursed relic."}', '/static/episode_thumbnails/jjk.png', 1),
+('2019-04-06', 3, 1440, 9100, 180000, '{"it":"Crudeltà","en":"Cruelty"}', '{"it":"Tanjiro torna a casa e trova la tragedia.","en":"Tanjiro returns home to a tragedy."}', '/static/episode_thumbnails/ds.png', 1),
+('2022-10-12', 4, 1440, 5400, 95000,  '{"it":"Cane e motosega","en":"Dog & Chainsaw"}', '{"it":"Denji fa un patto con Pochita.","en":"Denji makes a pact with Pochita."}', '/static/episode_thumbnails/csm.png', 1),
+('2024-04-13', 5, 1440, 3200, 80000,  '{"it":"L''uomo diventato Kaiju","en":"The Man Who Became a Kaiju"}', '{"it":"Kafka Hibino ottiene poteri mostruosi.","en":"Kafka Hibino gets monster powers."}', '/static/episode_thumbnails/kaiju.png', 1),
+('2023-09-29', 6, 1440, 6700, 105000, '{"it":"La fine del viaggio","en":"The Journey''s End"}', '{"it":"Il gruppo degli eroi si scioglie.","en":"The hero party disbands."}', '/static/episode_thumbnails/frieren.png', 1),
+('2024-01-07', 7, 1440, 8800, 120000, '{"it":"Sono abituato a essere debole","en":"I''m Used to Being Weak"}', '{"it":"Sung Jinwoo entra nel doppio dungeon.","en":"Sung Jinwoo enters the double dungeon."}', '/static/episode_thumbnails/solo.png', 1),
+('1999-10-20', 8, 1440, 12000, 250000, '{"it":"Sono Rufy! Diventerò il Re dei Pirati!","en":"I''m Luffy! The Man Who Will Become the Pirate King!"}', '{"it":"Inizia il viaggio verso la Rotta Maggiore.","en":"The journey to the Grand Line begins."}', '/static/episode_thumbnails/op.png', 1),
+('1999-10-27', 8, 1440, 11500, 230000, '{"it":"Appare il cacciatore di pirati Zoro","en":"Enter Zoro: Pirate Hunter"}', '{"it":"Rufy incontra il suo primo compagno.","en":"Luffy meets his first crewmate."}', '/static/episode_thumbnails/op.png', 2),
+('2022-04-09', 9, 1440, 4500, 88000,  '{"it":"Operazione Strix","en":"Operation Strix"}', '{"it":"Twilight adotta Anya.","en":"Twilight adopts Anya."}', '/static/episode_thumbnails/spy.png', 1),
+('2006-10-04', 10, 1440, 15000, 190000,'{"it":"Rinascita","en":"Rebirth"}', '{"it":"Light Yagami trova il Death Note.","en":"Light Yagami finds the Death Note."}', '/static/episode_thumbnails/deathnote.png', 1),
+('2011-04-06', 11, 1440, 7300, 92000,  '{"it":"Il Prologo del Principio e della Fine","en":"Turning Point"}', '{"it":"Okabe scopre una cospirazione temporale.","en":"Okabe discovers a time conspiracy."}', '/static/episode_thumbnails/steins.png', 1),
+('1995-10-04', 12, 1440, 11000, 140000,'{"it":"L''Attacco dell''Angelo","en":"Angel Attack"}', '{"it":"Shinji viene chiamato a Neo Tokyo-3.","en":"Shinji is summoned to Neo Tokyo-3."}', '/static/episode_thumbnails/eva.png', 1),
+('2009-04-05', 13, 1440, 14500, 185000,'{"it":"L''Alchimista d''Acciaio","en":"Fullmetal Alchemist"}', '{"it":"Ed e Al arrivano a Liore.","en":"Ed and Al arrive in Liore."}', '/static/episode_thumbnails/fmab.png', 1),
+('2011-10-02', 14, 1440, 13200, 175000,'{"it":"Partenza e Amici","en":"Departure x And x Friends"}', '{"it":"Gon lascia l''Isola Balena.","en":"Gon leaves Whale Island."}', '/static/episode_thumbnails/hxh.png', 1),
+('2016-04-03', 15, 1440, 9500, 130000, '{"it":"Izuku Midoriya: Origini","en":"Izuku Midoriya: Origin"}', '{"it":"Izuku incontra il suo idolo All Might.","en":"Izuku meets his idol All Might."}', '/static/episode_thumbnails/mha.png', 1),
+('2002-10-03', 16, 1440, 16000, 210000,'{"it":"Arriva Naruto Uzumaki!","en":"Enter: Naruto Uzumaki!"}', '{"it":"Il ninja ribelle ruba il rotolo segreto.","en":"The rebel ninja steals the secret scroll."}', '/static/episode_thumbnails/naruto.png', 1),
+('2004-10-05', 17, 1440, 12500, 165000,'{"it":"Il giorno in cui divenni Shinigami","en":"The Day I Became a Shinigami"}', '{"it":"Ichigo incontra Rukia.","en":"Ichigo meets Rukia."}', '/static/episode_thumbnails/bleach.png', 1),
+('2012-07-08', 18, 1440, 8200, 115000, '{"it":"Il mondo delle spade","en":"The World of Swords"}', '{"it":"Il log-out è sparito dal menu.","en":"The log-out button is missing."}', '/static/episode_thumbnails/sao.png', 1),
+('2016-04-04', 19, 1440, 7600, 102000, '{"it":"La fine dell''inizio","en":"The End of the Beginning"}', '{"it":"Subaru muore per la prima volta.","en":"Subaru dies for the first time."}', '/static/episode_thumbnails/rezero.png', 1),
+('2019-01-12', 20, 1440, 6900, 98000,  '{"it":"Mi farò invitare al cinema","en":"I Will Make Him Invite Me"}', '{"it":"Inizia la guerra psicologica.","en":"The psychological war begins."}', '/static/episode_thumbnails/kaguya.png', 1);
 
 -- B. Episodi Aggiuntivi per le Stagioni successive (ID Stagioni 21 - 28)
 INSERT INTO "Episodes" ("ReleaseDate", "REF_SeasonID", "Duration", "Likes", "Streams", "Title", "Description", "ThumbnailURI", "EpisodeNumber") VALUES 
 -- AOT Stagione 2 (SeasonID 21)
-('2017-04-01', 21, 24, 9800, 160000, '{"it":"Il gigante bestia","en":"Beast Titan"}', '{"it":"Una nuova anomala minaccia si profila all''orizzonte.","en":"A new anomalous threat appears on the horizon."}', '/static/episode_thumbnails/aot_01.png', 1),
-('2017-04-08', 21, 24, 8900, 155000, '{"it":"Sono a casa","en":"I''m Home"}', '{"it":"Sasha corre per salvare il suo villaggio natale.","en":"Sasha races to save her home village."}', '/static/episode_thumbnails/aot_01.png', 2),
+('2017-04-01', 21, 1440, 9800, 160000, '{"it":"Il gigante bestia","en":"Beast Titan"}', '{"it":"Una nuova anomala minaccia si profila all''orizzonte.","en":"A new anomalous threat appears on the horizon."}', '/static/episode_thumbnails/aot_01.png', 1),
+('2017-04-08', 21, 1440, 8900, 155000, '{"it":"Sono a casa","en":"I''m Home"}', '{"it":"Sasha corre per salvare il suo villaggio natale.","en":"Sasha races to save her home village."}', '/static/episode_thumbnails/aot_01.png', 2),
 
 -- AOT Stagione 3 (SeasonID 22)
-('2018-07-23', 22, 24, 12000, 180000, '{"it":"Segnali di fumo","en":"Smoke Signal"}', '{"it":"La squadra Levi inizia una nuova e pericolosa missione.","en":"Levi squad begins a new dangerous mission."}', '/static/episode_thumbnails/aot_01.png', 1),
+('2018-07-23', 22, 1440, 12000, 180000, '{"it":"Segnali di fumo","en":"Smoke Signal"}', '{"it":"La squadra Levi inizia una nuova e pericolosa missione.","en":"Levi squad begins a new dangerous mission."}', '/static/episode_thumbnails/aot_01.png', 1),
 
 -- AOT Stagione 4 (SeasonID 23)
-('2020-12-07', 23, 24, 25000, 300000, '{"it":"Al di là del mare","en":"The Other Side of the Sea"}', '{"it":"I guerrieri di Marley in azione sul campo di battaglia.","en":"Marley warriors in action on the battlefield."}', '/static/episode_thumbnails/aot_01.png', 1),
+('2020-12-07', 23, 1440, 25000, 300000, '{"it":"Al di là del mare","en":"The Other Side of the Sea"}', '{"it":"I guerrieri di Marley in azione sul campo di battaglia.","en":"Marley warriors in action on the battlefield."}', '/static/episode_thumbnails/aot_01.png', 1),
 
 -- JJK Stagione 2 (SeasonID 24)
-('2023-07-06', 24, 24, 15000, 210000, '{"it":"Talento Nascosto","en":"Hidden Inventory"}', '{"it":"Il passato di Satoru Gojo e Suguru Geto.","en":"The past of Satoru Gojo and Suguru Geto."}', '/static/episode_thumbnails/jjk.png', 1),
+('2023-07-06', 24, 1440, 15000, 210000, '{"it":"Talento Nascosto","en":"Hidden Inventory"}', '{"it":"Il passato di Satoru Gojo e Suguru Geto.","en":"The past of Satoru Gojo and Suguru Geto."}', '/static/episode_thumbnails/jjk.png', 1),
 
 -- Demon Slayer Stagione 2 (SeasonID 25)
-('2021-12-05', 25, 46, 14000, 190000, '{"it":"Il Pilastro del Suono, Tengen Uzui","en":"Sound Hashira Tengen Uzui"}', '{"it":"Tanjiro e i ragazzi si infiltrano nel quartiere dei piaceri.","en":"Tanjiro and the boys infiltrate the entertainment district."}', '/static/episode_thumbnails/ds.png', 1),
+('2021-12-05', 25, 2760, 14000, 190000, '{"it":"Il Pilastro del Suono, Tengen Uzui","en":"Sound Hashira Tengen Uzui"}', '{"it":"Tanjiro e i ragazzi si infiltrano nel quartiere dei piaceri.","en":"Tanjiro and the boys infiltrate the entertainment district."}', '/static/episode_thumbnails/ds.png', 1),
 
 -- Demon Slayer Stagione 3 (SeasonID 26)
-('2023-04-09', 26, 45, 18000, 250000, '{"it":"Il sogno di qualcuno","en":"Someone''s Dream"}', '{"it":"Tanjiro si risveglia nel villaggio dei forgiatori di spade.","en":"Tanjiro wakes up in the swordsmith village."}', '/static/episode_thumbnails/ds.png', 1),
+('2023-04-09', 26, 2700, 18000, 250000, '{"it":"Il sogno di qualcuno","en":"Someone''s Dream"}', '{"it":"Tanjiro si risveglia nel villaggio dei forgiatori di spade.","en":"Tanjiro wakes up in the swordsmith village."}', '/static/episode_thumbnails/ds.png', 1),
 
 -- One Piece Stagione 2 - Alabasta (SeasonID 27)
-('2001-03-21', 27, 24, 11000, 230000, '{"it":"Verso Alabasta!","en":"Towards Alabasta!"}', '{"it":"La ciurma sbarca per aiutare la principessa Bibi.","en":"The crew lands to help Princess Vivi."}', '/static/episode_thumbnails/op.png', 1),
+('2001-03-21', 27, 1440, 11000, 230000, '{"it":"Verso Alabasta!","en":"Towards Alabasta!"}', '{"it":"La ciurma sbarca per aiutare la principessa Bibi.","en":"The crew lands to help Princess Vivi."}', '/static/episode_thumbnails/op.png', 1),
 
 -- My Hero Academia Stagione 2 (SeasonID 28)
-('2017-04-01', 28, 24, 15000, 190000, '{"it":"L''inizio del festival!","en":"That''s the Idea, Ochaco"}', '{"it":"Gli eroi della Yuei si preparano per il torneo sportivo.","en":"U.A. heroes prepare for the sports tournament."}', '/static/episode_thumbnails/mha.png', 1);
+('2017-04-01', 28, 1440, 15000, 190000, '{"it":"L''inizio del festival!","en":"That''s the Idea, Ochaco"}', '{"it":"Gli eroi della Yuei si preparano per il torneo sportivo.","en":"U.A. heroes prepare for the sports tournament."}', '/static/episode_thumbnails/mha.png', 1);
 
 -- 8. Discussioni (Discussions)
 INSERT INTO "Discussions" ("REF_EpisodeID", "OpenDate", "CloseDate", "ForceClosed", "Type") 

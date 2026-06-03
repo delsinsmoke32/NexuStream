@@ -65,27 +65,34 @@
       @if (continueWatching().length > 0) {
         <div class="category-row">
           <h2 class="row-title">Continua a guardare</h2>
-          <div class="horizontal-scroll">
-            @for (cw of continueWatching(); track cw.ShowID) {
-              <div class="show-card landscape">
-                <div class="poster-container" (click)="playAnime(cw.ShowID, $event)">
-                  <img [src]="cw.BannerURI ? (cw.BannerURI | backendUrl) : 'assets/placeholder-banner.png'" [alt]="cw.ShowTitle" />
-                  
-                  <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" [style.width]="(cw.Progress || 0) + '%'"></div>
+          
+          <div class="carousel-wrapper">
+            <button class="scroll-arrow left" (click)="scrollRow('continueWatching', 'left')">
+              <ion-icon name="chevron-back-outline"></ion-icon>
+            </button>
+            
+            <div class="horizontal-scroll" #continueWatchingScroll>
+              @for (cw of continueWatching(); track cw.EpisodeID) {
+                <div class="show-card landscape">
+                  <div class="poster-container" (click)="resumeEpisode(cw)">
+                    <img [src]="cw.BannerURI ? (cw.BannerURI | backendUrl) : 'assets/placeholder-banner.png'" [alt]="cw.ShowTitle" />
+                    <div class="progress-bar-bg">
+                      <div class="progress-bar-fill" [style.width]="(cw.Progress || 0) + '%'"></div>
+                    </div>
+                    <div class="play-overlay">
+                      <ion-icon name="play-circle"></ion-icon>
+                    </div>
                   </div>
-                  
-                  <div class="play-overlay">
-                    <ion-icon name="play-circle"></ion-icon>
+                  <div class="card-info-bottom" (click)="openSeriesInfo(cw.ShowID, $event)">
+                    <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
                   </div>
                 </div>
-                
-                <div class="card-info-bottom" (click)="openSeriesInfo(cw.ShowID, $event)">
-                  <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
-                </div>
-
-              </div>
-            }
+              }
+            </div>
+            
+            <button class="scroll-arrow right" (click)="scrollRow('continueWatching', 'right')">
+              <ion-icon name="chevron-forward-outline"></ion-icon>
+            </button>
           </div>
         </div>
       }
@@ -93,22 +100,31 @@
       @if (mostViewed().length > 0) {
         <div class="category-row">
           <h2 class="row-title">I più visti questa settimana</h2>
-          <div class="horizontal-scroll">
-            @for (show of mostViewed(); track show.ShowID) {
-              <div class="show-card portrait">
-                <div class="poster-container" (click)="playAnime(show.ShowID, $event)">
-                  <img [src]="show.ThumbnailURI ? (show.ThumbnailURI | backendUrl) : 'assets/placeholder-poster.png'" [alt]="show.Title" />
-                  <div class="play-overlay">
-                    <ion-icon name="play-circle"></ion-icon>
+          
+          <div class="carousel-wrapper">
+            <button class="scroll-arrow left" (click)="scrollRow('mostViewed', 'left')">
+              <ion-icon name="chevron-back-outline"></ion-icon>
+            </button>
+            
+            <div class="horizontal-scroll" #mostViewedScroll>
+              @for (show of mostViewed(); track show.ShowID) {
+                <div class="show-card portrait">
+                  <div class="poster-container" (click)="playAnime(show.ShowID, $event)">
+                    <img [src]="show.ThumbnailURI ? (show.ThumbnailURI | backendUrl) : 'assets/placeholder-poster.png'" [alt]="show.Title" />
+                    <div class="play-overlay">
+                      <ion-icon name="play-circle"></ion-icon>
+                    </div>
+                  </div>
+                  <div class="card-info-bottom" (click)="openSeriesInfo(show.ShowID, $event)">
+                    <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
                   </div>
                 </div>
-                
-                <div class="card-info-bottom" (click)="openSeriesInfo(show.ShowID, $event)">
-                  <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
-                </div>
+              }
+            </div>
 
-              </div>
-            }
+            <button class="scroll-arrow right" (click)="scrollRow('mostViewed', 'right')">
+              <ion-icon name="chevron-forward-outline"></ion-icon>
+            </button>
           </div>
         </div>
       }
@@ -116,22 +132,31 @@
       @if (mostLiked().length > 0) {
         <div class="category-row">
           <h2 class="row-title">I più amati dagli utenti</h2>
-          <div class="horizontal-scroll">
-            @for (show of mostLiked(); track show.ShowID) {
-              <div class="show-card portrait">
-                <div class="poster-container" (click)="playAnime(show.ShowID, $event)">
-                  <img [src]="show.ThumbnailURI ? (show.ThumbnailURI | backendUrl) : 'assets/placeholder-poster.png'" [alt]="show.Title" />
-                  <div class="play-overlay">
-                    <ion-icon name="play-circle"></ion-icon>
+          
+          <div class="carousel-wrapper">
+            <button class="scroll-arrow left" (click)="scrollRow('mostLiked', 'left')">
+              <ion-icon name="chevron-back-outline"></ion-icon>
+            </button>
+            
+            <div class="horizontal-scroll" #mostLikedScroll>
+              @for (show of mostLiked(); track show.ShowID) {
+                <div class="show-card portrait">
+                  <div class="poster-container" (click)="playAnime(show.ShowID, $event)">
+                    <img [src]="show.ThumbnailURI ? (show.ThumbnailURI | backendUrl) : 'assets/placeholder-poster.png'" [alt]="show.Title" />
+                    <div class="play-overlay">
+                      <ion-icon name="play-circle"></ion-icon>
+                    </div>
+                  </div>
+                  <div class="card-info-bottom" (click)="openSeriesInfo(show.ShowID, $event)">
+                    <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
                   </div>
                 </div>
-                
-                <div class="card-info-bottom" (click)="openSeriesInfo(show.ShowID, $event)">
-                  <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
-                </div>
+              }
+            </div>
 
-              </div>
-            }
+            <button class="scroll-arrow right" (click)="scrollRow('mostLiked', 'right')">
+              <ion-icon name="chevron-forward-outline"></ion-icon>
+            </button>
           </div>
         </div>
       }

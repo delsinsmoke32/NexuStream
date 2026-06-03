@@ -191,18 +191,64 @@
   }
 }
 
+/* ===================================
+   CAROSELLO E SCORRIMENTO ORIZZONTALE
+   =================================== */
+.carousel-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  // Stile Frecce Desktop
+  .scroll-arrow {
+    position: absolute;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    height: 90%; // Leggermente più basso delle card
+    width: 45px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; // Invisibili di default
+    transition: opacity 0.3s ease, background 0.2s ease, transform 0.1s ease;
+    
+    &.left { left: 0; border-radius: 0 8px 8px 0; }
+    &.right { right: 0; border-radius: 8px 0 0 8px; }
+    
+    ion-icon { font-size: 2.5rem; }
+
+    &:hover { background: rgba(0, 0, 0, 0.95); }
+    &:active { transform: scale(0.9); }
+  }
+
+  // Mostra le frecce solo se il mouse è sopra (Desktop)
+  @media (hover: hover) {
+    &:hover .scroll-arrow {
+      opacity: 1;
+    }
+  }
+}
+
 .horizontal-scroll {
   display: flex;
   align-items: flex-start;
   overflow-x: auto;
   overflow-y: visible;
-  padding: 0 16px 20px 16px; 
+  padding: 10px 16px 20px 16px; // Spazio extra per box-shadow
   gap: 14px;
+  width: 100%;
+  
+  // Rende lo scroll fluido quando si usano i bottoni
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   
+  // Nasconde la brutta scrollbar di sistema
   &::-webkit-scrollbar { display: none; }
+  scrollbar-width: none; // Per Firefox
 }
 
 /* ===================================

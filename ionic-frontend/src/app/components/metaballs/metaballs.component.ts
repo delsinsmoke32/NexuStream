@@ -25,6 +25,33 @@ export class MetaballsScreenSaverComponent implements OnInit, AfterViewInit, OnD
 
   ngOnInit() {}
 
+  private onResize = () => {
+    if (!this.canvasRef) return;
+    const canvas = this.canvasRef.nativeElement;
+    const container = canvas.parentElement;
+    if (!container) return;
+
+    const oldScale = this.getScaleFactor();
+    const isMobileResize = window.innerWidth < 768;
+    const currentDivisor = isMobileResize ? 1 : 2;
+
+    // Ricalcola in base al container
+    canvas.width = container.clientWidth / currentDivisor;
+    canvas.height = container.clientHeight / currentDivisor;
+
+    const newScale = this.getScaleFactor();
+    const resizeRatio = newScale / oldScale;
+
+    this.balls.forEach(ball => {
+      ball.radius *= resizeRatio;
+      ball.vx *= resizeRatio;
+      ball.vy *= resizeRatio;
+
+      if (ball.x + ball.radius > canvas.width) ball.x = canvas.width - ball.radius;
+      if (ball.y + ball.radius > canvas.height) ball.y = canvas.height - ball.radius;
+    });
+  };
+
   ngAfterViewInit() {
     this.initCanvas();
     this.generateBalls();
@@ -32,75 +59,61 @@ export class MetaballsScreenSaverComponent implements OnInit, AfterViewInit, OnD
   }
 
   ngOnDestroy() {
-    // Sicurezza: Cancelliamo il loop quando l'utente esce dalla pagina
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);
     }
+    // Rimuoviamo l'evento per evitare leak di memoria!
+    window.removeEventListener('resize', this.onResize);
   }
 
   private getScaleFactor(): number {
-    const canvas = this.canvasRef.nativeElement;
-    // Calcoliamo la diagonale basandoci sulle dimensioni reali dello schermo (innerWidth/innerHeight)
-    // per mantenere la proporzione costante tra desktop e mobile
-    const referenceDiagonal = Math.sqrt(1920 * 1920 + 1080 * 1080);
-    const currentDiagonal = Math.sqrt(window.innerWidth * window.innerWidth + window.innerHeight * window.innerHeight);
+    if (!this.canvasRef) return 1;
+    const container = this.canvasRef.nativeElement.parentElement;
+    if (!container) return 1;
+
+    // Calcoliamo la scala rispetto alla grandezza standard di un player (es. 1280x720)
+    const referenceDiagonal = Math.sqrt(1280 * 1280 + 720 * 720);
+    const currentDiagonal = Math.sqrt(container.clientWidth * container.clientWidth + container.clientHeight * container.clientHeight);
     
-    return currentDiagonal / referenceDiagonal;
+    return (currentDiagonal / referenceDiagonal) || 1;
   }
 
   private initCanvas() {
     const canvas = this.canvasRef.nativeElement;
+    // Prendiamo le dimensioni del contenitore padre (il player)
+    const container = canvas.parentElement!;
     this.ctx = canvas.getContext('2d')!;
     
-    // LA SOLUZIONE MOBILE: Se lo schermo è piccolo (sotto i 768px come i telefoni),
-    // usiamo la risoluzione 1:1 per non distruggere i pixel. Su desktop teniamo il /2 per le performance.
     const isMobile = window.innerWidth < 768;
     const divisor = isMobile ? 1 : 2;
 
-    canvas.width = window.innerWidth / divisor;
-    canvas.height = window.innerHeight / divisor;
+    canvas.width = container.clientWidth / divisor;
+    canvas.height = container.clientHeight / divisor;
 
-    window.addEventListener('resize', () => {
-      const oldScale = this.getScaleFactor();
-
-      const isMobileResize = window.innerWidth < 768;
-      const currentDivisor = isMobileResize ? 1 : 2;
-
-      canvas.width = window.innerWidth / currentDivisor;
-      canvas.height = window.innerHeight / currentDivisor;
-
-      const newScale = this.getScaleFactor();
-      const resizeRatio = newScale / oldScale;
-
-      this.balls.forEach(ball => {
-        ball.radius *= resizeRatio;
-        ball.vx *= resizeRatio;
-        ball.vy *= resizeRatio;
-
-        if (ball.x + ball.radius > canvas.width) ball.x = canvas.width - ball.radius;
-        if (ball.y + ball.radius > canvas.height) ball.y = canvas.height - ball.radius;
-      });
-    });
+    window.addEventListener('resize', this.onResize);
   }
+
 
   private generateBalls() {
     const canvas = this.canvasRef.nativeElement;
     
     // ADATTAMENTO DENSITÀ: Meno sfere sugli schermi piccoli per non intasare lo spazio
     const isMobile = window.innerWidth < 768;
-    const numberOfBalls = 15; 
+    const numberOfBalls = isMobile ? 6 : 10; 
 
     this.balls = []; // Svuotiamo l'array per sicurezza
 
     for (let i = 0; i < numberOfBalls; i++) {
       // Raggio base equilibrato (circa 70-110px su desktop, proporzionato su mobile)
-      const radius = isMobile ? (Math.random() * 40 + 100) * this.getScaleFactor() : (Math.random() * 40 + 70) * this.getScaleFactor();
-      
+      const radius = isMobile 
+        ? Math.random() * 10 + 20 
+        : Math.random() * 15 + 30;
+
       this.balls.push({
         x: Math.random() * (canvas.width - radius * 2) + radius,
         y: Math.random() * (canvas.height - radius * 2) + radius,
-        vx: (Math.random() - 0.5) * 4 * this.getScaleFactor(), 
-        vy: (Math.random() - 0.5) * 4 * this.getScaleFactor(), 
+        vx: (Math.random() - 0.5) * 2.5 * this.getScaleFactor(), 
+        vy: (Math.random() - 0.5) * 2.5 * this.getScaleFactor(),
         radius: radius
       });
     }
@@ -109,45 +122,27 @@ export class MetaballsScreenSaverComponent implements OnInit, AfterViewInit, OnD
   private animate = () => {
     const canvas = this.canvasRef.nativeElement;
     
-    // Puliamo il canvas ad ogni frame (ma almeno chiamalo clearBackground smh)
+    // Puliamo il canvas ad ogni frame lasciandolo totalmente trasparente
     this.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Disegniamo ogni metaball
     this.balls.forEach(ball => {
-      // Aggiorniamo la posizione in base alla velocità
+      // Movimento invariato
       ball.x += ball.vx;
       ball.y += ball.vy;
 
-      // Rimbalzo orizzontale
-      if (ball.x - ball.radius < 0) {
-        ball.vx *= -1;
-        ball.x = ball.radius;
-      } else if (ball.x + ball.radius > canvas.width){
-        ball.vx *= -1;
-        ball.x = canvas.width - ball.radius;
-      }
-      // Rimbalzo verticale
-      if (ball.y - ball.radius < 0) {
-        ball.vy *= -1;
-        ball.y = ball.radius;
-      } else if (ball.y + ball.radius > canvas.height){
-        ball.vy *= -1;
-        ball.y = canvas.height - ball.radius;
-      }
+      if (ball.x - ball.radius < 0) { ball.vx *= -1; ball.x = ball.radius; } 
+      else if (ball.x + ball.radius > canvas.width) { ball.vx *= -1; ball.x = canvas.width - ball.radius; }
+      
+      if (ball.y - ball.radius < 0) { ball.vy *= -1; ball.y = ball.radius; } 
+      else if (ball.y + ball.radius > canvas.height) { ball.vy *= -1; ball.y = canvas.height - ball.radius; }
 
-      // Disegniamo la sfera come un gradiente radiale (sfumato)
-      // Nota: Il filtro CSS farà fondere queste sfumature creando l'effetto che vogliamo
-      const gradient = this.ctx.createRadialGradient(ball.x, ball.y, 0, ball.x, ball.y, ball.radius);
-      gradient.addColorStop(0, 'rgba(229, 9, 20, 1)'); // Rosso NexuStream puro al centro
-      gradient.addColorStop(1, 'rgba(229, 9, 20, 0)'); // Sfuma a trasparente sui bordi
-
-      this.ctx.fillStyle = gradient;
+      // 🚀 DISEGNO SEMPLIFICATO: Cerchi rossi solidi. Più veloce e pulito!
+      this.ctx.fillStyle = '#b22222'; // Rosso base NexuStream
       this.ctx.beginPath();
       this.ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
       this.ctx.fill();
     });
 
-    // 3. Richiediamo il prossimo frame di animazione nativo
     this.animationId = requestAnimationFrame(this.animate);
   }
 

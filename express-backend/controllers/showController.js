@@ -78,10 +78,17 @@ const getShowDetails = async (req, res) => {
 
     const { showId } = req.params;
     const applang = req.user ? req.user.appLang : 'it'; // O req.language a seconda di come l'hai impostato
+    let show = null;
+
 
     try {
-        // 1. Dettagli base dello show
-        const show = await showModel.getShowById(showId, applang);
+
+        if (req.user) {
+            show = await showModel.getShowByIdAuth(req.user.id, showId, applang); //mostra anche i like
+        } else {
+            show = await showModel.getShowByIdNoAuth(showId, applang);
+        }
+
         if (!show) return res.status(404).json({ error: "Show non trovato" });
 
         // 2. Aggiungiamo i Generi (trasformiamo [{Name: 'Action'}, {Name: 'Fantasy'}] in ['Action', 'Fantasy'])

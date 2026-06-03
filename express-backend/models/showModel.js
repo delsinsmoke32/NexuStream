@@ -161,6 +161,7 @@ const getContinueWatching = async (userId, applang = 'it') => {
     const sql = `
         SELECT 
             sh.ShowID, sh.ThumbnailURI, sh.BannerURI,
+            s.SeasonID,
             COALESCE(sh.Title->>?, sh.Title->>'it') AS ShowTitle,
             e.EpisodeID, 
             COALESCE(e.Title->>?, e.Title->>'it') AS EpisodeTitle,
@@ -183,15 +184,29 @@ const getContinueWatching = async (userId, applang = 'it') => {
  * @param {string} applang - La lingua rilevata (es. "en")
  * @returns {Promise<Object|null>}
  */
-const getShowById = async (showId, applang = 'it') => {
+const getShowByIdNoAuth = async (showId, applang = 'it') => {
     const sql = `
         SELECT 
             ShowID, DateStarted, hasEnded, DateEnded, Favourited, ThumbnailURI, BannerURI,
+            0 AS isFavorited,
             COALESCE(Title->>?, Title->>'it') AS Title,
             COALESCE(Description->>?, Description->>'it') AS Description
-        FROM Shows 
+        FROM Shows as s
         WHERE ShowID = ?`;
     return await db.getAsync(sql, [applang, applang, showId]);
+};
+
+const getShowByIdAuth = async (userId, showId, applang = 'it') => {
+    const sql = `
+        SELECT 
+            s.ShowID, s.DateStarted, s.hasEnded, s.DateEnded, s.Favourited, s.ThumbnailURI, s.BannerURI,
+            COALESCE(s.Title->>?, s.Title->>'it') AS Title,
+            COALESCE(s.Description->>?, s.Description->>'it') AS Description,
+            CASE WHEN l.REF_ShowID IS NOT NULL THEN 1 ELSE 0 END AS isFavorited
+        FROM Shows AS s
+        LEFT JOIN LINKs_User_Likes_Show AS l ON s.ShowID = l.REF_ShowID AND l.REF_UserID = ?
+        WHERE s.ShowID = ?`;
+    return await db.getAsync(sql, [applang, applang, userId, showId]);
 };
 
 /**
@@ -245,7 +260,8 @@ module.exports = {
     getTopStreamed,
     getTopFavorited,
     getContinueWatching,
-    getShowById,
+    getShowByIdNoAuth,
+    getShowByIdAuth,
     addLikeInteraction,
     removeLikeInteraction,
     incrementFavorites,

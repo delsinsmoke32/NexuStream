@@ -1,7 +1,7 @@
 <ion-header translucent>
     <ion-toolbar>
-        <ion-title slot="start">
-            Login on
+        <ion-title i18n="@@loginOn" slot="start">
+            Accesso su
             <ion-text color="primary">
                 <strong> NexuStream </strong>
             </ion-text>
@@ -13,7 +13,7 @@
 <ion-content fullscreen class="login-content">
     <div class="login-container flex-centered">
         <div class="text-heading">
-            <h1 i18n="@@Welcome_to_NexuStream">Benvenuti a NexuStream</h1>
+            <h1 i18n="@@Welcome_to_NexuStream">Benvenuto su NexuStream</h1>
         </div>
 
         <ion-card class="form-log-in-card">
@@ -49,18 +49,18 @@
                     </div>
 
                     <div class="button-container" style="margin-top: 25px">
-                        <ion-button
+                        <ion-button i18n="@@login"
                             type="submit"
                             expand="block"
                             class="login-button"
                             [disabled]="loginForm.invalid"
                         >
-                            Login
+                            Accesso
                         </ion-button>
                     </div>
 
                     <div class="text-link ion-text-center ion-margin-top">
-                        <a routerLink="/forgot-password" class="auth-link">Forgot password?</a>
+                        <a i18n="@@forgotPass" routerLink="/forgot-password" class="auth-link">Password dimenticata?</a>
                     </div>
                     
                 </ion-card-content>

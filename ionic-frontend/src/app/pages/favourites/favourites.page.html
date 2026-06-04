@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/" color="primary"></ion-back-button>
     </ion-buttons>
-    <ion-title>La Mia Lista</ion-title>
+    <ion-title i18n="@@myList">La Mia Lista</ion-title>
     <ion-buttons slot="end">
         <ion-button color="light" (click)="openProfileMenu($event)">
           <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
@@ -15,7 +15,7 @@
 <ion-content class="ion-padding">
 
   <div *ngIf="favorites.length > 0">
-    <p class="results-count">Hai salvato {{ favorites.length }} anime</p>
+    <p i18n="@@myFavouritesCount" class="results-count">Hai salvato {{ favorites.length }} anime</p>
     
     <ion-grid class="ion-no-padding">
       <ion-row>
@@ -46,9 +46,9 @@
     <div class="icon-container">
       <ion-icon name="heart-dislike-outline"></ion-icon>
     </div>
-    <h2>La tua lista è vuota</h2>
-    <p>Esplora la home page per aggiungere i tuoi anime preferiti e non perderti nessun aggiornamento.</p>
-    <ion-button color="primary" expand="block" routerLink="/home" class="explore-btn">
+    <h2 i18n="@@emptyList">La tua lista è vuota</h2>
+    <p i18n="@@messEmptyList">Esplora la home page per aggiungere i tuoi anime preferiti e non perderti nessun aggiornamento.</p>
+    <ion-button i18n="@@explore" color="primary" expand="block" routerLink="/home" class="explore-btn">
       Esplora Anime
     </ion-button>
   </div>
@@ -57,17 +57,17 @@
 <ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
   <ng-template>
     <ion-list color="dark">
-      <ion-item button (click)="openUserSettings()">
+      <ion-item button (click)="openUserSettings()" i18n="@@settings">
         <ion-icon color="light" slot="start" name="settings-outline"></ion-icon>
         Impostazioni
       </ion-item>
-      <ion-item button routerLink="/favourites" (click)="openFavorites()">
+      <ion-item button routerLink="/favourites" (click)="openFavorites()" i18n="@@favouritesList">
         <ion-icon slot="start" name="heart-outline"></ion-icon>
         Lista Preferiti
       </ion-item>
-      <ion-item button (click)="logout()">
+      <ion-item button (click)="logout()" i18n="@@logOut">
         <ion-icon slot="start" name="log-out-outline"></ion-icon>
-        Logout
+        Esci
       </ion-item>
     </ion-list>
   </ng-template>

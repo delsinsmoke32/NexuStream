@@ -77,7 +77,7 @@ export class LoginPage implements OnInit {
         // Usiamo la validazione nativa dei Reactive Forms
         if (this.loginForm.invalid) {
             this.presentToast(
-                "Inserisci un'email valida e una password di almeno 8 caratteri.",
+                $localize `:@@insertLogin: Inserisci un'email valida e una password di almeno 8 caratteri.`,
                 'danger'
             )
             return
@@ -109,7 +109,7 @@ export class LoginPage implements OnInit {
             error: (err) => {
                 console.error('Errore HTTP Login:', err)
                 this.presentToast(
-                    err.error?.message || 'Errore durante il login.',
+                    err.error?.message || $localize `:@@errorLogin: Errore durante l'accesso.`,
                     'danger'
                 )
             },

@@ -1,5 +1,10 @@
 <div class="comments-wrapper">
-    <h3><ion-icon name="chatbubbles-outline"></ion-icon> 12 Comments</h3>
+    <h3>
+       <ion-icon name="chatbubbles-outline"></ion-icon>
+       <span i18n="@@commentsCount">
+         {comments?.length, plural, =0 {Nessun commento} =1 {1 Commento} other {# Commenti}}
+       </span>
+    </h3>
 
     <div class="new-comment-box">
         <ion-item lines="none" class="custom-input">
@@ -10,16 +15,23 @@
                 />
             </ion-avatar>
             <ion-textarea
-                placeholder="Write a comment..."
+                placeholder="Scrivi un commento..."
+                i18n-placeholder="@@commentPlaceholder"
                 autosize="true"
+                [(ngModel)]="nuovoCommentoTesto"
+                (keyup.enter)="aggiungiCommento()"
+                rows="1"
             ></ion-textarea>
         </ion-item>
         <div class="btn-container">
-            <ion-button fill="clear" class="post-btn">Post</ion-button>
+            <ion-button i18n="@@sendButton" fill="clear" class="post-btn" (click)="aggiungiCommento()" [disabled]="!nuovoCommentoTesto || nuovoCommentoTesto.trim()=== ''" >Invia </ion-button>
         </div>
     </div>
 
     <div class="comments-list">
+        <div If="!comments || comments.length === 0" class="no-comments-placeholder">
+          <p i18n="@@noComments">Nessun commento. Sii il primo a dire la tua!</p>
+        </div>
         <div class="comment-item" *ngFor="let comment of comments">
             <ion-avatar>
                 <img
@@ -34,10 +46,10 @@
                 </div>
                 <p class="text">{{ comment.text }}</p>
                 <div class="comment-actions">
-                    <ion-button fill="clear" size="small">
-                        <ion-icon name="thumbs-up-outline"></ion-icon> Like
+                    <ion-button i18n="@@commentLike" fill="clear" size="small" (click)="toggleLike(comment)" [color]="comment.isLiked ? 'danger' : 'medium'">
+                        <ion-icon [name]="comment.isLiked ? 'thumbs-up' : 'thumbs-up-outline'"></ion-icon> {{ comment.likes || 0 }} Mi piace
                     </ion-button>
-                    <ion-button fill="clear" size="small">Reply</ion-button>
+                    <ion-button i18n="@@commentReply" fill="clear" size="small" color="medium" (click)="rispondiA(comment.username)">Rispondi</ion-button>
                 </div>
             </div>
         </div>

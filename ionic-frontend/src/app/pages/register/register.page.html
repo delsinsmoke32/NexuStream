@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
     <ion-toolbar>
-        <ion-title slot="start">
-            Register on
+        <ion-title i18n="@@registerON" slot="start">
+            Registrati su
             <ion-text color="primary">
                 <strong> NexuStream </strong>
             </ion-text>
@@ -14,7 +14,7 @@
     <form [formGroup]="registerForm" (ngSubmit)="register()">
         <div class="split-wrapper">
             <div class="column left-column">
-                <h1 class="title">Welcome to NexuStream</h1>
+                <h1 i18n="@@Welcome_to_NexuStream" class="title">Benvenuto su NexuStream</h1>
 
                 <ion-card class="form-log-in-card">
                     <ion-card-content>
@@ -24,8 +24,10 @@
                                 <ion-input
                                     formControlName="email"
                                     errorText="Indirizzo email non valido"
+                                    i18n-errorText="@@invalidEmailError"
                                     type="email"
-                                    placeholder="example@mail.com"
+                                    placeholder="esempio@mail.com"
+                                    i18n-placeholder="@@exampleEmail"
                                 ></ion-input>
                             </ion-item>
                         </div>
@@ -36,6 +38,7 @@
                                 <ion-input
                                     formControlName="password"
                                     errorText="Minimo 8 caratteri richiesti"
+                                    i18n-errorText="@@minimumCharPassError"
                                     type="password"
                                     placeholder="password"
                                 >
@@ -48,7 +51,7 @@
                         </div>
 
                         <div class="input-group" style="margin-top: 15px">
-                            <ion-label position="stacked"
+                            <ion-label i18n="@@confirmPass" position="stacked"
                                 >Conferma Password</ion-label
                             >
                             <ion-item lines="none" class="custom-input">
@@ -56,6 +59,7 @@
                                     formControlName="conf_password"
                                     type="password"
                                     placeholder="Ripeti la password"
+                                    i18n-placeholder="@@repeatPass"
                                 >
                                     <ion-input-password-toggle
                                         slot="end"
@@ -66,13 +70,13 @@
                         </div>
 
                         <div class="button-container" style="margin-top: 25px">
-                            <ion-button
+                            <ion-button i18n="@@register"
                                 type="submit"
                                 expand="block"
                                 class="register-button"
                                 [disabled]="registerForm.invalid"
                             >
-                                Register
+                                Registrati
                             </ion-button>
                         </div>
                     </ion-card-content>
@@ -80,18 +84,20 @@
             </div>
 
             <div class="column right-column">
-                <h1 class="title">What's your name?</h1>
+                <h1 i18n="@@name" class="title">Qual è il tuo nome?</h1>
 
                 <ion-card class="form-log-in-card">
                     <ion-card-content>
                         <div class="input-group">
-                            <ion-label position="stacked">Username</ion-label>
+                            <ion-label i18n="@@username" position="stacked">Nome utente</ion-label>
                             <ion-item lines="none" class="custom-input">
                                 <ion-input
                                     formControlName="username"
                                     errorText="Lo username è obbligatorio (min 3 caratteri)"
+                                    i18n-errorText="@@obligatoryUser"
                                     type="text"
-                                    placeholder="username"
+                                    placeholder="nome utente"
+                                    i18n-placeholder="@@userPlaceHolder"
                                 ></ion-input>
                             </ion-item>
                         </div>

@@ -1,107 +1,124 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar class="main-toolbar">
-    <!-- Serve per la fare la freccia per tornare alla pagina precedente
+<ion-header class="ion-no-border absolute-header">
+  <ion-toolbar class="transparent-toolbar">
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/" color="light"></ion-back-button>
-    </ion-buttons> -->
-    <ion-title routerLink="/home" class="brand-title">NexuStream</ion-title>
-    <ion-buttons slot="end">
-      <ion-button color="light" routerLink="/search">
-        <ion-icon slot="icon-only" name="search-outline"></ion-icon>
-      </ion-button>
-      <ion-button color="light" (click)="openProfileMenu($event)">
-          <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
-      </ion-button>
+      <ion-back-button defaultHref="/home" color="primary"></ion-back-button>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="dark-content">
-  <div class="page-container" *ngIf="animeData">
+<ion-content [fullscreen]="true">
+  
+  @if (isLoading()) {
+    <div class="loading-state">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
+    </div>
+  } @else if (show()) {
     
-    <div class="title-banner">
-      <h2>Lista Completa Episodi {{ animeData.titolo }}</h2>
-      <ion-button fill="clear" (click)="togglePreferito()" class="favorite-btn">
-        <ion-icon 
-          slot="icon-only" 
-          [name]="animeData.isPreferito ? 'star' : 'star-outline'"
-          [class.active]="animeData.isPreferito">
-        </ion-icon>
-      </ion-button>
+    <div class="hero-banner">
+      <img class="banner-img" [src]="show().BannerURI ? (show().BannerURI | backendUrl) : 'assets/placeholder-banner.png'" alt="Banner">
+      <div class="hero-gradient-overlay"></div>
     </div>
 
-    <div class="cover-container">
-      <img [src]="animeData.copertina" alt="Cover Image" />
-    </div>
-
-    <div *ngIf="!animeData" class="ion-text-center ion-padding">
-    <ion-spinner color="danger"></ion-spinner>
-    <p style="color: white;">Caricamento serie...</p>
-    </div>
-
-    <div class="info-grid">
-      <div class="info-left">
-        <p><strong>Titolo:</strong> {{ animeData.titolo }}</p>
-        <p><strong>Episodi:</strong> {{ animeData.numEpisodi }}</p>
-        <p><strong>Durata episodio:</strong> {{ animeData.durata }}</p>
-      </div>
-      <div class="info-right">
-        <p><strong>Trama:</strong> {{ animeData.trama }}</p>
-      </div>
-    </div>
-
-    <div class="season-selector-container" *ngIf="animeData.stagioni && animeData.stagioni.length > 0">
-      <ion-item lines="none" class="custom-select-item">
-        <ion-select 
-          interface="popover" 
-          [value]="seasonSelected?.numeroStagione" 
-          (ionChange)="cambiaStagione($event)"
-          toggleIcon="chevron-down-outline"
-          placeholder="Seleziona Stagione">
+    <div class="shows-content-container">
+      
+      <div class="top-info-section">
+        
+        <div class="main-details">
+          <h1 class="shows-title">{{ show().Title }}</h1>
           
-          <ion-select-option *ngFor="let st of animeData.stagioni" [value]="st.numeroStagione">
-            {{ st.nome }}
-          </ion-select-option>
+          <div class="action-buttons">
+            <button class="btn-play-primary" (click)="playEpisode(resumeEpisode()?.EpisodeID, $event)">
+              <ion-icon name="play"></ion-icon>
+              <div class="btn-text">
+                
+                <span class="action">
+                  {{ (resumeEpisode()?.progress > 5) ? 'Continua a guardare' : 'Inizia a guardare' }}
+                </span>
+                
+                <span class="ep-ref">
+                  Episodio {{ resumeEpisode()?.EpisodeNumber || 1 }}
+                </span>
+                
+              </div>
+            </button>
+            
+            <button class="btn-icon-secondary" (click)="toggleFavorite()">
+              <ion-icon [name]="show().isFavorited ? 'heart' : 'heart-outline'"></ion-icon>
+            </button>
+          </div>
           
-        </ion-select>
-      </ion-item>
-    </div>
-
-    <div class="episodes-container" *ngIf="seasonSelected">
-      <div class="episode-row" *ngFor="let ep of seasonSelected.episodi" (click)="playEpisodio(ep)">
-        <div class="ep-number">{{ ep.numero }}</div>
-        <div class="ep-title">{{ ep.titolo }}</div>
-        <div class="ep-play">
-          <ion-icon name="play-circle"></ion-icon>
+          <p class="shows-description">{{ show().Description }}</p>
         </div>
+
+        <div class="meta-sidebar">
+          
+          <div class="meta-block">
+            <span class="meta-label">Generi:</span>
+            <div class="chip-container">
+              @for (genre of show().genres; track $index) {
+                <span class="meta-chip">{{ genre }}</span>
+              } @empty {
+                <span class="meta-text">N/D</span>
+              }
+            </div>
+          </div>
+          
+          <div class="meta-block">
+            <span class="meta-label">Audio:</span>
+            <span class="meta-text uppercase-lang">
+              {{ show().audio?.length > 0 ? show().audio.join(', ') : 'N/D' }}
+            </span>
+          </div>
+          
+          <div class="meta-block">
+            <span class="meta-label">Sottotitoli:</span>
+            <span class="meta-text uppercase-lang">
+              {{ show().subs?.length > 0 ? show().subs.join(', ') : 'N/D' }}
+            </span>
+          </div>
+
+        </div>
+      </div> <div class="divider"></div>
+
+      <div class="episodes-section">
+        
+        <div class="season-header">
+          <ion-select 
+            class="season-selector" 
+            [value]="selectedSeasonId()" 
+            (ionChange)="onSeasonChange($event)"
+            interface="popover">
+            @for (season of seasons(); track season.SeasonID) {
+              <ion-select-option [value]="season.SeasonID">
+                {{ season.Title }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </div>
+
+        @if (getSelectedSeason()?.Description) {
+          <p class="season-description">{{ getSelectedSeason().Description }}</p>
+        }
+
+        <div class="episodes-list">
+          @if (isEpisodesLoading()) {
+            <div class="local-spinner">
+              <ion-spinner name="crescent" color="primary"></ion-spinner>
+            </div>
+          } @else {
+            @for (ep of episodes(); track ep.EpisodeID) {
+              <app-episode-card 
+                [episode]="ep" 
+                (play)="playEpisode($event)"
+                (info)="openEpisodeInfo($event)">
+              </app-episode-card>
+            } @empty {
+              <div class="no-episodes">Nessun episodio trovato per questa stagione.</div>
+            }
+          }
+        </div>
+
       </div>
-    </div>
+    </div> }
 
-    
-
-    <div class="status-footer">
-      <span>{{ animeData.stato }}</span>
-    </div>
-
-  </div>
 </ion-content>
-
-<!-- Menu a tendina per il profilo -->
-<ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
-  <ng-template>
-    <ion-list color="dark">
-      <ion-item button (click)="openUserSettings()">
-        <ion-icon slot="start" name="settings-outline"></ion-icon>
-        Impostazioni
-      </ion-item>
-      <ion-item button (click)="openFavorites()">
-        <ion-icon slot="start" name="heart-outline"></ion-icon>
-        Lista Preferiti
-      </ion-item>
-      <ion-item button (click)="logout()">
-        <ion-icon slot="start" name="log-out-outline"></ion-icon>
-        Logout
-      </ion-item>
-    </ion-list>
-  </ng-template>
-</ion-popover>

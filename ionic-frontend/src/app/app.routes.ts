@@ -4,10 +4,10 @@ import { CataloguerGuard } from './guards/cataloguer-guard';
 import { ModGuard } from './guards/mod-guard';
 
 export const routes: Routes = [
-  // 1. Reindirizzamento iniziale: se l'utente apre l'app senza path, lo mandiamo alla login (o alla home se preferisci)
+  // 1. Reindirizzamento iniziale: se l'utente apre l'app senza path, lo mandiamo alla home
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'home',
     pathMatch: 'full'
   },
   
@@ -47,7 +47,7 @@ export const routes: Routes = [
   
   // 5. Pagine di Dettaglio con ID dinamico (fondamentali per caricare i dati corretti dal DB)
   {
-    path: 'shows/:showId',
+    path: 'shows/:id',
     loadComponent: () => import('./pages/shows/shows.page').then(m => m.ShowsPage)
   },
   {

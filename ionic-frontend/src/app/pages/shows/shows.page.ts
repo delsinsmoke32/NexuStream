@@ -1,109 +1,206 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {ActivatedRoute, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, Router} from '@angular/router';
+import { 
+  IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton,
+  IonIcon, IonSpinner, IonSelect, IonSelectOption, ToastController 
+} from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { star, starOutline, searchOutline, personCircleOutline, settingsOutline, heartOutline, logOutOutline, playCircle } from 'ionicons/icons';
-import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonSpinner,IonIcon, IonPopover,IonList,IonItem, IonSelect, IonSelectOption } from '@ionic/angular/standalone';
+import { play, heartOutline, heart, shareSocialOutline } from 'ionicons/icons';
+
+// Importiamo forkJoin da RxJS per eseguire chiamate HTTP in parallelo
+import { forkJoin } from 'rxjs';
+
+import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
+import { EpisodeCardComponent } from '../../components/episode-card/episode-card.component';
 
 @Component({
   selector: 'app-shows',
   templateUrl: './shows.page.html',
   styleUrls: ['./shows.page.scss'],
   standalone: true,
-  imports: [IonButton, IonIcon,IonPopover,IonList,IonItem, IonButtons, IonContent,IonSpinner, IonHeader, IonTitle, IonToolbar,IonSelect, IonSelectOption,RouterModule, CommonModule, FormsModule]
+  imports: [
+    CommonModule, BackendUrlPipe, EpisodeCardComponent,
+    IonContent, IonHeader, IonToolbar, IonButtons, IonBackButton,
+    IonIcon, IonSpinner, IonSelect, IonSelectOption
+  ]
 })
-export class ShowsPage implements OnInit {
-// Usiamo ViewChild per accedere al popover definito nel template con #profilePopover
-  @ViewChild('profilePopover') popover: any;
+export class ShowsPage {
+  private http = inject(HttpClient);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
+  private toastCtrl = inject(ToastController);
 
-  animeId!: string | null;
-  animeData: any = null;
-  seasonSelected : any;
-  private apiUrl = 'api/shows';
+  isLoading = signal<boolean>(true);
+  isEpisodesLoading = signal<boolean>(false);
+  
+  // Dati
+  showId = signal<string>(''); // Salviamo l'ID dello show per usarlo nelle chiamate successive
+  show = signal<any>(null);
+  seasons = signal<any[]>([]);
+  episodes = signal<any[]>([]);
+  
+  
+  // Stato interattivo
+  selectedSeasonId = signal<number | null>(null);
+  resumeEpisode = signal<any>(null); // Episodio da inserire nel bottone Play principale
 
-  constructor(private http: HttpClient, private route: ActivatedRoute) {
-    
-    addIcons({star, searchOutline, starOutline, personCircleOutline, settingsOutline, heartOutline, logOutOutline, playCircle});
+  constructor() {
+    addIcons({ play, heartOutline, heart, shareSocialOutline });
   }
- 
 
-  ngOnInit() {
-    // 3. Recuperiamo l'ID dall'URL (es. "12" o "45")
-    this.animeId = this.route.snapshot.paramMap.get('id');
-
-    if (this.animeId) {
-      // 4. Facciamo la chiamata dinamica al server: http://tuosito.com/api/serie/12
-      this.http.get(`${this.apiUrl}/${this.animeId}`).subscribe({
-        next: (datiRicevuti) => {
-          // Quando il server risponde, salviamo i dati. 
-          // La pagina HTML si accorgerà del cambiamento e si aggiornerà istantaneamente!
-          this.animeData = datiRicevuti; 
-          // Appena la pagina si carica, mostra automaticamente la PRIMA stagione della lista
-        if (this.animeData.stagioni && this.animeData.stagioni.length > 0) {
-          this.seasonSelected = this.animeData.stagioni[0];
-        }
-        },
-        error: (err) => {
-          console.error("Errore nel caricamento della serie:", err);
-        }
-      });
+  ionViewWillEnter() {
+    // Legge l'ID dello show dall'URL (es. /shows/5)
+    const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      this.showId.set(id);
+      
+      // Ora ogni volta che torni alla lista episodi, scaricherà i secondi aggiornati!
+      this.loadShowsData(id);
     }
   }
 
-  // Questa funzione viene attivata quando l'utente cambia stagione nel menu a tendina
-  cambiaStagione(event: any) {
-    const numeroStagioneScelta = event.detail.value;
+  loadShowsData(id: string) {
+    this.isLoading.set(true);
     
-    // Cerchiamo nell'array delle stagioni quella che ha lo stesso numero scelto dall'utente
-    this.seasonSelected = this.animeData.stagioni.find(
-      (st: any) => st.numeroStagione === numeroStagioneScelta
-    );
+    // Eseguiamo 2 chiamate separate in parallelo: una per la serie, una per le sue stagioni
+    forkJoin({
+      showDetails: this.http.get<any>(`api/shows/${id}`),
+      showSeasons: this.http.get<any[]>(`api/shows/${id}/seasons`)
+    }).subscribe({
+      next: (res) => {
+        this.show.set(res.showDetails);
+        this.seasons.set(res.showSeasons || []);
+        
+        // Se ci sono stagioni, selezioniamo la prima di default e carichiamo i suoi episodi
+        if (this.seasons().length > 0) {
+          const firstSeasonId = this.seasons()[0].SeasonID;
+          this.selectedSeasonId.set(firstSeasonId);
+          this.loadEpisodes(id, firstSeasonId);
+        } else {
+          this.isLoading.set(false); // Nessuna stagione, fermiamo il caricamento
+        }
+      },
+      error: (err) => {
+        console.error('Errore nel recupero della serie o delle stagioni:', err);
+        this.isLoading.set(false);
+      }
+    });
   }
 
-  // Funzione per attivare/disattivare i preferiti (dobbiamo fare in modo da aggiungere la serie ai preferiti dell'utente)
-  togglePreferito() {
-    this.animeData.isPreferito = !this.animeData.isPreferito;
+  onSeasonChange(event: any) {
+    const seasonId = event.detail.value;
+    this.selectedSeasonId.set(seasonId);
     
-    if (this.animeData.isPreferito) {
-      console.log(`${this.animeData.titolo} aggiunto ai preferiti!`);
-      // Qui andrebbe la chiamata al tuo backend o a Storage
-    } else {
-      console.log(`${this.animeData.titolo} rimosso dai preferiti.`);
+    // Usiamo il nuovo signal per non distruggere la pagina!
+    this.isEpisodesLoading.set(true); 
+    this.loadEpisodes(this.showId(), seasonId);
+  }
+
+  // Chiamata RESTful per gli episodi di una specifica stagione di uno specifico show
+  loadEpisodes(showId: string, seasonId: number) {
+    this.http.get<any[]>(`api/shows/${showId}/seasons/${seasonId}/episodes`).subscribe({
+      next: (eps) => {
+        this.episodes.set(eps || []);
+        if (eps && eps.length > 0) {
+          
+          // 🚀 CERCA L'EPISODIO INIZIATO MA NON FINITO
+          const inProgressEp = eps.find(ep => ep.progress > 5 && ep.isCompleted === 0);
+          
+          // Imposta l'episodio da riprendere (se non c'è, usa il primo della lista)
+          this.resumeEpisode.set(inProgressEp || eps[0]);
+        } else {
+          this.resumeEpisode.set(null);
+        }
+        
+        // Spegniamo entrambi i caricamenti
+        this.isLoading.set(false); 
+        this.isEpisodesLoading.set(false); 
+      },
+      error: (err) => {
+        console.error('Errore nel recupero degli episodi:', err);
+        this.isLoading.set(false);
+        this.isEpisodesLoading.set(false);
+      }
+    });
+  }
+
+  openEpisodeInfo(episodeId: number) {
+    if (!episodeId) return;
+
+    this.router.navigate(['/episode', episodeId], {
+      queryParams: { 
+        showId: this.showId(), 
+        seasonId: this.selectedSeasonId() 
+      }
+    });
+  }
+
+  playEpisode(episodeId: number, event?: Event) {
+    if (event && event.target) {
+      // Toglie il focus dal bottone prima di cambiare pagina
+      (event.target as HTMLElement).blur(); 
     }
+    if (!episodeId) return;
+    
+    // 1. Troviamo l'episodio cliccato
+    const targetEpisode = this.episodes().find(ep => ep.EpisodeID === episodeId);
+    
+    // 2. Estraiamo il progresso salvato
+    const savedProgress = targetEpisode?.progress || 0;
+
+    // 3. Navighiamo passando lo startAt!
+    this.router.navigate(['/episode', episodeId], {
+      queryParams: { 
+        showId: this.showId(), 
+        seasonId: this.selectedSeasonId(),
+        startAt: savedProgress // 🚀 INIETTIAMO I SECONDI NELL'URL
+      }
+    });
   }
 
-  // Funzione per avviare la riproduzione dell'episodio
-  playEpisodio(ep: any) {
-    console.log(`Avvio riproduzione Episodio ${ep.numero}: ${ep.titolo}`);
+  getSelectedSeason() {
+    return this.seasons().find(s => s.SeasonID === this.selectedSeasonId());
   }
 
-  // Funzione per aprire il menu a tendina del profilo
-  async openProfileMenu(ev: any) {
-    // Passiamo l'evento 'ev' così il popover sa di dover apparire vicino al tasto cliccato
-    this.popover.event = ev;
-    await this.popover.present();
+  toggleFavorite() {
+    const currentShow = this.show();
+    if (!currentShow) return;
+
+    const userToken = localStorage.getItem('token'); 
+    
+    if (!userToken) {
+      this.showToast('Devi accedere per aggiungere ai preferiti!', 'danger');
+      return; 
+    }
+
+    const wasFavorited = currentShow.isFavorited;
+    const newStatus = wasFavorited ? 0 : 1;
+
+    this.show.update(s => ({ ...s, isFavorited: newStatus }));
+
+    const payload = { isLiked: newStatus };
+    
+    this.http.post(`api/shows/${this.showId()}/interact`, payload).subscribe({
+      next: () => {
+        this.showToast(newStatus ? 'Aggiunto ai Preferiti' : 'Rimosso dai Preferiti', 'success');
+      },
+      error: (err) => {
+        console.error("Errore salvataggio preferito: ", err);
+        this.show.update(s => ({ ...s, isFavorited: wasFavorited }));
+        this.showToast('Errore di connessione. Riprova.', 'danger');
+      }
+    });
   }
 
-  // Funzione chiamata dal (didDismiss)
-  onPopoverDismiss() {
-    console.log('Il menu profilo è stato chiuso');
-  }
-
-  // Azioni del menu profilo
-  openUserSettings() {
-    console.log('Apro le impostazioni...');
-    this.popover.dismiss();
-  }
-
-  openFavorites() {
-    console.log('Apro i preferiti...');
-    this.popover.dismiss();
-  }
-
- logout() {
-    console.log('Eseguo il logout...');
-    this.popover.dismiss();
+  private async showToast(message: string, color: 'success' | 'danger') {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2000,
+      color,
+      position: 'bottom'
+    });
+    await toast.present();
   }
 }

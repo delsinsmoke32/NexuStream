@@ -1,83 +1,146 @@
 <ion-content [fullscreen]="true" class="streaming-content">
-    <div class="video-layout-wrapper">
-        <div class="main-video-section">
-            <div class="player-container">
-                <!-- <div class="video-placeholder">
-                    <ion-icon name="play-circle" class="play-hint"></ion-icon>
-                    <div class="video-overlay-bottom">
-                        @if ( episode$ | async; as episode ) {
-                        <p>{{ episode.Title }}</p>
-                        } @else {
-                        <p>
-                            <ion-skeleton-text
-                                animated
-                                style="width: 60%"
-                            ></ion-skeleton-text>
-                        </p>
-                        }
-                    </div>
-                </div> -->
-                <video
-                    #videoPlayer
-                    class="video-js vjs-default-skin vjs-big-play-centered video-placeholder"
-                    controls
-                    preload="auto"
-                    playsinline
-                ></video>
-            </div>
-
-            <div class="episode-details">
-                <h1 i18n="@@titleEp">Titolo</h1>
-                <p i18n="@@descriptionEp" class="description">
-                    <!--Chuck Norris, dopo aver sconfitto Satoru Gojo, si ritrova
-                    davanti a una Shibuya desolata. Dall'ombra, esce qualcuno;
-                    si tratta di lui, il più forte! Proprio lui, Gianni Morandi!-->
-                    Descrizione
-                </p>
-                <div class="action-buttons">
-                    <ion-button i18n="@@shareButton" fill="clear" class="btn-secondary">
-                        <ion-icon
-                            slot="start"
-                            name="share-social-outline"
-                        ></ion-icon>
-                        Condividi
-                    </ion-button>
-                    <ion-button i18n="@@myList" fill="clear" class="btn-secondary">
-                        <ion-icon
-                            slot="start"
-                            name="add-circle-outline"
-                        ></ion-icon>
-                        La Mia Lista
-                    </ion-button>
-                </div>
-            </div>
-            <app-comments></app-comments>
-        </div>
-
-        <div class="episode-sidebar">
-            <h2 i18n="@@nextEps" class="sidebar-title">Prossimi Episodi</h2>
-
-            <div class="playlist-container">
-                <ion-card class="episode-card active">
-                    <ion-card-content>
-                        <div class="ep-num">4</div>
-                        <div class="ep-info">
-                            <h3>Il più forte</h3>
-                            <p>24 min</p>
-                        </div>
-                    </ion-card-content>
-                </ion-card>
-
-                <ion-card class="episode-card">
-                    <ion-card-content>
-                        <div class="ep-num">5</div>
-                        <div class="ep-info">
-                            <h3>End of Za Warudo</h3>
-                            <p>24 min</p>
-                        </div>
-                    </ion-card-content>
-                </ion-card>
-            </div>
-        </div>
+  
+  @if (isLoading()) {
+    <div class="loading-state">
+      <ion-spinner name="crescent" color="primary"></ion-spinner>
     </div>
+  } @else if (episode()) {
+    
+    <div class="video-layout-wrapper">
+      
+      <div class="main-video-section">
+        
+        <div 
+          class="player-container" 
+          >
+          
+          <div class="video-wrapper">
+            <video
+              #videoPlayer
+              class="video-js vjs-default-skin vjs-big-play-centered video-placeholder"
+              controls
+              preload="auto"
+              playsinline
+            ></video>
+          </div>
+
+          <!--<
+          div id="screensaver-host" [style.display]="showScreensaver() ? 'block' : 'none'">
+            <app-metaballs-screensaver></app-metaballs-screensaver>
+          </div>
+          !-->
+          
+        </div>
+
+        <div class="episode-details">
+          
+          <div class="title-row">
+            <div>
+              <h2 class="ep-number">Episodio {{ episode().EpisodeNumber }}</h2>
+              <h1 class="ep-title">{{ episode().Title }}</h1>
+            </div>
+            
+            <div class="action-buttons">
+              <button class="btn-icon-secondary" (click)="toggleLike()">
+                <ion-icon [name]="episode().userInteraction?.isLiked ? 'heart' : 'heart-outline'"></ion-icon>
+                <span>{{ episode().Likes || 0 }}</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="meta-row">
+            <span class="meta-chip">{{ episode().Duration / 60 }} min</span>
+            @if (episode().Streams) {
+              <span class="meta-chip views">{{ episode().Streams | number }} visualizzazioni</span>
+            }
+            <div class="lang-info uppercase-lang">
+              <strong>SUB:</strong> {{ episode().SubLanguages?.length > 0 ? episode().SubLanguages.join(', ') : 'N/D' }} 
+              <span class="separator">|</span>
+              <strong>DUB:</strong> {{ episode().DubLanguages?.length > 0 ? episode().DubLanguages.join(', ') : 'N/D' }}
+            </div>
+          </div>
+
+          <p class="description">{{ episode().Description }}</p>
+        </div>
+
+        <div class="divider"></div>
+        
+        <div class="discussions-section">
+          <div class="discussions-header">
+            <h2>Discussioni dell'episodio</h2>
+            
+            @if (isMod()) {
+              <ion-button fill="outline" class="btn-new-discussion" (click)="openDiscussionModal()">
+                <ion-icon slot="start" name="chatbubbles-outline"></ion-icon>
+                Nuova
+              </ion-button>
+            }
+          </div>
+
+          @if (discussions().length === 0) {
+            <div class="no-discussions">
+              <p>Nessuna discussione aperta per questo episodio.</p>
+            </div>
+          } @else {
+            <div class="discussions-list">
+              @for (disc of discussions(); track disc.DiscussionID) {
+                
+                <div class="discussion-card" [routerLink]="['/discussion', disc.DiscussionID]">
+                  <div class="disc-info">
+                    <h3>{{ disc.Type | uppercase }} ZONE</h3>
+                    <p>Scadenza: {{ disc.CloseDate }} • {{ disc.forceClosed ? '(Chiusa)' : '(Aperta)' }}</p>
+                  </div>
+                  
+                  <div class="disc-actions">
+                    @if (isMod()) {
+                      <ion-button fill="clear" color="warning" (click)="openDiscussionModal(disc, $event)">
+                        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+                      </ion-button>
+                      
+                      <ion-button fill="clear" color="danger" (click)="deleteDiscussion(disc.DiscussionID, $event)">
+                        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                      </ion-button>
+                    }
+                    
+                    <ion-icon name="chevron-forward-outline" class="nav-arrow"></ion-icon>
+                  </div>
+                </div>
+                
+              }
+            </div>
+          }
+        </div>
+
+      </div> 
+    
+
+     <div class="episode-sidebar">
+        <h2 class="sidebar-title">Nella stessa stagione</h2>
+
+        <div class="playlist-container">
+          
+          @for (ep of seasonEpisodes(); track ep.EpisodeID) {
+            
+            <ion-card 
+              class="sidebar-ep-card" 
+              [class.active]="ep.EpisodeID.toString() === episodeId()"
+              [routerLink]="['/episode', ep.EpisodeID]"
+              [queryParams]="{ showId: showId(), seasonId: seasonId() }"> 
+              <ion-card-content>
+                <div class="ep-num">{{ ep.EpisodeNumber }}</div>
+                <div class="ep-info">
+                  <h3>{{ ep.Title }}</h3>
+                  <p>{{ ep.Duration / 60 }} min</p>
+                </div>
+              </ion-card-content>
+
+            </ion-card>
+            
+          }
+
+        </div>
+      </div>
+
+    </div>
+  }
 </ion-content>

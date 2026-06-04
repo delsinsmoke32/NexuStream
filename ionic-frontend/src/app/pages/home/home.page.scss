@@ -1,53 +1,429 @@
-/* Stili per le liste di categorie, i poster, il testo, ecc. */
-.category-list {
-  h3 {
-    margin-left: 10px;
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: white; /* O il colore che preferisci */
-  }
+:host {
+  --ion-background-color: var(--ion-color-dark, #121212);
+}
 
-  .horizontal-scroll {
-  display: flex;             // Mette gli elementi uno accanto all'altro
-  overflow-x: auto;          // Abilita lo scorrimento orizzontale
-  scroll-snap-type: x mandatory; // Fa sì che i poster si "aggancino" quando scorri
-  padding: 10px;
-  gap: 15px;                 // Spazio tra i poster
+.show-toolbar {
+  --background: linear-gradient(to bottom, rgba(10, 10, 10, 0.9) 0%, rgba(10, 10, 10, 0.4) 100%);
+  --border-width: 0;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  position: absolute; /* Fondamentale per far andare la hero sotto l'header */
+}
+
+.brand-title {
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  text-align: center;
+  font-family: 'Arial Black', sans-serif;
+  cursor: pointer;
+
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.btn-icon-red {
+  --color: var(--ion-color-primary, #b22222) !important;
+}
+
+.auth-link {
+  --color: var(--ion-color-primary, #b22222) !important;
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: none; /* Rimuove il "tutto maiuscolo" tipico dei bottoni material */
+  letter-spacing: 0.5px;
+  margin: 0 2px;
   
-  // Nasconde la barra di scorrimento brutta su alcuni browser
-  &::-webkit-scrollbar {
-    display: none;
+  /* Leggero effetto hover da desktop */
+  @media (hover: hover) {
+    &:hover {
+      --color: var(--ion-color-primary-tint, #c22222) !important; /* Diventa un po' più chiaro al passaggio del mouse */
+    }
   }
 }
 
-.anime-card {
-  flex: 0 0 auto;            // Impedisce ai poster di rimpicciolirsi
-  width: 140px;              // Larghezza del poster (simile a Immagine 2026-05-14 110108.jpg)
-  scroll-snap-align: start;  // Punto di aggancio per lo scorrimento
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 60vh;
+}
+
+/* ===================================
+   HERO BANNER
+   =================================== */
+.hero-container {
+  position: relative;
+  width: 100%;
+  height: 70vh; /* Prende una buona parte dello schermo */
+  max-height: 800px;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.hero-slide {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+  pointer-events: none;
+  z-index: 1;
+
+  &.active {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 2;
+  }
 
   img {
     width: 100%;
-    height: 200px;
+    height: 100%;
     object-fit: cover;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    object-position: top center; /* Evita di tagliare le teste nell'immagine */
   }
 
-  p {
-    color: white;
-    font-size: 0.9rem;
-    margin-top: 5px;
-    white-space: nowrap;     // Evita che il titolo vada a capo
-    overflow: hidden;
-    text-overflow: ellipsis; // Aggiunge i puntini sospensivi se il titolo è lungo
+  .hero-gradient {
+    position: absolute;
+    bottom: -2px; left: 0; right: 0;
+    height: 60%;
+    background: linear-gradient(to top, var(--ion-background-color) 0%, rgba(18,18,18,0.7) 40%, transparent 100%);
+  }
+
+  .hero-content {
+    position: absolute;
+    bottom: 40px;
+    left: 20px;
+    right: 20px;
+    z-index: 3;
+
+    @media (min-width: 768px) {
+      left: 60px;
+      bottom: 80px;
+      max-width: 50%;
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #fff;
+      margin: 0 0 10px 0;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+    }
+
+    .hero-description {
+      font-size: 1rem;
+      color: #e5e5e5;
+      margin: 0 0 20px 0;
+      line-height: 1.4;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.8);
+      /* Limita a 3 righe con i puntini */
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+
+      button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        font-size: 1rem;
+        font-weight: 700;
+        padding: 10px 24px;
+        border-radius: 6px;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.1s ease, filter 0.2s ease;
+
+        ion-icon { font-size: 1.4rem; }
+        &:active { transform: scale(0.95); }
+      }
+
+      .btn-hero-play {
+        background-color: #ffffff;
+        color: #000000;
+        &:hover { filter: brightness(0.8); }
+      }
+
+      .btn-hero-info {
+        background-color: rgba(109, 109, 110, 0.7);
+        color: #ffffff;
+        &:hover { background-color: rgba(109, 109, 110, 0.9); }
+      }
+    }
   }
 }
+
+/* ===================================
+   MAIN CONTAINER CARDS
+   =================================== */
+.main-container {
+  padding-top: 80px; /* Padding standard se non c'è hero */
+  padding-bottom: 60px;
+
+  &.has-hero {
+    padding-top: 0;
+    margin-top: -20px; /* Fa "salire" le card leggermente sopra la sfumatura */
+    position: relative;
+    z-index: 10;
+  }
 }
-.titolo-cliccabile {
-  cursor: pointer;
-  text-align: center;
-  /* Opzionale: un leggero effetto visivo quando l'utente ci passa sopra con il mouse */
-  &:hover {
-    opacity: 0.8;
+
+.category-row {
+  margin-bottom: 30px;
+
+  .row-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--ion-text-color, #ffffff);
+    margin: 0 0 12px 16px;
+    letter-spacing: 0.5px;
+  }
+}
+
+/* ===================================
+   CAROSELLO E SCORRIMENTO ORIZZONTALE
+   =================================== */
+.carousel-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  // Stile Frecce Desktop
+  .scroll-arrow {
+    position: absolute;
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    height: 90%; // Leggermente più basso delle card
+    width: 45px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0; // Invisibili di default
+    transition: opacity 0.3s ease, background 0.2s ease, transform 0.1s ease;
+    
+    &.left { left: 0; border-radius: 0 8px 8px 0; }
+    &.right { right: 0; border-radius: 8px 0 0 8px; }
+    
+    ion-icon { font-size: 2.5rem; }
+
+    &:hover { background: rgba(0, 0, 0, 0.95); }
+    &:active { transform: scale(0.9); }
+  }
+
+  // Mostra le frecce solo se il mouse è sopra (Desktop)
+  @media (hover: hover) {
+    &:hover .scroll-arrow {
+      opacity: 1;
+    }
+  }
+}
+
+.horizontal-scroll {
+  display: flex;
+  align-items: flex-start;
+  overflow-x: auto;
+  overflow-y: visible;
+  padding: 10px 16px 20px 16px; // Spazio extra per box-shadow
+  gap: 14px;
+  width: 100%;
+  
+  // Rende lo scroll fluido quando si usano i bottoni
+  scroll-behavior: smooth;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  
+  // Nasconde la brutta scrollbar di sistema
+  &::-webkit-scrollbar { display: none; }
+  scrollbar-width: none; // Per Firefox
+}
+
+/* ===================================
+   BASE CARD (STILE CRUNCHYROLL / MOBILE)
+   =================================== */
+.show-card {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  
+  /* 1. Sfondo Grigio e Bordi Arrotondati sull'INTERA card */
+  background-color: var(--ion-color-secondary-tint, #242424); 
+  border-radius: 8px;
+  overflow: hidden; /* Taglia l'immagine in alto e la barra in basso per farle seguire i bordi */
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
+
+  /* 2. Spostiamo l'effetto Zoom sull'intera card, così si alza tutta insieme! */
+  @media (hover: hover) {
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+    }
+    
+    /* Quando la card è in hover, scuriamo l'immagine */
+    &:hover .poster-container img { 
+      filter: brightness(0.5); 
+    }
+    
+    /* Quando la card è in hover, facciamo apparire il Play */
+    &:hover .play-overlay { 
+      opacity: 1 !important; 
+    }
+  }
+
+  .poster-container {
+    flex: 0 0 auto;
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+    /* Rimosse ombre e bordi da qui, ora li gestisce la card padre */
+
+    img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transition: filter 0.3s ease;
+    }
+
+    .play-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0; 
+      z-index: 5;
+      transition: opacity 0.3s ease;
+      
+      ion-icon {
+        font-size: 3.5rem;
+        color: #ffffff;
+        filter: drop-shadow(0 2px 8px rgba(0,0,0,0.8));
+        transition: color 0.2s ease, transform 0.2s ease; 
+
+        &:hover {
+          color: var(--ion-color-primary, #b22222); 
+          transform: scale(1.15);
+        }
+      }
+
+      /* FIX MOBILE: Nasconde totalmente l'overlay sugli schermi touch/piccoli */
+      @media (max-width: 768px) {
+        display: none !important;
+      }
+    }
+  }
+
+  /* RIGA INFORMAZIONI IN BASSO */
+  .card-info-bottom {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    width: 100%;
+    cursor: pointer;
+
+    /* 🚀 Icona a riposo */
+    ion-icon.info-btn {
+      font-size: 2rem !important; 
+      color: #aaaaaa !important; /* Grigio chiaro elegante */
+      /* Transizione fluida su colore e grandezza */
+      transition: transform 0.2s ease, color 0.2s ease;
+      padding: 8px;
+      margin: -8px;
+
+      /* 🚀 Effetto Hover: Zoom e Colore Rosso NexuStream! */
+      &:hover {
+        transform: scale(1.25); 
+        color: var(--ion-color-primary, #b22222) !important; 
+      }
+
+      /* Effetto tap su mobile */
+      &:active { 
+        transform: scale(0.85); 
+      }
+    }
+  }
+}
+
+/* ===================================
+   VARIANTI DI DIMENSIONE
+   =================================== */
+
+/* Formato Locandina Classica (Home e Search) */
+.portrait {
+  width: 130px;
+  @media (min-width: 768px) { width: 160px; }
+
+  .poster-container {
+    aspect-ratio: 2 / 3;
+  }
+}
+
+/* Formato Banner per il "Continua a guardare" (Solo Home) */
+.landscape {
+  width: 240px;
+  @media (min-width: 768px) { width: 300px; }
+
+  .poster-container {
+    aspect-ratio: 16 / 9;
+
+    .progress-bar-bg {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      z-index: 2; 
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background-color: var(--ion-color-primary, #b22222);
+    }
+  }
+  
+  .ep-title {
+    font-size: 0.75rem;
+    color: #aaaaaa;
+    margin-top: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+/* ===================================
+   POPOVER
+   =================================== */
+.dark-popover {
+  background: var(--ion-background-color);
+  
+  ion-item {
+    --background: var(--ion-background-color);
+    --color: var(--ion-color-primary, #b22222); 
+    --border-color: var(--ion-color-secondary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: opacity 0.2s ease;
+
+    &:hover { opacity: 0.8; }
+  }
+
+  .logout-item {
+    font-weight: 800;
+    letter-spacing: 0.5px;
   }
 }

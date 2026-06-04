@@ -6,6 +6,11 @@ const authOptional = require("../middleware/authOptional");
 const { body, param } = require('express-validator');
 const discussionsRoute = require("./discussion");
 
+router.get('/', authOptional, [
+    param('showId').isInt({min: 1}).notEmpty().withMessage("ID serie non valido"),
+    param('seasonId').isInt({min: 1}).notEmpty().withMessage("ID stagione non valido")
+], episodeController.getEpisodes);
+
 /**
  * @swagger
  * /api/shows/{showId}/seasons/{seasonId}/episodes/{episodeId}:
@@ -53,8 +58,8 @@ const discussionsRoute = require("./discussion");
  *                  example: 1
  *                Duration:
  *                  type: integer
- *                  description: Durata dell'episodio in minuti
- *                  example: 45
+ *                  description: Durata dell'episodio in secondi
+ *                  example: 1440
  *                Likes:
  *                  type: integer
  *                  example: 120

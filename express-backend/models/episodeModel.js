@@ -1,5 +1,47 @@
 const db = require("../db/db");
 
+const getEpisodesBySeasonNoAuth = async (seasonId, applang = "it") => {
+    const sql = `
+        SELECT 
+            e.EpisodeID, e.ReleaseDate, e.Duration, e.Likes, e.Streams, e.ThumbnailURI, e.EpisodeNumber,
+
+            -- Aggiunta la virgola sopra e rimossa la virgola prima del FROM
+            COALESCE(Title->>?, Title->>'it') AS Title,
+            COALESCE(Description->>?, Description->>'it') AS Description
+        FROM Episodes AS e
+        WHERE REF_SeasonID = ?
+        ORDER BY EpisodeNumber ASC`;
+    
+    // NOTA: Come sopra, servono 3 parametri per riempire i 3 punti interrogativi
+    return await db.allAsync(sql, [applang, applang, seasonId]);
+}
+
+const getEpisodesBySeasonAuth = async (userId, seasonId, applang = "it") => {
+    const sql = `
+        SELECT 
+            e.EpisodeID, e.ReleaseDate, e.Duration, e.Likes, e.Streams, e.ThumbnailURI, e.EpisodeNumber,
+            COALESCE(e.Title->>?, e.Title->>'it') AS Title,
+            COALESCE(e.Description->>?, e.Description->>'it') AS Description,
+            
+            -- CAMPI AGGIUNTI PER IL CONTINUA A GUARDARE E I LIKE
+            IFNULL(l.Progress, 0) AS progress, 
+            IFNULL(l.isCompleted, 0) AS isCompleted,
+            IFNULL(l.isLiked, 0) AS isLiked
+
+        FROM Episodes AS e
+
+        -- LEFT JOIN: Mostra tutti gli episodi, anche se non ci sono interazioni!
+        -- ATTENZIONE: Il controllo dell'ID utente DEVE stare nel "ON", non nel "WHERE"
+        LEFT JOIN LINKs_User_Interacts_Episode AS l 
+            ON e.EpisodeID = l.REF_EpisodeID AND l.REF_UserID = ?
+
+        WHERE e.REF_SeasonID = ?
+        ORDER BY e.EpisodeNumber ASC;
+    `;
+
+    return await db.allAsync(sql, [applang, applang, userId, seasonId]);
+}
+
 /**
  * Trova un episodio nel database usando il suo id
  * @param {number} episodeId 
@@ -18,6 +60,16 @@ const getEpisodeById = async (episodeId, applang = "it") => {
         WHERE e.EpisodeID = ?`;
         
     return await db.getAsync(sql, [applang, applang, episodeId]);
+};
+
+/**
+ * Recupera l'intera interazione dell'utente con l'episodio (progress, like, ecc.)
+ */
+const getUserEpisodeInteraction = async (episodeId, userId) => {
+    const sql = `SELECT Progress, isCompleted, isDropped, isLiked 
+                 FROM LINKs_User_Interacts_Episode 
+                 WHERE REF_EpisodeID = ? AND REF_UserID = ?`;
+    return await db.getAsync(sql, [episodeId, userId]);
 };
 
 
@@ -72,7 +124,10 @@ const updateEpisodeLikesCounter = async (likeDelta, episodeId) => {
 };
 
 module.exports = {
+    getEpisodesBySeasonAuth,
+    getEpisodesBySeasonNoAuth,
     getEpisodeById,
+    getUserEpisodeInteraction,
     getPreviousLikeStatus,
     upsertEpisodeInteraction,
     updateEpisodeLikesCounter

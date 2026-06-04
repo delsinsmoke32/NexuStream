@@ -77,9 +77,9 @@ export class ModPage implements OnInit {
   userPage = signal<number>(1);
   userLimit = signal<number>(50);
 
-  ngOnInit() {
-    this.loadDiscussions();
-  }
+    ngOnInit() {
+        this.loadDiscussions()
+    }
 
   // Switch dei Segment/Tab
   segmentChanged(event: any) {
@@ -101,10 +101,10 @@ export class ModPage implements OnInit {
       });
   }
 
-  toggleFilter(event: any) {
-    this.showClosed.set(event.detail.checked ? 1 : 0);
-    this.loadDiscussions();
-  }
+    toggleFilter(event: any) {
+        this.showClosed.set(event.detail.checked ? 1 : 0)
+        this.loadDiscussions()
+    }
 
   async openCreateModal() {
     const modal = await this.modalCtrl.create({

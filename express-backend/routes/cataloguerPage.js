@@ -489,7 +489,22 @@ router.delete('/episodes/:id', [
 // ==========================================
 // ROTTE IMMAGINI PROFILO (PROPICS)
 // ==========================================
+const multer = require('multer');
+const uploadAvatar = multer({ dest: 'public/avatars/' }); 
 
+router.post('/propic/add', uploadAvatar.single('img'), [
+    body('bundle').isString().trim().notEmpty().withMessage("Il bundle della propic non è valido"),
+    body('img').custom((value, { req }) => {
+            if (!req.file) {
+                throw new Error("L'immagine della propic è obbligatoria");
+            }
+            // Opzionale: Controlla l'estensione o il tipo di file (MIME type)
+            if (!req.file.mimetype.startsWith('image/')) {
+                throw new Error("Il file caricato deve essere un'immagine valida");
+            }
+            return true;
+        })
+], cataloguerController.addPropic);
 
 /**
  * @swagger

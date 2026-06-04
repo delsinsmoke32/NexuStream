@@ -8,28 +8,22 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
-const PORT = 3000;
-
-app.use(cors());
-app.use(express.json());
-
-const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
-}
+const uploadDir = path.join(__dirname, 'public/avatars');
+// if (!fs.existsSync(uploadDir)) {
+//   fs.mkdirSync(uploadDir, { recursive: true });
+// }
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, uploadDir);
   },
-  filename: (req, file, cb) => {
+  filename: (req, file, cb) => { //to change
     const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
     cb(null, `${uniqueSuffix}${path.extname(file.originalname)}`);
   }
 });
 
-const upload = multer({
+const uploadAvatar = multer({
   storage: storage,
   limits: { fileSize: 5 * 1024 * 1024 }, // Max 5MB
   fileFilter: (req, file, cb) => {
@@ -70,4 +64,6 @@ app.use((err, req, res, next) => {
   next();
 });
 
-app.listen(PORT, () => console.log(`Server handling storage on port ${PORT}`));
+// app.listen(PORT, () => console.log(`Server handling storage on port ${PORT}`));
+
+module.exports = { uploadAvatar }

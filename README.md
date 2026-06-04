@@ -40,3 +40,7 @@ npm run dev
 ```
 
 Eventualmente modificare `.env` per impostare `HOST` e `PORT` del backend, di default `localhost` e `3000`.
+
+`! Momentaneamente`
+
+Scaricare l'ultima versione di `ffmpeg` per il proprio sistema operativo e spostare i contenuti della cartella principale dentro `ffmpeg_installation`.

@@ -4,9 +4,12 @@
       <ion-back-button defaultHref="/home" class="btn-icon-red"></ion-back-button>
     </ion-buttons>
     
-    <ion-title class="brand-title">RICERCA</ion-title>
+    <ion-title i18n="@@search" class="brand-title">RICERCA</ion-title>
     
     <ion-buttons slot="end">
+      
+
+
       <ion-button class="btn-icon-red" (click)="openProfileMenu($event)">
         <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
       </ion-button>
@@ -15,7 +18,8 @@
 
   <ion-toolbar class="search-toolbar">
     <ion-searchbar 
-      placeholder="Cerca serie, anime, descrizioni..." 
+      placeholder="Cerca serie, anime, descrizioni..."
+      i18n-placeholder="@@searchPlaceHolder" 
       animated="true"
       debounce="400"
       (ionInput)="onSearchChange($event)"
@@ -26,7 +30,7 @@
       <ion-chip 
         [class.active-chip]="selectedGenre() === null" 
         (click)="selectGenre(null)">
-        <ion-label>Tutti</ion-label>
+        <ion-label i18n="@@all">Tutti</ion-label>
       </ion-chip>
 
       @for (genre of genres(); track genre.GenreID) {
@@ -52,7 +56,7 @@
       @if ((searchQuery().trim() !== '' || selectedGenre() !== null) && filteredResults().length === 0) {
         <div class="no-results">
           <ion-icon name="alert-circle-outline"></ion-icon>
-          <p>Nessun anime trovato corrispondente ai filtri.</p>
+          <p i18n="@@noAnimeFound">Nessun anime trovato corrispondente ai filtri.</p>
         </div>
       }
 
@@ -85,17 +89,17 @@
 
 <ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
   <ng-template>
-    <ion-list color="dark">
-      <ion-item i18n="@@settings" button (click)="openUserSettings()">
-        <ion-icon slot="start" name="settings-outline"></ion-icon>
+    <ion-list color="dark-popover">
+      <ion-item i18n="@@settings" button routerLink="/settings" (click)="openUserSettings()" lines="full">
+        <ion-icon color="danger" slot="start" name="settings-outline"></ion-icon>
         Impostazioni
       </ion-item>
-      <ion-item i18n="@@favouritesList" button (click)="openFavorites()">
-        <ion-icon slot="start" name="heart-outline"></ion-icon>
-        Lista Preferiti
+      <ion-item i18n="@@favourites" button routerLink="/favourites" (click)="openFavorites()" lines="full">
+        <ion-icon color="danger" slot="start" name="heart-outline"></ion-icon>
+        I miei preferiti
       </ion-item>
-      <ion-item i18n="@@logOut" button (click)="logout()">
-        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+      <ion-item i18n="@@logOut" button (click)="logout()" lines="none" class="logout-item">
+        <ion-icon color="danger" slot="start" name="log-out-outline"></ion-icon>
         Esci
       </ion-item>
     </ion-list>

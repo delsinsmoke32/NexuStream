@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-back-button defaultHref="/home" color="primary"></ion-back-button>
     </ion-buttons>
-    <ion-title>Impostazioni</ion-title>
+    <ion-title i18n="@@settings">Impostazioni</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -25,7 +25,7 @@
       </div>
     </div>
       <ion-label>
-        <h2>Nome Utente</h2>
+        <h2 i18n="@@username">Nome Utente</h2>
         <p>utente@nexustream.com</p>
       </ion-label>
     </ion-item>
@@ -34,7 +34,7 @@
   <ng-template>
     <ion-header class="ion-no-border">
       <ion-toolbar>
-        <ion-title>Scegli il tuo Avatar</ion-title>
+        <ion-title i18n="@@chooseAvatar">Scegli il tuo Avatar</ion-title>
         <ion-buttons slot="end">
           <ion-button color="primary" (click)="isAvatarModalOpen = false">Chiudi</ion-button>
         </ion-buttons>
@@ -42,7 +42,7 @@
     </ion-header>
 
     <ion-content class="ion-padding">
-      <p class="subtitle">Seleziona uno dei personaggi di NexuStream</p>
+      <p i18n="@@selectCharacter" class="subtitle">Seleziona uno dei personaggi di NexuStream</p>
       
       <ion-grid>
         <ion-row>
@@ -62,54 +62,70 @@
   </ng-template>
 </ion-modal>
 
-    <ion-item lines="full" detail="true" (click)="changePassword()">
+    <ion-item lines="full" detail="true" button routerLink="/reset-password" (click)="changePassword()">
       <ion-icon slot="start" name="lock-closed-outline" color="primary"></ion-icon>
-      <ion-label>Modifica Password</ion-label>
+      <ion-label i18n="@@resetPassword">Modifica Password</ion-label>
     </ion-item>
   </ion-item-group>
 
   <ion-item-group class="ion-margin-top">
     <ion-item-divider color="dark">
-      <ion-label>Preferenze</ion-label>
+      <ion-label i18n="@@preferences">Preferenze</ion-label>
     </ion-item-divider>
 
-    <ion-item lines="full">
-      <ion-icon slot="start" name="notifications-outline" color="primary"></ion-icon>
-      <ion-label>
-        <h2>Notifiche Push</h2>
-        <p>Avvisami quando esce un nuovo episodio</p>
-      </ion-label>
-      <ion-toggle slot="end" color="primary" [checked]="notificationsEnabled" (ionChange)="toggleNotifications($event)"></ion-toggle>
+    <ion-item>
+      <ion-label i18n="@@appLanguageLabel">Lingua dell'applicazione</ion-label>
+      <ion-select [interface]="'action-sheet'" 
+                  [(ngModel)]="userPreferences.appLanguage" 
+                  (ionChange)="savePreferences()">
+        <ion-select-option value="it">Italiano</ion-select-option>
+        <ion-select-option value="en">English</ion-select-option>
+      </ion-select>
     </ion-item>
 
-    <ion-item lines="full" detail="true" (click)="openQualitySettings()">
+    <ion-item>
+      <ion-label i18n="@@audioLanguageLabel">Audio predefinito</ion-label>
+      <ion-select [interface]="'action-sheet'" 
+                  [(ngModel)]="userPreferences.defaultAudio" 
+                  (ionChange)="savePreferences()">
+        <ion-select-option value="it" i18n="@@langItalian">Italiano</ion-select-option>
+        <ion-select-option value="en" i18n="@@langEnglish">Inglese</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label i18n="@@subtitleLanguageLabel">Sottotitoli predefiniti</ion-label>
+      <ion-select [interface]="'action-sheet'" 
+                  [(ngModel)]="userPreferences.defaultSubtitles" 
+                  (ionChange)="savePreferences()">
+        <ion-select-option value="off" i18n="@@subtitlesOff">Disattivati</ion-select-option>
+        <ion-select-option value="it" i18n="@@langItalian">Italiano</ion-select-option>
+        <ion-select-option value="en" i18n="@@langEnglish">Inglese</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!--<ion-item lines="full" detail="true" (click)="openQualitySettings()">
       <ion-icon slot="start" name="videocam-outline" color="primary"></ion-icon>
       <ion-label>
         <h2>Qualità Video</h2>
         <p>Attuale: Automatica (Consigliata)</p>
       </ion-label>
-    </ion-item>
-
-    <ion-item lines="full">
-      <ion-icon slot="start" name="wifi-outline" color="primary"></ion-icon>
-      <ion-label>Scarica solo sotto Wi-Fi</ion-label>
-      <ion-toggle slot="end" color="primary" [checked]="wifiOnly" (ionChange)="toggleWifi($event)"></ion-toggle>
-    </ion-item>
+    </ion-item>-->
   </ion-item-group>
 
   <ion-item-group class="ion-margin-top">
-    <ion-item-divider color="dark">
+    <!--<ion-item-divider color="dark">
       <ion-label>Assistenza</ion-label>
     </ion-item-divider>
 
     <ion-item lines="full" detail="true" (click)="openSupport()">
       <ion-icon slot="start" name="help-circle-outline" color="primary"></ion-icon>
       <ion-label>Centro Assistenza</ion-label>
-    </ion-item>
+    </ion-item>-->
 
     <ion-item lines="none" button="true" class="logout-item" (click)="logout()">
       <ion-icon slot="start" name="log-out-outline" color="primary"></ion-icon>
-      <ion-label color="primary">Sconnetti Account</ion-label>
+      <ion-label i18n="@@disconnectAccount" color="primary">Sconnetti Account</ion-label>
     </ion-item>
   </ion-item-group>
 

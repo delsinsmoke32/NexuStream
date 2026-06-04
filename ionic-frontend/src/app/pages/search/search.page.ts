@@ -19,6 +19,7 @@ import {
   IonSearchbar, IonButton, IonButtons, IonList, IonItem,
   IonPopover, IonIcon, IonChip, IonLabel, IonSpinner
 } from '@ionic/angular/standalone';
+import { AlertController, ToastController } from '@ionic/angular';
 
 // Pipe per le immagini dal backend
 import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
@@ -40,6 +41,9 @@ export class SearchPage implements OnInit {
   
   private http = inject(HttpClient);
   private router = inject(Router);
+  private alertCtrl = inject(AlertController);
+  private toastCtrl = inject(ToastController);
+
 
   // Stati reattivi
   searchQuery = signal<string>('');
@@ -132,5 +136,29 @@ export class SearchPage implements OnInit {
   onPopoverDismiss() {}
   openUserSettings() { this.popover.dismiss(); }
   openFavorites() { this.popover.dismiss(); }
-  logout() { this.popover.dismiss(); }
+  
+  async logout() {
+    const alert = await this.alertCtrl.create({
+      header: 'Disconnetti',
+      message: 'Sei sicuro di voler uscire da NexuStream?',
+      buttons: [
+        { text: 'Annulla', role: 'cancel' },
+        {
+          text: 'Esci',
+          role: 'destructive',
+          handler: async () => {
+            const toast = await this.toastCtrl.create({
+              message: 'Sessione chiusa',
+              duration: 2000,
+              color: 'dark'
+            });
+            await toast.present();
+            this.router.navigate(['/login']);
+          }
+        }
+      ]
+    });
+    await alert.present();
+    this.popover.dismiss();
+  }
 }

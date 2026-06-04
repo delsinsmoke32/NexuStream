@@ -2,11 +2,26 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="it" datatype="plaintext" original="ng2.template">
     <body>
-      <trans-unit id="2441678285702200546" datatype="html">
-        <source>{VAR_PLURAL, plural, =0 {Nessun commento} =1 {1 Commento} other {# Commenti}}</source>
+      <trans-unit id="sameSeason" datatype="html">
+        <source>Nella stessa stagione</source>
+      </trans-unit>
+      <trans-unit id="search" datatype="html">
+        <source>RICERCA</source>
+      </trans-unit>
+      <trans-unit id="searchPlaceHolder" datatype="html">
+        <source>Cerca serie, anime, descrizioni...</source>
       </trans-unit>
       <trans-unit id="securityAccount" datatype="html">
         <source>Sicurezza Account</source>
+      </trans-unit>
+      <trans-unit id="langEnglish" datatype="html">
+        <source>Inglese</source>
+      </trans-unit>
+      <trans-unit id="langItalian" datatype="html">
+        <source>Italiano</source>
+      </trans-unit>
+      <trans-unit id="logIn" datatype="html">
+        <source>Accedi</source>
       </trans-unit>
       <trans-unit id="login" datatype="html">
         <source> Accesso </source>
@@ -14,26 +29,35 @@
       <trans-unit id="accountRecovery" datatype="html">
         <source>Recupero Account</source>
       </trans-unit>
+      <trans-unit id="addedToFavouritesToast" datatype="html">
+        <source>Aggiunto ai Preferiti</source>
+      </trans-unit>
+      <trans-unit id="all" datatype="html">
+        <source>Tutti</source>
+      </trans-unit>
+      <trans-unit id="appLanguageLabel" datatype="html">
+        <source>Lingua dell&apos;applicazione</source>
+      </trans-unit>
+      <trans-unit id="audioLanguageLabel" datatype="html">
+        <source>Audio predefinito</source>
+      </trans-unit>
       <trans-unit id="backHome" datatype="html">
         <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;arrow-back-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Torna alla Home </source>
       </trans-unit>
       <trans-unit id="backLogin" datatype="html">
         <source>Torna alla pagina di Accesso</source>
       </trans-unit>
+      <trans-unit id="cancelBtn" datatype="html">
+        <source>Annulla</source>
+      </trans-unit>
+      <trans-unit id="chooseAvatar" datatype="html">
+        <source>Scegli il tuo Avatar</source>
+      </trans-unit>
       <trans-unit id="choosePass" datatype="html">
         <source> Scegli una nuova password sicura per il tuo account. </source>
       </trans-unit>
-      <trans-unit id="commentLike" datatype="html">
-        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon [name]=&quot;comment.isLiked ? &apos;thumbs-up&apos; : &apos;thumbs-up-outline&apos;&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> <x id="INTERPOLATION" equiv-text="{{ comment.likes || 0 }}"/> Mi piace </source>
-      </trans-unit>
-      <trans-unit id="commentPlaceholder" datatype="html">
-        <source>Scrivi un commento...</source>
-      </trans-unit>
-      <trans-unit id="commentReply" datatype="html">
-        <source>Rispondi</source>
-      </trans-unit>
-      <trans-unit id="commentsCount" datatype="html">
-        <source> <x id="ICU" equiv-text="{comments?.length, plural, =0 {Nessun commento} =1 {1 Commento} other {# Commenti}}" xid="2441678285702200546"/> </source>
+      <trans-unit id="closeSession" datatype="html">
+        <source>Sessione chiusa</source>
       </trans-unit>
       <trans-unit id="confirmNewPass" datatype="html">
         <source>Conferma Nuova Password</source>
@@ -41,17 +65,41 @@
       <trans-unit id="confirmPass" datatype="html">
         <source>Conferma Password</source>
       </trans-unit>
+      <trans-unit id="connessionErr" datatype="html">
+        <source>Errore di connessione.</source>
+      </trans-unit>
+      <trans-unit id="continueWatching" datatype="html">
+        <source>Continua a guardare</source>
+      </trans-unit>
+      <trans-unit id="deleteBtn" datatype="html">
+        <source>Elimina</source>
+      </trans-unit>
+      <trans-unit id="deleteDiscussionHeader" datatype="html">
+        <source>Conferma Eliminazione</source>
+      </trans-unit>
+      <trans-unit id="deleteDiscussionMessage" datatype="html">
+        <source>Sei sicuro di voler eliminare questa discussione? L&apos;azione è irreversibile.</source>
+      </trans-unit>
       <trans-unit id="deniedAccess" datatype="html">
         <source>ACCESSO NEGATO</source>
       </trans-unit>
-      <trans-unit id="descriptionEp" datatype="html">
-        <source> Descrizione </source>
+      <trans-unit id="disconnectAccount" datatype="html">
+        <source>Sconnetti Account</source>
       </trans-unit>
-      <trans-unit id="emptyCommentError" datatype="html">
-        <source>Il commento non può essere vuoto!</source>
+      <trans-unit id="disconnectHeader" datatype="html">
+        <source>Disconnetti</source>
+      </trans-unit>
+      <trans-unit id="disconnectMessage" datatype="html">
+        <source>Sei sicuro di voler uscire da NexuStream?</source>
+      </trans-unit>
+      <trans-unit id="discussion" datatype="html">
+        <source>Discussioni dell&apos;episodio</source>
       </trans-unit>
       <trans-unit id="emptyList" datatype="html">
         <source>La tua lista è vuota</source>
+      </trans-unit>
+      <trans-unit id="episode" datatype="html">
+        <source>Episodio <x id="INTERPOLATION" equiv-text="{{ episode.EpisodeNumber }}"/></source>
       </trans-unit>
       <trans-unit id="errorLogin" datatype="html">
         <source> Errore durante l&apos;accesso.</source>
@@ -59,14 +107,17 @@
       <trans-unit id="exampleEmail" datatype="html">
         <source>esempio@mail.com</source>
       </trans-unit>
+      <trans-unit id="expiration" datatype="html">
+        <source>Scadenza: <x id="INTERPOLATION" equiv-text="{{ disc.CloseDate }}"/> • <x id="INTERPOLATION_1" equiv-text="{{ disc.forceClosed ? &apos;(Chiusa)&apos; : &apos;(Aperta)&apos; }}"/></source>
+      </trans-unit>
       <trans-unit id="expiredLink" datatype="html">
         <source> Link scaduto o non valido.</source>
       </trans-unit>
       <trans-unit id="explore" datatype="html">
         <source> Esplora Anime </source>
       </trans-unit>
-      <trans-unit id="favouritesList" datatype="html">
-        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;heart-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Lista Preferiti </source>
+      <trans-unit id="favourites" datatype="html">
+        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;heart-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> I miei preferiti </source>
       </trans-unit>
       <trans-unit id="forgotErrorToast" datatype="html">
         <source> Errore durante l&apos;invio della richiesta.</source>
@@ -76,6 +127,12 @@
       </trans-unit>
       <trans-unit id="forgotSuccessToast" datatype="html">
         <source> Controlla la tua casella di posta!</source>
+      </trans-unit>
+      <trans-unit id="genres" datatype="html">
+        <source>Generi:</source>
+      </trans-unit>
+      <trans-unit id="impossibleLoading" datatype="html">
+        <source>Impossibile caricare i contenuti.</source>
       </trans-unit>
       <trans-unit id="insertEmailRecovery" datatype="html">
         <source> Inserisci la tua email per ricevere il link di ripristino temporaneo. </source>
@@ -95,6 +152,12 @@
       <trans-unit id="loginOn" datatype="html">
         <source> Accesso su <x id="START_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;ion-text color=&quot;primary&quot;&gt;"/><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/> NexuStream <x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="CLOSE_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;/ion-text&gt;"/></source>
       </trans-unit>
+      <trans-unit id="loginRequiredFavouritesToast" datatype="html">
+        <source>Devi accedere per aggiungere ai preferiti!</source>
+      </trans-unit>
+      <trans-unit id="logInToLike" datatype="html">
+        <source>Devi accedere per mettere Mi Piace!</source>
+      </trans-unit>
       <trans-unit id="logOut" datatype="html">
         <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;log-out-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Esci </source>
       </trans-unit>
@@ -110,23 +173,35 @@
       <trans-unit id="missingToken" datatype="html">
         <source>Token di ripristino mancante o scaduto.</source>
       </trans-unit>
+      <trans-unit id="mostLiked" datatype="html">
+        <source>I più amati dagli utenti</source>
+      </trans-unit>
+      <trans-unit id="mostViewed" datatype="html">
+        <source>I più visti questa settimana</source>
+      </trans-unit>
       <trans-unit id="myFavouritesCount" datatype="html">
         <source>Hai salvato <x id="INTERPOLATION" equiv-text="{{ favorites.length }}"/> anime</source>
       </trans-unit>
       <trans-unit id="myList" datatype="html">
-        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;add-circle-outline&quot; &gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> La Mia Lista </source>
+        <source>La Mia Lista</source>
       </trans-unit>
       <trans-unit id="name" datatype="html">
         <source>Qual è il tuo nome?</source>
       </trans-unit>
+      <trans-unit id="new" datatype="html">
+        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;chatbubbles-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Nuova </source>
+      </trans-unit>
       <trans-unit id="newPassword" datatype="html">
         <source>Nuova Password</source>
       </trans-unit>
-      <trans-unit id="nextEps" datatype="html">
-        <source>Prossimi Episodi</source>
+      <trans-unit id="noAnimeFound" datatype="html">
+        <source>Nessun anime trovato corrispondente ai filtri.</source>
       </trans-unit>
-      <trans-unit id="noComments" datatype="html">
-        <source>Nessun commento. Sii il primo a dire la tua!</source>
+      <trans-unit id="noDiscussion" datatype="html">
+        <source>Nessuna discussione aperta per questo episodio.</source>
+      </trans-unit>
+      <trans-unit id="noEpisode" datatype="html">
+        <source>Nessun episodio trovato per questa stagione.</source>
       </trans-unit>
       <trans-unit id="noPermission" datatype="html">
         <source> Non hai i permessi necessari per visualizzare questa risorsa. </source>
@@ -134,11 +209,20 @@
       <trans-unit id="obligatoryUser" datatype="html">
         <source>Lo username è obbligatorio (min 3 caratteri)</source>
       </trans-unit>
+      <trans-unit id="otherInfos" datatype="html">
+        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon name=&quot;information-circle-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Altre Info </source>
+      </trans-unit>
       <trans-unit id="pageNotFound" datatype="html">
         <source> PAGINA NON TROVATA </source>
       </trans-unit>
       <trans-unit id="passNotCoincide" datatype="html">
         <source>Le password inserite non coincidono.</source>
+      </trans-unit>
+      <trans-unit id="play" datatype="html">
+        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon name=&quot;play&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Riproduci </source>
+      </trans-unit>
+      <trans-unit id="preferences" datatype="html">
+        <source>Preferenze</source>
       </trans-unit>
       <trans-unit id="rawEmail" datatype="html">
         <source> Il campo email non può contenere solo spazi vuoti.</source>
@@ -147,7 +231,7 @@
         <source>La password non può contenere solo spazi vuoti.</source>
       </trans-unit>
       <trans-unit id="register" datatype="html">
-        <source> Registrati </source>
+        <source>Registrati</source>
       </trans-unit>
       <trans-unit id="registerError" datatype="html">
         <source>Errore durante la registrazione.</source>
@@ -161,6 +245,9 @@
       <trans-unit id="registerSuccess" datatype="html">
         <source> Registrazione completata con successo! Ora puoi accedere.</source>
       </trans-unit>
+      <trans-unit id="removedFromFavouritesToast" datatype="html">
+        <source>Rimosso dai Preferiti</source>
+      </trans-unit>
       <trans-unit id="repeatPass" datatype="html">
         <source>Ripeti la password</source>
       </trans-unit>
@@ -170,8 +257,11 @@
       <trans-unit id="resetPassSuccess" datatype="html">
         <source> Password modificata con successo!</source>
       </trans-unit>
-      <trans-unit id="sendButton" datatype="html">
-        <source>Invia </source>
+      <trans-unit id="resetPassword" datatype="html">
+        <source>Modifica Password</source>
+      </trans-unit>
+      <trans-unit id="selectCharacter" datatype="html">
+        <source>Seleziona uno dei personaggi di NexuStream</source>
       </trans-unit>
       <trans-unit id="sendOTP" datatype="html">
         <source><x id="START_BLOCK_IF" equiv-text="@if (isLoading) {"/> Invio in corso... <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Invia Link di Reset <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
@@ -179,11 +269,17 @@
       <trans-unit id="settings" datatype="html">
         <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon color=&quot;light&quot; slot=&quot;start&quot; name=&quot;settings-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Impostazioni </source>
       </trans-unit>
-      <trans-unit id="shareButton" datatype="html">
-        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;share-social-outline&quot; &gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Condividi </source>
+      <trans-unit id="startWatching" datatype="html">
+        <source>Inizia a guardare</source>
       </trans-unit>
-      <trans-unit id="titleEp" datatype="html">
-        <source>Titolo</source>
+      <trans-unit id="subtitleLanguageLabel" datatype="html">
+        <source>Sottotitoli predefiniti</source>
+      </trans-unit>
+      <trans-unit id="subtitles" datatype="html">
+        <source>Sottotitoli:</source>
+      </trans-unit>
+      <trans-unit id="subtitlesOff" datatype="html">
+        <source>Disattivati</source>
       </trans-unit>
       <trans-unit id="updatePassword" datatype="html">
         <source> Aggiorna Password </source>
@@ -193,6 +289,9 @@
       </trans-unit>
       <trans-unit id="userPlaceHolder" datatype="html">
         <source>nome utente</source>
+      </trans-unit>
+      <trans-unit id="views" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ episode().Streams | number }}"/> visualizzazioni</source>
       </trans-unit>
       <trans-unit id="Welcome_to_NexuStream" datatype="html">
         <source>Benvenuto su NexuStream</source>

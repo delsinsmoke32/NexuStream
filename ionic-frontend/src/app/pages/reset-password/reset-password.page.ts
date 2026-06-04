@@ -57,7 +57,7 @@ export class ResetPasswordPage implements OnInit {
     this.token = this.route.snapshot.queryParamMap.get('token') || '';
 
     if (!this.token) {
-      this.presentToast('Token di ripristino mancante o scaduto.', 'danger');
+      this.presentToast($localize `:@@missingToken:Token di ripristino mancante o scaduto.`, 'danger');
       this.router.navigate(['/login']);
       return;
     }
@@ -80,18 +80,18 @@ export class ResetPasswordPage implements OnInit {
 
   onSubmit() {
     if (this.resetForm.invalid) {
-      this.presentToast("Assicurati che i campi siano validi e coincidano.", "danger");
+      this.presentToast($localize `:@@resetFormInvalid:Assicurati che i campi siano validi e coincidano.`, "danger");
       return;
     }
 
     if (!this.token) {
-      this.presentToast("Token sessione non valido.", "danger");
+      this.presentToast($localize `:@@invalidToken:Token sessione non valido.`, "danger");
       return;
     }
 
     const cleanPassword = this.resetForm.value.newPassword?.trim();
     if (!cleanPassword) {
-      this.presentToast("La password non può contenere solo spazi vuoti.", "danger");
+      this.presentToast($localize `:@@rawPassword:La password non può contenere solo spazi vuoti.`, "danger");
       return;
     }
 
@@ -102,13 +102,13 @@ export class ResetPasswordPage implements OnInit {
 
     this.authService.resetPassword(payload).subscribe({
       next: (res: any) => {
-        this.presentToast(res.message || 'Password modificata con successo!', 'success');
+        this.presentToast(res.message ||$localize `:@@resetPassSuccess: Password modificata con successo!`, 'success');
         this.router.navigate(['/login']);
       },
       error: (err) => {
         console.error("Errore HTTP Reset Password:", err);
         this.presentToast(
-          err.error?.error || 'Link scaduto o non valido.',
+          err.error?.error ||$localize `:@@expiredLink: Link scaduto o non valido.`,
           'danger'
         );
       }

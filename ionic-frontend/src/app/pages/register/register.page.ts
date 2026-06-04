@@ -85,8 +85,8 @@ export class RegisterPage implements OnInit {
     register() {
         // 1. Verifica validità form (campi vuoti, email malformate, password corte)
         if (this.registerForm.invalid) {
-            this.presentToast(
-                'Compila tutti i campi correttamente. La password richiede almeno 8 caratteri.',
+            this.presentToast($localize `:@@registerFormInvalid: 
+                Compila tutti i campi correttamente. La password richiede almeno 8 caratteri.`,
                 'danger'
             )
             return
@@ -96,7 +96,7 @@ export class RegisterPage implements OnInit {
 
         // 2. Controllo coincidenza password (unico controllo logico manuale necessario)
         if (formData.password !== formData.conf_password) {
-            this.presentToast('Le password inserite non coincidono.', 'danger')
+            this.presentToast($localize `:@@passNotCoincide:Le password inserite non coincidono.`, 'danger')
             return
         }
 
@@ -116,8 +116,8 @@ export class RegisterPage implements OnInit {
         // 3. Invio della richiesta tramite AuthService
         this.authService.register(payload).subscribe({
             next: () => {
-                this.presentToast(
-                    'Registrazione completata con successo! Ora puoi accedere.',
+                this.presentToast($localize `:@@registerSuccess:
+                    Registrazione completata con successo! Ora puoi accedere.`,
                     'success'
                 )
                 this.router.navigate(['/login'])
@@ -127,7 +127,7 @@ export class RegisterPage implements OnInit {
                 const errMsg =
                     err.error?.message ||
                     err.error?.error ||
-                    'Errore durante la registrazione.'
+                    $localize `:@@registerError:Errore durante la registrazione.`
                 this.presentToast(errMsg, 'danger')
             },
         })

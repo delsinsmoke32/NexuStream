@@ -2,12 +2,264 @@
 <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
   <file source-language="it" datatype="plaintext" original="ng2.template">
     <body>
-      <trans-unit id="Forgot_password" datatype="html">
-        <source>Hai dimenticato la password?</source>
+      <trans-unit id="2441678285702200546" datatype="html">
+        <source>{VAR_PLURAL, plural, =0 {Nessun commento} =1 {1 Commento} other {# Commenti}}</source>
+        <target>{VAR_PLURAL, plural, =0 {NO comments} =1 {1 Comment} other {# Comments}}</target>
+      </trans-unit>
+      <trans-unit id="securityAccount" datatype="html">
+        <source>Sicurezza Account</source>
+        <target>Security Account</target>
+      </trans-unit>
+      <trans-unit id="login" datatype="html">
+        <source> Accesso </source>
+        <target> Login </target>
+      </trans-unit>
+      <trans-unit id="accountRecovery" datatype="html">
+        <source>Recupero Account</source>
+        <target>Account Recovery</target>
+      </trans-unit>
+      <trans-unit id="backHome" datatype="html">
+        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;arrow-back-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Torna alla Home </source>
+        <target><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;arrow-back-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Back to Home </target>
+      </trans-unit>
+      <trans-unit id="backLogin" datatype="html">
+        <source>Torna alla pagina di Accesso</source>
+        <target>Back to Login page</target>
+      </trans-unit>
+      <trans-unit id="choosePass" datatype="html">
+        <source> Scegli una nuova password sicura per il tuo account. </source>
+        <target> Choose a new secure password for your account </target>
+      </trans-unit>
+      <trans-unit id="commentLike" datatype="html">
+        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon [name]=&quot;comment.isLiked ? &apos;thumbs-up&apos; : &apos;thumbs-up-outline&apos;&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> <x id="INTERPOLATION" equiv-text="{{ comment.likes || 0 }}"/> Mi piace </source>
+        <target><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon [name]=&quot;comment.isLiked ? &apos;thumbs-up&apos; : &apos;thumbs-up-outline&apos;&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> <x id="INTERPOLATION" equiv-text="{{ comment.likes || 0 }}"/> Like </target>
+      </trans-unit>
+      <trans-unit id="commentPlaceholder" datatype="html">
+        <source>Scrivi un commento...</source>
+        <target>Write a comment...</target>
+      </trans-unit>
+      <trans-unit id="commentReply" datatype="html">
+        <source>Rispondi</source>
+        <target>Reply</target>
+      </trans-unit>
+      <trans-unit id="commentsCount" datatype="html">
+        <source> <x id="ICU" equiv-text="{comments?.length, plural, =0 {Nessun commento} =1 {1 Commento} other {# Commenti}}" xid="2441678285702200546"/> </source>
+        <target> <x id="ICU" equiv-text="{comments?.length, plural, =0 {No comments} =1 {1 Comment} other {# Comments}}" xid="2441678285702200546"/> </target>
+      </trans-unit>
+      <trans-unit id="confirmNewPass" datatype="html">
+        <source>Conferma Nuova Password</source>
+        <target state="new">Conferma Nuova Password</target>
+      </trans-unit>
+      <trans-unit id="confirmPass" datatype="html">
+        <source>Conferma Password</source>
+        <target>Confirm Password</target>
+      </trans-unit>
+      <trans-unit id="descriptionEp" datatype="html">
+        <source> Descrizione </source>
+        <target> Description </target>
+      </trans-unit>
+      <trans-unit id="emptyCommentError" datatype="html">
+        <source>Il commento non può essere vuoto!</source>
+        <target>The comment cannot be empty!</target>
+      </trans-unit>
+      <trans-unit id="emptyList" datatype="html">
+        <source>La tua lista è vuota</source>
+        <target>Your list is empty</target>
+      </trans-unit>
+      <trans-unit id="errorLogin" datatype="html">
+        <source> Errore durante l&apos;accesso.</source>
+        <target> Error while logging.</target>
+      </trans-unit>
+      <trans-unit id="exampleEmail" datatype="html">
+        <source>esempio@mail.com</source>
+        <target>example@mail.com</target>
+      </trans-unit>
+      <trans-unit id="expiredLink" datatype="html">
+        <source> Link scaduto o non valido.</source>
+        <target> Expired or invalid link.</target>
+      </trans-unit>
+      <trans-unit id="explore" datatype="html">
+        <source> Esplora Anime </source>
+        <target> Explore Anime </target>
+      </trans-unit>
+      <trans-unit id="favouritesList" datatype="html">
+        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;heart-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Lista Preferiti </source>
+        <target><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;heart-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Favourites List </target>
+      </trans-unit>
+      <trans-unit id="forgotErrorToast" datatype="html">
+        <source> Errore durante l&apos;invio della richiesta.</source>
+        <target> Error while sending request.</target>
+      </trans-unit>
+      <trans-unit id="forgotPass" datatype="html">
+        <source>Password dimenticata?</source>
         <target>Forgot password?</target>
       </trans-unit>
+      <trans-unit id="forgotSuccessToast" datatype="html">
+        <source> Controlla la tua casella di posta!</source>
+        <target> Check your mailbox!</target>
+      </trans-unit>
+      <trans-unit id="deniedAccess" datatype="html">
+        <source>ACCESSO NEGATO</source>
+        <target>ACCESS DENIED</target>
+      </trans-unit>
+      <trans-unit id="insertEmailRecovery" datatype="html">
+        <source> Inserisci la tua email per ricevere il link di ripristino temporaneo. </source>
+        <target> Enter your email to receive the temporary restore link. </target>
+      </trans-unit>
+      <trans-unit id="insertLogin" datatype="html">
+        <source> Inserisci un&apos;email valida e una password di almeno 8 caratteri.</source>
+        <target> Enter a valid email and a password of at least 8 characters.</target>
+      </trans-unit>
+      <trans-unit id="invalidEmailError" datatype="html">
+        <source>Indirizzo email non valido</source>
+        <target>Invalid email address</target>
+      </trans-unit>
+      <trans-unit id="invalidForm" datatype="html">
+        <source> Inserisci un indirizzo email valido.</source>
+        <target> Enter a valid email address.</target>
+      </trans-unit>
+      <trans-unit id="invalidToken" datatype="html">
+        <source>Token sessione non valido.</source>
+        <target>Invalid session token.</target>
+      </trans-unit>
+      <trans-unit id="loginOn" datatype="html">
+        <source> Accesso su <x id="START_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;ion-text color=&quot;primary&quot;&gt;"/><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/> NexuStream <x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="CLOSE_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;/ion-text&gt;"/></source>
+        <target> Login on <x id="START_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;ion-text color=&quot;primary&quot;&gt;"/><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/> NexuStream <x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="CLOSE_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;/ion-text&gt;"/></target>
+      </trans-unit>
+      <trans-unit id="logOut" datatype="html">
+        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;log-out-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Esci </source>
+        <target><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;log-out-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Logout </target>
+      </trans-unit>
+      <trans-unit id="messEmptyList" datatype="html">
+        <source>Esplora la home page per aggiungere i tuoi anime preferiti e non perderti nessun aggiornamento.</source>
+        <target>Explore your home page to add your favourite anime and don&apos;t lose any news.</target>
+      </trans-unit>
+      <trans-unit id="messNotFound" datatype="html">
+        <source> La risorsa che stai cercando potrebbe essere stata rimossa, aver cambiato nome o essere temporaneamente non disponibile. </source>
+        <target> The resource you are looking for may have been removed, changed its name, or be temporarily unavailable. </target>
+      </trans-unit>
+      <trans-unit id="minimumCharPassError" datatype="html">
+        <source>Minimo 8 caratteri richiesti</source>
+        <target>Minimum 8 characters required</target>
+      </trans-unit>
+      <trans-unit id="missingToken" datatype="html">
+        <source>Token di ripristino mancante o scaduto.</source>
+        <target>Missing or expired recovery token.</target>
+      </trans-unit>
+      <trans-unit id="myFavouritesCount" datatype="html">
+        <source>Hai salvato <x id="INTERPOLATION" equiv-text="{{ favorites.length }}"/> anime</source>
+        <target>You have saved <x id="INTERPOLATION" equiv-text="{{ favorites.length }}"/> anime</target>
+      </trans-unit>
+      <trans-unit id="myList" datatype="html">
+        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;add-circle-outline&quot; &gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> La Mia Lista </source>
+        <target><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;add-circle-outline&quot; &gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> My List </target>
+      </trans-unit>
+      <trans-unit id="name" datatype="html">
+        <source>Qual è il tuo nome?</source>
+        <target>What is your name?</target>
+      </trans-unit>
+      <trans-unit id="newPassword" datatype="html">
+        <source>Nuova Password</source>
+        <target>New Password</target>
+      </trans-unit>
+      <trans-unit id="nextEps" datatype="html">
+        <source>Prossimi Episodi</source>
+        <target>Next Episodes</target>
+      </trans-unit>
+      <trans-unit id="noComments" datatype="html">
+        <source>Nessun commento. Sii il primo a dire la tua!</source>
+        <target>No comments yet. Be the first to have your say</target>
+      </trans-unit>
+      <trans-unit id="noPermission" datatype="html">
+        <source> Non hai i permessi necessari per visualizzare questa risorsa. </source>
+        <target> You do not have the required permissions to view this resource. </target>
+      </trans-unit>
+      <trans-unit id="obligatoryUser" datatype="html">
+        <source>Lo username è obbligatorio (min 3 caratteri)</source>
+        <target>Username is obligatory (min 3 characters)</target>
+      </trans-unit>
+      <trans-unit id="pageNotFound" datatype="html">
+        <source> PAGINA NON TROVATA </source>
+        <target> PAGE NOT FOUND </target>
+      </trans-unit>
+      <trans-unit id="passNotCoincide" datatype="html">
+        <source>Le password inserite non coincidono.</source>
+        <target>The passwords entered do not match.</target>
+      </trans-unit>
+      <trans-unit id="rawEmail" datatype="html">
+        <source> Il campo email non può contenere solo spazi vuoti.</source>
+        <target> Email field cannot contain only blank spaces.</target>
+      </trans-unit>
+      <trans-unit id="rawPassword" datatype="html">
+        <source>La password non può contenere solo spazi vuoti.</source>
+        <target>Password cannot contain only blank spaces.</target>
+      </trans-unit>
+      <trans-unit id="register" datatype="html">
+        <source> Registrati </source>
+        <target> Register </target>
+      </trans-unit>
+      <trans-unit id="registerError" datatype="html">
+        <source>Errore durante la registrazione.</source>
+        <target>Error while registering.</target>
+      </trans-unit>
+      <trans-unit id="registerFormInvalid" datatype="html">
+        <source> Compila tutti i campi correttamente. La password richiede almeno 8 caratteri.</source>
+        <target> Please fill out all fields correctly. The password requires at least 8 characters.</target>
+      </trans-unit>
+      <trans-unit id="registerON" datatype="html">
+        <source> Registrati su <x id="START_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;ion-text color=&quot;primary&quot;&gt;"/><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/> NexuStream <x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="CLOSE_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;/ion-text&gt;"/></source>
+        <target> Register on <x id="START_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;ion-text color=&quot;primary&quot;&gt;"/><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/> NexuStream <x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="CLOSE_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;/ion-text&gt;"/></target>
+      </trans-unit>
+      <trans-unit id="registerSuccess" datatype="html">
+        <source> Registrazione completata con successo! Ora puoi accedere.</source>
+        <target> Registration completed successfully! You can now log in.</target>
+      </trans-unit>
+      <trans-unit id="repeatPass" datatype="html">
+        <source>Ripeti la password</source>
+        <target>Repeat password</target>
+      </trans-unit>
+      <trans-unit id="resetFormInvalid" datatype="html">
+        <source>Assicurati che i campi siano validi e coincidano.</source>
+        <target>Make sure the fields are valid and match.</target>
+      </trans-unit>
+      <trans-unit id="resetPassSuccess" datatype="html">
+        <source> Password modificata con successo!</source>
+        <target> Password modified successfully!</target>
+      </trans-unit>
+      <trans-unit id="sendButton" datatype="html">
+        <source>Invia </source>
+        <target>Send </target>
+      </trans-unit>
+      <trans-unit id="sendOTP" datatype="html">
+        <source><x id="START_BLOCK_IF" equiv-text="@if (isLoading) {"/> Invio in corso... <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Invia Link di Reset <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
+        <target><x id="START_BLOCK_IF" equiv-text="@if (isLoading) {"/> Sending... <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Send Reset Link <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></target>
+      </trans-unit>
+      <trans-unit id="settings" datatype="html">
+        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon color=&quot;light&quot; slot=&quot;start&quot; name=&quot;settings-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Impostazioni </source>
+        <target><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon color=&quot;light&quot; slot=&quot;start&quot; name=&quot;settings-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Settings </target>
+      </trans-unit>
+      <trans-unit id="shareButton" datatype="html">
+        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;share-social-outline&quot; &gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Condividi </source>
+        <target><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;share-social-outline&quot; &gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Share </target>
+      </trans-unit>
+      <trans-unit id="titleEp" datatype="html">
+        <source>Titolo</source>
+        <target>Title</target>
+      </trans-unit>
+      <trans-unit id="updatePassword" datatype="html">
+        <source> Aggiorna Password </source>
+        <target> Update Password </target>
+      </trans-unit>
+      <trans-unit id="username" datatype="html">
+        <source>Nome utente</source>
+        <target>Username</target>
+      </trans-unit>
+      <trans-unit id="userPlaceHolder" datatype="html">
+        <source>nome utente</source>
+        <target>username</target>
+      </trans-unit>
       <trans-unit id="Welcome_to_NexuStream" datatype="html">
-        <source>Benvenuti a NexuStream</source>
+        <source>Benvenuto su NexuStream</source>
         <target>Welcome to NexuStream</target>
       </trans-unit>
     </body>

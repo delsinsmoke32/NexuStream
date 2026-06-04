@@ -85,15 +85,18 @@
 
 <ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
   <ng-template>
-    <ion-list class="dark-popover">
-      <ion-item button (click)="openUserSettings()" lines="full">
-        <ion-icon slot="start" name="settings-outline"></ion-icon> Impostazioni
+    <ion-list color="dark">
+      <ion-item i18n="@@settings" button (click)="openUserSettings()" lines ="full">
+        <ion-icon slot="start" name="settings-outline"></ion-icon>
+        Impostazioni
       </ion-item>
-      <ion-item button (click)="openFavorites()" lines="full">
-        <ion-icon slot="start" name="heart-outline"></ion-icon> I miei preferiti
+      <ion-item i18n="@@favouritesList" button (click)="openFavorites()">
+        <ion-icon slot="start" name="heart-outline"></ion-icon>
+        Lista Preferiti
       </ion-item>
-      <ion-item button (click)="logout()" lines="none" class="logout-item">
-        <ion-icon slot="start" name="log-out-outline"></ion-icon> Logout
+      <ion-item i18n="@@logOut" button (click)="logout()" lines="none" class="logout-item">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Logout
       </ion-item>
     </ion-list>
   </ng-template>

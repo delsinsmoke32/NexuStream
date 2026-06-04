@@ -25,8 +25,8 @@ import {
   ActionSheetController
 } from '@ionic/angular/standalone';
 
-import { DiscussionModalComponent } from '../../components/discussion-modal/discussion-modal.component'
-import { BackendUrlPipe } from '../../pipes/backend-url-pipe'
+import { DiscussionModalComponent } from '../../components/discussion-modal/discussion-modal.component';
+import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
 
 @Component({
   selector: 'app-mod',
@@ -77,9 +77,9 @@ export class ModPage implements OnInit {
   userPage = signal<number>(1);
   userLimit = signal<number>(50);
 
-    ngOnInit() {
-        this.loadDiscussions()
-    }
+  ngOnInit() {
+    this.loadDiscussions();
+  }
 
   // Switch dei Segment/Tab
   segmentChanged(event: any) {
@@ -124,6 +124,7 @@ export class ModPage implements OnInit {
     }
   }
 
+
   async openEditModal(discussion: any) {
     const modal = await this.modalCtrl.create({
       component: DiscussionModalComponent,
@@ -143,6 +144,8 @@ export class ModPage implements OnInit {
     }
   }
 
+
+
   deleteDiscussion(id: number) {
     if (confirm('Sei sicuro di voler eliminare questa discussione? L\'azione cancellerà tutti i commenti collegati.')) {
       this.http.delete(`${this.apiUrl}/discussions/${id}`).subscribe({
@@ -154,6 +157,7 @@ export class ModPage implements OnInit {
       });
     }
   }
+
 
   // 📂 LOGICA UTENTI
   loadUsersList() {
@@ -267,13 +271,15 @@ export class ModPage implements OnInit {
     }
   }
 
-    private async showToast(message: string, color: 'success' | 'danger') {
-        const toast = await this.toastCtrl.create({
-            message,
-            duration: 2000,
-            color,
-            position: 'bottom',
-        })
-        await toast.present()
-    }
+
+  private async showToast(message: string, color: 'success' | 'danger') {
+      const toast = await this.toastCtrl.create({
+          message,
+          duration: 2000,
+          color,
+          position: 'bottom',
+      })
+      await toast.present()
+  }
+
 }

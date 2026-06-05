@@ -6,8 +6,9 @@ import { BackendUrlPipe } from '@app/pipes/backend-url-pipe';
 import { combineLatest } from 'rxjs';
 // import { MetaballsScreenSaverComponent } from '@app/components/metaballs/metaballs.component'; // <-- Metaballs commentato
 import { IonContent, IonButton, IonCard, IonCardContent, IonIcon, IonSpinner, ToastController, ModalController, AlertController} from '@ionic/angular/standalone';
-import { addCircleOutline, playCircle, shareSocialOutline, heartOutline, heart, chatbubblesOutline, chevronForwardOutline } from 'ionicons/icons';
+import { addCircleOutline, playCircle, shareSocialOutline, heartOutline, heart, chatbubblesOutline, chevronForwardOutline, createOutline, trashOutline } from 'ionicons/icons';
 import { addIcons } from 'ionicons';
+import { CommentsComponent } from '@app/components/comments/comments.component';
 import { DiscussionModalComponent } from '@app/components/discussion-modal/discussion-modal.component';
 import { jwtDecodeHelper } from '@app/guards/mod-guard';
 import videojs from 'video.js';
@@ -19,7 +20,7 @@ import videojs from 'video.js';
     standalone: true,
     imports: [
         IonContent, IonButton, IonCard, IonCardContent, CommonModule, IonIcon, IonSpinner,
-        BackendUrlPipe, RouterModule
+        BackendUrlPipe, RouterModule, CommentsComponent
         // MetaballsScreenSaverComponent <-- Metaballs commentato
     ],
     providers: [BackendUrlPipe],
@@ -53,10 +54,12 @@ export class EpisodePage implements OnInit, OnDestroy {
     startAtTime = signal<number>(0); //per il continua a guardare
     isMod = signal<boolean>(false);
 
+    expandedDiscussionId = signal<string | null>(null);
+
     private saveTimeout: any; //per evitare di mandare troppi update legati a pausa al backend
 
     constructor() {
-        addIcons({ shareSocialOutline, addCircleOutline, playCircle, heartOutline, heart, chatbubblesOutline, chevronForwardOutline });
+        addIcons({chatbubblesOutline,createOutline,trashOutline,shareSocialOutline,addCircleOutline,playCircle,heartOutline,heart,chevronForwardOutline});
     }
 
     ngOnInit() {
@@ -278,6 +281,7 @@ export class EpisodePage implements OnInit, OnDestroy {
     }
 
     async openDiscussionModal(discussion?: any, event?: Event) {
+        console.log("ID episodio: ", this.episodeId());
         if (event) {
             event.stopPropagation();
             event.preventDefault();
@@ -285,7 +289,7 @@ export class EpisodePage implements OnInit, OnDestroy {
 
         const modal = await this.modalCtrl.create({
             component: DiscussionModalComponent,
-            componentProps: { discussion: discussion }
+            componentProps: { discussion: discussion, episodeId: this.episodeId() }
         });
 
         await modal.present();
@@ -293,12 +297,12 @@ export class EpisodePage implements OnInit, OnDestroy {
         const { data } = await modal.onDidDismiss();
         if (data?.payload) {
             if (data.isEdit) {
-                this.http.put(`api/discussions/${data.discussionId}`, data.payload).subscribe({
+                this.http.patch(`api/mod/discussions/${data.discussionId}`, data.payload).subscribe({
                     next: () => this.loadDiscussions(this.showId(), this.seasonId(), this.episodeId()),
                     error: (err) => console.error("Errore aggiornamento:", err)
                 });
             } else {
-                this.http.post(`api/discussions`, data.payload).subscribe({
+                this.http.post(`api/mod/discussions`, data.payload).subscribe({
                     next: () => this.loadDiscussions(this.showId(), this.seasonId(), this.episodeId()),
                     error: (err) => console.error("Errore creazione:", err)
                 });
@@ -319,7 +323,7 @@ export class EpisodePage implements OnInit, OnDestroy {
                   text: 'Elimina', 
                   role: 'destructive',
                   handler: () => {
-                      this.http.delete(`api/discussions/${discussionId}`).subscribe({
+                      this.http.delete(`api/mod/discussions/${discussionId}`).subscribe({
                           next: () => this.loadDiscussions(this.showId(), this.seasonId(), this.episodeId()),
                           error: (err) => console.error("Errore eliminazione:", err)
                       });
@@ -328,6 +332,10 @@ export class EpisodePage implements OnInit, OnDestroy {
             ]
         });
         await alert.present();
+    }
+
+    toggleDiscussion(discussionId: string) {
+        this.expandedDiscussionId.update(id => id === discussionId ? null : discussionId);
     }
 
     /*

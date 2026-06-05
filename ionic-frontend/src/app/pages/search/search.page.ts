@@ -22,6 +22,7 @@ import {
 
 // Pipe per le immagini dal backend
 import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
+import { ShowCardComponent } from '@app/components/show-card/show-card.component';
 
 @Component({
   selector: 'app-search',
@@ -32,7 +33,7 @@ import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
     CommonModule, FormsModule, RouterModule, BackendUrlPipe,
     IonIcon, IonSearchbar, IonContent, IonHeader, IonTitle,
     IonToolbar, IonButton, IonButtons, IonBackButton,
-    IonPopover, IonList, IonItem, IonChip, IonLabel, IonSpinner
+    IonPopover, IonList, IonItem, IonChip, IonLabel, IonSpinner, ShowCardComponent
   ],
 })
 export class SearchPage implements OnInit {

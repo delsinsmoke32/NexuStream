@@ -186,7 +186,7 @@
     font-size: 1.15rem;
     font-weight: 700;
     color: var(--ion-text-color, #ffffff);
-    margin: 0 0 12px 16px;
+    margin: 0 0 12px 24px; 
     letter-spacing: 0.5px;
   }
 }
@@ -237,174 +237,23 @@
   align-items: flex-start;
   overflow-x: auto;
   overflow-y: visible;
-  padding: 10px 16px 20px 16px; // Spazio extra per box-shadow
+  /* Padding reale: 10px sopra, 24px destra, 20px sotto, 24px sinistra */
+  padding: 10px 24px 20px 24px; 
   gap: 14px;
   width: 100%;
   
-  // Rende lo scroll fluido quando si usano i bottoni
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
+  
+  /* Dice allo scroll-snap di rispettare il margine! */
+  scroll-padding-left: 24px; 
+  
   -webkit-overflow-scrolling: touch;
   
-  // Nasconde la brutta scrollbar di sistema
   &::-webkit-scrollbar { display: none; }
-  scrollbar-width: none; // Per Firefox
+  scrollbar-width: none; 
 }
 
-/* ===================================
-   BASE CARD (STILE CRUNCHYROLL / MOBILE)
-   =================================== */
-.show-card {
-  flex: 0 0 auto;
-  scroll-snap-align: start;
-  display: flex;
-  flex-direction: column;
-  
-  /* 1. Sfondo Grigio e Bordi Arrotondati sull'INTERA card */
-  background-color: var(--ion-color-secondary-tint, #242424); 
-  border-radius: 8px;
-  overflow: hidden; /* Taglia l'immagine in alto e la barra in basso per farle seguire i bordi */
-  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
-
-  /* 2. Spostiamo l'effetto Zoom sull'intera card, così si alza tutta insieme! */
-  @media (hover: hover) {
-    &:hover {
-      transform: scale(1.05);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.6);
-    }
-    
-    /* Quando la card è in hover, scuriamo l'immagine */
-    &:hover .poster-container img { 
-      filter: brightness(0.5); 
-    }
-    
-    /* Quando la card è in hover, facciamo apparire il Play */
-    &:hover .play-overlay { 
-      opacity: 1 !important; 
-    }
-  }
-
-  .poster-container {
-    flex: 0 0 auto;
-    position: relative;
-    width: 100%;
-    cursor: pointer;
-    /* Rimosse ombre e bordi da qui, ora li gestisce la card padre */
-
-    img {
-      width: 100%; height: 100%;
-      object-fit: cover; display: block;
-      transition: filter 0.3s ease;
-    }
-
-    .play-overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      opacity: 0; 
-      z-index: 5;
-      transition: opacity 0.3s ease;
-      
-      ion-icon {
-        font-size: 3.5rem;
-        color: #ffffff;
-        filter: drop-shadow(0 2px 8px rgba(0,0,0,0.8));
-        transition: color 0.2s ease, transform 0.2s ease; 
-
-        &:hover {
-          color: var(--ion-color-primary, #b22222); 
-          transform: scale(1.15);
-        }
-      }
-
-      /* FIX MOBILE: Nasconde totalmente l'overlay sugli schermi touch/piccoli */
-      @media (max-width: 768px) {
-        display: none !important;
-      }
-    }
-  }
-
-  /* RIGA INFORMAZIONI IN BASSO */
-  .card-info-bottom {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding-top: 8px;
-    padding-bottom: 8px;
-    width: 100%;
-    cursor: pointer;
-
-    /* 🚀 Icona a riposo */
-    ion-icon.info-btn {
-      font-size: 2rem !important; 
-      color: #aaaaaa !important; /* Grigio chiaro elegante */
-      /* Transizione fluida su colore e grandezza */
-      transition: transform 0.2s ease, color 0.2s ease;
-      padding: 8px;
-      margin: -8px;
-
-      /* 🚀 Effetto Hover: Zoom e Colore Rosso NexuStream! */
-      &:hover {
-        transform: scale(1.25); 
-        color: var(--ion-color-primary, #b22222) !important; 
-      }
-
-      /* Effetto tap su mobile */
-      &:active { 
-        transform: scale(0.85); 
-      }
-    }
-  }
-}
-
-/* ===================================
-   VARIANTI DI DIMENSIONE
-   =================================== */
-
-/* Formato Locandina Classica (Home e Search) */
-.portrait {
-  width: 130px;
-  @media (min-width: 768px) { width: 160px; }
-
-  .poster-container {
-    aspect-ratio: 2 / 3;
-  }
-}
-
-/* Formato Banner per il "Continua a guardare" (Solo Home) */
-.landscape {
-  width: 240px;
-  @media (min-width: 768px) { width: 300px; }
-
-  .poster-container {
-    aspect-ratio: 16 / 9;
-
-    .progress-bar-bg {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.2);
-      z-index: 2; 
-    }
-    .progress-bar-fill {
-      height: 100%;
-      background-color: var(--ion-color-primary, #b22222);
-    }
-  }
-  
-  .ep-title {
-    font-size: 0.75rem;
-    color: #aaaaaa;
-    margin-top: 4px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-}
 /* ===================================
    POPOVER
    =================================== */

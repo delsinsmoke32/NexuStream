@@ -9,8 +9,12 @@ const getDiscussionComments = async (req, res) => {
     const user = req.user;
     const isMod = !!(user && user.isMod);
 
+
     try {
-        const comments = await commentModel.getCommentsByDiscussion(discussionId, isMod);
+        if (!user){
+            return res.status(403).json({ message: "Devi essere autenticato per vedere i commenti!" });
+        }
+        const comments = await commentModel.getCommentsByDiscussion(discussionId, isMod, user.id);
         return res.json(comments);
     } catch (err) {
         console.error("Errore recupero commenti: ", err);
@@ -57,17 +61,21 @@ const interactWithComment = async (req, res) => {
         const newLiked = isLiked !== undefined ? isLiked : oldLiked;
         const newReported = isReported !== undefined ? isReported : oldReported;
 
+        // Calcoliamo di quanto devono variare i contatori totali (+1, -1 o 0)
         const likeDelta = newLiked - oldLiked;
+        const reportDelta = newReported - oldReported;
 
+        // 1. Salviamo l'interazione del singolo utente
         await commentModel.upsertCommentInteraction(commentId, userId, newLiked, newReported);
         
-        return res.status(201).json({
-            message: "Interazione registrata con successo!",
-            likeStatus: newLiked,
-            likeDelta: likeDelta
-        });
+        // 2. Aggiorniamo il totale nel commento
+        if (likeDelta !== 0 || reportDelta !== 0) {
+            await commentModel.updateCommentStats(commentId, likeDelta, reportDelta);
+        }
+        
+        return res.status(201).json({ message: "Interazione registrata!" });
     } catch (err) {
-        if (err && err.code === 'SQLITE_CONSTRAINT') {
+       if (err && err.code === 'SQLITE_CONSTRAINT') {
             return res.status(400).json({ message: "Impossibile registrare l'interazione: riferimenti non validi." });
         }
         return res.status(500).json({ message: "Errore interno del server." });

@@ -107,6 +107,21 @@ const deleteResetToken = async (token) => {
 
     return await db.runAsync(sql, [token]);
 }
+
+
+const getUserFavorites = async (userId, applang = "it") => {
+    const sql = `SELECT s.ShowID, s.ThumbnailURI,
+                COALESCE(s.Title->>?, s.Title->>'it') AS Title,
+                COALESCE(s.Description->>?, s.Description->>'it') AS Description
+                FROM LINKs_User_Likes_Show AS l
+                JOIN Shows AS s ON l.REF_ShowID = s.ShowID
+                WHERE l.REF_UserID = ?
+                ORDER BY Title ASC`;
+    
+    return await db.allAsync(sql, [applang, applang, userId]);
+}
+
+
 module.exports = {
     getUserByEmail,
     createUser,
@@ -114,5 +129,6 @@ module.exports = {
     saveResetToken,
     validateResetToken,
     updatePassword,
-    deleteResetToken
+    deleteResetToken,
+    getUserFavorites
 };

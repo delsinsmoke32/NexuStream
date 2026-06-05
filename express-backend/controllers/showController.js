@@ -77,7 +77,8 @@ const getShowDetails = async (req, res) => {
     }
 
     const { showId } = req.params;
-    const applang = req.user ? req.user.appLang : 'it'; // O req.language a seconda di come l'hai impostato
+    const user = req.user;
+    const applang = user ? user.appLang : req.language; // O req.language a seconda di come l'hai impostato
     let show = null;
 
 

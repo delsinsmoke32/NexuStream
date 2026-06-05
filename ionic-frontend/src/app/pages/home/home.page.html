@@ -73,20 +73,14 @@
             
             <div class="horizontal-scroll" #continueWatchingScroll>
               @for (cw of continueWatching(); track cw.EpisodeID) {
-                <div class="show-card landscape">
-                  <div class="poster-container" (click)="resumeEpisode(cw)">
-                    <img [src]="cw.BannerURI ? (cw.BannerURI | backendUrl) : 'assets/placeholder-banner.png'" [alt]="cw.ShowTitle" />
-                    <div class="progress-bar-bg">
-                      <div class="progress-bar-fill" [style.width]="(cw.Progress || 0) + '%'"></div>
-                    </div>
-                    <div class="play-overlay">
-                      <ion-icon name="play-circle"></ion-icon>
-                    </div>
-                  </div>
-                  <div class="card-info-bottom" (click)="openSeriesInfo(cw.ShowID, $event)">
-                    <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
-                  </div>
-                </div>
+                <app-show-card 
+                  [show]="cw" 
+                  layout="landscape" 
+                  [showDismiss]="true"  
+                  (play)="resumeEpisode($event)" 
+                  (info)="openSeriesInfo($event)"
+                  (dismiss)="removeFromContinueWatching($event)">
+                </app-show-card>
               }
             </div>
             
@@ -108,17 +102,12 @@
             
             <div class="horizontal-scroll" #mostViewedScroll>
               @for (show of mostViewed(); track show.ShowID) {
-                <div class="show-card portrait">
-                  <div class="poster-container" (click)="playAnime(show.ShowID, $event)">
-                    <img [src]="show.ThumbnailURI ? (show.ThumbnailURI | backendUrl) : 'assets/placeholder-poster.png'" [alt]="show.Title" />
-                    <div class="play-overlay">
-                      <ion-icon name="play-circle"></ion-icon>
-                    </div>
-                  </div>
-                  <div class="card-info-bottom" (click)="openSeriesInfo(show.ShowID, $event)">
-                    <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
-                  </div>
-                </div>
+                <app-show-card 
+                  [show]="show" 
+                  layout="portrait" 
+                  (play)="playAnime($event.ShowID)" 
+                  (info)="openSeriesInfo($event)">
+                </app-show-card>
               }
             </div>
 
@@ -140,17 +129,12 @@
             
             <div class="horizontal-scroll" #mostLikedScroll>
               @for (show of mostLiked(); track show.ShowID) {
-                <div class="show-card portrait">
-                  <div class="poster-container" (click)="playAnime(show.ShowID, $event)">
-                    <img [src]="show.ThumbnailURI ? (show.ThumbnailURI | backendUrl) : 'assets/placeholder-poster.png'" [alt]="show.Title" />
-                    <div class="play-overlay">
-                      <ion-icon name="play-circle"></ion-icon>
-                    </div>
-                  </div>
-                  <div class="card-info-bottom" (click)="openSeriesInfo(show.ShowID, $event)">
-                    <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
-                  </div>
-                </div>
+                <app-show-card 
+                  [show]="show" 
+                  layout="portrait" 
+                  (play)="playAnime($event.ShowID)" 
+                  (info)="openSeriesInfo($event)">
+                </app-show-card>
               }
             </div>
 

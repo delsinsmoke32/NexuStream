@@ -59,21 +59,12 @@
       @if (filteredResults().length > 0) {
         <div class="results-grid">
           @for (show of filteredResults(); track show.ShowID) {
-            <div class="show-card portrait">
-                
-                <div class="poster-container" (click)="openSeriesInfo(show.ShowID, $event)">
-                  <img [src]="show.ThumbnailURI ? (show.ThumbnailURI | backendUrl) : 'assets/placeholder-poster.png'" [alt]="show.Title" />
-                  
-                  <div class="play-overlay">
-                    <ion-icon name="play-circle"></ion-icon>
-                  </div>
-                </div>
-                
-                <div class="card-info-bottom" (click)="openSeriesInfo(show.ShowID, $event)">
-                  <ion-icon name="information-circle-outline" mode="md" class="info-btn"></ion-icon>
-                </div>
-
-            </div>
+            <app-show-card 
+              [show]="show" 
+              layout="portrait" 
+              (play)="openSeriesInfo($event.ShowID)" 
+              (info)="openSeriesInfo($event)">
+            </app-show-card>
           }
         </div>
       }

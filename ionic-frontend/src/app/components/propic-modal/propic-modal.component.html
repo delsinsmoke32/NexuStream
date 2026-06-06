@@ -32,6 +32,16 @@
                 Select Picture
             </ion-button>
 
+            @if (imagePreview()) {
+                <div class="ion-text-center ion-padding-top">
+                    <ion-avatar
+                        style="margin: 0 auto; width: 120px; height: 120px"
+                    >
+                        <img [src]="imagePreview()" alt="Preview" />
+                    </ion-avatar>
+                </div>
+            }
+
             @if (selectedFile(); as file) {
                 <ion-text color="medium" class="ion-text-center">
                     <p style="margin: 15px 0">Selected: {{ file.name }}</p>

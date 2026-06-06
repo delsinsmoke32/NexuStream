@@ -257,12 +257,13 @@ const deleteEpisode = async (episodeId) => {
 // ==========================================
 /**
  * Aggiunge un URI propic al DB.
- * @param {number} propicURI 
+ * @param {number} bundle 
+ * @param {number} propicURI
  * @returns {Promise<{id: number, changes: number}>}
  */
-const insertPropic = async (propicURI) => {
-    const sql = `INSERT INTO Propics (PropicURI) VALUES (?)`;
-    return await db.runAsync(sql, [propicURI]);
+const insertPropic = async (bundle, propicURI) => {
+    const sql = `INSERT INTO Propics (Bundle, PropicURI) VALUES (?, ?)`;
+    return await db.runAsync(sql, [bundle, propicURI]);
 };
 
 /**

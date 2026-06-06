@@ -20,6 +20,7 @@ const db = require("./db/db").db;
 const initDb = require("./db/db").initDb;
 const populateDb = require("./db/populateDb").populateDb
 const testRoute = require("./routes/test")
+const propicRoute = require("./routes/propic")
 const fs = require('fs');
 const path = require('path');
 
@@ -74,6 +75,7 @@ app.use("/api/shows", showRoute);
 app.use('/static', express.static(path.join(__dirname, 'public')));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 app.use('/api/test', testRoute);
+app.use('/api/propics', propicRoute);
 
 BigInt.prototype.toJSON = function() { return this.toString() }; //fixgpt
 

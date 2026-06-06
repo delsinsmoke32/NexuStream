@@ -98,13 +98,22 @@
                     </ion-card-content>
                 </ion-card>
 
-                <div class="red-sphere">
-                    <div class="smaller-sphere">
-                        <img
-                            [src]='"static/avatars/avatar-000.png" | backendUrl'
-                            alt="Avatar"
-                        />
+                <div class="img-picker-cont">
+                    <div class="red-sphere" (click)="triggerImageSelection()">
+                        <div class="smaller-sphere">
+                            <img [src]="selected() | backendUrl" alt="Avatar" />
+                        </div>
                     </div>
+                    <ion-button
+                        fill="clear"
+                        class="edit-btn"
+                        (click)="triggerImageSelection()"
+                    >
+                        <ion-icon
+                            slot="icon-only"
+                            name="swap-horizontal-outline"
+                        ></ion-icon>
+                    </ion-button>
                 </div>
             </div>
         </div>

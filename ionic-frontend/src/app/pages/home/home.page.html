@@ -168,13 +168,16 @@
     <ng-template>
       <ion-list class="dark-popover">
         <ion-item i18n="@@settings" button routerLink="/settings" (click)="openUserSettings()" lines="full">
-          <ion-icon slot="start" name="settings-outline"></ion-icon> Impostazioni
+          <ion-icon color="danger" slot="start" name="settings-outline"></ion-icon> 
+          Impostazioni
         </ion-item>
         <ion-item i18n="@@favourites" button routerLink="/favourites" (click)="openFavorites()" lines="full">
-          <ion-icon slot="start" name="heart-outline"></ion-icon> I miei preferiti
+          <ion-icon color="danger" slot="start" name="heart-outline"></ion-icon> 
+          I miei preferiti
         </ion-item>
         <ion-item i18n="@@logOut" button (click)="logout()" lines="none" class="logout-item">
-          <ion-icon slot="start" name="log-out-outline"></ion-icon> Esci
+          <ion-icon color="danger" slot="start" name="log-out-outline"></ion-icon> 
+          Esci
         </ion-item>
       </ion-list>
     </ng-template>

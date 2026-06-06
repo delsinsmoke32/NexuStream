@@ -7,12 +7,17 @@
     <ion-title i18n="@@search" class="brand-title">RICERCA</ion-title>
     
     <ion-buttons slot="end">
+       @if (!isLoggedIn()) {
+        <ion-button i18n="@@logIn" class="auth-link" routerLink="/login">Accedi</ion-button>
+        <ion-button i18n="@@register" class="auth-link" routerLink="/register">Registrati</ion-button>
+      }
       
 
-
+      @if (isLoggedIn()){ 
       <ion-button class="btn-icon-red" (click)="openProfileMenu($event)">
         <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
       </ion-button>
+    }
     </ion-buttons>
   </ion-toolbar>
 

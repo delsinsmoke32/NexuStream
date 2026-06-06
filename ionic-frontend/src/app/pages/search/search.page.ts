@@ -1,4 +1,5 @@
-import { Component, ViewChild, OnInit, signal, inject } from '@angular/core';
+import { Component, ViewChild, OnInit, signal, inject, OnDestroy } from '@angular/core';
+import { ViewWillEnter } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
@@ -36,21 +37,22 @@ import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
     IonPopover, IonList, IonItem, IonChip, IonLabel, IonSpinner
   ],
 })
-export class SearchPage implements OnInit {
+export class SearchPage implements ViewWillEnter {
   @ViewChild('profilePopover') popover: any;
   
   private http = inject(HttpClient);
   private router = inject(Router);
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
-
+  
 
   // Stati reattivi
   searchQuery = signal<string>('');
   selectedGenre = signal<number | null>(null);
   filteredResults = signal<any[]>([]);
   isLoading = signal<boolean>(false);
-  
+  isLoggedIn = signal<boolean>(false);
+
   // Lista dei generi dal database
   genres = signal<any[]>([]);
 
@@ -61,7 +63,9 @@ export class SearchPage implements OnInit {
     });
   }
 
-  ngOnInit() {
+  ionViewWillEnter() {
+    const token = localStorage.getItem('token');
+    this.isLoggedIn.set(!!token);
     this.loadGenres();
   }
 

@@ -1,0 +1,41 @@
+<div class="show-card" [ngClass]="layout()">
+  
+  <div class="poster-container" (click)="onPlay($event)">
+    
+    @if (layout() === 'landscape') {
+      <img [src]="show().BannerURI ? (show().BannerURI | backendUrl) : 'assets/placeholder-banner.png'" 
+           [alt]="show().Title || show().ShowTitle" />
+    } @else {
+      <img [src]="show().ThumbnailURI ? (show().ThumbnailURI | backendUrl) : 'assets/placeholder-poster.png'" 
+           [alt]="show().Title || show().ShowTitle" />
+    }
+
+    @if (layout() === 'landscape' && show().Progress !== undefined) {
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" [style.width]="(show().Progress || 0) + '%'"></div>
+      </div>
+    }
+
+    <div class="play-overlay">
+      <ion-icon name="play-circle"></ion-icon>
+    </div>
+
+    @if (showDelete()) {
+      <button class="action-top-btn" (click)="onRemove($event)">
+        <ion-icon name="trash"></ion-icon>
+      </button>
+    }
+
+    @if (showDismiss()) {
+      <button class="action-top-btn" (click)="onDismiss($event)">
+        <ion-icon name="close"></ion-icon>
+      </button>
+    }
+
+  </div>
+  
+  <div class="card-info-bottom" (click)="onInfo($event)">
+    <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
+  </div>
+
+</div>

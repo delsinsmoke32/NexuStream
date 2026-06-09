@@ -33,7 +33,7 @@ import {
     IonText,
     IonIcon,
 } from '@ionic/angular/standalone'
-import { HttpClient } from '@angular/common/http'
+import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { addIcons } from '@lib/ionicons'
 import { cameraOutline } from '@lib/ionicons/icons'
 
@@ -45,7 +45,6 @@ import { cameraOutline } from '@lib/ionicons/icons'
     imports: [
         CommonModule,
         ReactiveFormsModule,
-        // Registriamo singolarmente i componenti Ionic usati nell'HTML della modale
         IonHeader,
         IonToolbar,
         IonTitle,
@@ -68,7 +67,6 @@ export class PropicModalComponent implements OnInit {
 
     http = inject(HttpClient)
     constructor() {
-        // Required to register icons manually in Ionic Standalone model
         addIcons({ cameraOutline })
     }
 
@@ -79,31 +77,58 @@ export class PropicModalComponent implements OnInit {
     onFileSelect(event: Event) {
         const input = event.target as HTMLInputElement
         if (input.files && input.files.length > 0) {
-            this.selectedFile.set(input.files[0])
+            const file = input.files[0]
+            this.selectedFile.set(file)
+
+            // Aggiorna il valore nel form reattivo di Angular
+            // this.propicForm.patchValue({ img: file })
+            this.propicForm.get('img')?.setValue('file_selected')
+            // this.propicForm.get('img')?.updateValueAndValidity()
         }
+    }
+
+    private getAuthHeaders(): HttpHeaders {
+        const token = localStorage.getItem('token')
+        return new HttpHeaders({ Authorization: `Bearer ${token}` })
     }
 
     uploadPicture() {
         const file = this.selectedFile()
-        if (!file) return
+        if (!file || this.propicForm.invalid) return
 
         this.isUploading.set(true)
         const formData = new FormData()
-        formData.append('picture', file, file.name)
+        formData.append('bundle', this.propicForm.get('bundle')?.value)
+        formData.append('img', file, file.name)
+        // console.log(formData, file, file.name)
+        // const payload = this.propicForm.getRawValue()
+        console.log(formData)
+
+        const endpoint = 'api/cataloguer/propic/add'
 
         // Replace with your active API endpoint URL
-        this.http.post('api/upload/propic', formData).subscribe({
-            next: (response: any) => {
-                console.log('Upload success', response)
-                this.selectedFile.set(null)
-            },
-            error: (error: any) => {
-                console.error('Upload failed', error)
-            },
-            complete: () => {
-                this.isUploading.set(false)
-            },
-        })
+        this.http
+            .post(endpoint, formData, {
+                headers: this.getAuthHeaders(),
+            })
+            .subscribe({
+                next: (response: any) => {
+                    console.log('Upload success', response)
+                    this.selectedFile.set(null)
+
+                    // Resetta il form Angular
+                    this.propicForm.reset()
+
+                    // Resetta l'elemento HTML nativo per permettere di selezionare nuovamente lo stesso file
+                    this.fileInput().nativeElement.value = ''
+                },
+                error: (error: any) => {
+                    console.error('Upload failed', error)
+                },
+                complete: () => {
+                    this.isUploading.set(false)
+                },
+            })
     }
 
     propic: any = input() // Contiene l'oggetto se siamo in modalità modifica
@@ -120,14 +145,14 @@ export class PropicModalComponent implements OnInit {
     }
 
     private initForm() {
-        const getLangText = (jsonStr: string, lang: string) => {
-            try {
-                const obj = JSON.parse(jsonStr)
-                return obj[lang] || ''
-            } catch {
-                return jsonStr || ''
-            }
-        }
+        // const getLangText = (jsonStr: string, lang: string) => {
+        //     try {
+        //         const obj = JSON.parse(jsonStr)
+        //         return obj[lang] || ''
+        //     } catch {
+        //         return jsonStr || ''
+        //     }
+        // }
 
         this.propicForm = this.fb.group({
             bundle: [
@@ -135,7 +160,7 @@ export class PropicModalComponent implements OnInit {
                 [Validators.required],
             ],
             img: [
-                this.isEditMode ? getLangText(this.propic.img, 'it') : '',
+                this.isEditMode ? this.propic.file : '',
                 [Validators.required],
             ],
         })

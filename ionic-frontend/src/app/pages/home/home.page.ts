@@ -16,6 +16,7 @@ import {
 } from 'ionicons/icons';
 
 import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
+import { ShowCardComponent } from '@app/components/show-card/show-card.component';
 
 @Component({
   selector: 'app-home',
@@ -26,7 +27,7 @@ import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
     CommonModule, RouterModule, BackendUrlPipe,
     IonContent, IonHeader, IonTitle, IonToolbar, IonButton, 
     IonItem, IonIcon, IonPopover, IonMenuButton, IonButtons, 
-    IonSpinner, IonList
+    IonSpinner, IonList, ShowCardComponent
   ]
 })
 export class HomePage implements OnDestroy {
@@ -159,6 +160,33 @@ export class HomePage implements OnDestroy {
         startAt: item.Progress 
       }
     });
+  }
+
+  removeFromContinueWatching(showId: number) {
+    // 1. Aggiornamento UI immediato: la card sparisce all'istante
+    const oldList = this.continueWatching();
+    this.continueWatching.update(list => list.filter(cw => cw.ShowID !== showId));
+
+    const targetItem = oldList.find(cw => cw.ShowID === showId);
+    if (!targetItem) return;
+
+    // 2. Chiamata al backend per rimuovere la cronologia
+    const body = {
+      progress: 0,
+      isCompleted: 0,
+      isDropped: 1, 
+      isLiked: targetItem.isLiked || 0
+    };
+
+    this.http.post(`api/shows/${showId}/seasons/${targetItem.SeasonID}/episodes/${targetItem.EpisodeID}/interact`, body)
+      .subscribe({
+        next: () => this.showToast('Rimosso dal "Continua a guardare"', 'success'),
+        error: (err) => {
+          console.error("Errore:", err);
+          this.continueWatching.set(oldList); // Rollback
+          this.showToast('Errore di connessione', 'danger');
+        }
+      });
   }
 
   private async showToast(message: string, color: 'success' | 'danger') {

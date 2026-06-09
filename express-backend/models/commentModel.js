@@ -4,21 +4,37 @@ const db = require("../db/db");
  * Ottiene la lista dei commenti per una determinata discussione
  * @param {number} discussionId 
  * @param {boolean} isMod (0 o 1)
+ * @param {number} userId
  * @returns {Promise<Array<Object>>}
  */
 
-const getCommentsByDiscussion = async (discussionId, isMod) => {
-    let sql = `SELECT c.*, u.Username, u.isAdmin, u.isMod, u.isCataloguer
+const getCommentsByDiscussion = async (discussionId, isMod, userId) => {
+    // 🚀 Aggiunta la JOIN con le interazioni dell'utente per sapere se HA GIÀ messo like o segnalato!
+    let sql = `SELECT c.*, u.Username, u.REF_PropicURI, u.isAdmin, u.isMod, u.isCataloguer,
+                      COALESCE(i.isLiked, 0) AS isLiked,
+                      COALESCE(i.isReported, 0) AS isReported
                FROM Comments c
-               JOIN Users AS u ON c.REF_UserID = u.UserID
+               LEFT JOIN Users AS u ON c.REF_UserID = u.UserID
+               LEFT JOIN LINKs_User_Interacts_Comment i ON c.CommentID = i.REF_CommentID AND i.REF_UserID = ?
                WHERE c.REF_DiscussionID = ?`;
 
     if (!isMod) {
         sql += ` AND c.isHidden = 0`;
     }
-
     sql += ` ORDER BY c.DateCommented DESC`;
-    return await db.allAsync(sql, [discussionId]);
+    
+    // Passiamo prima l'userId per la JOIN, e poi il discussionId per la WHERE
+    return await db.allAsync(sql, [userId || null, discussionId]);
+};
+
+/**
+ * Aggiorna i contatori totali di Like e Report di un commento
+ */
+const updateCommentStats = async (commentId, likeDelta, reportDelta) => {
+    const sql = `UPDATE Comments 
+                 SET Likes = Likes + ?, ReportCount = ReportCount + ? 
+                 WHERE CommentID = ?`;
+    return await db.runAsync(sql, [likeDelta, reportDelta, commentId]);
 };
 
 /**
@@ -31,8 +47,8 @@ const getCommentsByDiscussion = async (discussionId, isMod) => {
  */
 
 const createComment = async (parentCommentId, userId, discussionId, text) => {
-    const sql = `INSERT INTO Comments (REF_CommentID, REF_UserID, REF_DiscussionID, CommentText, isHidden, Likes, isApproved)
-                 VALUES (?, ?, ?, ?, 0, 0, 0)`;
+    const sql = `INSERT INTO Comments (REF_CommentID, REF_UserID, REF_DiscussionID, CommentText, isHidden, Likes, isApproved, ReportCount)
+                 VALUES (?, ?, ?, ?, 0, 0, 0, 0)`;
     return await db.runAsync(sql, [parentCommentId || null, userId, discussionId, text]);
 };
 
@@ -95,5 +111,6 @@ module.exports = {
     getCommentInteraction,
     upsertCommentInteraction,
     updateHiddenStatus,
-    updateApprovalStatus
+    updateApprovalStatus,
+    updateCommentStats
 };

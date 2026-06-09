@@ -11,14 +11,12 @@
   <form [formGroup]="discussionForm" (ngSubmit)="save()">
     
     @if (!isEditMode) {
-      <ion-item fill="outline" mode="md">
-        <ion-label position="stacked">ID Episodio Target</ion-label>
-        <ion-input type="number" formControlName="REF_EpisodeID" placeholder="Es. 2"></ion-input>
+      <ion-item fill="outline" mode="md" class="ion-margin-bottom">
+        <ion-input label="ID Episodio (Auto)" labelPlacement="stacked" formControlName="REF_EpisodeID" type="number" [readonly]="true"></ion-input>
       </ion-item>
 
-      <ion-item fill="outline" mode="md">
-        <ion-label position="stacked">Tipo Discussione</ion-label>
-        <ion-select formControlName="type" placeholder="Seleziona tipo">
+      <ion-item fill="outline" mode="md" class="ion-margin-bottom">
+        <ion-select label="Tipo Discussione" labelPlacement="stacked" formControlName="type" placeholder="Seleziona tipo">
           <ion-select-option value="standard">Standard</ion-select-option>
           <ion-select-option value="spoiler">Spoiler Zone</ion-select-option>
           <ion-select-option value="archive">Archivio</ion-select-option>
@@ -26,9 +24,8 @@
       </ion-item>
     }
 
-    <ion-item fill="outline" mode="md">
-      <ion-label position="stacked">Data di Chiusura (YYYY-MM-DD HH:MM)</ion-label>
-      <ion-input type="text" formControlName="closeDate" placeholder="2027-01-01 00:00"></ion-input>
+    <ion-item fill="outline" mode="md" class="ion-margin-bottom">
+      <ion-input label="Data di Chiusura (YYYY-MM-DD HH:MM)" labelPlacement="stacked" type="text" formControlName="closeDate" placeholder="2027-01-01 00:00"></ion-input>
     </ion-item>
 
     @if (isEditMode) {
@@ -43,5 +40,5 @@
       {{ isEditMode ? 'Aggiorna Discussione' : 'Crea Discussione' }}
     </ion-button>
     
-  </form>
+</form>
 </ion-content>

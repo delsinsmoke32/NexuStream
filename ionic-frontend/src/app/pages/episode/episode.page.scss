@@ -334,3 +334,35 @@
     }
   }
 } 
+
+/* ===================================
+   TENDINA COMMENTI (DROPDOWN)
+   =================================== */
+.discussion-dropdown-content {
+  /* Crea un effetto di "estensione" della card soprastante */
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 0 0 8px 8px;
+  
+  /* Lo fa slittare sotto la card eliminando lo spazio visivo */
+  margin-top: -8px; 
+  padding: 16px;
+  
+  /* Bordo sottile per delineare l'area */
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: none;
+  
+  /* Animazione di discesa fluida */
+  animation: slideDown 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform-origin: top;
+}
+
+@keyframes slideDown {
+  from { 
+    opacity: 0; 
+    transform: translateY(-15px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}

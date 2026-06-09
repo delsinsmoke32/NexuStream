@@ -361,16 +361,101 @@ const removeEpisode = async (req, res) => {
 // ==========================================
 // CONTROLLER PROPIC
 // ==========================================
+
+// const addPropic = async (req, res) => {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+//     try {
+//         await cataloguerModel.insertPropic(req.body.propicURI);
+//         return res.json({ message: "Propic aggiunta con successo!" });
+//     } catch (err) {
+//         return res.status(500).json({ error: "Errore interno del server" });
+//     }
+// };
+
+const multer  = require('multer');
+const upload = multer({ dest: '../public/avatars' }); // o la tua configurazione di storage
+
+// Configurazione dello storage per preservare nome ed estensione
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        // Specifica la cartella dove salvare i file (creala se non esiste)
+        cb(null, '../public/avatars');
+    },
+    filename: function (req, file, cb) {
+        // Genera un nome univoco combinando timestamp attuale e un numero casuale
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        
+        // Recupera l'estensione del file originale (es: .jpg, .png)
+        const ext = path.extname(file.originalname);
+        
+        // Imposta il nome definitivo del file comprensivo di estensione
+        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
+    }
+});
+
+// Il nome 'img' dentro upload.single() deve essere identico a formData.append('img', ...)
+// app.post('/api/cataloguer/propic/add', upload.single('img'), (req, res) => {
+//     // I dati testuali del form si trovano qui:
+//     const bundle = req.body.bundle;
+    
+//     // Il file si trova qui:
+//     const file = req.file;
+
+//     if (!file) {
+//         return res.status(400).json({ error: 'Nessun file caricato' });
+//     }
+
+//     console.log('Bundle:', bundle);
+//     console.log('File ricevuto:', file);
+
+//     res.json({ message: 'Caricamento completato con successo!', file });
+// });
+
 const addPropic = async (req, res) => {
+    // 1. Controlla gli errori di validazione della rotta
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
     try {
-        await cataloguerModel.insertPropic(req.body.propicURI);
-        return res.json({ message: "Propic aggiunta con successo!" });
-    } catch (err) {
-        return res.status(500).json({ error: "Errore interno del server" });
+        // I dati testuali validati si trovano in req.body
+        const { bundle } = req.body;
+        
+        // I dettagli del file si trovano in req.file grazie a Multer
+        const fileData = req.file;
+
+        // Esempio di struttura dati che salverai nel database:
+        // - bundle: stringa ricevuta dal form
+        // - img: il percorso del file salvato su disco o sul cloud (es: fileData.path o fileData.filename)
+        const nuovaPropic = {
+            bundle: bundle,
+            img: fileData.path, // Salva il percorso relativo per poterlo servire in seguito
+            originalName: fileData.originalname
+        };
+
+        console.log('Salvataggio nuova Propic:', nuovaPropic);
+        
+        // Logica di salvataggio nel database (es. await Propic.create(nuovaPropic))
+
+        // Rispondi con successo ad Angular
+        return res.status(201).json({
+            message: "Propic inserita con successo!",
+            data: nuovaPropic
+        });
+
+    } catch (error) {
+        console.error('Errore durante il salvataggio della propic:', error);
+        return res.status(500).json({ 
+            error: "Errore interno del server durante il salvataggio" 
+        });
     }
 };
+
+// const addPropic = (req, res) => {
+
+// }
 
 const removePropic = async (req, res) => {
     const errors = validationResult(req);
@@ -383,6 +468,8 @@ const removePropic = async (req, res) => {
         return res.status(500).json({ error: "Errore interno del server" });
     }
 };
+
+
 
 module.exports = {
     getShows, getSeasons, getEpisodes,

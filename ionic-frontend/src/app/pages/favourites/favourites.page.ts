@@ -1,71 +1,114 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { addIcons } from 'ionicons';
-import { trash, heartDislikeOutline, personCircleOutline, settingsOutline, heartOutline, logOutOutline } from 'ionicons/icons';
-import { RouterModule } from '@angular/router';
+import { Component, ViewChild, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonIcon, IonButton, IonPopover,IonGrid, IonBackButton, IonButtons, IonRouterLink, IonRow, IonCol, IonItem, IonList } from '@ionic/angular/standalone';
+import { RouterModule, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { 
+  IonContent, IonHeader, IonTitle, IonToolbar, IonIcon, 
+  IonButton, IonPopover, IonBackButton, IonButtons, 
+  IonItem, IonList, IonSpinner, ToastController 
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { heartDislikeOutline, personCircleOutline, settingsOutline, heartOutline, logOutOutline } from 'ionicons/icons';
+
+// 🚀 Importiamo la nostra nuova fantastica card
+import { ShowCardComponent } from '../../components/show-card/show-card.component';
 
 @Component({
   selector: 'app-favourites',
   templateUrl: './favourites.page.html',
   styleUrls: ['./favourites.page.scss'],
   standalone: true,
-  imports: [IonContent, IonHeader, IonTitle, IonToolbar,IonIcon, IonButton, IonGrid,IonPopover, IonButtons, IonBackButton,IonRouterLink, IonRow, IonCol,IonList, IonItem, RouterModule, CommonModule, FormsModule]
+  imports: [
+    CommonModule, RouterModule, ShowCardComponent,
+    IonContent, IonHeader, IonTitle, IonToolbar, IonIcon, 
+    IonButton, IonPopover, IonButtons, IonBackButton, 
+    IonList, IonItem, IonSpinner
+  ]
 })
-export class FavouritesPage implements OnInit {
-   @ViewChild('profilePopover') popover: any;
-  // Array di anime preferiti (Dati mockati, pronti per essere sostituiti da un servizio)
-  favorites = [
-    { id: 1, title: 'Attack on Titan', posterUrl: 'assets/imgs/aot.jpg' },
-    { id: 2, title: 'Jujutsu Kaisen', posterUrl: 'assets/imgs/jjk.jpg' },
-    { id: 3, title: 'Demon Slayer', posterUrl: 'assets/imgs/ds.jpg' },
-    { id: 4, title: 'Frieren', posterUrl: 'assets/imgs/frieren.jpg' }
-  ];
+export class FavouritesPage {
+  @ViewChild('profilePopover') popover: any;
+  
+  private http = inject(HttpClient);
+  private router = inject(Router);
+  private toastCtrl = inject(ToastController);
 
-  constructor() { addIcons({ trash, heartDislikeOutline, personCircleOutline, settingsOutline, heartOutline, logOutOutline });}
+  isLoading = signal<boolean>(true);
+  favorites = signal<any[]>([]);
 
-  ngOnInit() {
-    // Qui andrà la logica per recuperare i preferiti dal database o dal localStorage
+  constructor() { 
+    addIcons({ heartDislikeOutline, personCircleOutline, settingsOutline, heartOutline, logOutOutline });
   }
-  // Funzione per rimuovere un anime dalla lista
-  removeFromFavorites(id: number, event: Event) {
-    // stopPropagation evita che il click sul cestino attivi anche il routerLink del dettaglio anime
-    event.stopPropagation();
-    
-    // Filtra l'array escludendo l'anime con l'id selezionato
-    this.favorites = this.favorites.filter(anime => anime.id !== id);
-    
-    console.log(`Anime con ID ${id} rimosso dai preferiti.`);
-    // Qui andrà la chiamata al tuo servizio/backend per aggiornare i dati reali
+
+  ionViewWillEnter() {
+    this.loadFavorites();
   }
+
+  // 1. Recupero dei preferiti
+  loadFavorites() {
+    this.isLoading.set(true);
+    this.http.get<any[]>('api/shows/favorites').subscribe({
+      next: (res) => {
+        this.favorites.set(res || []);
+        this.isLoading.set(false);
+      },
+      error: (err) => {
+        console.error('Errore nel recupero preferiti:', err);
+        this.isLoading.set(false);
+        this.showToast('Impossibile caricare i preferiti.', 'danger');
+      }
+    });
+  }
+
+  // 2. Rimozione dai preferiti
+  removeFromFavorites(showId: number) {
+    // Salviamo la lista vecchia in caso di errore di rete
+    const oldFavs = this.favorites();
+    
+    // Aggiornamento ottimistico: filtriamo via la card istantaneamente!
+    this.favorites.update(favs => favs.filter(anime => anime.ShowID !== showId));
+
+    // Invio la chiamata POST all'API
+    const payload = { showId: showId, isLiked: 0 };
+    this.http.post(`api/shows/${showId}/interact`, payload).subscribe({
+      next: () => {
+        this.showToast('Rimosso dai Preferiti', 'success');
+      },
+      error: (err) => {
+        console.error("Errore rimozione preferito:", err);
+        // ROLLBACK: Se la chiamata fallisce, rimettiamo la card al suo posto
+        this.favorites.set(oldFavs); 
+        this.showToast('Errore di connessione. Riprova.', 'danger');
+      }
+    });
+  }
+
+  // --- AZIONI NAVIGAZIONE CARD ---
+  openSeriesInfo(showId: number) {
+    this.router.navigate(['/shows', showId]);
+  }
+
+  playAnime(show: any) {
+    // Ricordati che l'evento (play) emette tutto l'oggetto, quindi estraiamo l'ID
+    const id = show.ShowID || show.id;
+    this.router.navigate(['/shows', id]);
+  }
+
+  // --- MENU PROFILO ---
   async openProfileMenu(ev: any) {
-    // Passiamo l'evento 'ev' così il popover sa di dover apparire vicino al tasto cliccato
     this.popover.event = ev;
     await this.popover.present();
   }
-  // Funzione chiamata dal (didDismiss)
-  onPopoverDismiss() {
-    console.log('Il menu profilo è stato chiuso');
-  }
-
-  // Azioni del menu profilo
-  openUserSettings() {
-    console.log('Apro le impostazioni...');
-    this.popover.dismiss();
-  }
-
-  openFavorites() {
-    console.log('Apro i preferiti...');
-    this.popover.dismiss();
-  }
-
- 
+  onPopoverDismiss() {}
+  openUserSettings() { this.popover.dismiss(); }
+  openFavorites() { this.popover.dismiss(); }
   
-
-  logout() {
-    console.log('Eseguo il logout...');
+  logout() { 
     this.popover.dismiss();
+    // Aggiungi qui la logica di pulizia localStorage se serve
   }
 
+  private async showToast(message: string, color: 'success' | 'danger') {
+    const toast = await this.toastCtrl.create({ message, duration: 2000, color, position: 'bottom' });
+    await toast.present();
+  }
 }

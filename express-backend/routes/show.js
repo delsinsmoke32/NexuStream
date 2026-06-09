@@ -1,10 +1,13 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 const showController = require('../controllers/showController');
+const userController = require('../controllers/userController');
 const auth = require("../middleware/auth");
 const authOptional = require("../middleware/authOptional");
 const { body, param } = require('express-validator');
 const seasonRoute = require("./season");
+
+router.get('/favorites', auth, userController.getFavorites);
 
 
 /**
@@ -120,6 +123,8 @@ router.post('/:showId/interact', auth, [
     param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido"),
     body('isLiked').isInt({ min: 0, max: 1 }).notEmpty().withMessage("Il like deve essere 0 o 1")
 ], showController.toggleShowLike);
+
+
 
 // Sotto-rotta per agganciare le stagioni correlati
 router.use('/:showId/seasons', seasonRoute);

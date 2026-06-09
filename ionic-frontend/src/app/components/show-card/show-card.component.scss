@@ -1,0 +1,162 @@
+:host {
+  display: block;
+}
+
+.show-card {
+  flex: 0 0 auto;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+  
+  /* Sfondo Grigio e Bordi Arrotondati sull'INTERA card */
+  background-color: var(--ion-color-secondary-tint, #242424); 
+  border-radius: 8px;
+  overflow: hidden; 
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
+
+  /* Effetto Zoom sull'intera card */
+  @media (hover: hover) {
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+    }
+    
+    &:hover .poster-container img { 
+      filter: brightness(0.5); 
+    }
+    
+    &:hover .play-overlay { 
+      opacity: 1 !important; 
+    }
+  }
+
+  .poster-container {
+    flex: 0 0 auto;
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+
+    img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transition: filter 0.3s ease;
+    }
+
+    .play-overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0; 
+      z-index: 5;
+      transition: opacity 0.3s ease;
+      
+      ion-icon {
+        font-size: 3.5rem;
+        color: #ffffff;
+        filter: drop-shadow(0 2px 8px rgba(0,0,0,0.8));
+        transition: color 0.2s ease, transform 0.2s ease; 
+
+        &:hover {
+          color: var(--ion-color-primary, #b22222); 
+          transform: scale(1.15);
+        }
+      }
+
+      @media (max-width: 768px) {
+        display: none !important;
+      }
+    }
+
+    /* BOTTONI IN ALTO A DESTRA (Elimina o Nascondi) */
+    .action-top-btn {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(18, 12, 12, 0.75);
+      border: 1px solid rgba(245, 245, 245, 0.2);
+      color: #ffffff;
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: all 0.2s ease;
+  
+      ion-icon { font-size: 1.2rem; }
+  
+      &:hover, &:active {
+        background: var(--ion-color-primary, #b22222);
+        color: #ffffff;
+        border-color: var(--ion-color-primary, #b22222);
+      }
+    }
+  }
+
+  /* RIGA INFORMAZIONI IN BASSO */
+  .card-info-bottom {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    width: 100%;
+    cursor: pointer;
+
+    ion-icon.info-btn {
+      font-size: 2rem !important; 
+      color: #aaaaaa !important;
+      transition: transform 0.2s ease, color 0.2s ease;
+      padding: 8px;
+      margin: -8px;
+
+      &:hover {
+        transform: scale(1.25); 
+        color: var(--ion-color-primary, #b22222) !important; 
+      }
+      &:active { transform: scale(0.85); }
+    }
+  }
+}
+
+/* ===================================
+   VARIANTI DI DIMENSIONE
+   =================================== */
+
+/* Formato Locandina Classica */
+.portrait {
+  width: 130px;
+  @media (min-width: 768px) { width: 160px; }
+
+  .poster-container {
+    aspect-ratio: 2 / 3;
+  }
+}
+
+/* Formato Banner Continua a guardare */
+.landscape {
+  width: 240px;
+  @media (min-width: 768px) { width: 300px; }
+
+  .poster-container {
+    aspect-ratio: 16 / 9;
+
+    .progress-bar-bg {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.2);
+      z-index: 2; 
+    }
+    .progress-bar-fill {
+      height: 100%;
+      background-color: var(--ion-color-primary, #b22222);
+    }
+  }
+}

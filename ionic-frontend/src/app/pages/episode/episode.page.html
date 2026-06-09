@@ -10,10 +10,7 @@
       
       <div class="main-video-section">
         
-        <div 
-          class="player-container" 
-          >
-          
+        <div class="player-container">
           <div class="video-wrapper">
             <video
               #videoPlayer
@@ -23,17 +20,9 @@
               playsinline
             ></video>
           </div>
-
-          <!--<
-          div id="screensaver-host" [style.display]="showScreensaver() ? 'block' : 'none'">
-            <app-metaballs-screensaver></app-metaballs-screensaver>
-          </div>
-          !-->
-          
         </div>
 
         <div class="episode-details">
-          
           <div class="title-row">
             <div>
               <h2 i18n="@@episode" class="ep-number">Episodio {{ episode().EpisodeNumber }}</h2>
@@ -85,7 +74,7 @@
             <div class="discussions-list">
               @for (disc of discussions(); track disc.DiscussionID) {
                 
-                <div class="discussion-card" [routerLink]="['/discussion', disc.DiscussionID]">
+                <div class="discussion-card" (click)="toggleDiscussion(disc.DiscussionID)">
                   <div class="disc-info">
                     <h3>{{ disc.Type | uppercase }} ZONE</h3>
                     <p i18n="@@expiration">Scadenza: {{ disc.CloseDate }} • {{ disc.forceClosed ? '(Chiusa)' : '(Aperta)' }}</p>
@@ -102,13 +91,28 @@
                       </ion-button>
                     }
                     
-                    <ion-icon name="chevron-forward-outline" class="nav-arrow"></ion-icon>
+                    <ion-icon 
+                      [name]="expandedDiscussionId() === disc.DiscussionID ? 'chevron-down-outline' : 'chevron-forward-outline'" 
+                      class="nav-arrow">
+                    </ion-icon>
                   </div>
                 </div>
-                
+
+                @if (expandedDiscussionId() === disc.DiscussionID) {
+                  <div class="discussion-dropdown-content">
+                    <app-comments 
+                      [showId]="showId()" 
+                      [seasonId]="seasonId()" 
+                      [episodeId]="episodeId()" 
+                      [discussionId]="disc.DiscussionID" 
+                      [isMod]="isMod()">
+                    </app-comments>
+                  </div>
+                }
+
               }
             </div>
-          }
+          }   
         </div>
 
       </div> 
@@ -118,14 +122,13 @@
         <h2 i18n="@@sameSeason" class="sidebar-title">Nella stessa stagione</h2>
 
         <div class="playlist-container">
-          
           @for (ep of seasonEpisodes(); track ep.EpisodeID) {
-            
             <ion-card 
               class="sidebar-ep-card" 
               [class.active]="ep.EpisodeID.toString() === episodeId()"
               [routerLink]="['/episode', ep.EpisodeID]"
               [queryParams]="{ showId: showId(), seasonId: seasonId() }"> 
+              
               <ion-card-content>
                 <div class="ep-num">{{ ep.EpisodeNumber }}</div>
                 <div class="ep-info">
@@ -135,12 +138,11 @@
               </ion-card-content>
 
             </ion-card>
-            
           }
-
         </div>
       </div>
 
     </div>
+    
   }
 </ion-content>

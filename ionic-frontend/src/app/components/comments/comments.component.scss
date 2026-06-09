@@ -1,16 +1,23 @@
+/* ===================================
+   LAYOUT BASE COMMENTI
+   =================================== */
 .comments-wrapper {
-  margin-top: 40px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding-top: 20px;
+  margin-top: 10px; 
+  padding-top: 10px;
+}
 
-  h3 {
-    color: white;
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
+.replying-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(var(--ion-color-primary-rgb, 178, 34, 34), 0.15);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  border-left: 3px solid var(--ion-color-primary, #b22222);
+
+  .reply-text { font-size: 0.85rem; color: #fff; }
+  .cancel-reply { font-size: 1.2rem; color: var(--ion-color-primary, #b22222); cursor: pointer; }
 }
 
 .new-comment-box {
@@ -21,35 +28,69 @@
   box-shadow: inset 0px 2px 5px rgba(0,0,0,0.5);
 
   .post-btn {
-    --color: var(--ion-color-primary);
+    --color: var(--ion-color-primary, #b22222);
     font-weight: bold;
     float: right;
   }
 }
 
+.no-comments-placeholder {
+  text-align: center;
+  color: #888;
+  padding: 20px;
+  font-style: italic;
+}
+
+/* ===================================
+   SINGOLO COMMENTO E AZIONI
+   =================================== */
 .comment-item {
   display: flex;
   gap: 15px;
   margin-bottom: 25px;
+  transition: all 0.3s ease;
 
   ion-avatar {
     width: 40px;
     height: 40px;
-    border: 1px solid var(--ion-color-primary);
+    border: 1px solid var(--ion-color-primary, #b22222);
   }
 
   .comment-content {
     flex: 1;
+    
     .comment-header {
       display: flex;
-      gap: 10px;
-      align-items: baseline;
-      .username { color: var(--ion-color-primary-contrast); font-weight: bold; font-size: 0.9rem; }
-      .time { color: #666; font-size: 0.8rem; }
+      justify-content: space-between; 
+      align-items: flex-start;
+      width: 100%;
+      flex-wrap: wrap; 
+      
+      .user-info {
+        display: flex;
+        flex-direction: column;
+        
+        .username { color: var(--ion-color-primary-contrast, #ffffff); font-weight: 800; font-size: 1rem; }
+        .time { color: #888; font-size: 0.75rem; margin-top: 2px; }
+        
+        .is-reply-badge {
+          font-size: 0.7rem;
+          color: #aaaaaa;
+          margin-left: 8px;
+          font-weight: 500;
+          
+          ion-icon { 
+              vertical-align: middle; 
+              margin-right: 2px; 
+              font-size: 0.8rem;
+          }
+        }
+      }
     }
+    
     .text {
       color: #b3b3b3;
-      margin: 5px 0;
+      margin: 8px 0 10px 0;
       font-size: 0.95rem;
       line-height: 1.4;
     }
@@ -57,10 +98,189 @@
 }
 
 .comment-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; 
+  gap: 4px;
+  
   ion-button {
-    --color: #666;
+    --color: #888888;
     font-size: 0.75rem;
     margin: 0;
-    --padding-start: 0;
+    --padding-start: 4px;
+    --padding-end: 4px;
+    height: 30px;
+  }
+}
+
+/* ===================================
+   STILI DI MODERAZIONE
+   =================================== */
+.is-hidden { 
+  opacity: 0.6; 
+  border: 1px dashed var(--ion-color-warning, #ffc409); 
+  padding: 8px; 
+  border-radius: 8px; 
+  background: rgba(var(--ion-color-warning-rgb, 255, 196, 9), 0.05);
+}
+
+.is-approved { 
+  border-left: 3px solid var(--ion-color-success, #2dd36f); 
+  padding-left: 8px; 
+}
+
+.badge {
+  font-size: 0.65rem; 
+  padding: 2px 6px; 
+  border-radius: 4px; 
+  font-weight: 800; 
+  text-transform: uppercase;
+  margin-left: 4px;
+  
+  &.badge-approved { 
+    background: rgba(var(--ion-color-success-rgb, 45, 211, 111), 0.2); 
+    color: var(--ion-color-success, #2dd36f); 
+  }
+  &.badge-hidden { 
+    background: rgba(var(--ion-color-warning-rgb, 255, 196, 9), 0.2); 
+    color: var(--ion-color-warning, #ffc409); 
+  }
+}
+
+.mod-divider { 
+  width: 1px; 
+  height: 16px; 
+  background: rgba(255,255,255,0.2); 
+  margin: 0 8px; 
+  display: inline-block; 
+  vertical-align: middle; 
+}
+
+/* ===================================
+   THREAD DI RISPOSTE INDENTATE
+   =================================== */
+.replies-thread {
+  margin-left: 55px; /* Salta la larghezza dell'avatar del padre */
+  border-left: 2px solid rgba(255, 255, 255, 0.1); /* Linea guida per far capire che sono collegate */
+  padding-left: 15px;
+  margin-top: -10px; /* Le avvicina un po' al commento padre */
+  margin-bottom: 25px;
+}
+
+/* Modifiche per stringere un po' i commenti che sono risposte */
+.reply-item {
+  margin-bottom: 15px !important; 
+  
+  ion-avatar {
+      width: 32px !important; /* Avatar più piccolo per distinguere i figli */
+      height: 32px !important;
+  }
+  
+  .username {
+      font-size: 0.9rem !important; /* Nome più compatto */
+  }
+}
+
+/* ===================================
+   STILE MENZIONI E SCROLL
+   =================================== */
+.mention {
+  color: var(--ion-color-primary, #b22222);
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+  
+  &:hover {
+    opacity: 0.8;
+    text-decoration: underline;
+  }
+}
+
+/* Animazione di lampeggio quando clicchi una menzione */
+.highlight-pulse {
+  animation: pulseBg 2s ease-out;
+  border-radius: 8px;
+}
+
+@keyframes pulseBg {
+  0%   { background-color: transparent; }
+  10%  { background-color: rgba(var(--ion-color-primary-rgb, 178, 34, 34), 0.4); }
+  100% { background-color: transparent; }
+}
+
+/* ===================================
+   FLAIRS UTENTI SPECIALI (BADGE)
+   =================================== */
+.roles-indicator-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  /* Rimosso il border-top per non "tagliare" il commento a metà, 
+     e aggiunto un piccolo margine inferiore per distanziare i bottoni dei like */
+  margin-bottom: 8px; 
+}
+
+.badge {
+  display: inline-flex;  /* 🚀 Fondamentale per allineare l'icona al testo */
+  align-items: center;
+  gap: 4px;
+  
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  ion-icon { font-size: 0.85rem; margin-bottom: 1px; }
+
+  &-admin { background: rgba(211, 47, 47, 0.15); color: #d32f2f; }
+  &-mod { background: rgba(var(--ion-color-primary-rgb, 178, 34, 34), 0.15); color: var(--ion-color-primary); }
+  &-cataloguer { background: rgba(0, 191, 255, 0.15); color: #00bfff; }
+}
+
+/* ===================================
+   LIVE PREVIEW E FORMATTAZIONE TESTO
+   =================================== */
+.live-preview-box {
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid var(--ion-color-medium);
+  padding: 8px 12px;
+  margin: 10px 10px 0 60px; /* Allineato sotto la textarea */
+  border-radius: 4px;
+
+  .preview-label {
+    font-size: 0.7rem;
+    color: #888;
+    text-transform: uppercase;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .preview-text {
+    margin: 0;
+    color: #ddd;
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+}
+
+/* Stili per il testo renderizzato (sia preview che commenti veri) */
+::ng-deep .text span, 
+::ng-deep .preview-text span {
+  strong {
+    font-weight: 800;
+    color: #ffffff; /* Il grassetto spicca di più */
+  }
+  
+  em {
+    font-style: italic;
+    color: #cccccc;
+  }
+  
+  del {
+    text-decoration: line-through;
+    opacity: 0.7;
   }
 }

@@ -19,7 +19,10 @@
                     [class.active]="avatar === selectedAvatar()"
                 >
                     <div class="smaller-sphere">
-                        <img [src]="avatar | backendUrl" alt="Avatar" />
+                        <img
+                            [src]="avatar | backendUrl: 'static'"
+                            alt="Avatar"
+                        />
                     </div>
                 </div>
             }

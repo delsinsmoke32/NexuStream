@@ -5,7 +5,9 @@
         <ion-item lines="none" class="custom-input">
             <ion-avatar slot="start">
                 <img
-                    [src]="'static/avatars/avatar-000.png' | backendUrl"
+                    [src]="
+                        'static/avatars/avatar-000.png' | backendUrl: 'static'
+                    "
                     alt="User"
                 />
             </ion-avatar>
@@ -23,7 +25,7 @@
         <div class="comment-item" *ngFor="let comment of comments">
             <ion-avatar>
                 <img
-                    [src]="comment.avatar | backendUrl"
+                    [src]="comment.avatar | backendUrl: 'static'"
                     [alt]="comment.username"
                 />
             </ion-avatar>

@@ -1,183 +1,265 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar class="show-toolbar">
-    <ion-buttons slot="start">
-      <ion-menu-button class="btn-icon-red"></ion-menu-button>
-    </ion-buttons>
+    <ion-toolbar class="show-toolbar">
+        <ion-buttons slot="start">
+            <ion-menu-button class="btn-icon-red"></ion-menu-button>
+        </ion-buttons>
 
-    <ion-title routerLink="/home" color="primary" class="brand-title">NEXUSTREAM</ion-title>
+        <ion-title routerLink="/home" color="primary" class="brand-title"
+            >NEXUSTREAM</ion-title
+        >
 
-    <ion-buttons slot="end">
-      
-      @if (!isLoggedIn()) {
-        <ion-button class="auth-link" routerLink="/login">Accedi</ion-button>
-        <ion-button class="auth-link" routerLink="/register">Registrati</ion-button>
-      }
+        <ion-buttons slot="end">
+            @if (!isLoggedIn()) {
+            <ion-button class="auth-link" routerLink="/login"
+                >Accedi</ion-button
+            >
+            <ion-button class="auth-link" routerLink="/register"
+                >Registrati</ion-button
+            >
+            }
 
-      <ion-button class="btn-icon-red" routerLink="/search">
-        <ion-icon slot="icon-only" name="search-outline"></ion-icon>
-      </ion-button>
+            <ion-button class="btn-icon-red" routerLink="/search">
+                <ion-icon slot="icon-only" name="search-outline"></ion-icon>
+            </ion-button>
 
-      @if (isLoggedIn()) {
-        <ion-button class="btn-icon-red" (click)="openProfileMenu($event)">
-          <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
-        </ion-button>
-      }
-      
-    </ion-buttons>
-  </ion-toolbar>
+            @if (isLoggedIn()) {
+            <ion-button class="btn-icon-red" (click)="openProfileMenu($event)">
+                <ion-icon
+                    slot="icon-only"
+                    name="person-circle-outline"
+                ></ion-icon>
+            </ion-button>
+            }
+        </ion-buttons>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  
-  @if (isLoading()) {
+    @if (isLoading()) {
     <div class="loading-state">
-      <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
     </div>
-  } @else {
-    
-    @if (heroList().length > 0) {
-      <div class="hero-container">
+    } @else { @if (heroList().length > 0) {
+    <div class="hero-container">
         @for (hero of heroList(); track hero.ShowID; let i = $index) {
-          <div class="hero-slide" [class.active]="i === activeHeroIndex()">
-            <img [src]="hero.BannerURI ? (hero.BannerURI | backendUrl) : 'assets/placeholder-banner.png'" [alt]="hero.Title" />
+        <div class="hero-slide" [class.active]="i === activeHeroIndex()">
+            <img
+                [src]="hero.BannerURI ? (hero.BannerURI | backendUrl: 'static') : 'assets/placeholder-banner.png'"
+                [alt]="hero.Title"
+            />
             <div class="hero-gradient"></div>
-            
+
             <div class="hero-content">
-              <h1 class="hero-title">{{ hero.Title }}</h1>
-              <p class="hero-description">{{ hero.Description }}</p>
-              
-              <div class="hero-actions">
-                <button class="btn-hero-play" (click)="playAnime(hero.ShowID)">
-                  <ion-icon name="play"></ion-icon> Riproduci
-                </button>
-                <button class="btn-hero-info" (click)="openSeriesInfo(hero.ShowID)">
-                  <ion-icon name="information-circle-outline"></ion-icon> Altre Info
-                </button>
-              </div>
+                <h1 class="hero-title">{{ hero.Title }}</h1>
+                <p class="hero-description">{{ hero.Description }}</p>
+
+                <div class="hero-actions">
+                    <button
+                        class="btn-hero-play"
+                        (click)="playAnime(hero.ShowID)"
+                    >
+                        <ion-icon name="play"></ion-icon> Riproduci
+                    </button>
+                    <button
+                        class="btn-hero-info"
+                        (click)="openSeriesInfo(hero.ShowID)"
+                    >
+                        <ion-icon name="information-circle-outline"></ion-icon>
+                        Altre Info
+                    </button>
+                </div>
             </div>
-          </div>
+        </div>
         }
-      </div>
+    </div>
     }
 
     <div class="main-container" [class.has-hero]="heroList().length > 0">
-      
-      @if (continueWatching().length > 0) {
+        @if (continueWatching().length > 0) {
         <div class="category-row">
-          <h2 class="row-title">Continua a guardare</h2>
-          
-          <div class="carousel-wrapper">
-            <button class="scroll-arrow left" (click)="scrollRow('continueWatching', 'left')">
-              <ion-icon name="chevron-back-outline"></ion-icon>
-            </button>
-            
-            <div class="horizontal-scroll" #continueWatchingScroll>
-              @for (cw of continueWatching(); track cw.EpisodeID) {
-                <div class="show-card landscape">
-                  <div class="poster-container" (click)="resumeEpisode(cw)">
-                    <img [src]="cw.BannerURI ? (cw.BannerURI | backendUrl) : 'assets/placeholder-banner.png'" [alt]="cw.ShowTitle" />
-                    <div class="progress-bar-bg">
-                      <div class="progress-bar-fill" [style.width]="(cw.Progress || 0) + '%'"></div>
-                    </div>
-                    <div class="play-overlay">
-                      <ion-icon name="play-circle"></ion-icon>
-                    </div>
-                  </div>
-                  <div class="card-info-bottom" (click)="openSeriesInfo(cw.ShowID, $event)">
-                    <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
-                  </div>
-                </div>
-              }
-            </div>
-            
-            <button class="scroll-arrow right" (click)="scrollRow('continueWatching', 'right')">
-              <ion-icon name="chevron-forward-outline"></ion-icon>
-            </button>
-          </div>
-        </div>
-      }
+            <h2 class="row-title">Continua a guardare</h2>
 
-      @if (mostViewed().length > 0) {
+            <div class="carousel-wrapper">
+                <button
+                    class="scroll-arrow left"
+                    (click)="scrollRow('continueWatching', 'left')"
+                >
+                    <ion-icon name="chevron-back-outline"></ion-icon>
+                </button>
+
+                <div class="horizontal-scroll" #continueWatchingScroll>
+                    @for (cw of continueWatching(); track cw.EpisodeID) {
+                    <div class="show-card landscape">
+                        <div
+                            class="poster-container"
+                            (click)="resumeEpisode(cw)"
+                        >
+                            <img
+                                [src]="cw.BannerURI ? (cw.BannerURI | backendUrl: 'static') : 'assets/placeholder-banner.png'"
+                                [alt]="cw.ShowTitle"
+                            />
+                            <div class="progress-bar-bg">
+                                <div
+                                    class="progress-bar-fill"
+                                    [style.width]="(cw.Progress || 0) + '%'"
+                                ></div>
+                            </div>
+                            <div class="play-overlay">
+                                <ion-icon name="play-circle"></ion-icon>
+                            </div>
+                        </div>
+                        <div
+                            class="card-info-bottom"
+                            (click)="openSeriesInfo(cw.ShowID, $event)"
+                        >
+                            <ion-icon
+                                name="information-circle-outline"
+                                class="info-btn"
+                            ></ion-icon>
+                        </div>
+                    </div>
+                    }
+                </div>
+
+                <button
+                    class="scroll-arrow right"
+                    (click)="scrollRow('continueWatching', 'right')"
+                >
+                    <ion-icon name="chevron-forward-outline"></ion-icon>
+                </button>
+            </div>
+        </div>
+        } @if (mostViewed().length > 0) {
         <div class="category-row">
-          <h2 class="row-title">I più visti questa settimana</h2>
-          
-          <div class="carousel-wrapper">
-            <button class="scroll-arrow left" (click)="scrollRow('mostViewed', 'left')">
-              <ion-icon name="chevron-back-outline"></ion-icon>
-            </button>
-            
-            <div class="horizontal-scroll" #mostViewedScroll>
-              @for (show of mostViewed(); track show.ShowID) {
-                <div class="show-card portrait">
-                  <div class="poster-container" (click)="playAnime(show.ShowID, $event)">
-                    <img [src]="show.ThumbnailURI ? (show.ThumbnailURI | backendUrl) : 'assets/placeholder-poster.png'" [alt]="show.Title" />
-                    <div class="play-overlay">
-                      <ion-icon name="play-circle"></ion-icon>
+            <h2 class="row-title">I più visti questa settimana</h2>
+
+            <div class="carousel-wrapper">
+                <button
+                    class="scroll-arrow left"
+                    (click)="scrollRow('mostViewed', 'left')"
+                >
+                    <ion-icon name="chevron-back-outline"></ion-icon>
+                </button>
+
+                <div class="horizontal-scroll" #mostViewedScroll>
+                    @for (show of mostViewed(); track show.ShowID) {
+                    <div class="show-card portrait">
+                        <div
+                            class="poster-container"
+                            (click)="playAnime(show.ShowID, $event)"
+                        >
+                            <img
+                                [src]="show.ThumbnailURI ? (show.ThumbnailURI | backendUrl: 'static') : 'assets/placeholder-poster.png'"
+                                [alt]="show.Title"
+                            />
+                            <div class="play-overlay">
+                                <ion-icon name="play-circle"></ion-icon>
+                            </div>
+                        </div>
+                        <div
+                            class="card-info-bottom"
+                            (click)="openSeriesInfo(show.ShowID, $event)"
+                        >
+                            <ion-icon
+                                name="information-circle-outline"
+                                class="info-btn"
+                            ></ion-icon>
+                        </div>
                     </div>
-                  </div>
-                  <div class="card-info-bottom" (click)="openSeriesInfo(show.ShowID, $event)">
-                    <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
-                  </div>
+                    }
                 </div>
-              }
+
+                <button
+                    class="scroll-arrow right"
+                    (click)="scrollRow('mostViewed', 'right')"
+                >
+                    <ion-icon name="chevron-forward-outline"></ion-icon>
+                </button>
             </div>
-
-            <button class="scroll-arrow right" (click)="scrollRow('mostViewed', 'right')">
-              <ion-icon name="chevron-forward-outline"></ion-icon>
-            </button>
-          </div>
         </div>
-      }
-
-      @if (mostLiked().length > 0) {
+        } @if (mostLiked().length > 0) {
         <div class="category-row">
-          <h2 class="row-title">I più amati dagli utenti</h2>
-          
-          <div class="carousel-wrapper">
-            <button class="scroll-arrow left" (click)="scrollRow('mostLiked', 'left')">
-              <ion-icon name="chevron-back-outline"></ion-icon>
-            </button>
-            
-            <div class="horizontal-scroll" #mostLikedScroll>
-              @for (show of mostLiked(); track show.ShowID) {
-                <div class="show-card portrait">
-                  <div class="poster-container" (click)="playAnime(show.ShowID, $event)">
-                    <img [src]="show.ThumbnailURI ? (show.ThumbnailURI | backendUrl) : 'assets/placeholder-poster.png'" [alt]="show.Title" />
-                    <div class="play-overlay">
-                      <ion-icon name="play-circle"></ion-icon>
+            <h2 class="row-title">I più amati dagli utenti</h2>
+
+            <div class="carousel-wrapper">
+                <button
+                    class="scroll-arrow left"
+                    (click)="scrollRow('mostLiked', 'left')"
+                >
+                    <ion-icon name="chevron-back-outline"></ion-icon>
+                </button>
+
+                <div class="horizontal-scroll" #mostLikedScroll>
+                    @for (show of mostLiked(); track show.ShowID) {
+                    <div class="show-card portrait">
+                        <div
+                            class="poster-container"
+                            (click)="playAnime(show.ShowID, $event)"
+                        >
+                            <img
+                                [src]="show.ThumbnailURI ? (show.ThumbnailURI | backendUrl: 'static') : 'assets/placeholder-poster.png'"
+                                [alt]="show.Title"
+                            />
+                            <div class="play-overlay">
+                                <ion-icon name="play-circle"></ion-icon>
+                            </div>
+                        </div>
+                        <div
+                            class="card-info-bottom"
+                            (click)="openSeriesInfo(show.ShowID, $event)"
+                        >
+                            <ion-icon
+                                name="information-circle-outline"
+                                class="info-btn"
+                            ></ion-icon>
+                        </div>
                     </div>
-                  </div>
-                  <div class="card-info-bottom" (click)="openSeriesInfo(show.ShowID, $event)">
-                    <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
-                  </div>
+                    }
                 </div>
-              }
+
+                <button
+                    class="scroll-arrow right"
+                    (click)="scrollRow('mostLiked', 'right')"
+                >
+                    <ion-icon name="chevron-forward-outline"></ion-icon>
+                </button>
             </div>
-
-            <button class="scroll-arrow right" (click)="scrollRow('mostLiked', 'right')">
-              <ion-icon name="chevron-forward-outline"></ion-icon>
-            </button>
-          </div>
         </div>
-      }
-
+        }
     </div>
-  }
+    }
 
-  <ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
-    <ng-template>
-      <ion-list class="dark-popover">
-        <ion-item button routerLink="/settings" (click)="openUserSettings()" lines="full">
-          <ion-icon slot="start" name="settings-outline"></ion-icon> Impostazioni
-        </ion-item>
-        <ion-item button routerLink="/favourites" (click)="openFavorites()" lines="full">
-          <ion-icon slot="start" name="heart-outline"></ion-icon> I miei preferiti
-        </ion-item>
-        <ion-item button (click)="logout()" lines="none" class="logout-item">
-          <ion-icon slot="start" name="log-out-outline"></ion-icon> Logout
-        </ion-item>
-      </ion-list>
-    </ng-template>
-  </ion-popover>
-
+    <ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
+        <ng-template>
+            <ion-list class="dark-popover">
+                <ion-item
+                    button
+                    routerLink="/settings"
+                    (click)="openUserSettings()"
+                    lines="full"
+                >
+                    <ion-icon slot="start" name="settings-outline"></ion-icon>
+                    Impostazioni
+                </ion-item>
+                <ion-item
+                    button
+                    routerLink="/favourites"
+                    (click)="openFavorites()"
+                    lines="full"
+                >
+                    <ion-icon slot="start" name="heart-outline"></ion-icon> I
+                    miei preferiti
+                </ion-item>
+                <ion-item
+                    button
+                    (click)="logout()"
+                    lines="none"
+                    class="logout-item"
+                >
+                    <ion-icon slot="start" name="log-out-outline"></ion-icon>
+                    Logout
+                </ion-item>
+            </ion-list>
+        </ng-template>
+    </ion-popover>
 </ion-content>

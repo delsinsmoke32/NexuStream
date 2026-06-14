@@ -1,33 +1,47 @@
 <div class="episode-card" (click)="onPlay($event)">
-  <div class="thumb-container">
-    <img [src]="episode.ThumbnailURI ? (episode.ThumbnailURI | backendUrl) : 'assets/placeholder-episode.png'" [alt]="episode.Title">
-    
-    @if (episode.Progress > 0 && episode.Progress < 100) {
-      <div class="progress-bar-bg">
-        <div class="progress-bar-fill" [style.width]="episode.Progress + '%'"></div>
-      </div>
-    } @else if (episode.Progress === 100) {
-      <div class="progress-bar-bg">
-        <div class="progress-bar-fill completed"></div>
-      </div>
-    }
-    
-    <div class="play-overlay">
-      <ion-icon name="play-circle"></ion-icon>
-    </div>
-    
-    <span class="duration-badge">{{ episode.Duration / 60 }} min</span>
-  </div>
+    <div class="thumb-container">
+        <img
+            [src]="
+                episode.ThumbnailURI
+                    ? (episode.ThumbnailURI | backendUrl: 'static')
+                    : 'assets/placeholder-episode.png'
+            "
+            [alt]="episode.Title"
+        />
 
-  <div class="ep-info">
-    <div>
-      <h4 class="ep-number">Episodio {{ episode.EpisodeNumber }}</h4>
-      <h3 class="ep-title">{{ episode.Title }}</h3>
-      <p class="ep-desc">{{ episode.Description }}</p>
+        @if (episode.Progress > 0 && episode.Progress < 100) {
+            <div class="progress-bar-bg">
+                <div
+                    class="progress-bar-fill"
+                    [style.width]="episode.Progress + '%'"
+                ></div>
+            </div>
+        } @else if (episode.Progress === 100) {
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill completed"></div>
+            </div>
+        }
+
+        <div class="play-overlay">
+            <ion-icon name="play-circle"></ion-icon>
+        </div>
+
+        <span class="duration-badge">{{ episode.Duration / 60 }} min</span>
     </div>
-    
-    <div class="ep-bottom-row">
-      <ion-icon name="information-circle-outline" class="info-btn" (click)="onInfo($event)"></ion-icon>
+
+    <div class="ep-info">
+        <div>
+            <h4 class="ep-number">Episodio {{ episode.EpisodeNumber }}</h4>
+            <h3 class="ep-title">{{ episode.Title }}</h3>
+            <p class="ep-desc">{{ episode.Description }}</p>
+        </div>
+
+        <div class="ep-bottom-row">
+            <ion-icon
+                name="information-circle-outline"
+                class="info-btn"
+                (click)="onInfo($event)"
+            ></ion-icon>
+        </div>
     </div>
-  </div>
 </div>

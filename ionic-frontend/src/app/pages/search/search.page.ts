@@ -1,4 +1,5 @@
-import { Component, ViewChild, OnInit, signal, inject } from '@angular/core';
+import { Component, ViewChild, OnInit, signal, inject, OnDestroy } from '@angular/core';
+import { ViewWillEnter } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
@@ -19,6 +20,7 @@ import {
   IonSearchbar, IonButton, IonButtons, IonList, IonItem,
   IonPopover, IonIcon, IonChip, IonLabel, IonSpinner
 } from '@ionic/angular/standalone';
+import { AlertController, ToastController } from '@ionic/angular';
 
 // Pipe per le immagini dal backend
 import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
@@ -36,18 +38,22 @@ import { ShowCardComponent } from '@app/components/show-card/show-card.component
     IonPopover, IonList, IonItem, IonChip, IonLabel, IonSpinner, ShowCardComponent
   ],
 })
-export class SearchPage implements OnInit {
+export class SearchPage implements ViewWillEnter {
   @ViewChild('profilePopover') popover: any;
   
   private http = inject(HttpClient);
   private router = inject(Router);
+  private alertCtrl = inject(AlertController);
+  private toastCtrl = inject(ToastController);
+  
 
   // Stati reattivi
   searchQuery = signal<string>('');
   selectedGenre = signal<number | null>(null);
   filteredResults = signal<any[]>([]);
   isLoading = signal<boolean>(false);
-  
+  isLoggedIn = signal<boolean>(false);
+
   // Lista dei generi dal database
   genres = signal<any[]>([]);
 
@@ -58,7 +64,9 @@ export class SearchPage implements OnInit {
     });
   }
 
-  ngOnInit() {
+  ionViewWillEnter() {
+    const token = localStorage.getItem('token');
+    this.isLoggedIn.set(!!token);
     this.loadGenres();
   }
 
@@ -133,5 +141,29 @@ export class SearchPage implements OnInit {
   onPopoverDismiss() {}
   openUserSettings() { this.popover.dismiss(); }
   openFavorites() { this.popover.dismiss(); }
-  logout() { this.popover.dismiss(); }
+  
+  async logout() {
+    const alert = await this.alertCtrl.create({
+      header: 'Disconnetti',
+      message: 'Sei sicuro di voler uscire da NexuStream?',
+      buttons: [
+        { text: 'Annulla', role: 'cancel' },
+        {
+          text: 'Esci',
+          role: 'destructive',
+          handler: async () => {
+            const toast = await this.toastCtrl.create({
+              message: 'Sessione chiusa',
+              duration: 2000,
+              color: 'dark'
+            });
+            await toast.present();
+            this.router.navigate(['/login']);
+          }
+        }
+      ]
+    });
+    await alert.present();
+    this.popover.dismiss();
+  }
 }

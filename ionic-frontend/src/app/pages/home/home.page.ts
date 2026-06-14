@@ -94,7 +94,7 @@ export class HomePage implements OnDestroy {
       error: (err) => {
         console.error('Errore caricamento Home:', err);
         this.isLoading.set(false);
-        this.showToast('Impossibile caricare i contenuti.', 'danger');
+        this.showToast($localize `:@@impossibleLoading:Impossibile caricare i contenuti.`, 'danger');
       }
     });
   }
@@ -196,16 +196,16 @@ export class HomePage implements OnDestroy {
 
   async logout() {
     const alert = await this.alertCtrl.create({
-      header: 'Disconnetti',
-      message: 'Sei sicuro di voler uscire da NexuStream?',
+      header: $localize `:@@disconnectHeader:Disconnetti`,
+      message:$localize `:@@disconnectMessage:Sei sicuro di voler uscire da NexuStream?`,
       buttons: [
-        { text: 'Annulla', role: 'cancel' },
+        { text: $localize `:@@cancelBtn:Annulla`, role: 'cancel' },
         {
-          text: 'Esci',
+          text: $localize `:@@logOut:Esci`,
           role: 'destructive',
           handler: async () => {
             const toast = await this.toastCtrl.create({
-              message: 'Sessione chiusa',
+              message: $localize `:@@closeSession:Sessione chiusa`,
               duration: 2000,
               color: 'dark'
             });

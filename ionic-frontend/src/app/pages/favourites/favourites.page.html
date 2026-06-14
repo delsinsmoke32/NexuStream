@@ -65,8 +65,13 @@
       <ion-item button (click)="openUserSettings()" i18n="@@settings">
         <ion-icon slot="start" name="settings-outline"></ion-icon> Impostazioni
       </ion-item>
-      <ion-item button (click)="logout()" i18n="@@logOut" class="logout-item">
-        <ion-icon slot="start" name="log-out-outline"></ion-icon> Esci
+      <ion-item button routerLink="/favourites" (click)="openFavorites()" i18n="@@favourites">
+        <ion-icon slot="start" name="heart-outline"></ion-icon>
+        I miei preferiti
+      </ion-item>
+      <ion-item button (click)="logout()" i18n="@@logOut">
+        <ion-icon slot="start" name="log-out-outline"></ion-icon>
+        Esci
       </ion-item>
     </ion-list>
   </ng-template>

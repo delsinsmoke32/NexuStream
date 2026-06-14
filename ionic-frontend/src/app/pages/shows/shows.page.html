@@ -32,10 +32,14 @@
               <div class="btn-text">
                 
                 <span class="action">
-                  {{ (resumeEpisode()?.progress > 5) ? 'Continua a guardare' : 'Inizia a guardare' }}
+                 @if ((resumeEpisode()?.progress || 0) > 5) {
+                  <ng-container i18n="@@continueWatching">Continua a guardare</ng-container>
+                } @else {
+                  <ng-container i18n="@@startWatching">Inizia a guardare</ng-container>
+                }
                 </span>
                 
-                <span class="ep-ref">
+                <span i18n="@@episode" class="ep-ref">
                   Episodio {{ resumeEpisode()?.EpisodeNumber || 1 }}
                 </span>
                 
@@ -53,7 +57,7 @@
         <div class="meta-sidebar">
           
           <div class="meta-block">
-            <span class="meta-label">Generi:</span>
+            <span i18n="@@genres" class="meta-label">Generi:</span>
             <div class="chip-container">
               @for (genre of show().genres; track $index) {
                 <span class="meta-chip">{{ genre }}</span>
@@ -71,7 +75,7 @@
           </div>
           
           <div class="meta-block">
-            <span class="meta-label">Sottotitoli:</span>
+            <span i18n="@@subtitles" class="meta-label">Sottotitoli:</span>
             <span class="meta-text uppercase-lang">
               {{ show().subs?.length > 0 ? show().subs.join(', ') : 'N/D' }}
             </span>
@@ -113,7 +117,7 @@
                 (info)="openEpisodeInfo($event)">
               </app-episode-card>
             } @empty {
-              <div class="no-episodes">Nessun episodio trovato per questa stagione.</div>
+              <div i18n="@@noEpisode" class="no-episodes">Nessun episodio trovato per questa stagione.</div>
             }
           }
         </div>

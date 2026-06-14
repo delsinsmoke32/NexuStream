@@ -34,6 +34,6 @@
   },
   "devDependencies": {
     "crypto": "^1.0.1",
-    "nodemailer": "^8.0.9"
+    "nodemailer": "^8.0.10"
   }
 }

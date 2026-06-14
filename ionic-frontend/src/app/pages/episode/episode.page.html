@@ -25,7 +25,7 @@
         <div class="episode-details">
           <div class="title-row">
             <div>
-              <h2 class="ep-number">Episodio {{ episode().EpisodeNumber }}</h2>
+              <h2 i18n="@@episode" class="ep-number">Episodio {{ episode().EpisodeNumber }}</h2>
               <h1 class="ep-title">{{ episode().Title }}</h1>
             </div>
             
@@ -40,7 +40,7 @@
           <div class="meta-row">
             <span class="meta-chip">{{ episode().Duration / 60 }} min</span>
             @if (episode().Streams) {
-              <span class="meta-chip views">{{ episode().Streams | number }} visualizzazioni</span>
+              <span i18n="@@views" class="meta-chip views">{{ episode().Streams | number }} visualizzazioni</span>
             }
             <div class="lang-info uppercase-lang">
               <strong>SUB:</strong> {{ episode().SubLanguages?.length > 0 ? episode().SubLanguages.join(', ') : 'N/D' }} 
@@ -56,10 +56,10 @@
         
         <div class="discussions-section">
           <div class="discussions-header">
-            <h2>Discussioni dell'episodio</h2>
+            <h2 i18n="@@discussion">Discussioni dell'episodio</h2>
             
             @if (isMod()) {
-              <ion-button fill="outline" class="btn-new-discussion" (click)="openDiscussionModal()">
+              <ion-button i18n="@@new" fill="outline" class="btn-new-discussion" (click)="openDiscussionModal()">
                 <ion-icon slot="start" name="chatbubbles-outline"></ion-icon>
                 Nuova
               </ion-button>
@@ -68,7 +68,7 @@
 
           @if (discussions().length === 0) {
             <div class="no-discussions">
-              <p>Nessuna discussione aperta per questo episodio.</p>
+              <p i18n="@@noDiscussion">Nessuna discussione aperta per questo episodio.</p>
             </div>
           } @else {
             <div class="discussions-list">
@@ -77,7 +77,7 @@
                 <div class="discussion-card" (click)="toggleDiscussion(disc.DiscussionID)">
                   <div class="disc-info">
                     <h3>{{ disc.Type | uppercase }} ZONE</h3>
-                    <p>Scadenza: {{ disc.CloseDate }} • {{ disc.forceClosed ? '(Chiusa)' : '(Aperta)' }}</p>
+                    <p i18n="@@expiration">Scadenza: {{ disc.CloseDate }} • {{ disc.forceClosed ? '(Chiusa)' : '(Aperta)' }}</p>
                   </div>
                   
                   <div class="disc-actions">
@@ -117,8 +117,9 @@
 
       </div> 
     
-      <div class="episode-sidebar">
-        <h2 class="sidebar-title">Nella stessa stagione</h2>
+
+     <div class="episode-sidebar">
+        <h2 i18n="@@sameSeason" class="sidebar-title">Nella stessa stagione</h2>
 
         <div class="playlist-container">
           @for (ep of seasonEpisodes(); track ep.EpisodeID) {

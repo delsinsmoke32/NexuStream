@@ -171,7 +171,7 @@ export class ShowsPage {
     const userToken = localStorage.getItem('token'); 
     
     if (!userToken) {
-      this.showToast('Devi accedere per aggiungere ai preferiti!', 'danger');
+      this.showToast($localize `:@@loginRequiredFavouritesToast:Devi accedere per aggiungere ai preferiti!`, 'danger');
       return; 
     }
 
@@ -184,12 +184,12 @@ export class ShowsPage {
     
     this.http.post(`api/shows/${this.showId()}/interact`, payload).subscribe({
       next: () => {
-        this.showToast(newStatus ? 'Aggiunto ai Preferiti' : 'Rimosso dai Preferiti', 'success');
+        this.showToast(newStatus ? $localize `:@@addedToFavouritesToast:Aggiunto ai Preferiti` : $localize `:@@removedFromFavouritesToast:Rimosso dai Preferiti`, 'success');
       },
       error: (err) => {
         console.error("Errore salvataggio preferito: ", err);
         this.show.update(s => ({ ...s, isFavorited: wasFavorited }));
-        this.showToast('Errore di connessione. Riprova.', 'danger');
+        this.showToast($localize `:@@connessionErr:Errore di connessione. Riprova.`, 'danger');
       }
     });
   }

@@ -6,6 +6,22 @@
 
         <base href="/" />
 
+        <script>
+         (function() {
+           var saved = localStorage.getItem('user_language_preferences');
+           if (saved) {
+             var targetLang = JSON.parse(saved).appLanguage;
+             var currentLang = window.location.pathname.split('/')[1];
+        
+            // Se l'utente è entrato nella lingua sbagliata, blocca tutto e devia subito l'URL
+             if (currentLang && (currentLang === 'it' || currentLang === 'en') && currentLang !== targetLang) {
+              var newPath = window.location.pathname.replace('/' + currentLang + '/', '/' + targetLang + '/');
+              window.location.href = window.location.origin + newPath + window.location.search;
+             }
+           }
+         })();
+        </script>
+
         <meta name="color-scheme" content="light dark" />
         <meta
             name="viewport"

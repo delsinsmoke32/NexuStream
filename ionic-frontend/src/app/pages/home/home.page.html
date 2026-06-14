@@ -9,8 +9,8 @@
     <ion-buttons slot="end">
       
       @if (!isLoggedIn()) {
-        <ion-button class="auth-link" routerLink="/login">Accedi</ion-button>
-        <ion-button class="auth-link" routerLink="/register">Registrati</ion-button>
+        <ion-button i18n="@@logIn" class="auth-link" routerLink="/login">Accedi</ion-button>
+        <ion-button i18n="@@register" class="auth-link" routerLink="/register">Registrati</ion-button>
       }
 
       <ion-button class="btn-icon-red" routerLink="/search">
@@ -47,10 +47,10 @@
               <p class="hero-description">{{ hero.Description }}</p>
               
               <div class="hero-actions">
-                <button class="btn-hero-play" (click)="playAnime(hero.ShowID)">
+                <button i18n="@@play" class="btn-hero-play" (click)="playAnime(hero.ShowID)">
                   <ion-icon name="play"></ion-icon> Riproduci
                 </button>
-                <button class="btn-hero-info" (click)="openSeriesInfo(hero.ShowID)">
+                <button i18n="@@otherInfos" class="btn-hero-info" (click)="openSeriesInfo(hero.ShowID)">
                   <ion-icon name="information-circle-outline"></ion-icon> Altre Info
                 </button>
               </div>
@@ -64,7 +64,7 @@
       
       @if (continueWatching().length > 0) {
         <div class="category-row">
-          <h2 class="row-title">Continua a guardare</h2>
+          <h2 i18n="@@continueWatching" class="row-title">Continua a guardare</h2>
           
           <div class="carousel-wrapper">
             <button class="scroll-arrow left" (click)="scrollRow('continueWatching', 'left')">
@@ -93,7 +93,7 @@
 
       @if (mostViewed().length > 0) {
         <div class="category-row">
-          <h2 class="row-title">I più visti questa settimana</h2>
+          <h2 i18n="@@mostViewed" class="row-title">I più visti questa settimana</h2>
           
           <div class="carousel-wrapper">
             <button class="scroll-arrow left" (click)="scrollRow('mostViewed', 'left')">
@@ -120,7 +120,7 @@
 
       @if (mostLiked().length > 0) {
         <div class="category-row">
-          <h2 class="row-title">I più amati dagli utenti</h2>
+          <h2 i18n="@@mostLiked" class="row-title">I più amati dagli utenti</h2>
           
           <div class="carousel-wrapper">
             <button class="scroll-arrow left" (click)="scrollRow('mostLiked', 'left')">
@@ -151,14 +151,17 @@
   <ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
     <ng-template>
       <ion-list class="dark-popover">
-        <ion-item button routerLink="/settings" (click)="openUserSettings()" lines="full">
-          <ion-icon slot="start" name="settings-outline"></ion-icon> Impostazioni
+        <ion-item i18n="@@settings" button routerLink="/settings" (click)="openUserSettings()" lines="full">
+          <ion-icon color="danger" slot="start" name="settings-outline"></ion-icon> 
+          Impostazioni
         </ion-item>
-        <ion-item button routerLink="/favourites" (click)="openFavorites()" lines="full">
-          <ion-icon slot="start" name="heart-outline"></ion-icon> I miei preferiti
+        <ion-item i18n="@@favourites" button routerLink="/favourites" (click)="openFavorites()" lines="full">
+          <ion-icon color="danger" slot="start" name="heart-outline"></ion-icon> 
+          I miei preferiti
         </ion-item>
-        <ion-item button (click)="logout()" lines="none" class="logout-item">
-          <ion-icon slot="start" name="log-out-outline"></ion-icon> Logout
+        <ion-item i18n="@@logOut" button (click)="logout()" lines="none" class="logout-item">
+          <ion-icon color="danger" slot="start" name="log-out-outline"></ion-icon> 
+          Esci
         </ion-item>
       </ion-list>
     </ng-template>

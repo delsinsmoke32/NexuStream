@@ -12,6 +12,8 @@ import { CommentsComponent } from '@app/components/comments/comments.component';
 import { DiscussionModalComponent } from '@app/components/discussion-modal/discussion-modal.component';
 import { jwtDecodeHelper } from '@app/guards/mod-guard';
 import videojs from 'video.js';
+//import 'videojs-contrib-quality-levels';
+//import 'videojs-hls-quality-selector';
 
 @Component({
     selector: 'app-episode',
@@ -178,6 +180,10 @@ export class EpisodePage implements OnInit, OnDestroy {
                     // 🚀 FORZATURA RESET: Se è un episodio nuovo senza progressi, parti da 0!
                     this.player.currentTime(0); 
                 }
+                //this.applyLanguagePreferences(player);
+                //this.player.hlsQualitySelector({
+                //  displayCurrentQuality: true,
+                //})
             });
 
             this.player.on('pause', () => {
@@ -189,6 +195,54 @@ export class EpisodePage implements OnInit, OnDestroy {
             });
         });
     }
+
+    /* Recupera le preferenze salvate o restituisce un oggetto di default
+getLanguagePreferences() {
+  const saved = localStorage.getItem('user_language_preferences');
+  if (saved) {
+    return JSON.parse(saved);
+  }
+  // Fallback se l'utente non ha mai aperto i settings
+  return { appLanguage: 'it', defaultAudio: 'ja', defaultSubtitles: 'it' };
+}
+
+// Configura le tracce del player in base alle preferenze
+applyLanguagePreferences(player: any) {
+  const prefs = this.getLanguagePreferences();
+
+  // --- 1. GESTIONE TRACCIA AUDIO ---
+  // Recuperiamo tutte le tracce audio disponibili nel file video
+  const audioTracks = player.audioTracks(); 
+  
+  if (audioTracks && audioTracks.length > 0) {
+    for (let i = 0; i < audioTracks.length; i++) {
+      // Se la traccia corrisponde alla preferenza (es. 'ja' o 'it')
+      if (audioTracks[i].language === prefs.defaultAudio) {
+        audioTracks[i].enabled = true; // Attiva questa traccia
+      } else {
+        audioTracks[i].enabled = false; // Disattiva le altre
+      }
+    }
+  }
+
+  // --- 2. GESTIONE SOTTOTITOLI (SUB) ---
+  const textTracks = player.textTracks();
+
+  if (textTracks && textTracks.length > 0) {
+    for (let i = 0; i < textTracks.length; i++) {
+      // Controlliamo se l'utente ha disattivato i sottotitoli nei settings
+      if (prefs.defaultSubtitles === 'off') {
+        textTracks[i].mode = 'disabled';
+      } 
+      // Altrimenti attiviamo solo la lingua scelta (es. 'it')
+      else if (textTracks[i].language === prefs.defaultSubtitles) {
+        textTracks[i].mode = 'showing'; // Mostra a schermo
+      } else {
+        textTracks[i].mode = 'disabled'; // Nascondi gli altri
+      }
+    }
+  }
+} */
 
     saveProgress(isCompleted: number, immediate: boolean = false) {
         // 🚀 1. Leggiamo il tempo SUBITO, prima di qualsiasi timeout!
@@ -233,7 +287,7 @@ export class EpisodePage implements OnInit, OnDestroy {
 
         const userToken = localStorage.getItem('token'); 
         if (!userToken) {
-            this.showToast('Devi accedere per mettere Mi Piace!', 'danger');
+            this.showToast($localize `:@@logInToLike:Devi accedere per mettere Mi Piace!`, 'danger');
             return; 
         }
 
@@ -275,7 +329,7 @@ export class EpisodePage implements OnInit, OnDestroy {
                         isLiked: wasLiked,
                         userInteraction: ep.userInteraction ? { ...ep.userInteraction, isLiked: wasLiked } : undefined
                     }));
-                    this.showToast('Errore di connessione.', 'danger');
+                    this.showToast($localize `:@@connessionErr:Errore di connessione.`, 'danger');
                 }
             });
     }
@@ -315,23 +369,26 @@ export class EpisodePage implements OnInit, OnDestroy {
         event.preventDefault();
 
         const alert = await this.alertCtrl.create({
-            header: 'Conferma Eliminazione',
-            message: 'Sei sicuro di voler eliminare questa discussione? L\'azione è irreversibile.',
-            buttons: [
-                { text: 'Annulla', role: 'cancel' },
-                { 
-                  text: 'Elimina', 
-                  role: 'destructive',
-                  handler: () => {
-                      this.http.delete(`api/mod/discussions/${discussionId}`).subscribe({
-                          next: () => this.loadDiscussions(this.showId(), this.seasonId(), this.episodeId()),
-                          error: (err) => console.error("Errore eliminazione:", err)
-                      });
-                  }
-                }
-            ]
-        });
-        await alert.present();
+         header: $localize `:@@deleteDiscussionHeader:Conferma Eliminazione`,
+         message: $localize `:@@deleteDiscussionMessage:Sei sicuro di voler eliminare questa discussione? L'azione è irreversibile.`,
+         buttons: [
+           { 
+             text: $localize `:@@cancelBtn:Annulla`, 
+             role: 'cancel' 
+           },
+           { 
+             text: $localize `:@@deleteBtn:Elimina`, 
+             role: 'destructive',
+             handler: () => {
+               this.http.delete(`api/mod/discussions/${discussionId}`).subscribe({
+                 next: () => this.loadDiscussions(this.showId(), this.seasonId(), this.episodeId()),
+                 error: (err) => console.error("Errore eliminazione:", err)
+                });
+             }
+           }
+         ]
+       });
+       await alert.present();
     }
 
     toggleDiscussion(discussionId: string) {

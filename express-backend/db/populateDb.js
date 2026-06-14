@@ -20,17 +20,17 @@ const populateDb = async () => {
             console.error(err);
         }
 
-        // 2. Inseriamo gli utenti (Tabella: Users) con i path in '/static/avatars/'
+        // 2. Inseriamo gli utenti (Tabella: Users) con i path in 'avatars/'
         const users = [
-            { email: 'admin@stream.it', pass: 'admin123', user: 'SuperAdmin', mod: 1, cat: 1, adm: 1, audio: 'jp', text: 'it', app: 'it', pic: '/static/avatars/avatar-000.png', canComment: 1 },
-            { email: 'marco@email.com', pass: 'marco888', user: 'MarcoRossi', mod: 0, cat: 0, adm: 0, audio: 'it', text: 'it', app: 'it', pic: '/static/avatars/avatar-001.png', canComment: 1 },
-            { email: 'gino@email.com', pass: 'gino9999', user: 'GinoRossi', mod: 1, cat: 0, adm: 0, audio: 'jp', text: 'it', app: 'it', pic: '/static/avatars/avatar-001.png', canComment: 1 },
-            { email: 'guest@test.com', pass: 'guest999', user: 'GuestUser', mod: 0, cat: 1, adm: 0, audio: 'en', text: 'en', app: 'en', pic: '/static/avatars/avatar-002.png', canComment: 1 },
+            { email: 'admin@stream.it', pass: 'admin123', user: 'SuperAdmin', mod: 1, cat: 1, adm: 1, audio: 'jp', text: 'it', app: 'it', pic: 'avatars/avatar-000.png', canComment: 1 },
+            { email: 'marco@email.com', pass: 'marco888', user: 'MarcoRossi', mod: 0, cat: 0, adm: 0, audio: 'it', text: 'it', app: 'it', pic: 'avatars/avatar-001.png', canComment: 1 },
+            { email: 'gino@email.com', pass: 'gino9999', user: 'GinoRossi', mod: 1, cat: 0, adm: 0, audio: 'jp', text: 'it', app: 'it', pic: 'avatars/avatar-001.png', canComment: 1 },
+            { email: 'guest@test.com', pass: 'guest999', user: 'GuestUser', mod: 0, cat: 1, adm: 0, audio: 'en', text: 'en', app: 'en', pic: 'avatars/avatar-002.png', canComment: 1 },
             
             // Nuovi Utenti Aggiunti per popolare il Database
-            { email: 'luigi@anime.it', pass: 'luigi999', user: 'LuigiOtaku', mod: 0, cat: 0, adm: 0, audio: 'jp', text: 'it', app: 'it', pic: '/static/avatars/avatar-002.png', canComment: 1 },
-            { email: 'giulia@stream.it', pass: 'giulia22', user: 'GiuliaWeeb', mod: 0, cat: 0, adm: 0, audio: 'jp', text: 'it', app: 'it', pic: '/static/avatars/avatar-003.png', canComment: 1 },
-            { email: 'hater@web.com', pass: 'hater123', user: 'AnimeHater', mod: 0, cat: 0, adm: 0, audio: 'it', text: 'it', app: 'it', pic: '/static/avatars/avatar-000.png', canComment: 0 } // Utente Bannato
+            { email: 'luigi@anime.it', pass: 'luigi999', user: 'LuigiOtaku', mod: 0, cat: 0, adm: 0, audio: 'jp', text: 'it', app: 'it', pic: 'avatars/avatar-002.png', canComment: 1 },
+            { email: 'giulia@stream.it', pass: 'giulia22', user: 'GiuliaWeeb', mod: 0, cat: 0, adm: 0, audio: 'jp', text: 'it', app: 'it', pic: 'avatars/avatar-003.png', canComment: 1 },
+            { email: 'hater@web.com', pass: 'hater123', user: 'AnimeHater', mod: 0, cat: 0, adm: 0, audio: 'it', text: 'it', app: 'it', pic: 'avatars/avatar-000.png', canComment: 0 } // Utente Bannato
         ];
 
         console.log("Hash delle password in corso...");

@@ -32,8 +32,14 @@ import {
     ModalController,
     IonText,
     IonIcon,
+    IonAvatar,
 } from '@ionic/angular/standalone'
-import { HttpClient, HttpHeaders } from '@angular/common/http'
+import {
+    HttpClient,
+    HttpEvent,
+    HttpEventType,
+    HttpHeaders,
+} from '@angular/common/http'
 import { addIcons } from '@lib/ionicons'
 import { cameraOutline } from '@lib/ionicons/icons'
 
@@ -56,11 +62,13 @@ import { cameraOutline } from '@lib/ionicons/icons'
         IonInput,
         IonText,
         IonIcon,
+        IonAvatar,
     ],
 })
 export class PropicModalComponent implements OnInit {
     fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput')
 
+    imagePreview = signal<string | null>(null)
     // Using Angular Signals for optimized reactivity
     selectedFile = signal<File | null>(null)
     isUploading = signal<boolean>(false)
@@ -82,8 +90,16 @@ export class PropicModalComponent implements OnInit {
 
             // Aggiorna il valore nel form reattivo di Angular
             // this.propicForm.patchValue({ img: file })
-            this.propicForm.get('img')?.setValue('file_selected')
+            this.propicForm.get('img')?.setValue('file_selected') //dummy, maybe rimuovere
             // this.propicForm.get('img')?.updateValueAndValidity()
+            // --- LOGICA PER L'ANTEPRIMA ---
+            const reader = new FileReader()
+            reader.onload = () => {
+                // Il risultato è un URL in formato Base64 utilizzabile nel tag <img>
+                this.imagePreview.set(reader.result as string)
+            }
+            reader.readAsDataURL(file)
+            // ------------------------------
         }
     }
 
@@ -98,11 +114,10 @@ export class PropicModalComponent implements OnInit {
 
         this.isUploading.set(true)
         const formData = new FormData()
-        formData.append('bundle', this.propicForm.get('bundle')?.value)
+        formData.append('bundle', this.propicForm.get('bundle')?.value ?? '')
         formData.append('img', file, file.name)
         // console.log(formData, file, file.name)
         // const payload = this.propicForm.getRawValue()
-        console.log(formData)
 
         const endpoint = 'api/cataloguer/propic/add'
 
@@ -110,17 +125,29 @@ export class PropicModalComponent implements OnInit {
         this.http
             .post(endpoint, formData, {
                 headers: this.getAuthHeaders(),
+                reportProgress: true,
+                observe: 'events',
             })
             .subscribe({
-                next: (response: any) => {
-                    console.log('Upload success', response)
-                    this.selectedFile.set(null)
+                next: (event: HttpEvent<any>) => {
+                    if (event.type === HttpEventType.UploadProgress) {
+                        const percentDone = Math.round(
+                            (100 * event.loaded) / (event.total ?? 1)
+                        )
+                        console.log(`Dati caricati al ${percentDone}%`)
+                        // Qui puoi aggiornare un signal o una variabile di stato, es: this.uploadPercent.set(percentDone)
+                    } else if (event.type === HttpEventType.Response) {
+                        let response = event.body
+                        console.log('Upload success', response)
+                        this.selectedFile.set(null)
 
-                    // Resetta il form Angular
-                    this.propicForm.reset()
+                        // Resetta il form Angular
+                        this.propicForm.reset()
 
-                    // Resetta l'elemento HTML nativo per permettere di selezionare nuovamente lo stesso file
-                    this.fileInput().nativeElement.value = ''
+                        // Resetta l'elemento HTML nativo per permettere di selezionare nuovamente lo stesso file
+                        this.fileInput().nativeElement.value = ''
+                        this.imagePreview.set(null)
+                    }
                 },
                 error: (error: any) => {
                     console.error('Upload failed', error)

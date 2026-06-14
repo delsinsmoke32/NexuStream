@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { Component, OnInit, inject } from '@angular/core'
+import { Component, OnInit, inject, signal } from '@angular/core'
 import {
     FormControl,
     FormGroup,
@@ -24,8 +24,13 @@ import {
     IonToolbar,
     ToastController,
     IonText,
+    IonIcon,
+    ModalController,
 } from '@ionic/angular/standalone'
+import { addIcons } from 'ionicons'
 import { LanguageSwitcherComponent } from '@app/components/language-switcher/language-switcher.component'
+import { swapHorizontalOutline } from '@lib/ionicons/icons'
+import { AvatarPickerModalComponent } from '@app/components/avatar-picker-modal/avatar-picker-modal.component'
 
 @Component({
     selector: 'app-register',
@@ -51,12 +56,14 @@ import { LanguageSwitcherComponent } from '@app/components/language-switcher/lan
         IonInputPasswordToggle,
         IonText,
         LanguageSwitcherComponent,
+        IonIcon,
     ],
 })
 export class RegisterPage implements OnInit {
     private router = inject(Router)
     private toastController = inject(ToastController)
     private authService = inject(AuthService)
+    private modalCtrl = inject(ModalController)
 
     // Configurazione del Form Reattivo
     registerForm = new FormGroup({
@@ -76,9 +83,17 @@ export class RegisterPage implements OnInit {
             nonNullable: true,
             validators: [Validators.required],
         }),
+        // propic: new FormControl('', {
+        //     nonNullable: true,
+        //     validators: [Validators.required],
+        // }),
     })
 
-    constructor() {}
+    selected = signal('avatars/avatar-003.png')
+    constructor() {
+        addIcons({ swapHorizontalOutline })
+        // this.registerForm.patchValue({ propic: this.selected() })
+    }
 
     ngOnInit() {}
 
@@ -110,7 +125,7 @@ export class RegisterPage implements OnInit {
             audioLanguageId: 'it',
             textLanguageId: 'it',
             appLanguageId: 'it',
-            propicURI: '/static/avatars/avatar-000.png',
+            propicURI: this.selected(),
         }
 
         // 3. Invio della richiesta tramite AuthService
@@ -141,5 +156,24 @@ export class RegisterPage implements OnInit {
             color: color,
         })
         await toast.present()
+    }
+
+    async triggerImageSelection() {
+        console.log(this.selected())
+        const modal = await this.modalCtrl.create({
+            component: AvatarPickerModalComponent,
+            componentProps: { propic: this.selected() },
+        })
+        await modal.present()
+
+        const { data } = await modal.onDidDismiss()
+
+        console.log(data)
+        console.log(this.selected())
+        // Se l'utente ha selezionato un avatar, aggiorna il signal della pagina principale
+        if (data && data.selectedAvatar) {
+            this.selected.set(data.selectedAvatar)
+            // this.registerForm.patchValue({ propic: this.selected() })
+        }
     }
 }

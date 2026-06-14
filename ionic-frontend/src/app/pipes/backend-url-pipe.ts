@@ -5,7 +5,7 @@ import { environment } from '../../environments/environment'
     name: 'backendUrl',
 })
 export class BackendUrlPipe implements PipeTransform {
-    private readonly baseUrl = `http://${environment.host}:${environment.port}`
+    private readonly baseUrl = `http://${environment.host}:${environment.port}/static`
 
     transform(value: string): string {
         if (!value) return ''

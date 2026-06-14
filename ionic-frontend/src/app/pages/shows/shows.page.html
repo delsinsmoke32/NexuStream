@@ -1,22 +1,28 @@
 <ion-header class="ion-no-border absolute-header">
-  <ion-toolbar class="transparent-toolbar">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home" color="primary"></ion-back-button>
-    </ion-buttons>
-  </ion-toolbar>
+    <ion-toolbar class="transparent-toolbar">
+        <ion-buttons slot="start">
+            <ion-back-button
+                defaultHref="/home"
+                color="primary"
+            ></ion-back-button>
+        </ion-buttons>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  
-  @if (isLoading()) {
+    @if (isLoading()) {
     <div class="loading-state">
-      <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
     </div>
-  } @else if (show()) {
-    
+    } @else if (show()) {
+
     <div class="hero-banner">
-      <img class="banner-img" [src]="show().BannerURI ? (show().BannerURI | backendUrl) : 'assets/placeholder-banner.png'" alt="Banner">
-      <div class="hero-gradient-overlay"></div>
+        <img
+            class="banner-img"
+            [src]="show().BannerURI ? (show().BannerURI | backendUrl: 'static') : 'assets/placeholder-banner.png'"
+            alt="Banner"
+        />
+        <div class="hero-gradient-overlay"></div>
     </div>
 
     <div class="shows-content-container">
@@ -82,27 +88,29 @@
           </div>
 
         </div>
-      </div> <div class="divider"></div>
+        <div class="divider"></div>
 
-      <div class="episodes-section">
-        
-        <div class="season-header">
-          <ion-select 
-            class="season-selector" 
-            [value]="selectedSeasonId()" 
-            (ionChange)="onSeasonChange($event)"
-            interface="popover">
-            @for (season of seasons(); track season.SeasonID) {
-              <ion-select-option [value]="season.SeasonID">
-                {{ season.Title }}
-              </ion-select-option>
+        <div class="episodes-section">
+            <div class="season-header">
+                <ion-select
+                    class="season-selector"
+                    [value]="selectedSeasonId()"
+                    (ionChange)="onSeasonChange($event)"
+                    interface="popover"
+                >
+                    @for (season of seasons(); track season.SeasonID) {
+                    <ion-select-option [value]="season.SeasonID">
+                        {{ season.Title }}
+                    </ion-select-option>
+                    }
+                </ion-select>
+            </div>
+
+            @if (getSelectedSeason()?.Description) {
+            <p class="season-description">
+                {{ getSelectedSeason().Description }}
+            </p>
             }
-          </ion-select>
-        </div>
-
-        @if (getSelectedSeason()?.Description) {
-          <p class="season-description">{{ getSelectedSeason().Description }}</p>
-        }
 
         <div class="episodes-list">
           @if (isEpisodesLoading()) {
@@ -121,8 +129,6 @@
             }
           }
         </div>
-
-      </div>
-    </div> }
-
+    </div>
+    }
 </ion-content>

@@ -10,7 +10,9 @@
     <div class="new-comment-box" id="comment-input-box">
         <ion-item lines="none" class="custom-input">
             <ion-avatar slot="start">
-                <img [src]="'static/avatars/avatar-000.png' | backendUrl" alt="User" />
+                <img [src]="
+                        'static/avatars/avatar-000.png' | backendUrl: 'static'
+                    " alt="User" />
             </ion-avatar>
             <ion-textarea
                 [placeholder]="replyingToUsername ? 'Scrivi la tua risposta...' : 'Scrivi un commento...'"

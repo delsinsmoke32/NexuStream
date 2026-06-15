@@ -1,23 +1,33 @@
 <div class="episode-card" (click)="onPlay($event)">
-  <div class="thumb-container">
-    <img [src]="episode.ThumbnailURI ? (episode.ThumbnailURI | backendUrl) : 'assets/placeholder-episode.png'" [alt]="episode.Title">
-    
-    @if (episode.Progress > 0 && episode.Progress < 100) {
-      <div class="progress-bar-bg">
-        <div class="progress-bar-fill" [style.width]="episode.Progress + '%'"></div>
-      </div>
-    } @else if (episode.Progress === 100) {
-      <div class="progress-bar-bg">
-        <div class="progress-bar-fill completed"></div>
-      </div>
-    }
-    
-    <div class="play-overlay">
-      <ion-icon name="play-circle"></ion-icon>
+    <div class="thumb-container">
+        <img
+            [src]="
+                episode.ThumbnailURI
+                    ? (episode.ThumbnailURI | backendUrl: 'static')
+                    : 'assets/placeholder-episode.png'
+            "
+            [alt]="episode.Title"
+        />
+
+        @if (episode.Progress > 0 && episode.Progress < 100) {
+            <div class="progress-bar-bg">
+                <div
+                    class="progress-bar-fill"
+                    [style.width]="episode.Progress + '%'"
+                ></div>
+            </div>
+        } @else if (episode.Progress === 100) {
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill completed"></div>
+            </div>
+        }
+
+        <div class="play-overlay">
+            <ion-icon name="play-circle"></ion-icon>
+        </div>
+
+        <span class="duration-badge">{{ episode.Duration / 60 }} min</span>
     </div>
-    
-    <span class="duration-badge">{{ episode.Duration / 60 }} min</span>
-  </div>
 
   <div class="ep-info">
     <div>

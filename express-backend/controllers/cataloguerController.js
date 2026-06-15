@@ -1,5 +1,5 @@
 const cataloguerModel = require('../models/cataloguerModel');
-const { validationResult } = require('express-validator');
+const { validationResult, check } = require('express-validator');
 
 // ==========================================
 // CONTROLLER RECUPERO
@@ -362,91 +362,64 @@ const removeEpisode = async (req, res) => {
 // CONTROLLER PROPIC
 // ==========================================
 
-// const addPropic = async (req, res) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
-//     try {
-//         await cataloguerModel.insertPropic(req.body.propicURI);
-//         return res.json({ message: "Propic aggiunta con successo!" });
-//     } catch (err) {
-//         return res.status(500).json({ error: "Errore interno del server" });
-//     }
-// };
-
-const multer  = require('multer');
-const upload = multer({ dest: '../public/avatars' }); // o la tua configurazione di storage
-
-// Configurazione dello storage per preservare nome ed estensione
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        // Specifica la cartella dove salvare i file (creala se non esiste)
-        cb(null, '../public/avatars');
-    },
-    filename: function (req, file, cb) {
-        // Genera un nome univoco combinando timestamp attuale e un numero casuale
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        
-        // Recupera l'estensione del file originale (es: .jpg, .png)
-        const ext = path.extname(file.originalname);
-        
-        // Imposta il nome definitivo del file comprensivo di estensione
-        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
-    }
-});
-
-// Il nome 'img' dentro upload.single() deve essere identico a formData.append('img', ...)
-// app.post('/api/cataloguer/propic/add', upload.single('img'), (req, res) => {
-//     // I dati testuali del form si trovano qui:
-//     const bundle = req.body.bundle;
-    
-//     // Il file si trova qui:
-//     const file = req.file;
-
-//     if (!file) {
-//         return res.status(400).json({ error: 'Nessun file caricato' });
-//     }
-
-//     console.log('Bundle:', bundle);
-//     console.log('File ricevuto:', file);
-
-//     res.json({ message: 'Caricamento completato con successo!', file });
-// });
+const multerConfig = require("../middleware/multerConfig")
+const fs = require("fs").promises
+const path = require("path")
 
 const addPropic = async (req, res) => {
-    // 1. Controlla gli errori di validazione della rotta
+    // ==============================
+    // ERROR HANDLING
+    // ==============================
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        const errorMap = errors.mapped();
+
+        if (errorMap.img) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+        if (errorMap.bundle) {
+            try {
+                if (req.file) {
+                    await fs.unlink(req.file.path).catch(() => {});
+                } else {
+                    return res.status(500).json({ error: "Nessun errore nel caricamento del file ma il file non esiste" });
+                }
+                return res.status(400).json({ error: errorMap.bundle.message })
+            } catch (e){
+                return res.status(500).json({ error: "Impossibile cancellare l'immagine orfana" })
+            }
+        }
     }
-
+    
+    // ==============================
+    // SUCCESS HANDLING
+    // ==============================
+    filePath = req.file.path
     try {
-        // I dati testuali validati si trovano in req.body
         const { bundle } = req.body;
-        
-        // I dettagli del file si trovano in req.file grazie a Multer
         const fileData = req.file;
-
-        // Esempio di struttura dati che salverai nel database:
-        // - bundle: stringa ricevuta dal form
-        // - img: il percorso del file salvato su disco o sul cloud (es: fileData.path o fileData.filename)
+        const publicPath = path.relative('public', fileData.path)
+        
         const nuovaPropic = {
             bundle: bundle,
-            img: fileData.path, // Salva il percorso relativo per poterlo servire in seguito
-            originalName: fileData.originalname
+            propicURI: publicPath,
         };
-
-        console.log('Salvataggio nuova Propic:', nuovaPropic);
+        console.log('Salvataggio DB nuova Propic:', nuovaPropic);
         
-        // Logica di salvataggio nel database (es. await Propic.create(nuovaPropic))
-
+        await cataloguerModel.insertPropic(nuovaPropic.bundle, nuovaPropic.propicURI)
+        
         // Rispondi con successo ad Angular
-        return res.status(201).json({
-            message: "Propic inserita con successo!",
-            data: nuovaPropic
-        });
+        return res.json({ message: "Propic inserita con successo" });
 
     } catch (error) {
-        console.error('Errore durante il salvataggio della propic:', error);
+        console.error('Errore durante il salvataggio della propic nel DB:', error);
+        try {
+            await fs.unlink(filePath);
+            console.log(`File orfano rimosso con successo: ${filePath}`);
+        } catch (unlinkErr) {
+            console.error(`Impossibile rimuovere il file ${filePath}:`, unlinkErr);
+        }
+
         return res.status(500).json({ 
             error: "Errore interno del server durante il salvataggio" 
         });
@@ -468,7 +441,6 @@ const removePropic = async (req, res) => {
         return res.status(500).json({ error: "Errore interno del server" });
     }
 };
-
 
 
 module.exports = {

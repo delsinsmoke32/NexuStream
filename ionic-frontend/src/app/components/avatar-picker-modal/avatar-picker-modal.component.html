@@ -1,0 +1,31 @@
+<ion-header>
+    <ion-toolbar color="dark">
+        <ion-title>Seleziona Avatar</ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="confirmSelection()">Salva</ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+    @for (bundle of avatars(); track bundle.name) {
+        <div class="form-section-title">{{ bundle.name }}</div>
+
+        <div class="image-row">
+            @for (avatar of bundle.items; track avatar) {
+                <div
+                    class="red-sphere"
+                    (click)="select(avatar)"
+                    [class.active]="avatar === selectedAvatar()"
+                >
+                    <div class="smaller-sphere">
+                        <img
+                            [src]="avatar | backendUrl: 'static'"
+                            alt="Avatar"
+                        />
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</ion-content>

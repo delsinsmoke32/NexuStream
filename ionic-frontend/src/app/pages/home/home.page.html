@@ -1,10 +1,12 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar class="show-toolbar">
-    <ion-buttons slot="start">
-      <ion-menu-button class="btn-icon-red"></ion-menu-button>
-    </ion-buttons>
+    <ion-toolbar class="show-toolbar">
+        <ion-buttons slot="start">
+            <ion-menu-button class="btn-icon-red"></ion-menu-button>
+        </ion-buttons>
 
-    <ion-title routerLink="/home" color="primary" class="brand-title">NEXUSTREAM</ion-title>
+        <ion-title routerLink="/home" color="primary" class="brand-title"
+            >NEXUSTREAM</ion-title
+        >
 
     <ion-buttons slot="end">
       
@@ -13,35 +15,37 @@
         <ion-button i18n="@@register" class="auth-link" routerLink="/register">Registrati</ion-button>
       }
 
-      <ion-button class="btn-icon-red" routerLink="/search">
-        <ion-icon slot="icon-only" name="search-outline"></ion-icon>
-      </ion-button>
+            <ion-button class="btn-icon-red" routerLink="/search">
+                <ion-icon slot="icon-only" name="search-outline"></ion-icon>
+            </ion-button>
 
-      @if (isLoggedIn()) {
-        <ion-button class="btn-icon-red" (click)="openProfileMenu($event)">
-          <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
-        </ion-button>
-      }
-      
-    </ion-buttons>
-  </ion-toolbar>
+            @if (isLoggedIn()) {
+            <ion-button class="btn-icon-red" (click)="openProfileMenu($event)">
+                <ion-icon
+                    slot="icon-only"
+                    name="person-circle-outline"
+                ></ion-icon>
+            </ion-button>
+            }
+        </ion-buttons>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  
-  @if (isLoading()) {
+    @if (isLoading()) {
     <div class="loading-state">
-      <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
     </div>
-  } @else {
-    
-    @if (heroList().length > 0) {
-      <div class="hero-container">
+    } @else { @if (heroList().length > 0) {
+    <div class="hero-container">
         @for (hero of heroList(); track hero.ShowID; let i = $index) {
-          <div class="hero-slide" [class.active]="i === activeHeroIndex()">
-            <img [src]="hero.BannerURI ? (hero.BannerURI | backendUrl) : 'assets/placeholder-banner.png'" [alt]="hero.Title" />
+        <div class="hero-slide" [class.active]="i === activeHeroIndex()">
+            <img
+                [src]="hero.BannerURI ? (hero.BannerURI | backendUrl: 'static') : 'assets/placeholder-banner.png'"
+                [alt]="hero.Title"
+            />
             <div class="hero-gradient"></div>
-            
+
             <div class="hero-content">
               <h1 class="hero-title">{{ hero.Title }}</h1>
               <p class="hero-description">{{ hero.Description }}</p>
@@ -55,14 +59,13 @@
                 </button>
               </div>
             </div>
-          </div>
+        </div>
         }
-      </div>
+    </div>
     }
 
     <div class="main-container" [class.has-hero]="heroList().length > 0">
-      
-      @if (continueWatching().length > 0) {
+        @if (continueWatching().length > 0) {
         <div class="category-row">
           <h2 i18n="@@continueWatching" class="row-title">Continua a guardare</h2>
           
@@ -89,9 +92,7 @@
             </button>
           </div>
         </div>
-      }
-
-      @if (mostViewed().length > 0) {
+        } @if (mostViewed().length > 0) {
         <div class="category-row">
           <h2 i18n="@@mostViewed" class="row-title">I più visti questa settimana</h2>
           
@@ -111,14 +112,15 @@
               }
             </div>
 
-            <button class="scroll-arrow right" (click)="scrollRow('mostViewed', 'right')">
-              <ion-icon name="chevron-forward-outline"></ion-icon>
-            </button>
-          </div>
+                <button
+                    class="scroll-arrow right"
+                    (click)="scrollRow('mostViewed', 'right')"
+                >
+                    <ion-icon name="chevron-forward-outline"></ion-icon>
+                </button>
+            </div>
         </div>
-      }
-
-      @if (mostLiked().length > 0) {
+        } @if (mostLiked().length > 0) {
         <div class="category-row">
           <h2 i18n="@@mostLiked" class="row-title">I più amati dagli utenti</h2>
           
@@ -138,15 +140,17 @@
               }
             </div>
 
-            <button class="scroll-arrow right" (click)="scrollRow('mostLiked', 'right')">
-              <ion-icon name="chevron-forward-outline"></ion-icon>
-            </button>
-          </div>
+                <button
+                    class="scroll-arrow right"
+                    (click)="scrollRow('mostLiked', 'right')"
+                >
+                    <ion-icon name="chevron-forward-outline"></ion-icon>
+                </button>
+            </div>
         </div>
-      }
-
+        }
     </div>
-  }
+    }
 
   <ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
     <ng-template>

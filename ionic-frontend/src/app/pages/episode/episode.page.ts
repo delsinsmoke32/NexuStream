@@ -380,7 +380,7 @@ applyLanguagePreferences(player: any) {
              text: $localize `:@@deleteBtn:Elimina`, 
              role: 'destructive',
              handler: () => {
-               this.http.delete(`api/discussions/${discussionId}`).subscribe({
+               this.http.delete(`api/mod/discussions/${discussionId}`).subscribe({
                  next: () => this.loadDiscussions(this.showId(), this.seasonId(), this.episodeId()),
                  error: (err) => console.error("Errore eliminazione:", err)
                 });

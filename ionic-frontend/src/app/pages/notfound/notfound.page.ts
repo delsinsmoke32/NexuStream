@@ -3,6 +3,8 @@ import { Component, OnInit, inject } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 import { Router } from '@angular/router'
 import { IonButton, IonContent, IonIcon } from '@ionic/angular/standalone'
+import { addIcons } from 'ionicons'
+import { homeOutline, compassOutline } from '@lib/ionicons/icons'
 
 @Component({
     selector: 'app-notfound',
@@ -14,7 +16,9 @@ import { IonButton, IonContent, IonIcon } from '@ionic/angular/standalone'
 export class NotfoundPage implements OnInit {
     private router = inject(Router)
 
-    constructor() {}
+    constructor() {
+        addIcons({ compassOutline, homeOutline })
+    }
 
     ngOnInit() {}
 

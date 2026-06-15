@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { CataloguerModalComponent } from './cataloguer-modal.component';
+import { CataloguerShowModalComponent } from './cataloguer-show-modal.component';
 
-describe('CataloguerModalComponent', () => {
-  let component: CataloguerModalComponent;
-  let fixture: ComponentFixture<CataloguerModalComponent>;
+describe('CataloguerShowModalComponent', () => {
+  let component: CataloguerShowModalComponent;
+  let fixture: ComponentFixture<CataloguerShowModalComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ CataloguerModalComponent ],
+      declarations: [ CataloguerShowModalComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CataloguerModalComponent);
+    fixture = TestBed.createComponent(CataloguerShowModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

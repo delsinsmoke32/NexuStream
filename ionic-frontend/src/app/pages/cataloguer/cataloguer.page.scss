@@ -5,6 +5,7 @@
   gap: 24px;
   max-width: 1400px;
   margin: 0 auto;
+  padding-bottom: 32px; // Extra padding in basso per lo scroll
 }
 
 // Struttura Toolbar Header
@@ -20,6 +21,7 @@
     --background: #121212 !important;
     --color: #ffffff;
     --placeholder-color: #666666;
+    --border-radius: 8px; // Forme leggermente più morbide
   }
 }
 
@@ -27,96 +29,121 @@
 .header-back-btn, .header-action-btn {
   background: transparent;
   border: none;
-  color: var(--ion-color-primary, #b22222);
-  width: 38px;
-  height: 38px;
+  color: var(--ion-color-primary, #b22222); // Colore rosso unificato
+  width: 44px; // Aumentato per un touch target migliore (mobile-friendly)
+  height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: opacity 0.2s ease;
 
   svg {
-    width: 22px;
-    height: 22px;
+    width: 24px;
+    height: 24px;
   }
+  
+  &:hover { opacity: 0.8; }
 }
 
-.logout-btn { color: #666666; &:hover { color: #ff4d4d; } }
+// Il trucco per colorare di rosso l'SVG "pieno" della propic
+.propic-btn svg {
+  fill: currentColor;
+}
+
+.logout-btn { 
+  &:hover { color: #ff4d4d; } 
+}
 
 .create-btn-native {
   background-color: var(--ion-color-primary, #b22222);
   color: #ffffff;
   border: none;
-  border-radius: 6px;
-  padding: 6px 14px;
-  font-size: 0.85rem;
+  border-radius: 8px; 
+  padding: 8px 16px; // Più respiro
+  font-size: 0.9rem;
   font-weight: 600;
   margin: 0 10px;
   display: inline-flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
 
   svg {
-    width: 16px;
-    height: 16px;
+    width: 18px;
+    height: 18px;
     stroke: currentColor;
   }
-  &:hover { background-color: var(--ion-color-primary-shade, #a21818); }
+  
+  &:hover { 
+    background-color: var(--ion-color-primary-shade, #a21818); 
+  }
+  &:active {
+    transform: scale(0.96); // Piccolo feed visivo al click
+  }
 }
 
 // Le Nuove Card di Catalogo NexuStream
 .catalog-card {
   background: var(--ion-color-secondary, #181818);
-  border: 1px solid #232323;
+  border: 1px solid #2a2a2a; // Schiarito leggermente per staccare dal background nero
   border-radius: 12px;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  overflow: hidden; // Previene sbavature dei contenuti sugli angoli arrotondati
 
   &:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6);
+    transform: translateY(-4px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.5);
+    border-color: #333333;
   }
 
   // Neon-Borders personalizzati per livello logico
   &.edge-primary { border-top: 4px solid var(--ion-color-primary, #b22222); }
-  &.edge-secondary { border-top: 4px solid #32cd32; } // Neon Verde per stagioni
-  &.edge-episode { border-top: 4px solid #1e90ff; }   // Neon Blu per episodi
+  &.edge-secondary { border-top: 4px solid #32cd32; } 
+  &.edge-episode { border-top: 4px solid #1e90ff; }   
 }
 
 .card-body {
-  padding: 18px;
+  padding: 20px; 
   flex-grow: 1;
+  display: flex;
+  flex-direction: column; // Setup per spingere i metadati in basso
 
   .episode-header-row {
     display: flex;
     justify-content: space-between;
     font-size: 0.75rem;
     font-weight: 700;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+    
     .ep-number { color: #1e90ff; }
-    .ep-duration { color: #666666; }
+    .ep-duration { color: #888888; }
   }
 
   .card-main-title {
-    font-size: 1.15rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: #ffffff;
-    margin: 0 0 8px 0;
+    margin: 0 0 10px 0;
+    line-height: 1.2;
   }
 
   .card-description {
-    font-size: 0.85rem;
-    color: #a3a3a3;
-    line-height: 1.4;
-    margin: 0 0 14px 0;
+    font-size: 0.9rem;
+    color: #aaaaaa;
+    line-height: 1.5;
+    margin: 0 0 16px 0;
     display: -webkit-box;
     line-clamp: 3;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    flex-grow: 1; // Spinge la metadata sempre sul fondo, allineando le card!
   }
 }
 
@@ -125,40 +152,46 @@
   justify-content: space-between;
   align-items: center;
   font-size: 0.8rem;
-  color: #666666;
-  border-top: 1px solid #232323;
-  padding-top: 10px;
+  color: #777777;
+  border-top: 1px solid #2a2a2a;
+  padding-top: 12px;
+  margin-top: auto; // Lavora in combo con il flex-grow della descrizione
 
-  strong { color: #b3b3b3; }
+  strong { color: #cccccc; }
 }
 
 // Sistema dei Badge
 .badge {
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
   font-size: 0.7rem;
   font-weight: 700;
   text-transform: uppercase;
-  background: rgba(50, 205, 50, 0.15);
+  letter-spacing: 0.5px;
+  background: rgba(50, 205, 50, 0.12);
   color: #32cd32;
+  border: 1px solid rgba(50, 205, 50, 0.2); // Aggiunge definizione
 
   &.badge-ended {
-    background: rgba(178, 34, 34, 0.15);
-    color: #b22222;
+    background: rgba(178, 34, 34, 0.12);
+    color: #ff4d4d; // Più leggibile del rosso scuro su sfondo scuro
+    border-color: rgba(178, 34, 34, 0.3);
   }
   &.badge-season {
-    background: rgba(255, 165, 0, 0.15);
-    color: orange;
+    background: rgba(255, 165, 0, 0.12);
+    color: #ffa500;
+    border-color: rgba(255, 165, 0, 0.3);
   }
 }
 
 // Struttura Bottoni delle Card
 .card-actions-row {
-  border-top: 1px solid #232323;
-  padding: 10px 14px;
+  border-top: 1px solid #2a2a2a;
+  background-color: rgba(0, 0, 0, 0.15); // Stacca leggermente l'area bottoni per evidenziarli
+  padding: 12px 16px;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
-  gap: 8px;
+  gap: 10px;
 
   &.split-two {
     grid-template-columns: 1fr 1fr;
@@ -166,39 +199,100 @@
 }
 
 .card-action-btn {
-  background: #232323;
-  border: none;
-  border-radius: 4px;
-  padding: 8px;
+  background: #282828;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  padding: 10px 8px; // Più spazio verticale per cliccarli meglio
   font-size: 0.8rem;
-  font-weight: 700;
-  color: #ffffff;
+  font-weight: 600;
+  color: #dddddd;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.1s;
 
-  svg { width: 14px; height: 14px; stroke: currentColor; }
-  &:hover { background: #303030; }
+  svg { width: 16px; height: 16px; stroke: currentColor; }
+  
+  &:hover { 
+    background: #353535; 
+    color: #ffffff;
+  }
+  
+  &:active {
+    transform: scale(0.97);
+  }
 }
 
 .btn-explore {
-  background-color: rgba(var(--ion-color-primary-rgb), 0.12);
-  color: var(--ion-color-primary, #b22222);
-  &:hover { background-color: rgba(var(--ion-color-primary-rgb), 0.2); }
+  background-color: rgba(var(--ion-color-primary-rgb, 178, 34, 34), 0.15);
+  color: #ff6b6b; // Rosso più acceso per farsi notare di più
+  border: 1px solid rgba(var(--ion-color-primary-rgb, 178, 34, 34), 0.3);
+  
+  &:hover { 
+    background-color: rgba(var(--ion-color-primary-rgb, 178, 34, 34), 0.25); 
+    color: #ffffff;
+  }
 }
 
 .btn-delete {
   color: #ff4d4d;
   background: rgba(255, 77, 77, 0.08);
-  &:hover { background: rgba(255, 77, 77, 0.18); }
+  
+  &:hover { 
+    background: rgba(255, 77, 77, 0.15); 
+    border-color: rgba(255, 77, 77, 0.3);
+  }
 }
 
 .empty-state {
   grid-column: 1 / -1;
   text-align: center;
-  padding: 100px 20px;
-  color: #555555;
-  font-size: 1.1rem;
+  padding: 120px 20px;
+  color: #666666;
+  font-size: 1.15rem;
+  font-weight: 500;
+  
+  p { margin: 0; }
+}
+
+/* ==========================================
+   RESPONSIVE: FIX HEADER PER SCHERMI STRETTI
+   ========================================== */
+@media (max-width: 576px) {
+  
+  // 1. Riduciamo le dimensioni dei bottoni icona (Propic, Logout, Back)
+  .header-back-btn, .header-action-btn {
+    width: 36px;
+    height: 36px;
+    
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  // 2. Trasformiamo il bottone "Aggiungi" in un bottone solo-icona quadrato
+  .create-btn-native {
+    padding: 8px; // Toglie il padding laterale largo
+    margin: 0 4px; // Avvicina i bottoni tra loro
+    
+    // Nasconde la parola "Aggiungi"
+    .btn-text {
+      display: none;
+    }
+  }
+
+  // 3. Rimpiccioliamo leggermente il titolo per dargli respiro e togliamo padding
+  ion-title {
+    font-size: 1.05rem;
+    padding-inline: 0; 
+  }
+  
+  // 4. Togliamo un po' di margini laterali alla toolbar per recuperare pixel preziosi
+  .main-header {
+    --padding-start: 4px;
+    --padding-end: 4px;
+  }
 }

@@ -276,3 +276,36 @@
     letter-spacing: 0.5px;
   }
 }
+
+/* Di default (desktop/tablet), nascondiamo le icone di login/registrazione */
+.auth-mobile-icon {
+  display: none;
+}
+
+/* ==========================================
+   RESPONSIVE: FIX HEADER HOME 
+   ========================================== */
+@media (max-width: 576px) {
+  
+  .auth-link {
+    /* Riduciamo il padding per stringere i bottoni */
+    --padding-start: 8px;
+    --padding-end: 8px;
+    margin: 0;
+
+    .auth-text {
+      display: none; /* Facciamo sparire le parole "Accedi" e "Registrati" */
+    }
+
+    .auth-mobile-icon {
+      display: block; /* Mostriamo l'icona al posto del testo */
+      font-size: 22px; 
+    }
+  }
+
+  /* Rimpiccioliamo leggermente il titolo principale per dare più spazio */
+  .brand-title {
+    font-size: 1.05rem;
+    padding-inline: 0;
+  }
+}

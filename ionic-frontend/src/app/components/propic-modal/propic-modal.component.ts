@@ -33,6 +33,7 @@ import {
     IonText,
     IonIcon,
     IonAvatar,
+    ToastController
 } from '@ionic/angular/standalone'
 import {
     HttpClient,
@@ -66,60 +67,61 @@ import { cameraOutline } from '@lib/ionicons/icons'
     ],
 })
 export class PropicModalComponent implements OnInit {
-    fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput')
+    fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
 
-    imagePreview = signal<string | null>(null)
+    imagePreview = signal<string | null>(null);
     // Using Angular Signals for optimized reactivity
-    selectedFile = signal<File | null>(null)
-    isUploading = signal<boolean>(false)
+    selectedFile = signal<File | null>(null);
+    isUploading = signal<boolean>(false);
 
-    http = inject(HttpClient)
+    http = inject(HttpClient);
+    toastCtrl = inject(ToastController);
     constructor() {
-        addIcons({ cameraOutline })
+        addIcons({ cameraOutline });
     }
 
     triggerSelect() {
-        this.fileInput().nativeElement.click()
+        this.fileInput().nativeElement.click();
     }
 
     onFileSelect(event: Event) {
         const input = event.target as HTMLInputElement
         if (input.files && input.files.length > 0) {
-            const file = input.files[0]
-            this.selectedFile.set(file)
+            const file = input.files[0];
+            this.selectedFile.set(file);
 
             // Aggiorna il valore nel form reattivo di Angular
             // this.propicForm.patchValue({ img: file })
-            this.propicForm.get('img')?.setValue('file_selected') //dummy, maybe rimuovere
+            this.propicForm.get('img')?.setValue('file_selected'); //dummy, maybe rimuovere
             // this.propicForm.get('img')?.updateValueAndValidity()
             // --- LOGICA PER L'ANTEPRIMA ---
-            const reader = new FileReader()
+            const reader = new FileReader();
             reader.onload = () => {
                 // Il risultato è un URL in formato Base64 utilizzabile nel tag <img>
-                this.imagePreview.set(reader.result as string)
+                this.imagePreview.set(reader.result as string);
             }
-            reader.readAsDataURL(file)
+            reader.readAsDataURL(file);
             // ------------------------------
         }
     }
 
     private getAuthHeaders(): HttpHeaders {
-        const token = localStorage.getItem('token')
-        return new HttpHeaders({ Authorization: `Bearer ${token}` })
+        const token = localStorage.getItem('token');
+        return new HttpHeaders({ Authorization: `Bearer ${token}` });
     }
 
     uploadPicture() {
-        const file = this.selectedFile()
-        if (!file || this.propicForm.invalid) return
+        const file = this.selectedFile();
+        if (!file || this.propicForm.invalid) return;
 
-        this.isUploading.set(true)
-        const formData = new FormData()
-        formData.append('bundle', this.propicForm.get('bundle')?.value ?? '')
-        formData.append('img', file, file.name)
+        this.isUploading.set(true);
+        const formData = new FormData();
+        formData.append('bundle', this.propicForm.get('bundle')?.value ?? '');
+        formData.append('img', file, file.name);
         // console.log(formData, file, file.name)
         // const payload = this.propicForm.getRawValue()
 
-        const endpoint = 'api/cataloguer/propic/add'
+        const endpoint = 'api/cataloguer/propic/add';
 
         // Replace with your active API endpoint URL
         this.http
@@ -133,42 +135,44 @@ export class PropicModalComponent implements OnInit {
                     if (event.type === HttpEventType.UploadProgress) {
                         const percentDone = Math.round(
                             (100 * event.loaded) / (event.total ?? 1)
-                        )
-                        console.log(`Dati caricati al ${percentDone}%`)
+                        );
+                        console.log(`Dati caricati al ${percentDone}%`);
                         // Qui puoi aggiornare un signal o una variabile di stato, es: this.uploadPercent.set(percentDone)
                     } else if (event.type === HttpEventType.Response) {
-                        let response = event.body
-                        console.log('Upload success', response)
-                        this.selectedFile.set(null)
+                        let response = event.body;
+                        console.log('Upload success', response);
+                        this.selectedFile.set(null);
 
                         // Resetta il form Angular
-                        this.propicForm.reset()
+                        this.propicForm.reset();
 
                         // Resetta l'elemento HTML nativo per permettere di selezionare nuovamente lo stesso file
-                        this.fileInput().nativeElement.value = ''
-                        this.imagePreview.set(null)
+                        this.fileInput().nativeElement.value = '';
+                        this.imagePreview.set(null);
                     }
+                    this.presentToast("Propic caricata!", "success");
                 },
                 error: (error: any) => {
-                    console.error('Upload failed', error)
+                    this.presentToast("Errore nel caricamento della propic", "danger");
+                    console.error('Upload failed', error);
                 },
                 complete: () => {
-                    this.isUploading.set(false)
+                    this.isUploading.set(false);
                 },
             })
     }
 
-    propic: any = input() // Contiene l'oggetto se siamo in modalità modifica
+    propic: any = input(); // Contiene l'oggetto se siamo in modalità modifica
 
-    private fb = inject(FormBuilder)
-    private modalCtrl = inject(ModalController)
+    private fb = inject(FormBuilder);
+    private modalCtrl = inject(ModalController);
 
-    propicForm!: FormGroup
-    isEditMode = false
+    propicForm!: FormGroup;
+    isEditMode = false;
 
     ngOnInit() {
-        this.isEditMode = !!this.propic
-        this.initForm()
+        this.isEditMode = !!this.propic;
+        this.initForm();
     }
 
     private initForm() {
@@ -194,14 +198,22 @@ export class PropicModalComponent implements OnInit {
     }
 
     dismiss(result?: any) {
-        this.modalCtrl.dismiss(result)
+        this.modalCtrl.dismiss(result);
     }
 
     save() {
-        if (this.propicForm.invalid) return
+        if (this.propicForm.invalid) return;
 
         // Includiamo i campi disabilitati per non perdere chiavi primarie/strutturali nel backend
-        const rawValues = this.propicForm.getRawValue()
-        this.dismiss({ payload: rawValues, isEdit: this.isEditMode })
+        const rawValues = this.propicForm.getRawValue();
+        this.dismiss({ payload: rawValues, isEdit: this.isEditMode });
     }
+
+    async presentToast(message: string, color: 'success' | 'danger') {
+        const toast = await this.toastCtrl.create({
+            message, duration: 2500, position: 'bottom', color,
+        });
+        await toast.present();
+    }
+
 }

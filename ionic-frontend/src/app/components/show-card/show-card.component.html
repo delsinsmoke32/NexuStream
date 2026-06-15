@@ -6,7 +6,7 @@
       <img [src]="show().BannerURI ? (show().BannerURI | backendUrl) : 'assets/placeholder-banner.png'" 
            [alt]="show().Title || show().ShowTitle" />
     } @else {
-      <img [src]="show().ThumbnailURI ? (show().ThumbnailURI | backendUrl) : 'assets/placeholder-poster.png'" 
+      <img [src]="show().ThumbnailURI ? (show().ThumbnailURI | backendUrl: 'static') : 'assets/placeholder-poster.png'" 
            [alt]="show().Title || show().ShowTitle" />
     }
 

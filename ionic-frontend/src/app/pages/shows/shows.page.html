@@ -88,47 +88,47 @@
           </div>
 
         </div>
-        <div class="divider"></div>
+      </div> <div class="divider"></div>
 
-        <div class="episodes-section">
-            <div class="season-header">
-                <ion-select
-                    class="season-selector"
-                    [value]="selectedSeasonId()"
-                    (ionChange)="onSeasonChange($event)"
-                    interface="popover"
-                >
-                    @for (season of seasons(); track season.SeasonID) {
-                    <ion-select-option [value]="season.SeasonID">
-                        {{ season.Title }}
-                    </ion-select-option>
-                    }
-                </ion-select>
-            </div>
+      <div class="episodes-section">
+          <div class="season-header">
+              <ion-select
+                  class="season-selector"
+                  [value]="selectedSeasonId()"
+                  (ionChange)="onSeasonChange($event)"
+                  interface="popover"
+              >
+                  @for (season of seasons(); track season.SeasonID) {
+                  <ion-select-option [value]="season.SeasonID">
+                      {{ season.Title }}
+                  </ion-select-option>
+                  }
+              </ion-select>
+          </div>
 
-            @if (getSelectedSeason()?.Description) {
-            <p class="season-description">
-                {{ getSelectedSeason().Description }}
-            </p>
-            }
-
-        <div class="episodes-list">
-          @if (isEpisodesLoading()) {
-            <div class="local-spinner">
-              <ion-spinner name="crescent" color="primary"></ion-spinner>
-            </div>
-          } @else {
-            @for (ep of episodes(); track ep.EpisodeID) {
-              <app-episode-card 
-                [episode]="ep" 
-                (play)="playEpisode($event)"
-                (info)="openEpisodeInfo($event)">
-              </app-episode-card>
-            } @empty {
-              <div i18n="@@noEpisode" class="no-episodes">Nessun episodio trovato per questa stagione.</div>
-            }
+          @if (getSelectedSeason()?.Description) {
+          <p class="season-description">
+              {{ getSelectedSeason().Description }}
+          </p>
           }
-        </div>
-    </div>
-    }
+
+          <div class="episodes-list">
+            @if (isEpisodesLoading()) {
+              <div class="local-spinner">
+                <ion-spinner name="crescent" color="primary"></ion-spinner>
+              </div>
+            } @else {
+              @for (ep of episodes(); track ep.EpisodeID) {
+                <app-episode-card 
+                  [episode]="ep" 
+                  (play)="playEpisode($event)"
+                  (info)="openEpisodeInfo($event)">
+                </app-episode-card>
+              } @empty {
+                <div i18n="@@noEpisode" class="no-episodes">Nessun episodio trovato per questa stagione.</div>
+              }
+            }
+          </div>
+      </div>
+    </div> }
 </ion-content>

@@ -1,5 +1,10 @@
 const cataloguerModel = require('../models/cataloguerModel');
+const showModel = require('../models/showModel');
+const episodeModel = require('../models/episodeModel');
 const { validationResult, check } = require('express-validator');
+const fs = require('fs').promises;
+const path = require('path');
+const multerConfig = require("../middleware/multerConfig");
 
 // ==========================================
 // CONTROLLER RECUPERO
@@ -7,18 +12,24 @@ const { validationResult, check } = require('express-validator');
 
 /**
  * Recupera l'elenco di tutte le serie TV (Shows) disponibili nel catalogo.
- * Supporta un filtro di ricerca testuale opzionale tramite query parameter.
- * @param {Object} req - Oggetto della richiesta Express (può contenere req.query.search)
+ * Supporta un filtro di ricerca testuale opzionale e paginazione tramite query parameter.
+ * @param {Object} req - Oggetto della richiesta Express (può contenere req.query.search, req.query.page, req.query.limit)
  * @param {Object} res - Oggetto della risposta Express
  */
-
 const getShows = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    
+    // Calcolo della paginazione per fermare l'infinite scroll del frontend
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 20;
+    const offset = (page - 1) * limit;
+
     try {
-        const shows = await cataloguerModel.getAllShows(req.query.search);
+        const shows = await cataloguerModel.getAllShows(req.query.search, limit, offset);
         return res.json(shows);
     } catch (err) {
+        console.error("Errore getShows:", err);
         return res.status(500).json({ error: "Errore interno del server" });
     }
 };
@@ -28,46 +39,50 @@ const getShows = async (req, res) => {
  * @param {Object} req - Oggetto della richiesta Express (può contenere req.query.refShow)
  * @param {Object} res - Oggetto della risposta Express
  */
-
 const getSeasons = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    
     try {
         const seasons = await cataloguerModel.getAllSeasons(req.query.refShow);
         return res.json(seasons);
     } catch (err) {
+        console.error("Errore getSeasons:", err);
         return res.status(500).json({ error: "Errore interno del server" });
     }
 };
 
 /**
- * Recupera l'elenco di tutte gli episodi, filtrandoli opzionalmente per la Stagione di appartenenza.
+ * Recupera l'elenco di tutti gli episodi, filtrandoli opzionalmente per la Stagione di appartenenza.
  * @param {Object} req - Oggetto della richiesta Express (può contenere req.query.refSeason)
  * @param {Object} res - Oggetto della risposta Express
  */
-
 const getEpisodes = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    
     try {
         const episodes = await cataloguerModel.getAllEpisodes(req.query.refSeason);
         return res.json(episodes);
     } catch (err) {
+        console.error("Errore getEpisodes:", err);
         return res.status(500).json({ error: "Errore interno del server" });
     }
 };
 
+
 // ==========================================
 // CONTROLLER SERIE
+// ==========================================
+// ==========================================
+// CREAZIONE SERIE
 // ==========================================
 const addShow = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
     
-    // Ci aspettiamo che i testi arrivino divisi per lingua dal form del frontend
     const { title_it, title_en, title_jp, description_it, description_en, description_jp, dateStarted, dateEnded, thumbnailURI, bannerURI } = req.body;
     
-    // Creiamo gli oggetti puliti da passare al Model (l'italiano è sempre obbligatorio come fallback)
     const titleObj = {
         it: title_it,
         ...(title_en && { en: title_en }),
@@ -80,75 +95,139 @@ const addShow = async (req, res) => {
         ...(description_jp && { jp: description_jp })
     };
 
-    //si calcola hasEnded anzichè passarla esplicitamente
     const hasEnded = (dateEnded && dateEnded.trim() !== "") ? 1 : 0;
 
     try {
         const result = await cataloguerModel.insertShow(titleObj, descriptionObj, dateStarted, dateEnded, hasEnded, thumbnailURI, bannerURI);
         return res.status(201).json({ message: "Serie creata con successo!", showId: result.id });
     } catch (err) {
-        console.error(err);
+        console.error("Errore addShow:", err);
+        
+        // ROLLBACK: Il DB è fallito, elimino le immagini orfane appena caricate!
+        if (thumbnailURI) await fs.unlink(path.join(__dirname, '../public', thumbnailURI)).catch(() => {});
+        if (bannerURI) await fs.unlink(path.join(__dirname, '../public', bannerURI)).catch(() => {});
+
         return res.status(500).json({ error: "Errore interno del server" });
     }
 };
 
+// ==========================================
+// MODIFICA SERIE
+// ==========================================
 const modifyShow = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-    const showId = req.params.id;
-    // 'lang' indica quale lingua si sta modificando (es. 'it', 'en', 'jp')
-    const { title, description, dateEnded, lang } = req.body;
+    const showId = parseInt(req.params.id);
+    // Aggiunti thumbnailURI e bannerURI per poterli aggiornare!
+    const { title, description, dateEnded, lang, thumbnailURI, bannerURI } = req.body;
+
+    const user = req.user;
+    const applang = user.appLang;
+    
 
     let fields = [];
     let params = [];
+    let oldShow = null;
 
-    // Se si modifica il titolo, lo aggiorniamo chirurgicamente dentro il JSON usando la lingua passata
     if (title !== undefined) { 
-        const targetLang = lang || 'it'; // Se non specificata, di default modifica l'italiano
+        const targetLang = lang || 'it';
         fields.push(`Title = json_set(Title, '$.${targetLang}', ?)`); 
         params.push(title); 
     }
     
-    // Stessa cosa per la descrizione
     if (description !== undefined) { 
         const targetLang = lang || 'it';
         fields.push(`Description = json_set(Description, '$.${targetLang}', ?)`); 
         params.push(description); 
     }
     
-    // I campi non JSON rimangono esattamente come prima
     if (dateEnded !== undefined) {
         fields.push('DateEnded = ?'); 
         params.push(dateEnded);
 
-        //calcolo della hasEnded
         const hasEnded = (dateEnded && dateEnded.trim() !== "") ? 1 : 0;
         fields.push('hasEnded = ?'); 
         params.push(hasEnded);
     }
-    
+
+    // Aggiungiamo i campi delle immagini alla query se sono stati inviati
+    if (thumbnailURI !== undefined) {
+        fields.push('ThumbnailURI = ?');
+        params.push(thumbnailURI);
+    }
+    if (bannerURI !== undefined) {
+        fields.push('BannerURI = ?');
+        params.push(bannerURI);
+    }
 
     if (fields.length === 0) return res.status(400).json({ message: "Inserisci qualche parametro da modificare." });
 
     try {
+        // 1. Leggiamo lo stato ATTUALE della serie prima di sovrascriverla (per sapere i vecchi URI)
+        oldShow = await showModel.getShowByIdAuth(user.id, showId, applang);
+        if (!oldShow) return res.status(404).json({ error: "La serie specificata non è stata trovata." });
+
+        // 2. Aggiorniamo il DB
         const result = await cataloguerModel.updateShow(showId, fields, params);
-        if (result.changes === 0) return res.status(404).json({ error: "La serie specificata non è stata trovata." });
+        if (result.changes === 0) return res.status(400).json({ error: "Nessuna modifica effettuata." });
+
+        // 3. NETTURBINO (Successo): Se hai caricato una NUOVA immagine, cancello quella VECCHIA per liberare spazio
+        if (thumbnailURI && oldShow.ThumbnailURI && thumbnailURI !== oldShow.ThumbnailURI) {
+            await fs.unlink(path.join(__dirname, '../public', oldShow.ThumbnailURI)).catch(() => {});
+        }
+        if (bannerURI && oldShow.BannerURI && bannerURI !== oldShow.BannerURI) {
+            await fs.unlink(path.join(__dirname, '../public', oldShow.BannerURI)).catch(() => {});
+        }
+
         return res.json({ message: "Serie aggiornata con successo!" });
+
     } catch (err) {
-        console.error(err);
+        console.error("Errore modifyShow:", err);
+        
+        // ROLLBACK (Fallimento): Se l'update nel DB fallisce, elimino le NUOVE immagini caricate per sbaglio
+        if (thumbnailURI && thumbnailURI !== oldShow?.ThumbnailURI) {
+            await fs.unlink(path.join(__dirname, '../public', thumbnailURI)).catch(() => {});
+        }
+        if (bannerURI && bannerURI !== oldShow?.BannerURI) {
+            await fs.unlink(path.join(__dirname, '../public', bannerURI)).catch(() => {});
+        }
+
         return res.status(500).json({ error: "Errore interno del server" });
     }
 };
 
+// ==========================================
+// CANCELLAZIONE SERIE
+// ==========================================
 const removeShow = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    
+    const showId = parseInt(req.params.id);
+    const user = req.user;
+    const applang = user.appLang;
+
     try {
-        const result = await cataloguerModel.deleteShow(req.params.id);
-        if (result.changes === 0) return res.status(404).json({ error: "La serie specificata non è stata trovata." });
-        return res.json({ message: "Serie cancellata con successo!" });
+        // Recupero la serie PRIMA di cancellarla dal DB per avere in memoria gli URI
+        const show = await showModel.getShowByIdAuth(user.id, showId, applang);
+        if (!show) return res.status(404).json({ error: "La serie specificata non è stata trovata." });
+
+        // Cancello la serie dal DB
+        const result = await cataloguerModel.deleteShow(showId);
+        if (result.changes === 0) return res.status(400).json({ error: "Impossibile cancellare la serie." });
+
+        // Cancello fisicamente dal server tutte le immagini relative a questa serie!
+        if (show.ThumbnailURI) {
+            await fs.unlink(path.join(__dirname, '../public', show.ThumbnailURI)).catch(() => {});
+        }
+        if (show.BannerURI) {
+            await fs.unlink(path.join(__dirname, '../public', show.BannerURI)).catch(() => {});
+        }
+
+        return res.json({ message: "Serie e file multimediali cancellati con successo!" });
     } catch (err) {
+        console.error("Errore removeShow:", err);
         return res.status(500).json({ error: "Errore interno del server" });
     }
 };
@@ -250,14 +329,12 @@ const removeSeason = async (req, res) => {
 };
 
 // ==========================================
-// CONTROLLER EPISODI
+// CREAZIONE EPISODIO
 // ==========================================
-
 const addEpisode = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-    // Estraiamo i dati, separando i testi delle varie lingue per Titolo e Descrizione
     const { 
         title_it, title_en, title_jp, 
         description_it, description_en, description_jp, 
@@ -266,7 +343,6 @@ const addEpisode = async (req, res) => {
         thumbnailURI
     } = req.body;
 
-    // Impacchettiamo gli oggetti JSON (con l'italiano sempre come base obbligatoria)
     const titleObj = {
         it: title_it,
         ...(title_en && { en: title_en }),
@@ -293,25 +369,37 @@ const addEpisode = async (req, res) => {
         );
         return res.status(201).json({ message: "Episodio creato con successo!", episodeId: result.id });
     } catch (err) {
-        console.error(err);
+        console.error("Errore addEpisode:", err);
+        
+        // ROLLBACK: Se l'inserimento nel DB fallisce, elimino la thumbnail orfana appena caricata
+        if (thumbnailURI) {
+            await fs.unlink(path.join(__dirname, '../public', thumbnailURI)).catch(() => {});
+        }
+
         return res.status(500).json({ error: "Errore interno del server" });
     }
 };
 
+// ==========================================
+// MODIFICA EPISODIO
+// ==========================================
 const modifyEpisode = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
     const episodeId = req.params.id;
-    // 'lang' specifica quale lingua sovrascrivere o aggiungere (es. 'en')
-    const { title, description, refSeason, DubLanguages, SubLanguages, lang } = req.body;
+
+    const user = req.user;
+    const applang = user.appLang;
+    
+    const { title, description, refSeason, DubLanguages, SubLanguages, lang, thumbnailURI } = req.body;
 
     let fields = [];
     let fieldsParams = [];
+    let oldEpisode = null;
 
-    // Aggiornamento parziale e mirato del JSON tramite json_set
     if (title !== undefined) { 
-        const targetLang = lang || 'it'; // Default italiano se omesso
+        const targetLang = lang || 'it';
         fields.push(`Title = json_set(Title, '$.${targetLang}', ?)`); 
         fieldsParams.push(title); 
     }
@@ -321,39 +409,82 @@ const modifyEpisode = async (req, res) => {
         fieldsParams.push(description); 
     }
     
-    // Campo relazionale standard
     if (refSeason !== undefined) { 
         fields.push('REF_SeasonID = ?'); 
         fieldsParams.push(refSeason); 
     }
 
-    // Controllo di sicurezza: se non si aggiorna né la tabella principale né le relazioni audio/sub, blocca la richiesta
+    // Aggiungiamo il campo per la thumbnail se è stata inviata una modifica
+    if (thumbnailURI !== undefined) {
+        fields.push('ThumbnailURI = ?');
+        fieldsParams.push(thumbnailURI);
+    }
+
     if (fields.length === 0 && !DubLanguages && !SubLanguages) {
         return res.status(400).json({ message: "Inserisci qualche parametro da modificare." });
     }
 
     try {
+        // 1. Recupero i vecchi dati dell'episodio per sapere quale fosse la vecchia immagine
+        // (Assicurati di avere questo metodo nel model corrispondente, ad es. episodeModel)
+        oldEpisode = await episodeModel.getEpisodeById(episodeId, applang);
+        if (!oldEpisode) return res.status(404).json({ error: "L'episodio specificato non è stato trovato." });
+
+        // 2. Eseguo l'aggiornamento
         const result = await cataloguerModel.updateEpisodeFull(episodeId, fields, fieldsParams, DubLanguages, SubLanguages);
-        if (fields.length > 0 && result.changes === 0) {
-            return res.status(404).json({ error: "L'episodio specificato non è stato trovato." });
+        
+        // Attenzione: un update solo su Dub/Sub potrebbe avere fields.length === 0, quindi aggiustiamo il controllo
+        if (fields.length > 0 && result.changes === 0 && !DubLanguages && !SubLanguages) {
+             return res.status(400).json({ error: "Nessuna modifica effettuata." });
         }
+
+        // 3. NETTURBINO (Successo): Cancello l'immagine vecchia se ne ho caricata una nuova
+        if (thumbnailURI && oldEpisode.ThumbnailURI && thumbnailURI !== oldEpisode.ThumbnailURI) {
+            await fs.unlink(path.join(__dirname, '../public', oldEpisode.ThumbnailURI)).catch(() => {});
+        }
+
         return res.json({ message: "Episodio aggiornato con successo!" });
     } catch (err) {
-        console.error(err);
+        console.error("Errore modifyEpisode:", err);
+
+        // 4. ROLLBACK (Fallimento): Cancello la nuova immagine caricata per sbaglio se il DB va in crash
+        if (thumbnailURI && thumbnailURI !== oldEpisode?.ThumbnailURI) {
+            await fs.unlink(path.join(__dirname, '../public', thumbnailURI)).catch(() => {});
+        }
+
         return res.status(500).json({ error: "Errore interno del server" });
     }
 };
 
+// ==========================================
+// CANCELLAZIONE EPISODIO
+// ==========================================
 const removeEpisode = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
     
+    const episodeId = req.params.id;
+
+    const user = req.user;
+    const applang = user.appLang;
+
     try {
-        const result = await cataloguerModel.deleteEpisode(req.params.id);
-        if (result.changes === 0) return res.status(404).json({ error: "L'episodio specificato non è stato trovato." });
+        // 1. Estraggo i dati per ottenere la ThumbnailURI prima di cancellare la riga dal DB
+        const episode = await episodeModel.getEpisodeById(episodeId, applang);
+        if (!episode) return res.status(404).json({ error: "L'episodio specificato non è stato trovato." });
+
+        // 2. Cancello l'episodio dal Database
+        const result = await cataloguerModel.deleteEpisode(episodeId);
+        if (result.changes === 0) return res.status(400).json({ error: "Impossibile cancellare l'episodio." });
+
+        // 3. NETTURBINO: Cancello l'immagine fisica dal disco
+        if (episode.ThumbnailURI) {
+            await fs.unlink(path.join(__dirname, '../public', episode.ThumbnailURI)).catch(() => {});
+        }
+
         return res.json({ message: "Episodio cancellato con successo!" });
     } catch (err) {
-        console.error(err);
+        console.error("Errore removeEpisode:", err);
         return res.status(500).json({ error: "Errore interno del server" });
     }
 };
@@ -361,10 +492,6 @@ const removeEpisode = async (req, res) => {
 // ==========================================
 // CONTROLLER PROPIC
 // ==========================================
-
-const multerConfig = require("../middleware/multerConfig")
-const fs = require("fs").promises
-const path = require("path")
 
 const addPropic = async (req, res) => {
     // ==============================
@@ -398,7 +525,7 @@ const addPropic = async (req, res) => {
     try {
         const { bundle } = req.body;
         const fileData = req.file;
-        const publicPath = path.relative('public', fileData.path)
+        const publicPath = path.relative('public', fileData.path).replace(/\\/g, '/'); //per windows, visto che usa \ per il filesystem lo rimpiazziamo con / nell'uri
         
         const nuovaPropic = {
             bundle: bundle,
@@ -426,17 +553,28 @@ const addPropic = async (req, res) => {
     }
 };
 
-// const addPropic = (req, res) => {
-
-// }
-
 const removePropic = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    
     try {
-        const result = await cataloguerModel.deletePropicByURI(req.body.propicURI);
+        const propicURI = req.body.propicURI;
+        
+        // Cancelliamo la riga dal Database
+        const result = await cataloguerModel.deletePropicByURI(propicURI);
         if (result.changes === 0) return res.status(404).json({ error: "L'URI propic specificato non esiste." });
-        return res.json({ message: "Propic cancellata con successo!" });
+
+        // Cancelliamo fisicamente l'immagine dall'hard disk!
+        // Ricostruiamo il percorso assoluto partendo dall'URI salvato nel DB
+        const fullFilePath = path.join(__dirname, '../public', propicURI);
+        
+        await fs.unlink(fullFilePath).catch((err) => {
+            // Usiamo il catch in modo silenzioso: se l'immagine era già stata cancellata a mano, non facciamo crashare l'API.
+            console.log("Nota: Il file fisico non è stato trovato o era già stato rimosso.", err.message);
+        });
+
+        return res.json({ message: "Propic cancellata con successo dal DB e dal disco!" });
+        
     } catch (err) {
         return res.status(500).json({ error: "Errore interno del server" });
     }

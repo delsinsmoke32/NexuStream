@@ -11,8 +11,14 @@
     <ion-buttons slot="end">
       
       @if (!isLoggedIn()) {
-        <ion-button i18n="@@logIn" class="auth-link" routerLink="/login">Accedi</ion-button>
-        <ion-button i18n="@@register" class="auth-link" routerLink="/register">Registrati</ion-button>
+        <ion-button class="auth-link" routerLink="/login" title="Accedi">
+            <ion-icon name="log-in-outline" class="auth-mobile-icon"></ion-icon>
+            <span class="auth-text" i18n="@@logIn">Accedi</span>
+        </ion-button>
+        <ion-button class="auth-link" routerLink="/register" title="Registrati">
+            <ion-icon name="person-add-outline" class="auth-mobile-icon"></ion-icon>
+            <span class="auth-text" i18n="@@register">Registrati</span>
+        </ion-button>
       }
 
             <ion-button class="btn-icon-red" routerLink="/search">

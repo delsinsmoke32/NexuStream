@@ -1,0 +1,106 @@
+ion-content {
+  --background: var(--ion-background-color, #121212) !important;
+}
+
+.form-section-title {
+  color: #777777;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 16px 0 8px 4px;
+}
+
+ion-item {
+  --background: var(--ion-color-secondary, #181818);
+  --color: #ffffff;
+  --border-radius: 8px;
+  --border-color: #2b2b2b;
+  margin-bottom: 14px;
+
+  ion-label {
+    color: var(--ion-color-primary, #b22222) !important;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  
+  ion-input, ion-textarea {
+    --color: #ffffff;
+    font-size: 0.95rem;
+  }
+}
+
+.btn-svg {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  stroke: currentColor;
+}
+
+/* --- STILI BOX UPLOAD IMMAGINE --- */
+.upload-box {
+  background: var(--ion-color-secondary, #181818);
+  border: 2px dashed #3a3a3a;
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+  min-height: 180px; /* Più grande perché è da solo */
+  margin-bottom: 16px;
+
+  &:hover {
+    border-color: var(--ion-color-primary, #b22222);
+  }
+
+  .placeholder-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #777777;
+
+    ion-icon {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+      color: #999;
+    }
+
+    span {
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+  }
+
+  .preview-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Per gli episodi, le thumbnail sono tipicamente 16:9 */
+  .banner-aspect { aspect-ratio: 16 / 9; }
+}
+
+/* Placeholder grafico per quando faremo il Video Upload */
+.upload-video-placeholder {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 16px;
+  color: #666;
+  
+  ion-icon {
+    font-size: 2rem;
+    margin-bottom: 8px;
+  }
+  p {
+    margin: 0;
+    font-size: 0.85rem;
+  }
+}

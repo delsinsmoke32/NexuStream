@@ -16,7 +16,7 @@ INSERT INTO "Propics" ("PropicURI", "Bundle") VALUES
 
 -- 4. Serie TV (Shows)
 INSERT INTO "Shows" ("DateStarted", "hasEnded", "DateEnded", "Favourited", "Title", "Description", "ThumbnailURI", "BannerURI") VALUES 
-('2013-04-07', 1, '2023-11-04', 15400, '{"it":"L''Attacco dei Giganti","en":"Attack on Titan"}', '{"it":"L''umanità combatte per la sopravvivenza contro i temibili Giganti.","en":"Humanity fights for survival against the terrifying Titans."}', 'show_thumbnails/aot.png', 'banners/aot.png'),
+('2013-04-07', 1, '2023-11-04', 15400, '{"it":"L''Attacco dei Giganti","en":"Attack on Titan"}', '{"it":"L''umanità combatte per la sopravvivenza contro i temibili Giganti.","en":"Humanity fights for survival against the terrifying Titans."}', 'show_thumbnails/aot.jpg', 'banners/aot.png'),
 ('2020-10-03', 0, NULL, 12300, '{"it":"Jujutsu Kaisen","en":"Jujutsu Kaisen"}', '{"it":"Yuji Itadori si unisce a un''organizzazione segreta di stregoni.","en":"Yuji Itadori joins a secret organization of Jujutsu Sorcerers."}', 'show_thumbnails/jjk.png', 'banners/jjk.png'),
 ('2019-04-06', 0, NULL, 18900, '{"it":"Demon Slayer","en":"Demon Slayer"}', '{"it":"Tanjiro cerca una cura per la sorella trasformata in demone.","en":"Tanjiro seeks a cure for his sister who turned into a demon."}', 'show_thumbnails/ds.png', 'banners/ds.png'),
 ('2022-10-12', 0, NULL, 9800, '{"it":"Chainsaw Man","en":"Chainsaw Man"}', '{"it":"Denji rinasce come mezzo demone con motoseghe al posto delle braccia.","en":"Denji is reborn as a half-devil with chainsaws for arms."}', 'show_thumbnails/csm.png', 'banners/csm.png'),

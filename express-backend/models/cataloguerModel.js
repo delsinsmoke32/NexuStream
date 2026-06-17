@@ -3,36 +3,51 @@ const db = require("../db/db");
 // ==========================================
 // RECUPERO DATI
 // ==========================================
-const getAllShows = async (search) => {
+const getAllShows = async (search, limit, offset) => {
     let sql = `SELECT ShowID, Title, Description, DateStarted, DateEnded, hasEnded FROM Shows WHERE 1=1`;
     const params = [];
+    
     if (search) {
         sql += ` AND Title LIKE ?`;
         params.push(`%${search}%`);
     }
+    
     sql += ` ORDER BY Title ASC`;
+
+    // Aggiungiamo la paginazione se i parametri sono stati passati
+    if (limit !== undefined && offset !== undefined) {
+        sql += ` LIMIT ? OFFSET ?`;
+        params.push(limit, offset);
+    }
+
     return await db.allAsync(sql, params);
 };
 
 const getAllSeasons = async (refShow) => {
     let sql = `SELECT SeasonID, Title, Description, DateStarted, DateEnded, hasEnded, REF_ShowID FROM Seasons WHERE 1=1`;
     const params = [];
+    
     if (refShow) {
         sql += ` AND REF_ShowID = ?`;
         params.push(refShow);
     }
+    
     sql += ` ORDER BY SeasonID ASC`;
+    
     return await db.allAsync(sql, params);
 };
 
 const getAllEpisodes = async (refSeason) => {
     let sql = `SELECT EpisodeID, Title, Description, ReleaseDate, Duration, REF_SeasonID, Streams, Likes FROM Episodes WHERE 1=1`;
     const params = [];
+    
     if (refSeason) {
         sql += ` AND REF_SeasonID = ?`;
         params.push(refSeason);
     }
+    
     sql += ` ORDER BY EpisodeID ASC`;
+    
     return await db.allAsync(sql, params);
 };
 

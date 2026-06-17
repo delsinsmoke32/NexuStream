@@ -76,8 +76,12 @@ router.get('/shows', [
 
 
 router.post('/shows/add', [
-    body('title').isString().trim().notEmpty().withMessage("Titolo non valido"),
-    body('description').isString().trim().notEmpty().withMessage("Descrizione non valida"),
+    body('title_it').isString().trim().notEmpty().withMessage("Il titolo italiano è obbligatorio"),
+    body('description_it').isString().trim().notEmpty().withMessage("La descrizione italiana è obbligatoria"),
+    // Le altre lingue sono opzionali
+    body('title_en').optional({ checkFalsy: true }).isString().trim(),
+    body('description_en').optional({ checkFalsy: true }).isString().trim(),
+    
     body('dateStarted').isDate({ format: 'YYYY-MM-DD' }).withMessage("La data d'inizio deve essere YYYY-MM-DD"),
     body('dateEnded').optional({ checkFalsy: true }).isDate({ format: 'YYYY-MM-DD' }).withMessage("La data di fine deve essere YYYY-MM-DD"),
     body('thumbnailURI').optional().isString().trim().notEmpty().withMessage("L'URI deve essere una stringa"),
@@ -125,8 +129,11 @@ router.post('/shows/add', [
 
 router.patch('/shows/:id', [
     param('id').isInt({ min: 1 }).withMessage("ID serie non valido"),
-    body('title').optional().isString().trim().notEmpty().withMessage("Titolo non valido"),
-    body('description').optional().isString().trim().notEmpty().withMessage("Descrizione non valida"),
+    body('title_it').isString().trim().notEmpty().withMessage("Il titolo italiano è obbligatorio"),
+    body('description_it').isString().trim().notEmpty().withMessage("La descrizione italiana è obbligatoria"),
+    // Le altre lingue sono opzionali
+    body('title_en').optional({ checkFalsy: true }).isString().trim(),
+    body('description_en').optional({ checkFalsy: true }).isString().trim(),
     body('dateEnded').optional({ checkFalsy: true }).isDate({ format: 'YYYY-MM-DD' }).withMessage("La data deve essere YYYY-MM-DD"),
     body('thumbnailURI').optional().isString().trim().notEmpty().withMessage("L'URI deve essere una stringa"),
     body('bannerURI').optional().isString().trim().notEmpty().withMessage("L'URI deve essere una stringa")
@@ -232,8 +239,11 @@ router.get('/seasons', [
 
 
 router.post('/seasons/add', [
-    body('title').isString().trim().notEmpty().withMessage("Titolo non valido"),
-    body('description').isString().trim().notEmpty().withMessage("Descrizione non valida"),
+    body('title_it').isString().trim().notEmpty().withMessage("Il titolo italiano è obbligatorio"),
+    body('description_it').isString().trim().notEmpty().withMessage("La descrizione italiana è obbligatoria"),
+    // Le altre lingue sono opzionali
+    body('title_en').optional({ checkFalsy: true }).isString().trim(),
+    body('description_en').optional({ checkFalsy: true }).isString().trim(),
     body('dateStarted').isDate({ format: 'YYYY-MM-DD' }).withMessage("La data d'inizio deve essere YYYY-MM-DD"),
     body('dateEnded').optional({ checkFalsy: true }).isDate({ format: 'YYYY-MM-DD' }).withMessage("La data di fine deve essere YYYY-MM-DD"),
     body('refShow').isInt({ min: 1 }).withMessage("ID della serie non valido"),
@@ -283,8 +293,11 @@ router.post('/seasons/add', [
 
 router.patch('/seasons/:id', [
     param('id').isInt({ min: 1 }).withMessage("ID stagione non valido"),
-    body('title').optional().isString().trim().notEmpty().withMessage("Titolo non valido"),
-    body('description').optional().isString().trim().notEmpty().withMessage("Descrizione non valida"),
+    body('title_it').isString().trim().notEmpty().withMessage("Il titolo italiano è obbligatorio"),
+    body('description_it').isString().trim().notEmpty().withMessage("La descrizione italiana è obbligatoria"),
+    // Le altre lingue sono opzionali
+    body('title_en').optional({ checkFalsy: true }).isString().trim(),
+    body('description_en').optional({ checkFalsy: true }).isString().trim(),
     body('dateEnded').optional({ checkFalsy: true }).isDate({ format: 'YYYY-MM-DD' }).withMessage("La data deve essere YYYY-MM-DD"),
     body('hasEnded').optional().isInt({ min: 0, max: 1 }).withMessage("hasEnded deve essere 0 o 1"),
     body('refShow').optional().isInt({ min: 1 }).withMessage("ID della serie non valido")
@@ -395,8 +408,11 @@ router.get('/episodes', [
 
 
 router.post('/episodes/add', [
-    body('title').isString().trim().notEmpty().withMessage("Titolo non valido"),
-    body('description').isString().trim().notEmpty().withMessage("Descrizione non valida"),
+    body('title_it').isString().trim().notEmpty().withMessage("Il titolo italiano è obbligatorio"),
+    body('description_it').isString().trim().notEmpty().withMessage("La descrizione italiana è obbligatoria"),
+    // Le altre lingue sono opzionali
+    body('title_en').optional({ checkFalsy: true }).isString().trim(),
+    body('description_en').optional({ checkFalsy: true }).isString().trim(),
     body('releaseDate').isDate({ format: 'YYYY-MM-DD' }).withMessage("La data deve essere YYYY-MM-DD"),
     body('duration').isInt({ min: 1 }).withMessage("La durata deve essere un intero positivo"),
     body('refSeason').isInt({ min: 1 }).withMessage("ID stagione non valido"),
@@ -451,8 +467,11 @@ router.post('/episodes/add', [
 
 router.patch('/episodes/:id', [
     param('id').isInt({ min: 1 }).withMessage("ID episodio non valido"),
-    body('title').optional().isString().trim().notEmpty().withMessage("Titolo non valido"),
-    body('description').optional().isString().trim().notEmpty().withMessage("Descrizione non valida"),
+    body('title_it').isString().trim().notEmpty().withMessage("Il titolo italiano è obbligatorio"),
+    body('description_it').isString().trim().notEmpty().withMessage("La descrizione italiana è obbligatoria"),
+    // Le altre lingue sono opzionali
+    body('title_en').optional({ checkFalsy: true }).isString().trim(),
+    body('description_en').optional({ checkFalsy: true }).isString().trim(),
     body('refSeason').optional().isInt({ min: 1 }).withMessage("ID stagione non valido"),
     body('DubLanguages').optional().isArray().withMessage("DubLanguages deve essere un array"),
     body('SubLanguages').optional().isArray().withMessage("SubLanguages deve essere un array"),

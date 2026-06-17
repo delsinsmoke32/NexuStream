@@ -1,69 +1,76 @@
 const multer = require('multer');
-const path = require('path'); // Richiesto per path.extname
+const path = require('path');
+const fs = require('fs'); // 🚀 IMPORTANTE: Aggiungi fs!
+const { body } = require('express-validator');
 
-// Configurazione dello storage per preservare nome ed estensione
-const avatarStorage = multer.diskStorage({
+// 1. FACTORY: Crea la configurazione di Storage in base alla cartella
+const createStorage = (folderPath) => multer.diskStorage({
     destination: function (req, file, cb) {
-        // Specifica la cartella dove salvare i file (creala se non esiste)
-        cb(null, 'public/avatars/');
+        // 🚀 FIX: Creiamo il percorso assoluto e la cartella se non esiste
+        const dir = path.join(__dirname, '../public', folderPath);
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        cb(null, dir); 
     },
     filename: function (req, file, cb) {
-        // Genera un nome univoco combinando timestamp attuale e un numero casuale
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        
-        // Recupera l'estensione del file originale (es: .jpg, .png)
         const ext = path.extname(file.originalname);
-        
-        // Imposta il nome definitivo del file comprensivo di estensione
         cb(null, file.fieldname + '-' + uniqueSuffix + ext);
     }
 });
 
-const { body } = require('express-validator');
-
-const uploadAvatar = multer({
-    storage: avatarStorage,
+// 2. FACTORY: Crea l'istanza di Multer con i controlli di sicurezza
+const createUploader = (folderPath) => multer({
+    storage: createStorage(folderPath),
     limits: { fileSize: 5 * 1024 * 1024 }, // Limite 5MB
     fileFilter: (req, file, cb) => {
-        // 1. Definisci i formati accettati
         const allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
         const allowedExtensions = /jpeg|jpg|png|webp/;
 
-        // 2. Controlla sia il Mime Type che l'estensione del nome file
         const isMimeValid = allowedMimeTypes.includes(file.mimetype);
         const isExtValid = allowedExtensions.test(path.extname(file.originalname).toLowerCase());
 
         if (isMimeValid && isExtValid) {
-            // Accetta il file: Multer inizierà a salvarlo sul disco
             cb(null, true); 
         } else {
-            // Rifiuta il file: interrompe immediatamente l'upload e passa l'errore al controller
             cb(new multer.MulterError('FORMATO_NON_VALIDO'), false); 
         }
     }
-})
-
-const validateAvatar = body('img').custom(async (value, { req }) => {
-    // Avvolgiamo Multer in una Promise per integrarlo nel flusso asincrono
-    await new Promise((resolve, reject) => {
-        uploadAvatar.single('img')(req, req.res, (err) => {
-            if (err) {
-                if (err instanceof multer.MulterError && err.code === 'FORMATO_NON_VALIDO') {
-                    return reject(new Error("Il file caricato deve essere un'immagine valida (PNG, JPG, WEBP)"));
-                }
-                if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
-                    return reject(new Error("Il file è troppo grande. Massimo 5MB."));
-                }
-                return reject(new Error(err.message));
-            }
-            console.log("Avatar salvato con successo")
-            resolve();
-        });
-    });
-    
-    return true;
 });
 
+// 3. FACTORY: Crea il validatore personalizzato (Il "Wrapper" di Express-Validator)
+const createValidator = (folderPath, fieldName) => {
+    const uploader = createUploader(folderPath);
+    
+    return body(fieldName).custom(async (value, { req }) => {
+        await new Promise((resolve, reject) => {
+            uploader.single(fieldName)(req, req.res, (err) => {
+                if (err) {
+                    if (err instanceof multer.MulterError && err.code === 'FORMATO_NON_VALIDO') {
+                        return reject(new Error("Il file deve essere un'immagine valida (PNG, JPG, WEBP)"));
+                    }
+                    if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+                        return reject(new Error("Il file è troppo grande. Massimo 5MB."));
+                    }
+                    return reject(new Error(err.message));
+                }
+                resolve();
+            });
+        });
+        return true;
+    });
+};
+
+// ==========================================
+// ESPORTIAMO I MIDDLEWARE PRONTI ALL'USO!
+// ==========================================
 module.exports = {
-    validateAvatar
-}
+    // Single-Step per la rotta propic, visto che è molto più leggera
+    validateAvatar: createValidator('avatars', 'img'),
+
+    // Two-Step per le altre rotte, sono più pesanti
+    uploadShowThumbnail: createUploader('show_thumbnails'),
+    uploadShowBanner: createUploader('banners'),
+    uploadEpisodeThumbnail: createUploader('episode_thumbnails')
+};

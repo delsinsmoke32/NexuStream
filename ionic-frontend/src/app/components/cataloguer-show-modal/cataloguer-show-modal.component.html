@@ -1,0 +1,91 @@
+<ion-header>
+    <ion-toolbar color="dark">
+        <ion-title>{{ isEditMode ? 'Modifica Serie' : 'Nuova Serie' }}</ion-title>
+        <ion-buttons slot="end">
+            <ion-button (click)="dismiss()" [disabled]="isUploading()">Annulla</ion-button>
+        </ion-buttons>
+    </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+    <form [formGroup]="showForm" (ngSubmit)="save()">
+        
+        <div class="form-section-title">Media / Immagini</div>
+        <ion-grid class="ion-no-padding">
+            <ion-row>
+                <ion-col size="6" class="ion-padding-end">
+                    <div class="upload-box" (click)="triggerSelect('thumbnail')">
+                        <input type="file" #thumbInput (change)="onFileSelect($event, 'thumbnail')" accept="image/*" hidden />
+                        @if (thumbnailPreview()) {
+                            <img [src]="thumbnailPreview()" class="preview-img thumb-aspect" />
+                        } @else {
+                            <div class="placeholder-content">
+                                <ion-icon name="image-outline"></ion-icon>
+                                <span>Thumbnail (Locandina)</span>
+                            </div>
+                        }
+                    </div>
+                </ion-col>
+
+                <ion-col size="6">
+                    <div class="upload-box" (click)="triggerSelect('banner')">
+                        <input type="file" #bannerInput (change)="onFileSelect($event, 'banner')" accept="image/*" hidden />
+                        @if (bannerPreview()) {
+                            <img [src]="bannerPreview()" class="preview-img banner-aspect" />
+                        } @else {
+                            <div class="placeholder-content">
+                                <ion-icon name="images-outline"></ion-icon>
+                                <span>Banner (Orizzontale)</span>
+                            </div>
+                        }
+                    </div>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+
+        <div class="form-section-title">Lingua Italiana (Principale)</div>
+        <ion-item fill="outline" mode="md">
+            <ion-label position="stacked">Titolo (IT) *</ion-label>
+            <ion-input type="text" formControlName="title_it" placeholder="Inserisci titolo in italiano"></ion-input>
+        </ion-item>
+
+        <ion-item fill="outline" mode="md">
+            <ion-label position="stacked">Descrizione / Trama (IT) *</ion-label>
+            <ion-textarea formControlName="description_it" placeholder="Inserisci trama in italiano" rows="3"></ion-textarea>
+        </ion-item>
+
+        <div class="form-section-title">Lingua Inglese (Opzionale)</div>
+        <ion-item fill="outline" mode="md">
+            <ion-label position="stacked">Titolo (EN)</ion-label>
+            <ion-input type="text" formControlName="title_en" placeholder="Inserisci titolo in inglese"></ion-input>
+        </ion-item>
+
+        <ion-item fill="outline" mode="md">
+            <ion-label position="stacked">Descrizione / Trama (EN)</ion-label>
+            <ion-textarea formControlName="description_en" placeholder="Inserisci trama in inglese" rows="3"></ion-textarea>
+        </ion-item>
+
+        <div class="form-section-title">Dati Strutturali</div>
+        <ion-item fill="outline" mode="md">
+            <ion-label position="stacked">Data Inizio *</ion-label>
+            <ion-input type="date" formControlName="dateStarted"></ion-input>
+        </ion-item>
+        <ion-item fill="outline" mode="md">
+            <ion-label position="stacked">Data Fine</ion-label>
+            <ion-input type="date" formControlName="dateEnded"></ion-input>
+        </ion-item>
+
+        <ion-button
+            expand="block"
+            type="submit"
+            [disabled]="showForm.invalid || isUploading()"
+            color="primary"
+            class="ion-margin-top"
+        >
+            <svg viewBox="0 0 512 512" class="btn-svg">
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M380.93 57.37A32 32 0 00358.3 48H92a44 44 0 00-44 44v328a44 44 0 0044 44h328a44 44 0 0044-44V153.7a32 32 0 00-9.37-22.63zM256 416a64 64 0 1164-64 64 64 0 01-64 64zm48-224H112a16 16 0 01-16-16v-64a16 16 0 0116-16h192a16 16 0 0116 16v64a16 16 0 01-16 16z" />
+            </svg>
+            {{ isUploading() ? 'Caricamento file in corso...' : (isEditMode ? 'Aggiorna Serie' : 'Salva Serie nel Catalogo') }}
+        </ion-button>
+    </form>
+</ion-content>

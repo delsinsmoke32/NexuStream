@@ -28,6 +28,7 @@
                 class="header-action-btn propic-btn"
                 (click)="openPropicModal()"
                 title="Gestisci Propic"
+                color="#b22222"
             >
                 <svg viewBox="0 0 512 512">
                     <path
@@ -50,7 +51,7 @@
                         d="M256 112v288M400 256H112"
                     />
                 </svg>
-                Aggiungi
+                <span class="btn-text">Aggiungi</span>
             </button>
 
             <button
@@ -198,7 +199,7 @@
                     <span class="ep-number"
                         >EPISODIO {{ episode.EpisodeNumber }}</span
                     >
-                    <span class="ep-duration">{{ episode.Duration }} min</span>
+                    <span class="ep-duration">{{ episode.Duration / 60}} min</span>
                 </div>
                 <h2 class="card-main-title">
                     "{{ getLangText(episode.Title, 'it') }}"

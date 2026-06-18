@@ -104,3 +104,39 @@ ion-item {
     font-size: 0.85rem;
   }
 }
+
+/* --- STILI BOX UPLOAD VIDEO --- */
+.video-upload-box {
+  min-height: 120px; /* Più stretto dell'immagine */
+  background: rgba(255, 255, 255, 0.02);
+  
+  &.has-file {
+    border-color: var(--ion-color-success, #2dd36f);
+    background: rgba(45, 211, 111, 0.05);
+  }
+
+  .file-selected {
+    color: var(--ion-color-success, #2dd36f);
+    font-weight: 600 !important;
+    text-transform: none !important;
+    margin-top: 8px;
+    word-break: break-all;
+    padding: 0 16px;
+    text-align: center;
+  }
+
+  .file-hint {
+    font-size: 0.7rem !important;
+    color: #666;
+    margin-top: 6px;
+    text-transform: none !important;
+  }
+}
+
+.ion-text-truncate {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%; // Forza il rispetto dei confini del bottone
+}

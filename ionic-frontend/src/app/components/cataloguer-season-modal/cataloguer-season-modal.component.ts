@@ -22,6 +22,7 @@ import {
 })
 export class CataloguerSeasonModalComponent implements OnInit {
   @Input() data: any; // Contiene l'oggetto se siamo in modalità modifica
+  @Input() autoSeasonNumber!: number; // Numero stagione autogenerato, passato con componentProps
 
   private fb = inject(FormBuilder);
   private modalCtrl = inject(ModalController);
@@ -51,7 +52,10 @@ export class CataloguerSeasonModalComponent implements OnInit {
       // Dati Strutturali (Disabilitati in modifica per evitare conflitti DB)
       dateStarted: [{ value: this.data?.DateStarted || '', disabled: this.isEditMode }, this.isEditMode ? [] : [Validators.required]],
       dateEnded: [this.data?.DateEnded || ''],
-      seasonNumber: [{ value: this.data?.SeasonNumber || '', disabled: this.isEditMode }, this.isEditMode ? [] : [Validators.required, Validators.min(1)]]
+      seasonNumber: [{ 
+          value: this.data?.SeasonNumber || this.autoSeasonNumber, 
+          disabled: true 
+      }],
     });
   }
 

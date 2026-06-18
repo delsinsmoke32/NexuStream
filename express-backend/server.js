@@ -57,12 +57,17 @@ const swaggerOptions = {
     apis: ['./routes/*.js', './controllers/*.js'], 
 };
 
+const corsOptions = {
+    origin: 'http://localhost:8100', // <-- Cambia 8100 con 4200 se usi Angular liscio!
+    credentials: true, // 🚀 IL PASS VIP CHE RISOLVE L'ERRORE
+};
+
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 
 app.use(detectLanguage);
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 app.use('/api/login', loginRoute);
 app.use('/api/register', registerRoute);
 app.use('/api/users', userRoute);

@@ -505,6 +505,13 @@ router.delete('/episodes/:id', [
 ], cataloguerController.removeEpisode);
 
 
+router.delete('/episodes/:id/tracks/:type/:lang', [
+    param('id').isInt({ min: 1 }).withMessage("ID episodio non valido"),
+    param('type').isIn(['audio', 'subs']).withMessage("Tipo non valido"),
+    param('lang').isString().trim().notEmpty().withMessage("ID lingua non valido")
+], cataloguerController.removeTrack);
+
+
 // ==========================================
 // ROTTE IMMAGINI PROFILO (PROPICS)
 // ==========================================

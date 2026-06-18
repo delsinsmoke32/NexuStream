@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, max } from 'rxjs';
 
 // IONIC STANDALONE
 import {
@@ -78,10 +78,35 @@ export class CataloguerPage implements OnInit {
 
         // 1. Selezioniamo il componente corretto
         if (currentLvl === 'shows') targetComponent = CataloguerShowModalComponent;
-        else if (currentLvl === 'seasons') targetComponent = CataloguerSeasonModalComponent;
+        else if (currentLvl === 'seasons') {
+            targetComponent = CataloguerSeasonModalComponent;
+            const currentSeasons = this.seasons(); 
+        
+            const maxNum = currentSeasons.reduce((max, s) => {
+                // Tenta di parsare il numero (cerca la E maiuscola e minuscola)
+                const val = parseInt(s.SeasonNumber || s.seasonNumber, 10);
+                // Se è un numero valido ed è maggiore del massimo attuale, lo aggiorna
+                return (!isNaN(val) && val > max) ? val : max;
+            }, 0); // Partiamo da 0
+            componentProps = {
+                autoSeasonNumber: maxNum + 1
+            }
+        }
         else if (currentLvl === 'episodes') {
             targetComponent = CataloguerEpisodeModalComponent;
-            componentProps = { seasonId: this.selectedSeasonId() }; // Passiamo l'ID stagione
+           const currentEpisodes = this.episodes(); 
+
+           console.log("Episodi attuali in memoria:", currentEpisodes);
+            
+            // Calcolo Antiproiettile
+            const maxNum = currentEpisodes.reduce((max, e) => {
+                const val = parseInt(e.EpisodeNumber || e.episodeNumber, 10);
+                return (!isNaN(val) && val > max) ? val : max;
+            }, 0);
+            componentProps = { 
+                seasonId: this.selectedSeasonId(),
+                autoEpisodeNumber: maxNum + 1 // Lo passiamo alla modale
+            };
         }
 
         const modal = await this.modalCtrl.create({
@@ -132,9 +157,12 @@ export class CataloguerPage implements OnInit {
                 duration: parseInt(data.payload.duration, 10),
                 refSeason: this.selectedSeasonId(),
                 episodeNumber: parseInt(data.payload.episodeNumber, 10),
+                audioTracks: data.payload.audioTracks || [], 
+                subTracks: data.payload.subTracks || [],
                 DubLanguages: ['it'], // Dummy per ora
                 SubLanguages: ['it'], // Dummy per ora
                 thumbnailURI: data.payload.thumbnailURI || null,
+                rawVideoURI: data.payload.rawVideoURI || null 
             };
         }
 
@@ -240,10 +268,23 @@ export class CataloguerPage implements OnInit {
                 if (data.payload.dateEnded !== undefined) extraFields.dateEnded = data.payload.dateEnded;
             } else if (currentLvl === 'episodes') {
                 if (data.payload.thumbnailURI) extraFields.thumbnailURI = data.payload.thumbnailURI;
-                extraFields.DubLanguages = item.DubLanguages || ['it'];
-                extraFields.SubLanguages = item.SubLanguages || ['it'];
+                
+                extraFields.DubLanguages = typeof item.DubLanguages === 'string' 
+                    ? item.DubLanguages.split(',') 
+                    : (item.DubLanguages || ['it']);
+
+                extraFields.SubLanguages = typeof item.SubLanguages === 'string' 
+                    ? item.SubLanguages.split(',') 
+                    : (item.SubLanguages || []); // I sub non sono obbligatori, quindi default array vuoto
+
                 if (data.payload.duration) extraFields.duration = parseInt(data.payload.duration, 10);
                 if (data.payload.episodeNumber) extraFields.episodeNumber = parseInt(data.payload.episodeNumber, 10);
+                if (data.payload.audioTracks && data.payload.audioTracks.length > 0) {
+                    extraFields.audioTracks = data.payload.audioTracks;
+                }
+                if (data.payload.subTracks && data.payload.subTracks.length > 0) {
+                    extraFields.subTracks = data.payload.subTracks;
+                }
             }
 
             const currentTitleIt = data.payload.title_it?.trim() || this.getLangText(item.Title, 'it');
@@ -263,6 +304,13 @@ export class CataloguerPage implements OnInit {
                 };
                 await firstValueFrom(this.http.patch(`${this.baseUrl}/${subPath}/${id}`, payloadIt, { headers: this.getAuthHeaders() }));
             }
+
+
+            //per non appesantire la chiamata
+            delete extraFields.audioTracks;
+            delete extraFields.subTracks;
+            delete extraFields.thumbnailURI;
+            delete extraFields.bannerURI;
 
             // PATCH INGLESE
             if (data.payload.title_en?.trim() || data.payload.description_en?.trim()) {
@@ -305,19 +353,36 @@ export class CataloguerPage implements OnInit {
                     return item;
                 }));
             } else if (currentLvl === 'episodes') {
-                this.episodes.update(items => items.map(item => {
-                    if (item.EpisodeID === id) {
+                let updatedDubs = item.DubLanguages ? item.DubLanguages.split(',') : ['it'];
+                if (data.payload.audioTracks) {
+                    data.payload.audioTracks.forEach((t: any) => { 
+                        if (!updatedDubs.includes(t.lang)) updatedDubs.push(t.lang); 
+                    });
+                }
+                
+                let updatedSubs = item.SubLanguages ? item.SubLanguages.split(',') : [];
+                if (data.payload.subTracks) {
+                    data.payload.subTracks.forEach((t: any) => { 
+                        if (!updatedSubs.includes(t.lang)) updatedSubs.push(t.lang); 
+                    });
+                }
+
+                // Aggiorniamo il Signal
+                this.episodes.update(items => items.map(ep => {
+                    if (ep.EpisodeID === id) {
                         return {
-                            ...item,
+                            ...ep,
                             Title: updatedTitle,
                             Description: updatedDesc,
-                            Duration: extraFields.duration !== undefined ? extraFields.duration : item.Duration,
-                            EpisodeNumber: extraFields.episodeNumber !== undefined ? extraFields.episodeNumber : item.EpisodeNumber
+                            Duration: extraFields.duration !== undefined ? extraFields.duration : ep.Duration,
+                            EpisodeNumber: extraFields.episodeNumber !== undefined ? extraFields.episodeNumber : ep.EpisodeNumber,
+                            DubLanguages: updatedDubs.join(','),
+                            SubLanguages: updatedSubs.join(',')
                         };
                     }
-                    return item;
+                    return ep;
                 }));
-                // Opzionale: Riordiniamo gli episodi se hai modificato il Numero Episodio
+                // Riordiniamo gli episodi qualora serva
                 this.episodes.update(items => items.sort((a, b) => a.EpisodeNumber - b.EpisodeNumber));
             }
 

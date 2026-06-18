@@ -142,20 +142,21 @@
         track season.SeasonID) {
         <div class="catalog-card edge-secondary">
             <div class="card-body">
+                <span class="season-overline">STAGIONE {{ season.SeasonNumber }}</span>
+
                 <h2 class="card-main-title">
                     {{ getLangText(season.Title, 'it') }}
                 </h2>
                 <p class="card-description">
                     {{ getLangText(season.Description, 'it') }}
                 </p>
+                
                 <div class="card-metadata">
-                    <span
-                        >Rilascio:
-                        <strong>{{ season.DateStarted }}</strong></span
-                    >
-                    <span class="badge badge-season"
-                        >Stagione {{ season.SeasonNumber }}</span
-                    >
+                    <span>Rilascio: <strong>{{ season.DateStarted }}</strong></span>
+                    
+                    <span class="badge" [class.badge-ended]="season.DateEnded">
+                        {{ season.DateEnded ? 'Conclusa' : 'In Corso' }}
+                    </span>
                 </div>
             </div>
             <div class="card-actions-row">

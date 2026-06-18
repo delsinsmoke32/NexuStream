@@ -115,44 +115,69 @@ const interactWithEpisode = async (req, res) => {
     }
 };
 
+
 const stream = async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()){
-        return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+
+    const episodeId = req.params.episodeId || req.params.id;
+    const host = process.env.HOST || 'localhost';
+    const port = process.env.PORT || 3000;
+    const baseUri = `http://${host}:${port}/static/videos/${episodeId}/`;
+
+    const langNames = { 'it': 'Italiano', 'en': 'English', 'ja': 'Giapponese', 'es': 'Español' };
+
+    try {
+        // AGGIUNTO #EXT-X-INDEPENDENT-SEGMENTS per forzare l'avvio immediato senza blocchi sul timestamp 0
+        let m3u8 = '#EXTM3U\n#EXT-X-VERSION:6\n#EXT-X-INDEPENDENT-SEGMENTS\n#EXT-X-START:TIME-OFFSET=0\n\n';
+
+        const audios = await episodeModel.getEpisodeDubs(episodeId) || []; 
+        const subtitles = await episodeModel.getEpisodeSubs(episodeId) || []; 
+
+        // 2. Generazione Tracce Audio (DUB)
+        if (audios.length > 0) {
+            audios.forEach((audioObj, index) => {
+                const langStr = typeof audioObj === 'string' ? audioObj : (audioObj.REF_LanguageID || audioObj.LanguageID || audioObj.lang || Object.values(audioObj)[0]);
+                
+                const isDefault = index === 0 ? 'YES' : 'NO'; 
+                const langName = langNames[langStr] || langStr.toUpperCase();
+                
+                // AGGIUNTO CHARACTERISTICS="public.accessibility.describes-video" per legare stabilmente l'audio al video principale
+                m3u8 += `#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="audio",NAME="${langName}",DEFAULT=${isDefault},AUTOSELECT=YES,LANGUAGE="${langStr}",CHARACTERISTICS="public.accessibility.describes-video",URI="${baseUri}audio_${langStr}/audio.m3u8"\n`;
+            });
+            m3u8 += '\n';
+        }
+        if (subtitles.length > 0) {
+            subtitles.forEach(subObj => {
+                const langStr = typeof subObj === 'string' ? subObj : (subObj.REF_LanguageID || subObj.LanguageID || subObj.lang || Object.values(subObj)[0]);
+                const langName = langNames[langStr] || langStr.toUpperCase();
+                
+                // ORA PUNTA ALLA PLAYLIST SEGMENTATA (subs.m3u8) E NON AL FILE SINGOLO
+                m3u8 += `#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID="subs",NAME="${langName}",DEFAULT=NO,AUTOSELECT=YES,FORCED=NO,LANGUAGE="${langStr}",URI="${baseUri}subs_${langStr}/subs.m3u8"\n`;
+            });
+            m3u8 += '\n';
+        }
+
+        // 4. Flusso Video Principale
+        let streamInf = '#EXT-X-STREAM-INF:BANDWIDTH=6000000';
+        if (audios.length > 0) streamInf += ',AUDIO="audio"';
+        if (subtitles.length > 0) streamInf += ',SUBTITLES="subs"';
+        
+        m3u8 += `${streamInf}\n`;
+        m3u8 += `${baseUri}video/video.m3u8\n`;
+        
+        m3u8 += `${streamInf}\n`;
+        m3u8 += `${baseUri}video/video.m3u8\n`;
+
+        res.setHeader('Content-Type', 'application/x-mpegURL');
+        return res.status(200).send(m3u8);
+
+    } catch (err) {
+        console.error("Errore generazione HLS:", err);
+        return res.status(500).json({ error: "Errore durante la generazione dello stream" });
     }
-    let id = "test"
-    let baseUri = `http://${HOST}:${PORT}/static/videos/${id}/`;
-    const audios = [
-        { name: 'Japanese (Original)', lang: 'jp', uri: 'audio1/audio1.m3u8', default: 'YES' },
-        { name: 'English', lang: 'en', uri: 'audio2/audio2.m3u8', default: 'NO' }
-    ];
-
-    const subtitles = [
-        { name: 'English', lang: 'en', uri: 'subs/subs1.m3u8' },
-        { name: 'Japanese', lang: 'jp', uri: 'subs/subs2.m3u8' }
-    ];
-
-    let m3u8 = '#EXTM3U\n#EXT-X-VERSION:6\n\n';
-
-    // Genera Audio
-    audios.forEach(a => {
-        m3u8 += `#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="audio",NAME="${a.name}",DEFAULT=${a.default},AUTOSELECT=YES,LANGUAGE="${a.lang}",URI="${baseUri+a.uri}"\n`;
-    });
-    m3u8 += '\n';
-
-    // Genera Sottotitoli
-    subtitles.forEach(s => {
-        m3u8 += `#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID="subs",NAME="${s.name}",DEFAULT=NO,AUTOSELECT=YES,FORCED=NO,LANGUAGE="${s.lang}",URI="${baseUri+s.uri}"\n`;
-    });
-    m3u8 += '\n';
-
-    // Flusso Video principale
-    m3u8 += '#EXT-X-STREAM-INF:BANDWIDTH=6000000,AUDIO="audio",SUBTITLES="subs"\n';
-    m3u8 += baseUri+'video/video.m3u8';
-
-    res.setHeader('Content-Type', 'application/x-mpegURL');
-    return res.status(200).send(m3u8);
 };
+
 
 module.exports = {
     getEpisodes,

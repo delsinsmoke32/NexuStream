@@ -159,7 +159,25 @@ export class EpisodePage implements OnInit, OnDestroy {
         }
 
         this.player = videojs(videoTag.nativeElement, {
-            autoplay: false, controls: true, responsive: true, fluid: true,
+            autoplay: false, // Giusto lasciarlo a false per non disturbare l'utente
+            controls: true, 
+            responsive: true, 
+            fluid: true,
+            
+            // 🚀 FONDAMENTALE: Dice al player di scaricare subito il file .m3u8 e i primissimi segmenti
+            // Questo elimina al 99% il blocco a 00:00 perché il player non aspetta il click per leggere i dati
+            preload: 'auto', 
+
+            html5: {
+                vhs: {
+                    withCredentials: true,        // Il tuo settaggio originale (perfetto)
+                    
+                    // 🚀 POTENZIAMENTI HLS:
+                    overrideNative: true,         // Forza Video.js a usare il suo motore HLS anziché quello di alcuni browser
+                    fastReady: true,              // Cerca di sbloccare la riproduzione il più in fretta possibile
+                    useDevicePixelRatio: true     // Migliora leggermente la resa del testo dei sottotitoli
+                }
+            },
             sources: [{
                 src: this.backendUrl.transform(`api/shows/${this.showId()}/seasons/${this.seasonId()}/episodes/${this.episodeId()}/stream`),
                 type: 'application/x-mpegURL',

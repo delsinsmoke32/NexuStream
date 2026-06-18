@@ -24,7 +24,7 @@ const getAllShows = async (search, limit, offset) => {
 };
 
 const getAllSeasons = async (refShow) => {
-    let sql = `SELECT SeasonID, Title, Description, DateStarted, DateEnded, hasEnded, REF_ShowID FROM Seasons WHERE 1=1`;
+    let sql = `SELECT SeasonID, Title, Description, DateStarted, DateEnded, hasEnded, SeasonNumber, REF_ShowID FROM Seasons WHERE 1=1`;
     const params = [];
     
     if (refShow) {
@@ -38,7 +38,7 @@ const getAllSeasons = async (refShow) => {
 };
 
 const getAllEpisodes = async (refSeason) => {
-    let sql = `SELECT EpisodeID, Title, Description, ReleaseDate, Duration, REF_SeasonID, Streams, Likes FROM Episodes WHERE 1=1`;
+    let sql = `SELECT EpisodeID, Title, Description, ReleaseDate, Duration, REF_SeasonID, Streams, Likes, EpisodeNumber FROM Episodes WHERE 1=1`;
     const params = [];
     
     if (refSeason) {
@@ -291,6 +291,56 @@ const deletePropicByURI = async (propicURI) => {
     return await db.runAsync(sql, [propicURI]);
 };
 
+/**
+ * Inserisce una nuova lingua dub in un episodio.
+ * @param {number} episodeId
+ * @param {string} lang
+ * @returns {Promise<{id: number, changes: number}>}
+ */
+
+const insertDubLang = async (episodeId, lang) => {
+    const sql = `INSERT OR IGNORE INTO "EpisodeLanguage" ("REF_EpisodeID", "REF_LanguageID") VALUES (?, ?)`;
+    return await db.runAsync(sql, [episodeId, lang]);
+}
+
+/**
+ * Inserisce una nuova lingua sub in un episodio.
+ * @param {number} episodeId
+ * @param {string} lang
+ * @returns {Promise<{id: number, changes: number}>}
+ */
+
+const insertSubLang = async (episodeId, lang) => {
+    const sql = `INSERT OR IGNORE INTO "EpisodeSubtitles" ("REF_EpisodeID", "REF_LanguageID") VALUES (?, ?)`;
+    return await db.runAsync(sql, [episodeId, lang]);
+}
+
+/**
+ * Cancella una lingua dub da un episodio.
+ * @param {number} episodeId
+ * @param {string} lang
+ * @returns {Promise<{id: number, changes: number}>}
+ */
+
+const deleteDubLang = async (episodeId, lang) => {
+    const sql = `DELETE FROM "EpisodeLanguage" WHERE REF_EpisodeID = ? AND REF_LanguageID = ?`;
+    return await db.runAsync(sql, [episodeId, lang]);
+}
+
+/**
+ * Cancella una lingua sub da un episodio.
+ * @param {number} episodeId
+ * @param {string} lang
+ * @returns {Promise<{id: number, changes: number}>}
+ */
+
+const deleteSubLang = async (episodeId, lang) => {
+    const sql = `DELETE FROM "EpisodeSubtitles" WHERE REF_EpisodeID = ? AND REF_LanguageID = ?`;
+    return await db.runAsync(sql, [episodeId, lang]);
+}
+
+
+
 module.exports = {
     getAllShows,
     getAllSeasons,
@@ -305,5 +355,9 @@ module.exports = {
     updateEpisodeFull,
     deleteEpisode,
     insertPropic,
-    deletePropicByURI
+    deletePropicByURI,
+    insertDubLang,
+    insertSubLang,
+    deleteDubLang,
+    deleteSubLang
 };

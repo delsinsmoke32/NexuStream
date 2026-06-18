@@ -3,8 +3,6 @@ const ffmpeg = require('fluent-ffmpeg');
 const path = require('path');
 const fs = require('fs');
 
-const ffmpegPath = path.join(__dirname, '../', 'ffmpeg_installation', 'bin', 'ffmpeg.exe');
-ffmpeg.setFfmpegPath(ffmpegPath);
 // Crea la cartella di destinazione se non esiste
 const outputDir = path.join(__dirname, '../public/videos/test_jjk/video');
 if (!fs.existsSync(outputDir)) {

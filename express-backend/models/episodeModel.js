@@ -123,6 +123,29 @@ const updateEpisodeLikesCounter = async (likeDelta, episodeId) => {
     return await db.runAsync(sql, [likeDelta, episodeId]);
 };
 
+// Assicurati di avere una tabella SupportedLanguages con (LanguageID, LanguageName)
+// Es: ('it', 'Italiano'), ('en', 'English (Original)')
+
+const getEpisodeDubs = async (episodeId) => {
+    // Esempio basato su una tabella "EpisodeDubs"
+    const sql = `
+        SELECT REF_LanguageID
+        FROM EpisodeLanguage
+        WHERE REF_EpisodeID = ?
+    `;
+    return await db.allAsync(sql, [episodeId]);
+};
+
+const getEpisodeSubs = async (episodeId) => {
+    // Esempio basato su una tabella "EpisodeSubs"
+    const sql = `
+        SELECT REF_LanguageID
+        FROM EpisodeSubtitles
+        WHERE REF_EpisodeID = ?
+    `;
+    return await db.allAsync(sql, [episodeId]);
+};
+
 module.exports = {
     getEpisodesBySeasonAuth,
     getEpisodesBySeasonNoAuth,
@@ -130,5 +153,7 @@ module.exports = {
     getUserEpisodeInteraction,
     getPreviousLikeStatus,
     upsertEpisodeInteraction,
-    updateEpisodeLikesCounter
+    updateEpisodeLikesCounter,
+    getEpisodeDubs,
+    getEpisodeSubs
 };

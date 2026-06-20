@@ -69,328 +69,314 @@ export class CataloguerPage implements OnInit {
     }
 
     // ==========================================
-    // METODO UNIFICATO APERTURA MODALE (ADD)
-    // ==========================================
-    async openAddModal() {
-        const currentLvl = this.currentLevel();
-        let targetComponent: any;
-        let componentProps: any = {};
+// METODO UNIFICATO APERTURA MODALE (ADD)
+// ==========================================
+async openAddModal() {
+    const currentLvl = this.currentLevel();
+    let targetComponent: any;
+    let componentProps: any = {};
 
-        // 1. Selezioniamo il componente corretto
-        if (currentLvl === 'shows') targetComponent = CataloguerShowModalComponent;
-        else if (currentLvl === 'seasons') {
-            targetComponent = CataloguerSeasonModalComponent;
-            const currentSeasons = this.seasons(); 
+    // 1. Selezioniamo il componente corretto
+    if (currentLvl === 'shows') targetComponent = CataloguerShowModalComponent;
+    else if (currentLvl === 'seasons') {
+        targetComponent = CataloguerSeasonModalComponent;
+        const currentSeasons = this.seasons(); 
+    
+        const maxNum = currentSeasons.reduce((max, s) => {
+            const val = parseInt(s.SeasonNumber || s.seasonNumber, 10);
+            return (!isNaN(val) && val > max) ? val : max;
+        }, 0); 
+        componentProps = { autoSeasonNumber: maxNum + 1 }
+    }
+    else if (currentLvl === 'episodes') {
+        targetComponent = CataloguerEpisodeModalComponent;
+        const currentEpisodes = this.episodes(); 
         
-            const maxNum = currentSeasons.reduce((max, s) => {
-                // Tenta di parsare il numero (cerca la E maiuscola e minuscola)
-                const val = parseInt(s.SeasonNumber || s.seasonNumber, 10);
-                // Se è un numero valido ed è maggiore del massimo attuale, lo aggiorna
-                return (!isNaN(val) && val > max) ? val : max;
-            }, 0); // Partiamo da 0
-            componentProps = {
-                autoSeasonNumber: maxNum + 1
-            }
-        }
-        else if (currentLvl === 'episodes') {
-            targetComponent = CataloguerEpisodeModalComponent;
-           const currentEpisodes = this.episodes(); 
+        const maxNum = currentEpisodes.reduce((max, e) => {
+            const val = parseInt(e.EpisodeNumber || e.episodeNumber, 10);
+            return (!isNaN(val) && val > max) ? val : max;
+        }, 0);
+        componentProps = { 
+            seasonId: this.selectedSeasonId(),
+            autoEpisodeNumber: maxNum + 1 
+        };
+    }
 
-           console.log("Episodi attuali in memoria:", currentEpisodes);
+    const modal = await this.modalCtrl.create({
+        component: targetComponent,
+        componentProps: componentProps,
+    });
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+    if (!data) return;
+
+    let endpoint = '';
+    let payload: any = {};
+
+    // 2. Costruiamo il Payload pulito
+    if (currentLvl === 'shows') {
+        endpoint = `${this.baseUrl}/shows/add`;
+        payload = { /* ... dati show ... */
+            title_it: data.payload.title_it,
+            description_it: data.payload.description_it,
+            title_en: data.payload.title_en || null,
+            description_en: data.payload.description_en || null,
+            dateStarted: data.payload.dateStarted,
+            dateEnded: data.payload.dateEnded || null,
+            thumbnailURI: data.payload.thumbnailURI || null,
+            bannerURI: data.payload.bannerURI || null,
+        };
+    } else if (currentLvl === 'seasons') {
+        endpoint = `${this.baseUrl}/seasons/add`;
+        payload = { /* ... dati season ... */
+            title_it: data.payload.title_it,
+            description_it: data.payload.description_it,
+            title_en: data.payload.title_en || null,
+            description_en: data.payload.description_en || null,
+            dateStarted: data.payload.dateStarted,
+            dateEnded: data.payload.dateEnded || null,
+            seasonNumber: parseInt(data.payload.seasonNumber, 10),
+            refShow: this.selectedShowId(),
+        };
+    } else if (currentLvl === 'episodes') {
+        endpoint = `${this.baseUrl}/episodes/add`;
+        payload = {
+            title_it: data.payload.title_it,
+            description_it: data.payload.description_it,
+            title_en: data.payload.title_en || null,
+            description_en: data.payload.description_en || null,
+            releaseDate: data.payload.releaseDate,
+            duration: parseInt(data.payload.duration, 10),
+            refSeason: this.selectedSeasonId(),
+            episodeNumber: parseInt(data.payload.episodeNumber, 10),
+            audioTracks: data.payload.audioTracks || [], 
+            subTracks: data.payload.subTracks || [],
+            DubLanguages: ['it'], 
+            SubLanguages: ['it'], 
+            thumbnailURI: data.payload.thumbnailURI || null,
+            rawVideoURI: data.payload.rawVideoURI || null,
+            times: data.payload.times || []
+        };
+    }
+
+    this.http.post(endpoint, payload, { headers: this.getAuthHeaders() })
+    .subscribe({
+        next: async (res: any) => {
+            this.presentToast('Elemento aggiunto con successo!', 'success');
             
-            // Calcolo Antiproiettile
-            const maxNum = currentEpisodes.reduce((max, e) => {
-                const val = parseInt(e.EpisodeNumber || e.episodeNumber, 10);
-                return (!isNaN(val) && val > max) ? val : max;
-            }, 0);
-            componentProps = { 
-                seasonId: this.selectedSeasonId(),
-                autoEpisodeNumber: maxNum + 1 // Lo passiamo alla modale
-            };
-        }
+            const newTitle = JSON.stringify({ it: data.payload.title_it, en: data.payload.title_en });
+            const newDesc = JSON.stringify({ it: data.payload.description_it, en: data.payload.description_en });
 
-        const modal = await this.modalCtrl.create({
-            component: targetComponent,
-            componentProps: componentProps,
-        });
-        await modal.present();
+            if (currentLvl === 'shows') {
+                const newShow = {
+                    ShowID: res.showId || 1, 
+                    Title: newTitle,
+                    Description: newDesc,
+                    DateStarted: data.payload.dateStarted,
+                    hasEnded: data.payload.dateEnded ? 1 : 0
+                };
+                this.shows.update(items => [newShow, ...items]); 
+                
+            } else if (currentLvl === 'seasons') {
+                const newSeason = {
+                    SeasonID: res.seasonId || 1,
+                    Title: newTitle,
+                    Description: newDesc,
+                    DateStarted: data.payload.dateStarted,
+                    SeasonNumber: parseInt(data.payload.seasonNumber, 10)
+                };
+                this.seasons.update(items => {
+                    const updated = [...items, newSeason];
+                    return updated.sort((a, b) => a.SeasonNumber - b.SeasonNumber);
+                });
 
-        const { data } = await modal.onWillDismiss();
-        if (!data) return;
+            } else if (currentLvl === 'episodes') {
+                const newEpisodeId = res.episodeId || 1; // ID RESTITUITO DAL BACKEND DOPO LA POST!
 
-        let endpoint = '';
-        let payload: any = {};
+                const newEpisode = {
+                    EpisodeID: newEpisodeId,
+                    Title: newTitle,
+                    Description: newDesc,
+                    Duration: parseInt(data.payload.duration, 10),
+                    EpisodeNumber: parseInt(data.payload.episodeNumber, 10),
+                    ReleaseDate: data.payload.releaseDate
+                };
+                this.episodes.update(items => {
+                    const updated = [...items, newEpisode];
+                    return updated.sort((a, b) => a.EpisodeNumber - b.EpisodeNumber);
+                });
+            }
+        },
+        error: (err) => {
+            console.error("Dettaglio Errore Add:", err);
+            this.presentToast('Errore durante il salvataggio. Controlla la console.', 'danger');
+        },
+    });
+}
 
-        // 2. Costruiamo il Payload pulito
+
+// ==========================================
+// MODIFICA UNIFICATA E SUPER-BLINDATA (EDIT)
+// ==========================================
+async openEditModalData(item: any) {
+    const currentLvl = this.currentLevel();
+    let targetComponent: any;
+    let componentProps: any = { data: item };
+
+    if (currentLvl === 'shows') targetComponent = CataloguerShowModalComponent;
+    else if (currentLvl === 'seasons') targetComponent = CataloguerSeasonModalComponent;
+    else if (currentLvl === 'episodes') {
+        targetComponent = CataloguerEpisodeModalComponent;
+        componentProps.seasonId = this.selectedSeasonId();
+    }
+
+    const modal = await this.modalCtrl.create({
+        component: targetComponent,
+        componentProps: componentProps,
+    });
+    await modal.present();
+
+    const { data } = await modal.onWillDismiss();
+    if (!data || !data.payload) return;
+
+    const id = currentLvl === 'shows' ? item.ShowID : currentLvl === 'seasons' ? item.SeasonID : item.EpisodeID;
+    const subPath = currentLvl === 'shows' ? 'shows' : currentLvl === 'seasons' ? 'seasons' : 'episodes';
+
+    try {
+        const extraFields: any = {};
+
         if (currentLvl === 'shows') {
-            endpoint = `${this.baseUrl}/shows/add`;
-            payload = {
-                title_it: data.payload.title_it,
-                description_it: data.payload.description_it,
-                title_en: data.payload.title_en || null,
-                description_en: data.payload.description_en || null,
-                dateStarted: data.payload.dateStarted,
-                dateEnded: data.payload.dateEnded || null,
-                thumbnailURI: data.payload.thumbnailURI || null,
-                bannerURI: data.payload.bannerURI || null,
-            };
+            if (data.payload.dateEnded !== undefined) extraFields.dateEnded = data.payload.dateEnded;
+            if (data.payload.thumbnailURI) extraFields.thumbnailURI = data.payload.thumbnailURI;
+            if (data.payload.bannerURI) extraFields.bannerURI = data.payload.bannerURI;
         } else if (currentLvl === 'seasons') {
-            endpoint = `${this.baseUrl}/seasons/add`;
-            payload = {
-                title_it: data.payload.title_it,
-                description_it: data.payload.description_it,
-                title_en: data.payload.title_en || null,
-                description_en: data.payload.description_en || null,
-                dateStarted: data.payload.dateStarted,
-                dateEnded: data.payload.dateEnded || null,
-                seasonNumber: parseInt(data.payload.seasonNumber, 10),
-                refShow: this.selectedShowId(),
-            };
+            if (data.payload.dateEnded !== undefined) extraFields.dateEnded = data.payload.dateEnded;
         } else if (currentLvl === 'episodes') {
-            endpoint = `${this.baseUrl}/episodes/add`;
-            payload = {
-                title_it: data.payload.title_it,
-                description_it: data.payload.description_it,
-                title_en: data.payload.title_en || null,
-                description_en: data.payload.description_en || null,
-                releaseDate: data.payload.releaseDate,
-                duration: parseInt(data.payload.duration, 10),
-                refSeason: this.selectedSeasonId(),
-                episodeNumber: parseInt(data.payload.episodeNumber, 10),
-                audioTracks: data.payload.audioTracks || [], 
-                subTracks: data.payload.subTracks || [],
-                DubLanguages: ['it'], // Dummy per ora
-                SubLanguages: ['it'], // Dummy per ora
-                thumbnailURI: data.payload.thumbnailURI || null,
-                rawVideoURI: data.payload.rawVideoURI || null 
-            };
-        }
-
-        this.http.post(endpoint, payload, { headers: this.getAuthHeaders() })
-        .subscribe({
-            next: (res: any) => {
-                this.presentToast('Elemento aggiunto con successo!', 'success');
-                
-                // Prepariamo i testi in formato JSON
-                const newTitle = JSON.stringify({ 
-                    it: data.payload.title_it, 
-                    en: data.payload.title_en 
-                });
-                const newDesc = JSON.stringify({ 
-                    it: data.payload.description_it, 
-                    en: data.payload.description_en 
-                });
-
-                if (currentLvl === 'shows') {
-                    const newShow = {
-                        ShowID: res.showId || 1, // Prende l'ID dal backend o usa un fallback
-                        Title: newTitle,
-                        Description: newDesc,
-                        DateStarted: data.payload.dateStarted,
-                        hasEnded: data.payload.dateEnded ? 1 : 0
-                    };
-                    // Inseriamo la nuova serie in CIMA alla lista
-                    this.shows.update(items => [newShow, ...items]); 
-                    
-                } else if (currentLvl === 'seasons') {
-                    const newSeason = {
-                        SeasonID: res.seasonId || 1,
-                        Title: newTitle,
-                        Description: newDesc,
-                        DateStarted: data.payload.dateStarted,
-                        SeasonNumber: parseInt(data.payload.seasonNumber, 10)
-                    };
-                    // Aggiungiamo la stagione e riordiniamo per Numero Stagione
-                    this.seasons.update(items => {
-                        const updated = [...items, newSeason];
-                        return updated.sort((a, b) => a.SeasonNumber - b.SeasonNumber);
-                    });
-
-                } else if (currentLvl === 'episodes') {
-                    const newEpisode = {
-                        EpisodeID: res.episodeId || 1,
-                        Title: newTitle,
-                        Description: newDesc,
-                        Duration: parseInt(data.payload.duration, 10),
-                        EpisodeNumber: parseInt(data.payload.episodeNumber, 10),
-                        ReleaseDate: data.payload.releaseDate
-                    };
-                    // Aggiungiamo l'episodio e riordiniamo per Numero Episodio
-                    this.episodes.update(items => {
-                        const updated = [...items, newEpisode];
-                        return updated.sort((a, b) => a.EpisodeNumber - b.EpisodeNumber);
-                    });
-                }
-            },
-            error: (err) => {
-                console.error("Dettaglio Errore Add:", err);
-                this.presentToast('Errore durante il salvataggio. Controlla la console.', 'danger');
-            },
-        });
-    }
-
-    // ==========================================
-    // MODIFICA UNIFICATA E SUPER-BLINDATA (EDIT)
-    // ==========================================
-    async openEditModalData(item: any) {
-        const currentLvl = this.currentLevel();
-        let targetComponent: any;
-        let componentProps: any = { data: item };
-
-        // 1. Selezioniamo il componente corretto
-        if (currentLvl === 'shows') targetComponent = CataloguerShowModalComponent;
-        else if (currentLvl === 'seasons') targetComponent = CataloguerSeasonModalComponent;
-        else if (currentLvl === 'episodes') {
-            targetComponent = CataloguerEpisodeModalComponent;
-            componentProps.seasonId = this.selectedSeasonId();
-        }
-
-        const modal = await this.modalCtrl.create({
-            component: targetComponent,
-            componentProps: componentProps,
-        });
-        await modal.present();
-
-        const { data } = await modal.onWillDismiss();
-        if (!data || !data.payload) return;
-
-        const id = currentLvl === 'shows' ? item.ShowID : currentLvl === 'seasons' ? item.SeasonID : item.EpisodeID;
-        const subPath = currentLvl === 'shows' ? 'shows' : currentLvl === 'seasons' ? 'seasons' : 'episodes';
-
-        try {
-            const extraFields: any = {};
-
-            if (currentLvl === 'shows') {
-                if (data.payload.dateEnded !== undefined) extraFields.dateEnded = data.payload.dateEnded;
-                if (data.payload.thumbnailURI) extraFields.thumbnailURI = data.payload.thumbnailURI;
-                if (data.payload.bannerURI) extraFields.bannerURI = data.payload.bannerURI;
-            } else if (currentLvl === 'seasons') {
-                if (data.payload.dateEnded !== undefined) extraFields.dateEnded = data.payload.dateEnded;
-            } else if (currentLvl === 'episodes') {
-                if (data.payload.thumbnailURI) extraFields.thumbnailURI = data.payload.thumbnailURI;
-                
-                extraFields.DubLanguages = typeof item.DubLanguages === 'string' 
-                    ? item.DubLanguages.split(',') 
-                    : (item.DubLanguages || ['it']);
-
-                extraFields.SubLanguages = typeof item.SubLanguages === 'string' 
-                    ? item.SubLanguages.split(',') 
-                    : (item.SubLanguages || []); // I sub non sono obbligatori, quindi default array vuoto
-
-                if (data.payload.duration) extraFields.duration = parseInt(data.payload.duration, 10);
-                if (data.payload.episodeNumber) extraFields.episodeNumber = parseInt(data.payload.episodeNumber, 10);
-                if (data.payload.audioTracks && data.payload.audioTracks.length > 0) {
-                    extraFields.audioTracks = data.payload.audioTracks;
-                }
-                if (data.payload.subTracks && data.payload.subTracks.length > 0) {
-                    extraFields.subTracks = data.payload.subTracks;
-                }
-            }
-
-            const currentTitleIt = data.payload.title_it?.trim() || this.getLangText(item.Title, 'it');
-            const currentDescIt = data.payload.description_it?.trim() || this.getLangText(item.Description, 'it');
-            const currentTitleEn = data.payload.title_en?.trim() || this.getLangText(item.Title, 'en');
-            const currentDescEn = data.payload.description_en?.trim() || this.getLangText(item.Description, 'en');
-
-            // PATCH ITALIANO (Invia i campi per il validatore e quelli per il controller)
-            if (data.payload.title_it?.trim() || data.payload.description_it?.trim() || currentLvl === 'episodes') {
-                const payloadIt: any = { 
-                    title_it: currentTitleIt,       // Accontenta il Validatore
-                    description_it: currentDescIt,  // Accontenta il Validatore
-                    title: currentTitleIt,          // Accontenta il Controller
-                    description: currentDescIt,     // Accontenta il Controller
-                    lang: 'it',                     // Specifica la lingua
-                    ...extraFields 
-                };
-                await firstValueFrom(this.http.patch(`${this.baseUrl}/${subPath}/${id}`, payloadIt, { headers: this.getAuthHeaders() }));
-            }
-
-
-            //per non appesantire la chiamata
-            delete extraFields.audioTracks;
-            delete extraFields.subTracks;
-            delete extraFields.thumbnailURI;
-            delete extraFields.bannerURI;
-
-            // PATCH INGLESE
-            if (data.payload.title_en?.trim() || data.payload.description_en?.trim()) {
-                const payloadEn: any = { 
-                    title_it: currentTitleIt,       // Obbligatorio per bypassare il Validatore
-                    description_it: currentDescIt,  // Obbligatorio per bypassare il Validatore
-                    title: currentTitleEn,          // Accontenta il Controller per l'inglese
-                    description: currentDescEn,     // Accontenta il Controller per l'inglese
-                    lang: 'en',
-                    ...extraFields 
-                };
-                await firstValueFrom(this.http.patch(`${this.baseUrl}/${subPath}/${id}`, payloadEn, { headers: this.getAuthHeaders() }));
-            }
-
+            if (data.payload.thumbnailURI) extraFields.thumbnailURI = data.payload.thumbnailURI;
             
-            this.presentToast('Elemento aggiornato con successo!', 'success');
-            // 1. Ricostruiamo i JSON per i campi multilingua (per far funzionare getLangText nell'HTML)
-            const updatedTitle = JSON.stringify({ it: currentTitleIt, en: currentTitleEn });
-            const updatedDesc = JSON.stringify({ it: currentDescIt, en: currentDescEn });
+            extraFields.DubLanguages = typeof item.DubLanguages === 'string' 
+                ? item.DubLanguages.split(',') 
+                : (item.DubLanguages || ['it']);
 
-            // 2. Aggiorniamo a caldo i Signal in base al livello
-            if (currentLvl === 'shows') {
-                this.shows.update(items => items.map(item => {
-                    if (item.ShowID === id) {
-                        return {
-                            ...item,
-                            Title: updatedTitle,
-                            Description: updatedDesc,
-                            DateEnded: extraFields.dateEnded !== undefined ? extraFields.dateEnded : item.DateEnded,
-                            hasEnded: extraFields.dateEnded ? 1 : 0 // Aggiorna il badge "In Corso / Conclusa"
-                        };
-                    }
-                    return item;
-                }));
-            } else if (currentLvl === 'seasons') {
-                this.seasons.update(items => items.map(item => {
-                    if (item.SeasonID === id) {
-                        return { ...item, Title: updatedTitle, Description: updatedDesc };
-                    }
-                    return item;
-                }));
-            } else if (currentLvl === 'episodes') {
-                let updatedDubs = item.DubLanguages ? item.DubLanguages.split(',') : ['it'];
-                if (data.payload.audioTracks) {
-                    data.payload.audioTracks.forEach((t: any) => { 
-                        if (!updatedDubs.includes(t.lang)) updatedDubs.push(t.lang); 
-                    });
-                }
-                
-                let updatedSubs = item.SubLanguages ? item.SubLanguages.split(',') : [];
-                if (data.payload.subTracks) {
-                    data.payload.subTracks.forEach((t: any) => { 
-                        if (!updatedSubs.includes(t.lang)) updatedSubs.push(t.lang); 
-                    });
-                }
+            extraFields.SubLanguages = typeof item.SubLanguages === 'string' 
+                ? item.SubLanguages.split(',') 
+                : (item.SubLanguages || []); 
 
-                // Aggiorniamo il Signal
-                this.episodes.update(items => items.map(ep => {
-                    if (ep.EpisodeID === id) {
-                        return {
-                            ...ep,
-                            Title: updatedTitle,
-                            Description: updatedDesc,
-                            Duration: extraFields.duration !== undefined ? extraFields.duration : ep.Duration,
-                            EpisodeNumber: extraFields.episodeNumber !== undefined ? extraFields.episodeNumber : ep.EpisodeNumber,
-                            DubLanguages: updatedDubs.join(','),
-                            SubLanguages: updatedSubs.join(',')
-                        };
-                    }
-                    return ep;
-                }));
-                // Riordiniamo gli episodi qualora serva
-                this.episodes.update(items => items.sort((a, b) => a.EpisodeNumber - b.EpisodeNumber));
+            if (data.payload.duration) extraFields.duration = parseInt(data.payload.duration, 10);
+            if (data.payload.episodeNumber) extraFields.episodeNumber = parseInt(data.payload.episodeNumber, 10);
+            if (data.payload.audioTracks && data.payload.audioTracks.length > 0) {
+                extraFields.audioTracks = data.payload.audioTracks;
+            }
+            if (data.payload.subTracks && data.payload.subTracks.length > 0) {
+                extraFields.subTracks = data.payload.subTracks;
             }
 
-        } catch (err) {
-            console.error('Dettaglio Errore 400 Backend:', err);
-            this.presentToast('Errore 400: Controlla i campi obbligatori del server.', 'danger');
+            if (data.payload.times) {
+                extraFields.times = data.payload.times; 
+            }
+
         }
+
+        const currentTitleIt = data.payload.title_it?.trim() || this.getLangText(item.Title, 'it');
+        const currentDescIt = data.payload.description_it?.trim() || this.getLangText(item.Description, 'it');
+        const currentTitleEn = data.payload.title_en?.trim() || this.getLangText(item.Title, 'en');
+        const currentDescEn = data.payload.description_en?.trim() || this.getLangText(item.Description, 'en');
+
+        // PATCH ITALIANO 
+        if (data.payload.title_it?.trim() || data.payload.description_it?.trim() || currentLvl === 'episodes') {
+            const payloadIt: any = { 
+                title_it: currentTitleIt,       
+                description_it: currentDescIt,  
+                title: currentTitleIt,          
+                description: currentDescIt,     
+                lang: 'it',                     
+                ...extraFields 
+            };
+            await firstValueFrom(this.http.patch(`${this.baseUrl}/${subPath}/${id}`, payloadIt, { headers: this.getAuthHeaders() }));
+        }
+
+        //per non appesantire la chiamata
+        delete extraFields.audioTracks;
+        delete extraFields.subTracks;
+        delete extraFields.thumbnailURI;
+        delete extraFields.bannerURI;
+
+        // PATCH INGLESE
+        if (data.payload.title_en?.trim() || data.payload.description_en?.trim()) {
+            const payloadEn: any = { 
+                title_it: currentTitleIt,       
+                description_it: currentDescIt,  
+                title: currentTitleEn,          
+                description: currentDescEn,     
+                lang: 'en',
+                ...extraFields 
+            };
+            await firstValueFrom(this.http.patch(`${this.baseUrl}/${subPath}/${id}`, payloadEn, { headers: this.getAuthHeaders() }));
+        }
+
+        
+        this.presentToast('Elemento aggiornato con successo!', 'success');
+        const updatedTitle = JSON.stringify({ it: currentTitleIt, en: currentTitleEn });
+        const updatedDesc = JSON.stringify({ it: currentDescIt, en: currentDescEn });
+
+        if (currentLvl === 'shows') {
+            this.shows.update(items => items.map(item => {
+                if (item.ShowID === id) {
+                    return {
+                        ...item,
+                        Title: updatedTitle,
+                        Description: updatedDesc,
+                        DateEnded: extraFields.dateEnded !== undefined ? extraFields.dateEnded : item.DateEnded,
+                        hasEnded: extraFields.dateEnded ? 1 : 0 
+                    };
+                }
+                return item;
+            }));
+        } else if (currentLvl === 'seasons') {
+            this.seasons.update(items => items.map(item => {
+                if (item.SeasonID === id) {
+                    return { ...item, Title: updatedTitle, Description: updatedDesc };
+                }
+                return item;
+            }));
+        } else if (currentLvl === 'episodes') {
+            let updatedDubs = item.DubLanguages ? item.DubLanguages.split(',') : ['it'];
+            if (data.payload.audioTracks) {
+                data.payload.audioTracks.forEach((t: any) => { 
+                    if (!updatedDubs.includes(t.lang)) updatedDubs.push(t.lang); 
+                });
+            }
+            
+            let updatedSubs = item.SubLanguages ? item.SubLanguages.split(',') : [];
+            if (data.payload.subTracks) {
+                data.payload.subTracks.forEach((t: any) => { 
+                    if (!updatedSubs.includes(t.lang)) updatedSubs.push(t.lang); 
+                });
+            }
+
+            this.episodes.update(items => items.map(ep => {
+                if (ep.EpisodeID === id) {
+                    return {
+                        ...ep,
+                        Title: updatedTitle,
+                        Description: updatedDesc,
+                        Duration: extraFields.duration !== undefined ? extraFields.duration : ep.Duration,
+                        EpisodeNumber: extraFields.episodeNumber !== undefined ? extraFields.episodeNumber : ep.EpisodeNumber,
+                        DubLanguages: updatedDubs.join(','),
+                        SubLanguages: updatedSubs.join(',')
+                    };
+                }
+                return ep;
+            }));
+            this.episodes.update(items => items.sort((a, b) => a.EpisodeNumber - b.EpisodeNumber));
+        }
+
+    } catch (err) {
+        console.error('Dettaglio Errore 400 Backend:', err);
+        this.presentToast('Errore 400: Controlla i campi obbligatori del server.', 'danger');
     }
+}
 
     private refreshCurrentLevel() {
         if (this.currentLevel() === 'shows') {

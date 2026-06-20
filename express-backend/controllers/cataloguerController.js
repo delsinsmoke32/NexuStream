@@ -344,7 +344,8 @@ const addEpisode = async (req, res) => {
         thumbnailURI,
         rawVideoURI,
         audioTracks, 
-        subTracks    
+        subTracks,
+        times   
     } = req.body;
 
     console.log("=== DATI RICEVUTI DAL FRONTEND ===");
@@ -392,6 +393,15 @@ const addEpisode = async (req, res) => {
         );
 
         const episodeId = result.id;
+
+        if (times && Array.isArray(times)) {
+            try {
+                // Usiamo la funzione del model che fa "Piazza pulita e Riscrivi"
+                await episodeModel.updateEpisodeTimes(newEpisodeId, times);
+            } catch (err) {
+                console.error("Errore salvataggio marker durante la creazione:", err);
+            }
+        }
 
         // 3. Spostiamo fisicamente i file temporanei audio e sub nella cartella dell'episodio
         if (audioTracks && audioTracks.length > 0) {
@@ -453,7 +463,8 @@ const modifyEpisode = async (req, res) => {
         title, description, refSeason, lang, thumbnailURI,
         DubLanguages, SubLanguages,
         audioTracks, 
-        subTracks    
+        subTracks,
+        times    
     } = req.body;
 
     let fields = [];
@@ -485,6 +496,14 @@ const modifyEpisode = async (req, res) => {
 
         if (thumbnailURI && oldEpisode.ThumbnailURI && thumbnailURI !== oldEpisode.ThumbnailURI) {
             await fs.unlink(path.join(__dirname, '../public', oldEpisode.ThumbnailURI)).catch(() => {});
+        }
+
+        if (times && Array.isArray(times)) {
+            try {
+                await episodeModel.updateEpisodeTimes(id, times);
+            } catch (err) {
+                console.error("Errore salvataggio marker durante la modifica:", err);
+            }
         }
 
         // SPOSTAMENTO NUOVE TRACCE AUDIO E SOTTOTITOLI E REGISTRAZIONE NEL DB

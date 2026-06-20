@@ -140,3 +140,24 @@ ion-item {
   white-space: nowrap;
   max-width: 100%; // Forza il rispetto dei confini del bottone
 }
+
+// Allineamento per le intestazioni con bottone laterale (usato per Tracce e Marker)
+.section-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+// Stile per le righe dei singoli marker temporali
+.marker-row {
+  border: 1px dashed var(--ion-color-medium, #989aa2);
+  border-radius: 8px;
+  padding-top: 10px;
+  background: rgba(var(--ion-color-light-rgb, 244, 245, 248), 0.03); // Leggerissimo sfondo
+  transition: border-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--ion-color-primary, #3880ff);
+  }
+}

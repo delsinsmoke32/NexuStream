@@ -74,7 +74,7 @@
             </ion-list>
         }
 
-        <div class="form-section-title" style="display: flex; align-items: center; justify-content: space-between;">
+        <div class="form-section-title section-header-flex">
             <span>Tracce Audio (.mp3, .aac)</span>
             <ion-button size="small" fill="clear" (click)="addAudioTrack()">
                 <ion-icon name="add-circle-outline" slot="start"></ion-icon>
@@ -109,7 +109,7 @@
             </ion-row>
         }
 
-        <div class="form-section-title" style="display: flex; align-items: center; justify-content: space-between;">
+        <div class="form-section-title section-header-flex">
             <span>Sottotitoli (.vtt)</span>
             <ion-button size="small" fill="clear" (click)="addSubTrack()">
                 <ion-icon name="add-circle-outline" slot="start"></ion-icon>
@@ -139,6 +139,46 @@
                 <ion-col size="2" class="ion-text-center">
                     <ion-button fill="clear" color="danger" (click)="removeSubTrack($index)">
                         <ion-icon name="trash-outline"></ion-icon>
+                    </ion-button>
+                </ion-col>
+            </ion-row>
+        }
+
+        <div class="form-section-title section-header-flex">
+            <span>Marker Temporali (Secondi)</span>
+            <ion-button size="small" fill="clear" color="primary" (click)="addMarker()">
+                <ion-icon name="time-outline" slot="start"></ion-icon>
+                Aggiungi
+            </ion-button>
+        </div>
+
+        @for (marker of markersList(); track $index) {
+            <ion-row class="ion-align-items-center ion-margin-bottom marker-row">
+                <ion-col size="12" size-md="4">
+                    <ion-item fill="outline" mode="md">
+                        <ion-label position="stacked">Tipo Action</ion-label>
+                        <ion-select [(ngModel)]="marker.Type" [ngModelOptions]="{standalone: true}" interface="popover">
+                            <ion-select-option value="intro">Skip Intro</ion-select-option>
+                            <ion-select-option value="recap">Skip Riassunto</ion-select-option>
+                            <ion-select-option value="credits">Titoli di Coda / Next Ep</ion-select-option>
+                        </ion-select>
+                    </ion-item>
+                </ion-col>
+                <ion-col size="5" size-md="3">
+                    <ion-item fill="outline" mode="md">
+                        <ion-label position="stacked">Inizio (sec)</ion-label>
+                        <ion-input type="number" [(ngModel)]="marker.StartTime" [ngModelOptions]="{standalone: true}"></ion-input>
+                    </ion-item>
+                </ion-col>
+                <ion-col size="5" size-md="3">
+                    <ion-item fill="outline" mode="md">
+                        <ion-label position="stacked">Fine (sec)</ion-label>
+                        <ion-input type="number" [(ngModel)]="marker.EndTime" [ngModelOptions]="{standalone: true}"></ion-input>
+                    </ion-item>
+                </ion-col>
+                <ion-col size="2" class="ion-text-center">
+                    <ion-button fill="clear" color="danger" (click)="removeMarker($index)">
+                        <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
                     </ion-button>
                 </ion-col>
             </ion-row>

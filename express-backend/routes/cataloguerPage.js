@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 const cataloguerController = require('../controllers/cataloguerController');
+const episodeController = require('../controllers/episodeController');
 const isCataloguer = require("../middleware/isCataloguer");
 const { query, body, param } = require('express-validator');
 
@@ -419,7 +420,25 @@ router.post('/episodes/add', [
     body('episodeNumber').isInt({ min: 1 }).withMessage("Numero di episodio non valido"),
     body('DubLanguages').optional().isArray().withMessage("DubLanguages deve essere un array"),
     body('SubLanguages').optional().isArray().withMessage("SubLanguages deve essere un array"),
-    body('thumbnailURI').optional().isString().trim().notEmpty().withMessage("L'URI deve essere una stringa")
+    body('thumbnailURI').optional().isString().trim().notEmpty().withMessage("L'URI deve essere una stringa"),
+
+    // 🚀 NUOVI CONTROLLI PER I MEDIA
+    body('rawVideoURI').optional().isString().trim().notEmpty().withMessage("L'URI del video deve essere una stringa"),
+    
+    body('audioTracks').optional().isArray().withMessage("audioTracks deve essere un array"),
+    body('audioTracks.*.lang').optional().isString().trim(),
+    body('audioTracks.*.uri').optional().isString().trim(),
+    
+    body('subTracks').optional().isArray().withMessage("subTracks deve essere un array"),
+    body('subTracks.*.lang').optional().isString().trim(),
+    body('subTracks.*.uri').optional().isString().trim(),
+
+    // 🚀 BLINDATURA MARKER TEMPORALI
+    body('times').optional().isArray().withMessage("Times deve essere un array"),
+    body('times.*.StartTime').isInt({ min: 0 }).withMessage("StartTime deve essere un numero positivo o zero"),
+    body('times.*.EndTime').isInt({ min: 1 }).withMessage("EndTime deve essere maggiore di 0"),
+    body('times.*.Type').isIn(['intro', 'recap', 'credits']).withMessage("Tipo di marker non valido")
+
 ], cataloguerController.addEpisode);
 
 
@@ -467,6 +486,7 @@ router.post('/episodes/add', [
 
 router.patch('/episodes/:id', [
     param('id').isInt({ min: 1 }).withMessage("ID episodio non valido"),
+    
     body('title_it').isString().trim().notEmpty().withMessage("Il titolo italiano è obbligatorio"),
     body('description_it').isString().trim().notEmpty().withMessage("La descrizione italiana è obbligatoria"),
     // Le altre lingue sono opzionali
@@ -475,7 +495,27 @@ router.patch('/episodes/:id', [
     body('refSeason').optional().isInt({ min: 1 }).withMessage("ID stagione non valido"),
     body('DubLanguages').optional().isArray().withMessage("DubLanguages deve essere un array"),
     body('SubLanguages').optional().isArray().withMessage("SubLanguages deve essere un array"),
-    body('thumbnailURI').optional().isString().trim().notEmpty().withMessage("L'URI deve essere una stringa")
+    body('thumbnailURI').optional().isString().trim().notEmpty().withMessage("L'URI deve essere una stringa"),
+
+    // 🚀 CAMPI EXTRA CHE IL FRONTEND INVIA IN EDIT
+    body('duration').optional().isInt({ min: 1 }).withMessage("La durata deve essere un intero positivo"),
+    body('episodeNumber').optional().isInt({ min: 1 }).withMessage("Numero di episodio non valido"),
+
+    // 🚀 CONTROLLI TRACCE (SE AGGIUNTE IN MODIFICA)
+    body('audioTracks').optional().isArray().withMessage("audioTracks deve essere un array"),
+    body('audioTracks.*.lang').optional().isString().trim(),
+    body('audioTracks.*.uri').optional().isString().trim(),
+    
+    body('subTracks').optional().isArray().withMessage("subTracks deve essere un array"),
+    body('subTracks.*.lang').optional().isString().trim(),
+    body('subTracks.*.uri').optional().isString().trim(),
+
+    // 🚀 BLINDATURA MARKER TEMPORALI (EDIT)
+    body('times').optional().isArray().withMessage("Times deve essere un array"),
+    body('times.*.StartTime').optional().isInt({ min: 0 }).withMessage("StartTime deve essere un numero positivo o zero"),
+    body('times.*.EndTime').optional().isInt({ min: 1 }).withMessage("EndTime deve essere maggiore di 0"),
+    body('times.*.Type').optional().isIn(['intro', 'recap', 'credits']).withMessage("Tipo di marker non valido")
+
 ], cataloguerController.modifyEpisode);
 
 
@@ -511,6 +551,10 @@ router.delete('/episodes/:id/tracks/:type/:lang', [
     param('lang').isString().trim().notEmpty().withMessage("ID lingua non valido")
 ], cataloguerController.removeTrack);
 
+
+router.get('/episodes/:id/times', [
+    param('id').isInt({ min: 1 }).withMessage("ID episodio non valido")
+], episodeController.getTimes);
 
 // ==========================================
 // ROTTE IMMAGINI PROFILO (PROPICS)

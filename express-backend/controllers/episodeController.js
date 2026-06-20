@@ -64,6 +64,9 @@ const getEpisodeDetails = async (req, res) => {
             }
         };
 
+        const episodeTimes = await episodeModel.getEpisodeTimes(episodeId);
+        response.EpisodeTimes = episodeTimes;
+
         return res.json(response);
 
     } catch (err) {
@@ -115,7 +118,94 @@ const interactWithEpisode = async (req, res) => {
     }
 };
 
+// ==========================================
+// GET: Rotta dedicata al recupero tempi
+// ==========================================
+const getTimes = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const times = await episodeModel.getEpisodeTimes(id);
+        return res.json(times);
+    } catch (err) {
+        console.error("Errore in getTimes:", err);
+        return res.status(500).json({ error: "Errore interno del server" });
+    }
+};
 
+// =============================================
+// SET: Salva i tempi dal pannello Catalogatore
+// =============================================
+const setTimes = async (req, res) => {
+    // Controllo validazione
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { id } = req.params;
+    const { times } = req.body; // Ci aspettiamo un array di oggetti [{ StartTime: 5, EndTime: 20, Type: 'intro' }]
+
+    try {
+        await episodeModel.updateEpisodeTimes(id, times);
+        return res.json({ message: "Tempi dell'episodio aggiornati con successo!" });
+    } catch (err) {
+        console.error("Errore in setTimes:", err);
+        return res.status(500).json({ error: "Errore interno del server durante il salvataggio dei tempi." });
+    }
+};
+
+
+// ================================================================================================
+// ATTENZIONE!!! QUESTA E' LA VERSIONE MOCK DELLA STREAM, USATA PER NON DOVER CARICARE OGNI VOLTA
+// TUTTI LE CARTELLE (E FARE LE TRANSCODIFICHE NECESSARIE)
+// IN QUESTO MODO, TUTTI GLI EPISODI SONO LEGATI ALLA CARTELLA TEST IN public/videos/test
+// PER PROVARE LA STREAM EFFETTIVA, COMMENTARE QUESTA E DECOMMENTARE QUELLA SUCCESSIVA
+// TUTTAVIA, NON FUNZIONERA' PER GLI EPISODI PRESENTI NEL DATABASE 
+// (NON SI PUO' MODIFICARE IL FILE VIDEO DI UN EPISODIO), MA SOLO PER QUELLI NUOVI
+// ================================================================================================
+
+
+const stream = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.status(400).json({ errors: errors.array() });
+    }
+    let id = "test"
+    let baseUri = `http://${HOST}:${PORT}/static/videos/${id}/`;
+    const audios = [
+        { name: 'Japanese (Original)', lang: 'jp', uri: 'audio1/audio1.m3u8', default: 'YES' },
+        { name: 'English', lang: 'en', uri: 'audio2/audio2.m3u8', default: 'NO' }
+    ];
+
+    const subtitles = [
+        { name: 'English', lang: 'en', uri: 'subs/subs1.m3u8' },
+        { name: 'Japanese', lang: 'jp', uri: 'subs/subs2.m3u8' }
+    ];
+
+    let m3u8 = '#EXTM3U\n#EXT-X-VERSION:6\n\n';
+
+    // Genera Audio
+    audios.forEach(a => {
+        m3u8 += `#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="audio",NAME="${a.name}",DEFAULT=${a.default},AUTOSELECT=YES,LANGUAGE="${a.lang}",URI="${baseUri+a.uri}"\n`;
+    });
+    m3u8 += '\n';
+
+    // Genera Sottotitoli
+    subtitles.forEach(s => {
+        m3u8 += `#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID="subs",NAME="${s.name}",DEFAULT=NO,AUTOSELECT=YES,FORCED=NO,LANGUAGE="${s.lang}",URI="${baseUri+s.uri}"\n`;
+    });
+    m3u8 += '\n';
+
+    // Flusso Video principale
+    m3u8 += '#EXT-X-STREAM-INF:BANDWIDTH=6000000,AUDIO="audio",SUBTITLES="subs"\n';
+    m3u8 += baseUri+'video/video.m3u8';
+
+    res.setHeader('Content-Type', 'application/x-mpegURL');
+    return res.status(200).send(m3u8);
+};
+
+
+/*
 const stream = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
@@ -177,11 +267,14 @@ const stream = async (req, res) => {
         return res.status(500).json({ error: "Errore durante la generazione dello stream" });
     }
 };
+*/
 
 
 module.exports = {
     getEpisodes,
     getEpisodeDetails,
     interactWithEpisode,
+    getTimes,
+    setTimes,
     stream
 };

@@ -296,3 +296,12 @@
     --padding-end: 4px;
   }
 }
+
+.season-overline {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    color: var(--ion-color-medium); /* Oppure var(--ion-color-secondary) per dargli il colore del tema */
+    display: block;
+    margin-bottom: 4px;
+}

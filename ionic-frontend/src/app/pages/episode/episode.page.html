@@ -10,17 +10,15 @@
       
       <div class="main-video-section">
         
-        <div class="player-container">
-          <div class="video-wrapper">
-            <video
-              #videoPlayer
-              class="video-js vjs-default-skin vjs-big-play-centered video-placeholder"
-              controls
-              preload="auto"
-              playsinline
-            ></video>
-          </div>
-        </div>
+        <app-video-player
+          [url]="backendUrl.transform('api/shows/' + showId() + '/seasons/' + seasonId() + '/episodes/' + episodeId() + '/stream')"
+          [times]="episode().EpisodeTimes || []"
+          [startAtTime]="getComputedStartTime()"
+          (onPause)="handlePlayerPause($event)"
+          (onEnded)="handlePlayerEnded($event)"
+          (onDestroySave)="handlePlayerDestroySave($event)"
+          (onNextEpisode)="handleNextEpisode()">
+        </app-video-player>
 
         <div class="episode-details">
           <div class="title-row">

@@ -16,4 +16,37 @@ const handleImageUpload = (req, res) => {
     });
 };
 
-module.exports = { handleImageUpload };
+const handleRawVideoUpload = (req, res) => {
+    if (!req.file) {
+        return res.status(400).json({ error: "Nessun video caricato o formato non valido." });
+    }
+
+    // Costruiamo il percorso relativo da salvare nel DB/passare ad addEpisode
+    // Risultato es: 'videos/temp/raw_video_123456789.mp4'
+    const videoURI = `videos/temp/${req.file.filename}`;
+    
+    return res.status(200).json({ 
+        message: "Video raw caricato con successo nella cartella temporanea", 
+        uri: videoURI 
+    });
+};
+
+const handleTrackUpload = (req, res) => {
+    // 1. Controllo di sicurezza: Multer ha fatto passare il file?
+    if (!req.file) {
+        return res.status(400).json({ error: "Nessun file traccia/sottotitolo caricato." });
+    }
+
+    // 2. Costruiamo il percorso relativo che il backend userà per trovare il file dopo
+    // (Multer salva fisicamente in public/videos/temp, quindi il percorso relativo è questo)
+    const fileUri = `videos/temp/${req.file.filename}`;
+
+    // 3. Rispediamo al frontend!
+    return res.status(200).json({ uri: fileUri });
+};
+
+module.exports = { 
+    handleImageUpload,
+    handleRawVideoUpload,
+    handleTrackUpload
+};

@@ -123,6 +123,62 @@ const updateEpisodeLikesCounter = async (likeDelta, episodeId) => {
     return await db.runAsync(sql, [likeDelta, episodeId]);
 };
 
+// Assicurati di avere una tabella SupportedLanguages con (LanguageID, LanguageName)
+// Es: ('it', 'Italiano'), ('en', 'English (Original)')
+
+const getEpisodeDubs = async (episodeId) => {
+    // Esempio basato su una tabella "EpisodeDubs"
+    const sql = `
+        SELECT REF_LanguageID
+        FROM EpisodeLanguage
+        WHERE REF_EpisodeID = ?
+    `;
+    return await db.allAsync(sql, [episodeId]);
+};
+
+const getEpisodeSubs = async (episodeId) => {
+    // Esempio basato su una tabella "EpisodeSubs"
+    const sql = `
+        SELECT REF_LanguageID
+        FROM EpisodeSubtitles
+        WHERE REF_EpisodeID = ?
+    `;
+    return await db.allAsync(sql, [episodeId]);
+};
+
+// ==========================================
+// GET: Recupera i tempi di un episodio
+// ==========================================
+const getEpisodeTimes = async (episodeId) => {
+    const sql = `SELECT "StartTime", "EndTime", "Type" FROM "EpisodeTimes" WHERE "REF_EpisodeID" = ?`;
+    return await db.allAsync(sql, [episodeId]);
+};
+
+// ==========================================
+// SET: Sovrascrive i tempi di un episodio
+// ==========================================
+const updateEpisodeTimes = async (episodeId, timesArray) => {
+    try {
+        // 1. Eliminiamo i vecchi tempi per fare piazza pulita
+        await db.runAsync(`DELETE FROM "EpisodeTimes" WHERE "REF_EpisodeID" = ?`, [episodeId]);
+
+        // 2. Inseriamo i nuovi tempi (se ce ne sono)
+        if (timesArray && timesArray.length > 0) {
+            for (const time of timesArray) {
+                // time.StartTime e time.EndTime devono essere interi!
+                await db.runAsync(
+                    `INSERT INTO "EpisodeTimes" ("REF_EpisodeID", "StartTime", "EndTime", "Type") VALUES (?, ?, ?, ?)`,
+                    [episodeId, time.StartTime, time.EndTime, time.Type]
+                );
+            }
+        }
+        return true;
+    } catch (err) {
+        console.error("Errore durante l'aggiornamento dei tempi dell'episodio:", err);
+        throw err;
+    }
+};
+
 module.exports = {
     getEpisodesBySeasonAuth,
     getEpisodesBySeasonNoAuth,
@@ -130,5 +186,9 @@ module.exports = {
     getUserEpisodeInteraction,
     getPreviousLikeStatus,
     upsertEpisodeInteraction,
-    updateEpisodeLikesCounter
+    updateEpisodeLikesCounter,
+    getEpisodeDubs,
+    getEpisodeSubs,
+    getEpisodeTimes,
+    updateEpisodeTimes
 };

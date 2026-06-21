@@ -11,8 +11,8 @@
     <form [formGroup]="episodeForm" (ngSubmit)="save()">
         
         <div class="form-section-title">Copertina Episodio</div>
-        <div class="upload-box" (click)="triggerSelect()">
-            <input type="file" #thumbInput (change)="onFileSelect($event)" accept="image/*" hidden />
+        <div class="upload-box" (click)="triggerThumbSelect()">
+            <input type="file" #thumbInput (change)="onThumbSelect($event)" accept="image/*" hidden />
             @if (thumbnailPreview()) {
                 <img [src]="thumbnailPreview()" class="preview-img banner-aspect" />
             } @else {
@@ -23,13 +23,174 @@
             }
         </div>
 
+        @if (!isEditMode) {
+            <div class="form-section-title">File Video Principale (Obbligatorio)</div>
+            <div class="upload-box video-upload-box" (click)="triggerVideoSelect()" [class.has-file]="videoFile()">
+                <input type="file" #videoInput (change)="onVideoSelect($event)" accept="video/mp4,video/mkv,video/x-m4v,video/*" hidden />
+                <div class="placeholder-content">
+                    @if (videoFileName()) {
+                        <ion-icon name="document-text-outline" color="success"></ion-icon>
+                        <span class="file-selected">{{ videoFileName() }}</span>
+                        <span class="file-hint">Clicca per cambiare file</span>
+                    } @else {
+                        <ion-icon name="videocam-outline"></ion-icon>
+                        <span>Seleziona File Video (.mp4)</span>
+                        <span class="file-hint">Dimensione massima: 2GB</span>
+                    }
+                </div>
+            </div>
+        } @else {
+            <div class="form-section-title">Tracce attualmente sul server</div>
+            <ion-list class="ion-margin-bottom" style="border-radius: 8px; overflow: hidden; border: 1px solid var(--ion-color-light-shade);">
+                
+                @for (lang of existingDubs(); track lang) {
+                    <ion-item lines="full">
+                        <ion-icon name="volume-high-outline" slot="start" color="primary"></ion-icon>
+                        <ion-label>Audio: <b>{{ lang | uppercase }}</b></ion-label>
+                        <ion-button 
+                            fill="clear" 
+                            color="danger" 
+                            slot="end" 
+                            (click)="deleteServerTrack('audio', lang)"
+                            [disabled]="existingDubs().length === 1 && lang === 'it'">
+                            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                        </ion-button>
+                    </ion-item>
+                }
+
+                @for (lang of existingSubs(); track lang) {
+                    <ion-item lines="full">
+                        <ion-icon name="text-outline" slot="start" color="secondary"></ion-icon>
+                        <ion-label>Sottotitolo: <b>{{ lang | uppercase }}</b></ion-label>
+                        <ion-button fill="clear" color="danger" slot="end" (click)="deleteServerTrack('subs', lang)">
+                            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                        </ion-button>
+                    </ion-item>
+                }
+
+                @if (existingDubs().length === 0 && existingSubs().length === 0) {
+                    <ion-item color="light"><ion-label>Nessuna traccia presente.</ion-label></ion-item>
+                }
+            </ion-list>
+        }
+
+        <div class="form-section-title section-header-flex">
+            <span>Tracce Audio (.mp3, .aac)</span>
+            <ion-button size="small" fill="clear" (click)="addAudioTrack()">
+                <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+                Aggiungi
+            </ion-button>
+        </div>
+        
+        @for (track of audioTracksList(); track $index) {
+            <ion-row class="ion-align-items-center ion-margin-bottom">
+                <ion-col size="4">
+                    <ion-item fill="outline" mode="md">
+                        <ion-label position="stacked">Lingua</ion-label>
+                        <ion-select [(ngModel)]="track.lang" [ngModelOptions]="{standalone: true}" interface="popover">
+                            <ion-select-option value="it">Italiano</ion-select-option>
+                            <ion-select-option value="en">Inglese</ion-select-option>
+                            <ion-select-option value="jp">Giapponese</ion-select-option>
+                        </ion-select>
+                    </ion-item>
+                </ion-col>
+                <ion-col size="6">
+                    <ion-button expand="block" fill="outline" (click)="triggerAudioSelect($index)" [color]="track.file ? 'success' : 'medium'">
+                        <ion-icon [name]="track.file ? 'checkmark-circle' : 'musical-notes-outline'" slot="start"></ion-icon>
+                        <span class="ion-text-truncate">{{ track.file ? track.file.name : 'Seleziona File' }}</span>
+                    </ion-button>
+                    <input type="file" [id]="'audioInput_' + $index" (change)="onAudioSelect($event, $index)" accept="audio/mpeg, audio/mp3, audio/*" hidden />
+                </ion-col>
+                <ion-col size="2" class="ion-text-center">
+                    <ion-button fill="clear" color="danger" (click)="removeAudioTrack($index)">
+                        <ion-icon name="trash-outline"></ion-icon>
+                    </ion-button>
+                </ion-col>
+            </ion-row>
+        }
+
+        <div class="form-section-title section-header-flex">
+            <span>Sottotitoli (.vtt)</span>
+            <ion-button size="small" fill="clear" (click)="addSubTrack()">
+                <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+                Aggiungi
+            </ion-button>
+        </div>
+
+        @for (track of subTracksList(); track $index) {
+            <ion-row class="ion-align-items-center ion-margin-bottom">
+                <ion-col size="4">
+                    <ion-item fill="outline" mode="md">
+                        <ion-label position="stacked">Lingua</ion-label>
+                        <ion-select [(ngModel)]="track.lang" [ngModelOptions]="{standalone: true}" interface="popover">
+                            <ion-select-option value="it">Italiano</ion-select-option>
+                            <ion-select-option value="en">Inglese</ion-select-option>
+                            <ion-select-option value="jp">Giapponese</ion-select-option>
+                        </ion-select>
+                    </ion-item>
+                </ion-col>
+                <ion-col size="6">
+                    <ion-button expand="block" fill="outline" (click)="triggerSubSelect($index)" [color]="track.file ? 'success' : 'medium'">
+                        <ion-icon [name]="track.file ? 'checkmark-circle' : 'text-outline'" slot="start"></ion-icon>
+                        <span class="ion-text-truncate">{{ track.file ? track.file.name : 'Seleziona File' }}</span>
+                    </ion-button>
+                    <input type="file" [id]="'subInput_' + $index" (change)="onSubSelect($event, $index)" accept=".vtt,.srt,text/vtt" hidden />
+                </ion-col>
+                <ion-col size="2" class="ion-text-center">
+                    <ion-button fill="clear" color="danger" (click)="removeSubTrack($index)">
+                        <ion-icon name="trash-outline"></ion-icon>
+                    </ion-button>
+                </ion-col>
+            </ion-row>
+        }
+
+        <div class="form-section-title section-header-flex">
+            <span>Marker Temporali (Secondi)</span>
+            <ion-button size="small" fill="clear" color="primary" (click)="addMarker()">
+                <ion-icon name="time-outline" slot="start"></ion-icon>
+                Aggiungi
+            </ion-button>
+        </div>
+
+        @for (marker of markersList(); track $index) {
+            <ion-row class="ion-align-items-center ion-margin-bottom marker-row">
+                <ion-col size="12" size-md="4">
+                    <ion-item fill="outline" mode="md">
+                        <ion-label position="stacked">Tipo Action</ion-label>
+                        <ion-select [(ngModel)]="marker.Type" [ngModelOptions]="{standalone: true}" interface="popover">
+                            <ion-select-option value="intro">Skip Intro</ion-select-option>
+                            <ion-select-option value="recap">Skip Riassunto</ion-select-option>
+                            <ion-select-option value="credits">Titoli di Coda / Next Ep</ion-select-option>
+                        </ion-select>
+                    </ion-item>
+                </ion-col>
+                <ion-col size="5" size-md="3">
+                    <ion-item fill="outline" mode="md">
+                        <ion-label position="stacked">Inizio (sec)</ion-label>
+                        <ion-input type="number" [(ngModel)]="marker.StartTime" [ngModelOptions]="{standalone: true}"></ion-input>
+                    </ion-item>
+                </ion-col>
+                <ion-col size="5" size-md="3">
+                    <ion-item fill="outline" mode="md">
+                        <ion-label position="stacked">Fine (sec)</ion-label>
+                        <ion-input type="number" [(ngModel)]="marker.EndTime" [ngModelOptions]="{standalone: true}"></ion-input>
+                    </ion-item>
+                </ion-col>
+                <ion-col size="2" class="ion-text-center">
+                    <ion-button fill="clear" color="danger" (click)="removeMarker($index)">
+                        <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+                    </ion-button>
+                </ion-col>
+            </ion-row>
+        }
+
         <div class="form-section-title">Dati Tecnici</div>
         <ion-grid class="ion-no-padding">
             <ion-row>
                 <ion-col size="4" class="ion-padding-end">
                     <ion-item fill="outline" mode="md">
-                        <ion-label position="stacked">N° Episodio *</ion-label>
-                        <ion-input type="number" formControlName="episodeNumber"></ion-input>
+                        <ion-label position="stacked">N° Episodio (Auto)</ion-label>
+                        <ion-input type="number" formControlName="episodeNumber" readonly></ion-input>
                     </ion-item>
                 </ion-col>
                 <ion-col size="4" class="ion-padding-end">
@@ -72,14 +233,19 @@
         <ion-button
             expand="block"
             type="submit"
-            [disabled]="episodeForm.invalid || isUploading()"
+            [disabled]="episodeForm.invalid || (!isEditMode && !videoFile()) || isUploading()"
             color="primary"
-            class="ion-margin-top"
+            class="ion-margin-top ion-margin-bottom"
         >
-            <svg viewBox="0 0 512 512" class="btn-svg">
-                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M380.93 57.37A32 32 0 00358.3 48H92a44 44 0 00-44 44v328a44 44 0 0044 44h328a44 44 0 0044-44V153.7a32 32 0 00-9.37-22.63zM256 416a64 64 0 1164-64 64 64 0 01-64 64zm48-224H112a16 16 0 01-16-16v-64a16 16 0 0116-16h192a16 16 0 0116 16v64a16 16 0 01-16 16z" />
-            </svg>
-            {{ isUploading() ? 'Caricamento file in corso...' : (isEditMode ? 'Aggiorna Episodio' : 'Salva Episodio') }}
+            @if (isUploading()) {
+                <ion-spinner name="crescent" class="ion-margin-end"></ion-spinner>
+                Caricamento file in corso (attendere)...
+            } @else {
+                <svg viewBox="0 0 512 512" class="btn-svg ion-margin-end" style="width: 20px; height: 20px;">
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M380.93 57.37A32 32 0 00358.3 48H92a44 44 0 00-44 44v328a44 44 0 0044 44h328a44 44 0 0044-44V153.7a32 32 0 00-9.37-22.63zM256 416a64 64 0 1164-64 64 64 0 01-64 64zm48-224H112a16 16 0 01-16-16v-64a16 16 0 0116-16h192a16 16 0 0116 16v64a16 16 0 01-16 16z" />
+                </svg>
+                {{ isEditMode ? 'Aggiorna Episodio' : 'Salva Episodio' }}
+            }
         </ion-button>
     </form>
 </ion-content>

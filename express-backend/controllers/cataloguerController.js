@@ -5,6 +5,7 @@ const { validationResult, check } = require('express-validator');
 const fs = require('fs').promises;
 const path = require('path');
 const multerConfig = require("../middleware/multerConfig");
+const videoProcessor = require("../utils/videoProcessor");
 
 // ==========================================
 // CONTROLLER RECUPERO
@@ -340,8 +341,16 @@ const addEpisode = async (req, res) => {
         description_it, description_en, description_jp, 
         releaseDate, duration, refSeason, episodeNumber,
         DubLanguages, SubLanguages,
-        thumbnailURI
+        thumbnailURI,
+        rawVideoURI,
+        audioTracks, 
+        subTracks,
+        times   
     } = req.body;
+
+    console.log("=== DATI RICEVUTI DAL FRONTEND ===");
+    console.log("Audio Tracks:", req.body.audioTracks);
+    console.log("Sub Tracks:", req.body.subTracks);
 
     const titleObj = {
         it: title_it,
@@ -356,6 +365,21 @@ const addEpisode = async (req, res) => {
     };
 
     try {
+        const finalDubs = [];
+        if (audioTracks && audioTracks.length > 0) {
+            audioTracks.forEach(track => {
+                if (!finalDubs.includes(track.lang)) finalDubs.push(track.lang);
+            });
+        }
+
+        const finalSubs = [];
+        if (subTracks && subTracks.length > 0) {
+            subTracks.forEach(track => {
+                if (!finalSubs.includes(track.lang)) finalSubs.push(track.lang);
+            });
+        }
+
+        // 1. Salviamo l'episodio nel Database passando le lingue appena calcolate
         const result = await cataloguerModel.insertEpisodeFull(
             titleObj, 
             descriptionObj, 
@@ -363,19 +387,63 @@ const addEpisode = async (req, res) => {
             duration, 
             refSeason, 
             episodeNumber,
-            DubLanguages, 
-            SubLanguages,
+            finalDubs, 
+            finalSubs, 
             thumbnailURI
         );
-        return res.status(201).json({ message: "Episodio creato con successo!", episodeId: result.id });
-    } catch (err) {
-        console.error("Errore addEpisode:", err);
-        
-        // ROLLBACK: Se l'inserimento nel DB fallisce, elimino la thumbnail orfana appena caricata
-        if (thumbnailURI) {
-            await fs.unlink(path.join(__dirname, '../public', thumbnailURI)).catch(() => {});
+
+        const episodeId = result.id;
+
+        if (times && Array.isArray(times)) {
+            try {
+                // Usiamo la funzione del model che fa "Piazza pulita e Riscrivi"
+                await episodeModel.updateEpisodeTimes(newEpisodeId, times);
+            } catch (err) {
+                console.error("Errore salvataggio marker durante la creazione:", err);
+            }
         }
 
+        // 3. Spostiamo fisicamente i file temporanei audio e sub nella cartella dell'episodio
+        if (audioTracks && audioTracks.length > 0) {
+            for (let track of audioTracks) {
+                const tempPath = path.join(__dirname, '../public', track.uri);
+                // Sposta il file mp3/aac in public/videos/34/audio_en.mp3
+                await videoProcessor.moveMediaFile(tempPath, episodeId, 'audio', track.lang);
+                console.log(`[BACKEND] Traccia audio spostata con successo per lingua: ${track.lang}`);
+            }
+        }
+        
+        if (subTracks && subTracks.length > 0) {
+            for (let track of subTracks) {
+                const tempPath = path.join(__dirname, '../public', track.uri);
+                // Sposta il file vtt in public/videos/34/subs_en.vtt
+                await videoProcessor.moveMediaFile(tempPath, episodeId, 'subs', track.lang);
+                console.log(`[BACKEND] Sottotitolo spostato con successo per lingua: ${track.lang}`);
+            }
+        }
+
+        // 3. FIRE AND FORGET: Avviamo la transcodifica video in background!
+        if (rawVideoURI) {
+            const absoluteTempVideoPath = path.join(__dirname, '../public', rawVideoURI);
+            
+            videoProcessor.processVideoHLS(absoluteTempVideoPath, episodeId)
+                .then(async () => {
+                    console.log(`[BACKGROUND] Episodio ${episodeId} elaborato e pronto allo streaming!`);
+                    try {
+                        await fs.unlink(absoluteTempVideoPath);
+                        console.log(`[BACKGROUND] File temporaneo eliminato.`);
+                    } catch (err) {}
+                })
+                .catch(err => console.error(`[BACKGROUND] Errore FFmpeg:`, err));
+        }
+
+        return res.status(201).json({ message: "Episodio creato con successo!", episodeId });
+        
+    } catch (err) {
+        console.error("Errore addEpisode:", err);
+        // Rollback...
+        if (thumbnailURI) await fs.unlink(path.join(__dirname, '../public', thumbnailURI)).catch(() => {});
+        if (rawVideoURI) await fs.unlink(path.join(__dirname, '../public', rawVideoURI)).catch(() => {});
         return res.status(500).json({ error: "Errore interno del server" });
     }
 };
@@ -388,70 +456,91 @@ const modifyEpisode = async (req, res) => {
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
     const episodeId = req.params.id;
-
     const user = req.user;
     const applang = user.appLang;
     
-    const { title, description, refSeason, DubLanguages, SubLanguages, lang, thumbnailURI } = req.body;
+    const { 
+        title, description, refSeason, lang, thumbnailURI,
+        DubLanguages, SubLanguages,
+        audioTracks, 
+        subTracks,
+        times    
+    } = req.body;
 
     let fields = [];
     let fieldsParams = [];
     let oldEpisode = null;
 
     if (title !== undefined) { 
-        const targetLang = lang || 'it';
-        fields.push(`Title = json_set(Title, '$.${targetLang}', ?)`); 
+        fields.push(`Title = json_set(Title, '$.${lang || 'it'}', ?)`); 
         fieldsParams.push(title); 
     }
     if (description !== undefined) { 
-        const targetLang = lang || 'it';
-        fields.push(`Description = json_set(Description, '$.${targetLang}', ?)`); 
+        fields.push(`Description = json_set(Description, '$.${lang || 'it'}', ?)`); 
         fieldsParams.push(description); 
     }
-    
-    if (refSeason !== undefined) { 
-        fields.push('REF_SeasonID = ?'); 
-        fieldsParams.push(refSeason); 
-    }
+    if (refSeason !== undefined) { fields.push('REF_SeasonID = ?'); fieldsParams.push(refSeason); }
+    if (thumbnailURI !== undefined) { fields.push('ThumbnailURI = ?'); fieldsParams.push(thumbnailURI); }
 
-    // Aggiungiamo il campo per la thumbnail se è stata inviata una modifica
-    if (thumbnailURI !== undefined) {
-        fields.push('ThumbnailURI = ?');
-        fieldsParams.push(thumbnailURI);
-    }
-
-    if (fields.length === 0 && !DubLanguages && !SubLanguages) {
+    if (fields.length === 0 && !DubLanguages && !SubLanguages && !thumbnailURI && !audioTracks && !subTracks) {
         return res.status(400).json({ message: "Inserisci qualche parametro da modificare." });
     }
 
     try {
-        // 1. Recupero i vecchi dati dell'episodio per sapere quale fosse la vecchia immagine
-        // (Assicurati di avere questo metodo nel model corrispondente, ad es. episodeModel)
         oldEpisode = await episodeModel.getEpisodeById(episodeId, applang);
-        if (!oldEpisode) return res.status(404).json({ error: "L'episodio specificato non è stato trovato." });
+        if (!oldEpisode) return res.status(404).json({ error: "Episodio non trovato." });
 
-        // 2. Eseguo l'aggiornamento
-        const result = await cataloguerModel.updateEpisodeFull(episodeId, fields, fieldsParams, DubLanguages, SubLanguages);
-        
-        // Attenzione: un update solo su Dub/Sub potrebbe avere fields.length === 0, quindi aggiustiamo il controllo
-        if (fields.length > 0 && result.changes === 0 && !DubLanguages && !SubLanguages) {
-             return res.status(400).json({ error: "Nessuna modifica effettuata." });
+        if (fields.length > 0 || DubLanguages || SubLanguages) {
+            await cataloguerModel.updateEpisodeFull(episodeId, fields, fieldsParams, DubLanguages, SubLanguages);
         }
 
-        // 3. NETTURBINO (Successo): Cancello l'immagine vecchia se ne ho caricata una nuova
         if (thumbnailURI && oldEpisode.ThumbnailURI && thumbnailURI !== oldEpisode.ThumbnailURI) {
             await fs.unlink(path.join(__dirname, '../public', oldEpisode.ThumbnailURI)).catch(() => {});
+        }
+
+        if (times && Array.isArray(times)) {
+            try {
+                await episodeModel.updateEpisodeTimes(id, times);
+            } catch (err) {
+                console.error("Errore salvataggio marker durante la modifica:", err);
+            }
+        }
+
+        // SPOSTAMENTO NUOVE TRACCE AUDIO E SOTTOTITOLI E REGISTRAZIONE NEL DB
+        if (audioTracks && audioTracks.length > 0) {
+            for (let track of audioTracks) {
+                const tempPath = path.join(__dirname, '../public', track.uri);
+                
+                // 1. Sposta e segmenta il file con FFmpeg
+                await videoProcessor.moveMediaFile(tempPath, episodeId, 'audio', track.lang);
+                
+                // 2. Registra la lingua nel Database! (Se esiste già, la ignora senza dare errore)
+                await cataloguerModel.insertDubLang(episodeId, track.lang);
+                
+                console.log(`[BACKEND] Nuova traccia audio ${track.lang} registrata nel DB per l'episodio ${episodeId}`);
+            }
+        }
+        
+        if (subTracks && subTracks.length > 0) {
+            for (let track of subTracks) {
+                const tempPath = path.join(__dirname, '../public', track.uri);
+                
+                // 1. Sposta e segmenta il VTT
+                await videoProcessor.moveMediaFile(tempPath, episodeId, 'subs', track.lang);
+                
+                // 2. Registra il sottotitolo nel Database!
+                await cataloguerModel.insertSubLang(episodeId, track.lang);
+
+                console.log(`[BACKEND] Nuovi sottotitoli ${track.lang} registrati nel DB per l'episodio ${episodeId}`);
+            }
         }
 
         return res.json({ message: "Episodio aggiornato con successo!" });
     } catch (err) {
         console.error("Errore modifyEpisode:", err);
-
-        // 4. ROLLBACK (Fallimento): Cancello la nuova immagine caricata per sbaglio se il DB va in crash
         if (thumbnailURI && thumbnailURI !== oldEpisode?.ThumbnailURI) {
             await fs.unlink(path.join(__dirname, '../public', thumbnailURI)).catch(() => {});
         }
-
         return res.status(500).json({ error: "Errore interno del server" });
     }
 };
@@ -477,14 +566,52 @@ const removeEpisode = async (req, res) => {
         const result = await cataloguerModel.deleteEpisode(episodeId);
         if (result.changes === 0) return res.status(400).json({ error: "Impossibile cancellare l'episodio." });
 
-        // 3. NETTURBINO: Cancello l'immagine fisica dal disco
+        // 3. NETTURBINO IMMAGINI: Cancello l'immagine fisica dal disco
         if (episode.ThumbnailURI) {
             await fs.unlink(path.join(__dirname, '../public', episode.ThumbnailURI)).catch(() => {});
         }
 
-        return res.json({ message: "Episodio cancellato con successo!" });
+        // 4. NETTURBINO VIDEO: Rado al suolo l'intera cartella HLS (video, audio e sub)
+        const hlsFolder = path.join(__dirname, '../public/videos', String(episodeId));
+        await fs.rm(hlsFolder, { recursive: true, force: true }).catch((err) => {
+            console.log(`[NETTURBINO] Nessuna cartella video trovata per episodio ${episodeId} o già eliminata.`);
+        });
+
+        return res.json({ message: "Episodio e relativi file multimediali cancellati con successo!" });
     } catch (err) {
         console.error("Errore removeEpisode:", err);
+        return res.status(500).json({ error: "Errore interno del server" });
+    }
+};
+
+// ==========================================
+// ELIMINA SINGOLA TRACCIA (AUDIO O SUB)
+// ==========================================
+const removeTrack = async (req, res) => {
+    const { id, type, lang } = req.params;
+
+    try {
+        // 1. Eliminiamo dal Database
+        if (type === 'audio') {
+            await cataloguerModel.deleteDubLang(id, lang);
+        } else if (type === 'subs') {
+            await cataloguerModel.deleteSubLang(id, lang);
+        } else {
+            return res.status(400).json({ error: "Tipo traccia non valido." });
+        }
+
+        // 2. Eliminiamo fisicamente la cartella HLS di quella specifica lingua
+        // Es: public/videos/19/audio_en oppure subs_en
+        const folderPrefix = type === 'audio' ? 'audio_' : 'subs_';
+        const targetFolder = path.join(__dirname, '../public/videos', String(id), `${folderPrefix}${lang}`);
+
+        await fs.rm(targetFolder, { recursive: true, force: true }).catch(() => {
+            console.log(`[NETTURBINO TRACCE] Cartella ${targetFolder} non trovata, ma DB aggiornato.`);
+        });
+
+        return res.json({ message: `Traccia ${type} in ${lang} eliminata con successo!` });
+    } catch (err) {
+        console.error("Errore removeTrack:", err);
         return res.status(500).json({ error: "Errore interno del server" });
     }
 };
@@ -585,6 +712,6 @@ module.exports = {
     getShows, getSeasons, getEpisodes,
     addShow, modifyShow, removeShow,
     addSeason, modifySeason, removeSeason,
-    addEpisode, modifyEpisode, removeEpisode,
+    addEpisode, modifyEpisode, removeEpisode, removeTrack,
     addPropic, removePropic
 };

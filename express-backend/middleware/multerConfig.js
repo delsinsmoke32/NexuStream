@@ -62,6 +62,72 @@ const createValidator = (folderPath, fieldName) => {
     });
 };
 
+// Creiamo la cartella temporanea se non esiste
+const tempVideoDir = path.join(__dirname, '../public/videos/temp');
+if (!fs.existsSync(tempVideoDir)) {
+    fs.mkdirSync(tempVideoDir, { recursive: true });
+}
+
+// Storage dedicato ai video raw
+const rawVideoStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, tempVideoDir);
+    },
+    filename: function (req, file, cb) {
+        // Generiamo un nome univoco per evitare sovrascritture se due admin caricano insieme
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const ext = path.extname(file.originalname);
+        cb(null, `raw_video_${uniqueSuffix}${ext}`);
+    }
+});
+
+const uploadRawVideo = multer({ 
+    storage: rawVideoStorage,
+    limits: {
+        fileSize: 2 * 1024 * 1024 * 1024 // Limite di 2 GB! (Aggiusta in base alle tue esigenze)
+    },
+    fileFilter: (req, file, cb) => {
+        // Accettiamo solo file video (MP4, MKV, ecc.)
+        if (file.mimetype.startsWith('video/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Il file caricato non è un video valido.'), false);
+        }
+    }
+});
+
+// ==========================================
+// STORAGE PER AUDIO E SOTTOTITOLI (TEMP)
+// ==========================================
+const mediaTrackStorage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, tempVideoDir); // Usiamo la stessa cartella temp del video
+    },
+    filename: function (req, file, cb) {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        const ext = path.extname(file.originalname);
+        cb(null, `track_${uniqueSuffix}${ext}`);
+    }
+});
+
+const uploadMediaTrack = multer({ 
+    storage: mediaTrackStorage,
+    limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB
+    fileFilter: (req, file, cb) => {
+        const isAudio = file.mimetype.startsWith('audio/'); // Questo include già 'audio/mpeg' (MP3), quindi va bene!
+        
+        // I file dovrebbero essere aac, ma è decisamente più facile caricare mp3 nativo:
+        const isMp3 = file.originalname.endsWith('.mp3') || file.mimetype === 'audio/mpeg';
+        const isSub = file.mimetype === 'text/vtt' || file.originalname.endsWith('.vtt') || file.originalname.endsWith('.srt');
+        
+        if (isAudio || isMp3 || isSub) {
+            cb(null, true);
+        } else {
+            cb(new Error('Il file caricato deve essere un audio (.mp3, .aac) o un sottotitolo (.vtt, .srt).'), false);
+        }
+    }
+});
+
 // ==========================================
 // ESPORTIAMO I MIDDLEWARE PRONTI ALL'USO!
 // ==========================================
@@ -72,5 +138,7 @@ module.exports = {
     // Two-Step per le altre rotte, sono più pesanti
     uploadShowThumbnail: createUploader('show_thumbnails'),
     uploadShowBanner: createUploader('banners'),
-    uploadEpisodeThumbnail: createUploader('episode_thumbnails')
+    uploadEpisodeThumbnail: createUploader('episode_thumbnails'),
+    uploadRawVideo,
+    uploadMediaTrack
 };

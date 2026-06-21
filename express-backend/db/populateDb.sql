@@ -142,3 +142,16 @@ INSERT INTO "EpisodeSubtitles" ("REF_EpisodeID", "REF_LanguageID") SELECT Episod
 INSERT INTO "EpisodeSubtitles" ("REF_EpisodeID", "REF_LanguageID") SELECT EpisodeID, 'en' FROM "Episodes";
 
 INSERT INTO "EpisodeResolutions" ("REF_EpisodeID", "Resolution") SELECT EpisodeID, '1080p' FROM "Episodes";
+
+-- 10. Markers di Tempo (Skip Intro & Titoli di Coda)
+-- Aggiunge un marker per l'Intro (da sec 5 a 20) per TUTTI gli episodi
+INSERT INTO "EpisodeTimes" ("REF_EpisodeID", "StartTime", "EndTime", "Type")
+SELECT EpisodeID, 5, 20, 'intro' FROM "Episodes";
+
+-- Aggiunge un marker per il Recap (da sec 21 a 30) per TUTTI gli episodi
+INSERT INTO "EpisodeTimes" ("REF_EpisodeID", "StartTime", "EndTime", "Type")
+SELECT EpisodeID, 21, 30, 'recap' FROM "Episodes";
+
+-- Aggiunge un marker per i Titoli di Coda (da sec 75 a 85) per TUTTI gli episodi
+INSERT INTO "EpisodeTimes" ("REF_EpisodeID", "StartTime", "EndTime", "Type")
+SELECT EpisodeID, 75, 85, 'credits' FROM "Episodes";

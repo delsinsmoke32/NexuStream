@@ -27,13 +27,7 @@ import {
     IonButtons,
     IonButton,
     IonContent,
-    IonItem,
-    IonLabel,
-    IonInput,
     ModalController,
-    IonText,
-    IonIcon,
-    IonAvatar,
 } from '@ionic/angular/standalone'
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { addIcons } from '@lib/ionicons'
@@ -54,12 +48,6 @@ import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
         IonButtons,
         IonButton,
         IonContent,
-        IonItem,
-        IonLabel,
-        IonInput,
-        IonText,
-        IonIcon,
-        IonAvatar,
         BackendUrlPipe,
     ],
 })

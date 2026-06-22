@@ -13,7 +13,7 @@
     }
 
     <div class="new-comment-box" id="comment-input-box">
-        <ion-item lines="none" class="custom-input">
+        <ion-item lines="none" class="custom-input ion-text-wrap">
             <ion-avatar slot="start">
                 <img
                     [src]="'avatars/avatar-000.png' | backendUrl: 'static'"
@@ -26,9 +26,9 @@
                         ? 'Scrivi la tua risposta...'
                         : 'Scrivi un commento...'
                 "
-                autosize="true"
+                [autoGrow]="true"
                 [(ngModel)]="nuovoCommentoTesto"
-                (keyup.enter)="aggiungiCommento()"
+                (keydown.enter)="$event.preventDefault(); aggiungiCommento()"
                 rows="1"
             >
             </ion-textarea>
@@ -39,7 +39,9 @@
                 <span class="preview-label">Anteprima:</span>
                 <p class="preview-text">
                     @if (replyingToUsername) {
-                        <span class="mention">@{{ replyingToUsername }}</span>
+                        <span class="mention"
+                            >@{{ replyingToUsername }}&nbsp;</span
+                        >
                     }
                     <span
                         [innerHTML]="parseMarkdown(nuovoCommentoTesto)"

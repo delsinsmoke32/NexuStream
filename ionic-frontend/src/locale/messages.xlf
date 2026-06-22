@@ -15,10 +15,13 @@
         <source>Sicurezza Account</source>
       </trans-unit>
       <trans-unit id="langEnglish" datatype="html">
-        <source>Inglese</source>
+        <source>English</source>
       </trans-unit>
       <trans-unit id="langItalian" datatype="html">
         <source>Italiano</source>
+      </trans-unit>
+      <trans-unit id="langJapanese" datatype="html">
+        <source>Giapponese</source>
       </trans-unit>
       <trans-unit id="logIn" datatype="html">
         <source>Accedi</source>
@@ -42,7 +45,7 @@
         <source>Audio predefinito</source>
       </trans-unit>
       <trans-unit id="backHome" datatype="html">
-        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;arrow-back-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Torna alla Home </source>
+        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;home-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Torna alla Home </source>
       </trans-unit>
       <trans-unit id="backLogin" datatype="html">
         <source>Torna alla pagina di Accesso</source>
@@ -123,7 +126,7 @@
         <source> Errore durante l&apos;invio della richiesta.</source>
       </trans-unit>
       <trans-unit id="forgotPass" datatype="html">
-        <source>Password dimenticata?</source>
+        <source>Hai dimenticato la password?</source>
       </trans-unit>
       <trans-unit id="forgotSuccessToast" datatype="html">
         <source> Controlla la tua casella di posta!</source>
@@ -180,7 +183,7 @@
         <source>I più visti questa settimana</source>
       </trans-unit>
       <trans-unit id="myFavouritesCount" datatype="html">
-        <source>Hai salvato <x id="INTERPOLATION" equiv-text="{{ favorites.length }}"/> anime</source>
+        <source>Hai salvato <x id="INTERPOLATION" equiv-text="{{ favorites().length }}"/> anime</source>
       </trans-unit>
       <trans-unit id="myList" datatype="html">
         <source>La Mia Lista</source>
@@ -267,7 +270,7 @@
         <source><x id="START_BLOCK_IF" equiv-text="@if (isLoading) {"/> Invio in corso... <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Invia Link di Reset <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
       </trans-unit>
       <trans-unit id="settings" datatype="html">
-        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon color=&quot;light&quot; slot=&quot;start&quot; name=&quot;settings-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Impostazioni </source>
+        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;settings-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Impostazioni </source>
       </trans-unit>
       <trans-unit id="startWatching" datatype="html">
         <source>Inizia a guardare</source>

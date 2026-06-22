@@ -6,16 +6,15 @@ import {
     inject,
     signal,
     viewChild,
-} from '@angular/core'
-import { CommonModule } from '@angular/common'
+} from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
     FormBuilder,
     FormGroup,
     ReactiveFormsModule,
     Validators,
-} from '@angular/forms'
-import { HttpClient, HttpHeaders } from '@angular/common/http'
-import { firstValueFrom } from 'rxjs'
+} from '@angular/forms';
+import { firstValueFrom } from 'rxjs';
 
 // IONIC STANDALONE
 import {
@@ -34,9 +33,14 @@ import {
     IonCol,
     ModalController,
     IonIcon,
-} from '@ionic/angular/standalone'
-import { addIcons } from 'ionicons'
-import { imageOutline, imagesOutline } from 'ionicons/icons'
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { imageOutline, imagesOutline } from 'ionicons/icons';
+
+// 🚀 Import Service, Model e Pipe
+import { CataloguerService } from '../../services/cataloguer';
+import { ShowModalData, ShowPayload } from '../../models/cataloguer';
+import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
 
 @Component({
     selector: 'app-cataloguer-show-modal',
@@ -61,62 +65,59 @@ import { imageOutline, imagesOutline } from 'ionicons/icons'
         IonCol,
         IonIcon,
     ],
+    providers: [BackendUrlPipe] // 🚀 Aggiungiamo il Pipe nei providers per iniettarlo!
 })
 export class CataloguerShowModalComponent implements OnInit {
-    @Input() data: any // Contiene l'oggetto se siamo in modalità modifica
+    @Input() data!: ShowModalData; // 🚀 Tipizzato
 
-    // ViewChild per i due input file nascosti
-    thumbInput = viewChild.required<ElementRef<HTMLInputElement>>('thumbInput')
-    bannerInput =
-        viewChild.required<ElementRef<HTMLInputElement>>('bannerInput')
+    thumbInput = viewChild.required<ElementRef<HTMLInputElement>>('thumbInput');
+    bannerInput = viewChild.required<ElementRef<HTMLInputElement>>('bannerInput');
 
-    // Signals per gestire file e anteprime in modo reattivo
-    thumbnailFile = signal<File | null>(null)
-    thumbnailPreview = signal<string | null>(null)
+    thumbnailFile = signal<File | null>(null);
+    thumbnailPreview = signal<string | null>(null);
 
-    bannerFile = signal<File | null>(null)
-    bannerPreview = signal<string | null>(null)
+    bannerFile = signal<File | null>(null);
+    bannerPreview = signal<string | null>(null);
 
-    isUploading = signal<boolean>(false)
+    isUploading = signal<boolean>(false);
 
-    private fb = inject(FormBuilder)
-    private modalCtrl = inject(ModalController)
-    private http = inject(HttpClient)
+    private fb = inject(FormBuilder);
+    private modalCtrl = inject(ModalController);
+    private cataloguerService = inject(CataloguerService);
+    private backendUrl = inject(BackendUrlPipe); // 🚀 Iniezione del Pipe
 
-    showForm!: FormGroup
-    isEditMode = false
+    showForm!: FormGroup;
+    isEditMode = false;
 
     constructor() {
-        addIcons({ imageOutline, imagesOutline })
+        addIcons({ imageOutline, imagesOutline });
     }
 
     ngOnInit() {
-        this.isEditMode = !!this.data
+        this.isEditMode = !!this.data;
 
-        // Se siamo in modifica e abbiamo già delle immagini sul server, le impostiamo come anteprime iniziali
         if (this.isEditMode) {
-            if (this.data.ThumbnailURI)
-                this.thumbnailPreview.set(
-                    `http://localhost:3000/${this.data.ThumbnailURI}`
-                )
-            if (this.data.BannerURI)
-                this.bannerPreview.set(
-                    `http://localhost:3000/${this.data.BannerURI}`
-                )
+            // 🚀 Usiamo il Pipe per trasformare l'URI nel link completo, NIENTE RAW URL!
+            if (this.data.ThumbnailURI) {
+                this.thumbnailPreview.set(this.backendUrl.transform(this.data.ThumbnailURI));
+            }
+            if (this.data.BannerURI) {
+                this.bannerPreview.set(this.backendUrl.transform(this.data.BannerURI));
+            }
         }
 
-        this.initForm()
+        this.initForm();
     }
 
     private initForm() {
         const getLangText = (jsonStr: string, lang: string) => {
             try {
-                const obj = JSON.parse(jsonStr)
-                return obj[lang] || ''
+                const obj = JSON.parse(jsonStr);
+                return obj[lang] || '';
             } catch {
-                return jsonStr || ''
+                return jsonStr || '';
             }
-        }
+        };
 
         this.showForm = this.fb.group({
             title_it: [
@@ -141,100 +142,68 @@ export class CataloguerShowModalComponent implements OnInit {
                 this.isEditMode ? [] : [Validators.required],
             ],
             dateEnded: [this.data?.DateEnded || ''],
-        })
+        });
     }
 
     triggerSelect(type: 'thumbnail' | 'banner') {
-        if (type === 'thumbnail') this.thumbInput().nativeElement.click()
-        if (type === 'banner') this.bannerInput().nativeElement.click()
+        if (type === 'thumbnail') this.thumbInput().nativeElement.click();
+        if (type === 'banner') this.bannerInput().nativeElement.click();
     }
 
     onFileSelect(event: Event, type: 'thumbnail' | 'banner') {
-        const input = event.target as HTMLInputElement
+        const input = event.target as HTMLInputElement;
         if (input.files && input.files.length > 0) {
-            const file = input.files[0]
-            const reader = new FileReader()
+            const file = input.files[0];
+            const reader = new FileReader();
 
             reader.onload = () => {
                 if (type === 'thumbnail') {
-                    this.thumbnailFile.set(file)
-                    this.thumbnailPreview.set(reader.result as string)
+                    this.thumbnailFile.set(file);
+                    this.thumbnailPreview.set(reader.result as string);
                 } else {
-                    this.bannerFile.set(file)
-                    this.bannerPreview.set(reader.result as string)
+                    this.bannerFile.set(file);
+                    this.bannerPreview.set(reader.result as string);
                 }
-            }
-            reader.readAsDataURL(file)
+            };
+            reader.readAsDataURL(file);
         }
     }
 
     dismiss(result?: any) {
-        this.modalCtrl.dismiss(result)
-    }
-
-    // Helper per caricare un singolo file e farsi restituire l'URI
-    private async uploadImage(
-        file: File,
-        type: 'thumbnail' | 'banner'
-    ): Promise<string> {
-        const formData = new FormData()
-        formData.append(type, file, file.name) // 'thumbnail' o 'banner' (deve coincidere col backend)
-
-        const token = localStorage.getItem('token')
-        const headers = new HttpHeaders({ Authorization: `Bearer ${token}` })
-
-        // Sostituisci la base URL con il tuo environment
-        let endpoint = ``
-        if (type === 'thumbnail') {
-            endpoint = `http://localhost:3000/api/upload/show_thumbnails`
-        } else {
-            endpoint = `http://localhost:3000/api/upload/banners`
-        }
-
-        const response: any = await firstValueFrom(
-            this.http.post(endpoint, formData, { headers })
-        )
-        return response.uri
+        this.modalCtrl.dismiss(result);
     }
 
     async save() {
-        if (this.showForm.invalid) return
-        this.isUploading.set(true)
+        if (this.showForm.invalid) return;
+        this.isUploading.set(true);
 
         try {
-            // 1. STEP 1: Upload Fisico (se l'utente ha selezionato file nuovi)
-            let finalThumbURI = this.data?.ThumbnailURI || null
-            let finalBannerURI = this.data?.BannerURI || null
+            let finalThumbURI = this.data?.ThumbnailURI || null;
+            let finalBannerURI = this.data?.BannerURI || null;
 
+            // 🚀 Deleghiamo l'upload al service
             if (this.thumbnailFile()) {
-                finalThumbURI = await this.uploadImage(
-                    this.thumbnailFile()!,
-                    'thumbnail'
-                )
+                const res = await firstValueFrom(this.cataloguerService.uploadShowImage(this.thumbnailFile()!, 'thumbnail'));
+                finalThumbURI = res.uri;
             }
             if (this.bannerFile()) {
-                finalBannerURI = await this.uploadImage(
-                    this.bannerFile()!,
-                    'banner'
-                )
+                const res = await firstValueFrom(this.cataloguerService.uploadShowImage(this.bannerFile()!, 'banner'));
+                finalBannerURI = res.uri;
             }
 
-            // 2. Raccogliamo i testi
-            const rawValues = this.showForm.getRawValue()
+            const rawValues = this.showForm.getRawValue();
 
-            // 3. STEP 2: Impacchettiamo Testi + URI e passiamo tutto al genitore
-            const payload = {
+            const payload: ShowPayload = {
                 ...rawValues,
                 thumbnailURI: finalThumbURI,
                 bannerURI: finalBannerURI,
-            }
+            };
 
-            this.dismiss({ payload, isEdit: this.isEditMode })
+            this.dismiss({ payload, isEdit: this.isEditMode });
         } catch (error) {
-            console.error("Errore durante l'upload delle immagini:", error)
-            // Qui potresti mostrare un toast di errore Ionic
+            console.error("Errore durante l'upload delle immagini:", error);
         } finally {
-            this.isUploading.set(false)
+            this.isUploading.set(false);
         }
     }
 }

@@ -336,3 +336,70 @@
   from { opacity: 0; transform: translateY(-15px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+// percorso: src/app/pages/episode/episode.page.scss
+
+.guest-paywall-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9; /* Mantiene la proporzione di un player video standard */
+  background-color: #000; /* Colore di fallback mentre carica l'immagine */
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+
+  /* L'immagine di sfondo (Thumbnail) */
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    // Leggero zoom per rendere l'immagine più cinematografica
+    transform: scale(1.05); 
+  }
+
+  /* L'overlay scuro e sfocato che si sovrappone all'immagine */
+  .paywall-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    
+    /* Sfondo nero semitrasparente */
+    background: rgba(0, 0, 0, 0.65); 
+    /* L'effetto blur premium (supportato da tutti i browser moderni) */
+    backdrop-filter: blur(6px); 
+    -webkit-backdrop-filter: blur(6px);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 24px;
+
+    h3 {
+      color: #ffffff;
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-top: 0;
+      margin-bottom: 20px;
+      line-height: 1.4;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+      max-width: 80%;
+    }
+
+    ion-button {
+      --border-radius: 8px;
+      --padding-top: 12px;
+      --padding-bottom: 12px;
+      --padding-start: 24px;
+      --padding-end: 24px;
+      font-weight: bold;
+      font-size: 1rem;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    }
+  }
+}

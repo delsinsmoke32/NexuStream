@@ -1,45 +1,28 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
+import { ToastController } from '@ionic/angular/standalone';
+import { jwtDecodeHelper } from '../utils/jwt-helper'; // Assicurati che il path sia corretto
 
-export const AdminGuard: CanActivateFn = (route, state) => {
+export const AdminGuard: CanActivateFn = async (route, state) => {
   const router = inject(Router);
+  const toastCtrl = inject(ToastController);
   const token = localStorage.getItem('token');
 
   if (token) {
-    try {
-      // Decodifichiamo il payload del JWT al volo
-      const decodedToken = jwtDecodeHelper(token); 
-      
-      // Mappiamo il controllo sul flag reale del tuo token (es. user.isAdmin === 1)
-      if (decodedToken && decodedToken.isAdmin === 1) {
-        return true; // Accesso consentito
-      }
-    } catch (e) {
-      console.error("Token non valido, corrotto o manomesso", e);
+    const decodedToken = jwtDecodeHelper(token); 
+    if (decodedToken && decodedToken.isAdmin === 1) {
+      return true; // È un Admin, prego si accomodi
     }
   }
 
-  // Se non è admin o il token è manomesso, reindirizza al forbidden
+  // Non ha i permessi (o non ha il token)
+  const toast = await toastCtrl.create({
+    message: 'Accesso negato. Privilegi di Amministratore richiesti.',
+    duration: 3000,
+    color: 'danger',
+    position: 'bottom'
+  });
+  await toast.present();
+
   return router.parseUrl('/forbidden'); 
 };
-
-/**
- * Helper nativo per decodificare il payload di un JWT senza librerie esterne.
- * Prende la stringa centrale del token, la converte da Base64 e fa il JSON.parse.
- */
-function jwtDecodeHelper(token: string): any {
-  try {
-    const parts = token.split('.');
-    if (parts.length !== 3) return null; // Un JWT deve avere sempre 3 parti
-
-    const base64Url = parts[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(window.atob(base64).split('').map((c) => {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-    
-    return JSON.parse(jsonPayload);
-  } catch {
-    return null;
-  }
-}

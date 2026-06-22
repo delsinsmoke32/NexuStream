@@ -36,7 +36,7 @@ import {
 import { addIcons } from 'ionicons'
 import { CommentsComponent } from '@app/components/comments/comments.component'
 import { DiscussionModalComponent } from '@app/components/discussion-modal/discussion-modal.component'
-import { jwtDecodeHelper } from '@app/guards/mod-guard'
+import { jwtDecodeHelper } from '@app/utils/jwt-helper'
 import { VideoPlayerComponent } from '@app/components/video-player/video-player.component'
 
 @Component({
@@ -55,6 +55,7 @@ import { VideoPlayerComponent } from '@app/components/video-player/video-player.
         RouterModule,
         CommentsComponent,
         VideoPlayerComponent,
+        BackendUrlPipe
     ],
     providers: [BackendUrlPipe],
 })
@@ -71,6 +72,7 @@ export class EpisodePage implements OnInit, OnDestroy {
     episode = signal<any>(null)
     seasonEpisodes = signal<any[]>([])
     discussions = signal<any[]>([])
+    isLoggedIn = signal<boolean>(false);
 
     showId = signal<string>('')
     seasonId = signal<string>('')
@@ -87,21 +89,12 @@ export class EpisodePage implements OnInit, OnDestroy {
     @ViewChild(VideoPlayerComponent) videoPlayerComponent!: VideoPlayerComponent
 
     constructor() {
-        addIcons({
-            chatbubblesOutline,
-            createOutline,
-            trashOutline,
-            shareSocialOutline,
-            addCircleOutline,
-            playCircle,
-            heartOutline,
-            heart,
-            chevronForwardOutline,
-        })
+        addIcons({chatbubblesOutline,createOutline,trashOutline,shareSocialOutline,addCircleOutline,playCircle,heartOutline,heart,chevronForwardOutline,});
     }
 
     ngOnInit() {
-        const token = localStorage.getItem('token')
+        const token = localStorage.getItem('token');
+        this.isLoggedIn.set(!!token);
         if (token) {
             const decodedToken = jwtDecodeHelper(token)
             if (decodedToken && decodedToken.isMod === 1) this.isMod.set(true)
@@ -113,7 +106,7 @@ export class EpisodePage implements OnInit, OnDestroy {
         ]).subscribe(async ([params, queryParams]) => {
             const epId = params.get('id') || params.get('episodeId')
 
-            // 🚀 CONTROLLO DEL LUCCHETTO (Mancava questo!)
+            // CONTROLLO DEL LUCCHETTO (Mancava questo!)
             if (epId && !this.isNavigating) {
                 this.isNavigating = true
 

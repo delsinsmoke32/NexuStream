@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from './guards/auth-guard';
+import { GuestGuard } from './guards/guest-guard';
 import { AdminGuard } from './guards/admin-guard'; // Assicurati che il percorso sia corretto
 import { CataloguerGuard } from './guards/cataloguer-guard';
 import { ModGuard } from './guards/mod-guard';
@@ -14,18 +16,22 @@ export const routes: Routes = [
   // 2. Rotte di Autenticazione
   {
     path: 'login',
+    canActivate: [GuestGuard],
     loadComponent: () => import('./pages/login/login.page').then(m => m.LoginPage)
   },
   {
     path: 'register',
+    canActivate: [GuestGuard],
     loadComponent: () => import('./pages/register/register.page').then(m => m.RegisterPage)
   },
   {
     path: 'reset-password',
+    canActivate: [GuestGuard],
     loadComponent: () => import('./pages/reset-password/reset-password.page').then( m => m.ResetPasswordPage)
   },
   {
     path: 'forgot-password',
+    canActivate: [GuestGuard],
     loadComponent: () => import('./pages/forgot-password/forgot-password.page').then( m => m.ForgotPasswordPage)
   },
   
@@ -56,10 +62,12 @@ export const routes: Routes = [
   },
   {
     path: 'favourites',
+    canActivate: [AuthGuard],
     loadComponent: () => import('./pages/favourites/favourites.page').then(m => m.FavouritesPage)
   },
   {
     path: 'settings',
+    canActivate: [AuthGuard],
     loadComponent: () => import('./pages/settings/settings.page').then(m => m.SettingsPage)
   },
   

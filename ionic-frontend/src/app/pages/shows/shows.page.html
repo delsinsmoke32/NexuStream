@@ -19,7 +19,7 @@
     <div class="hero-banner">
         <img
             class="banner-img"
-            [src]="show().BannerURI ? (show().BannerURI | backendUrl: 'static') : 'assets/placeholder-banner.png'"
+            [src]="show()?.BannerURI ? (show()!.BannerURI! | backendUrl: 'static') : 'assets/placeholder-banner.png'"
             alt="Banner"
         />
         <div class="hero-gradient-overlay"></div>
@@ -30,7 +30,7 @@
       <div class="top-info-section">
         
         <div class="main-details">
-          <h1 class="shows-title">{{ show().Title }}</h1>
+          <h1 class="shows-title">{{ show()?.Title }}</h1>
           
           <div class="action-buttons">
             <button class="btn-play-primary" (click)="playEpisode(resumeEpisode()?.EpisodeID, $event)">
@@ -53,11 +53,11 @@
             </button>
             
             <button class="btn-icon-secondary" (click)="toggleFavorite()">
-              <ion-icon [name]="show().isFavorited ? 'heart' : 'heart-outline'"></ion-icon>
+              <ion-icon [name]="show()?.isFavorited ? 'heart' : 'heart-outline'"></ion-icon>
             </button>
           </div>
           
-          <p class="shows-description">{{ show().Description }}</p>
+          <p class="shows-description">{{ show()?.Description }}</p>
         </div>
 
         <div class="meta-sidebar">
@@ -65,7 +65,7 @@
           <div class="meta-block">
             <span i18n="@@genres" class="meta-label">Generi:</span>
             <div class="chip-container">
-              @for (genre of show().genres; track $index) {
+              @for (genre of show()?.genres; track $index) {
                 <span class="meta-chip">{{ genre }}</span>
               } @empty {
                 <span class="meta-text">N/D</span>
@@ -76,14 +76,14 @@
           <div class="meta-block">
             <span class="meta-label">Audio:</span>
             <span class="meta-text uppercase-lang">
-              {{ show().audio?.length > 0 ? show().audio.join(', ') : 'N/D' }}
+              {{ show()?.audio?.join(', ') || 'N/D' }}
             </span>
           </div>
           
           <div class="meta-block">
             <span i18n="@@subtitles" class="meta-label">Sottotitoli:</span>
             <span class="meta-text uppercase-lang">
-              {{ show().subs?.length > 0 ? show().subs.join(', ') : 'N/D' }}
+              {{ show()?.subs?.join(', ') || 'N/D' }}
             </span>
           </div>
 
@@ -108,7 +108,7 @@
 
           @if (getSelectedSeason()?.Description) {
           <p class="season-description">
-              {{ getSelectedSeason().Description }}
+              {{ getSelectedSeason()?.Description }}
           </p>
           }
 

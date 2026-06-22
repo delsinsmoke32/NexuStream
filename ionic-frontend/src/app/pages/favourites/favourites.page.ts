@@ -1,7 +1,6 @@
 import { Component, ViewChild, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { 
   IonContent, IonHeader, IonTitle, IonToolbar, IonIcon, 
   IonButton, IonPopover, IonBackButton, IonButtons, 
@@ -10,8 +9,10 @@ import {
 import { addIcons } from 'ionicons';
 import { heartDislikeOutline, personCircleOutline, settingsOutline, heartOutline, logOutOutline } from 'ionicons/icons';
 
-// 🚀 Importiamo la nostra nuova fantastica card
+// 🚀 Importiamo la card, il service e il model
 import { ShowCardComponent } from '../../components/show-card/show-card.component';
+import { FavoritesService } from '../../services/favorites';
+import { FavoriteShow } from '../../models/favorites';
 
 @Component({
   selector: 'app-favourites',
@@ -28,12 +29,12 @@ import { ShowCardComponent } from '../../components/show-card/show-card.componen
 export class FavouritesPage {
   @ViewChild('profilePopover') popover: any;
   
-  private http = inject(HttpClient);
+  private favoritesService = inject(FavoritesService);
   private router = inject(Router);
   private toastCtrl = inject(ToastController);
 
   isLoading = signal<boolean>(true);
-  favorites = signal<any[]>([]);
+  favorites = signal<FavoriteShow[]>([]);
 
   constructor() { 
     addIcons({ heartDislikeOutline, personCircleOutline, settingsOutline, heartOutline, logOutOutline });
@@ -43,10 +44,10 @@ export class FavouritesPage {
     this.loadFavorites();
   }
 
-  // 1. Recupero dei preferiti
+  // 1. Recupero dei preferiti tramite il Service
   loadFavorites() {
     this.isLoading.set(true);
-    this.http.get<any[]>('api/shows/favorites').subscribe({
+    this.favoritesService.getFavorites().subscribe({
       next: (res) => {
         this.favorites.set(res || []);
         this.isLoading.set(false);
@@ -59,7 +60,7 @@ export class FavouritesPage {
     });
   }
 
-  // 2. Rimozione dai preferiti
+  // 2. Rimozione dai preferiti tramite il Service
   removeFromFavorites(showId: number) {
     // Salviamo la lista vecchia in caso di errore di rete
     const oldFavs = this.favorites();
@@ -67,9 +68,8 @@ export class FavouritesPage {
     // Aggiornamento ottimistico: filtriamo via la card istantaneamente!
     this.favorites.update(favs => favs.filter(anime => anime.ShowID !== showId));
 
-    // Invio la chiamata POST all'API
-    const payload = { showId: showId, isLiked: 0 };
-    this.http.post(`api/shows/${showId}/interact`, payload).subscribe({
+    // Invio la chiamata al Service
+    this.favoritesService.removeFavorite(showId).subscribe({
       next: () => {
         this.showToast('Rimosso dai Preferiti', 'success');
       },
@@ -87,10 +87,12 @@ export class FavouritesPage {
     this.router.navigate(['/shows', showId]);
   }
 
-  playAnime(show: any) {
+  playAnime(show: FavoriteShow) {
     // Ricordati che l'evento (play) emette tutto l'oggetto, quindi estraiamo l'ID
     const id = show.ShowID || show.id;
-    this.router.navigate(['/shows', id]);
+    if (id) {
+        this.router.navigate(['/shows', id]);
+    }
   }
 
   // --- MENU PROFILO ---
@@ -98,8 +100,11 @@ export class FavouritesPage {
     this.popover.event = ev;
     await this.popover.present();
   }
+  
   onPopoverDismiss() {}
+  
   openUserSettings() { this.popover.dismiss(); }
+  
   openFavorites() { this.popover.dismiss(); }
   
   logout() { 

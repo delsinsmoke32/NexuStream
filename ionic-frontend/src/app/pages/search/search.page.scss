@@ -2,44 +2,37 @@
   --ion-background-color: var(--ion-color-dark, #121212);
 }
 
-.show-toolbar {
-  --background: rgba(18, 18, 18, 0.95);
-  --border-width: 0;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.brand-title {
-  font-weight: 900;
-  letter-spacing: 1.5px;
-  color: var(--ion-color-primary, #b22222);
-  font-family: 'Arial Black', sans-serif;
-  font-size: 1.1rem;
-}
-
-.btn-icon-red {
-  --color: var(--ion-color-primary, #b22222) !important;
-}
-
 /* ===================================
-   SEARCHBAR E FILTRO CHIPS
+   HEADER & TOOLBARS
    =================================== */
-.search-toolbar {
-  --background: rgba(18, 18, 18, 0.95);
-  padding: 0;
+/* 1. La prima toolbar (Solo il titolo) */
+.transparent-toolbar {
+  --background: var(--ion-color-dark, #121212);
   --border-width: 0;
+}
+
+/* 2. La seconda toolbar (Cerca + Filtri) */
+.search-toolbar {
+  --background: var(--ion-color-dark, #121212);
+  --border-width: 0;
+  padding-top: 12px;  /* Spazio tra il titolo "Ricerca" e la barra */
+  padding-bottom: 8px;
 
   .show-searchbar {
-    --background: #222222;
+    --box-shadow: none; /* Rimuove l'ombra piatta di base */
+    --background: rgba(255, 255, 255, 0.05); /* Leggerissimo grigio semitrasparente */
     --color: #ffffff;
     --placeholder-color: #888888;
     --icon-color: #888888;
     --clear-button-color: #ffffff;
-    --border-radius: 6px;
+    --border-radius: 8px;
     padding: 0 16px 10px 16px;
   }
 }
 
+/* ===================================
+   FILTRO CHIPS (GENERI)
+   =================================== */
 .genres-scroll {
   display: flex;
   overflow-x: auto;
@@ -69,15 +62,15 @@
 
     /* Ottimizzazioni per schermi piccoli */
     @media (max-width: 480px) {
-      font-size: 0.8rem;     /* Testo leggermente più piccolo */
-      height: 30px;          /* Chip un po' più bassi e proporzionati */
-      padding: 0 10px;       /* Riduce un po' l'ingombro laterale */
+      font-size: 0.8rem;     
+      height: 30px;          
+      padding: 0 10px;       
     }
   }
 }
 
 /* ===================================
-   MAIN CONTAINER
+   MAIN CONTAINER & STATI (LOADING/VUOTO)
    =================================== */
 .main-container {
   padding-bottom: 60px;
@@ -109,7 +102,7 @@
 }
 
 /* ===================================
-   GRIGLIA
+   GRIGLIA RISULTATI
    =================================== */
 .results-grid {
   display: grid;
@@ -118,39 +111,12 @@
   grid-template-columns: repeat(auto-fill, 130px);
   gap: 10px; 
   
-  /* Sposta tutto verso il bordo sinistro invece di centrare */
   justify-content: flex-start; 
-  
-  /* Riduciamo il padding (16px sopra/sotto, 8px ai lati) per farle stare più larghe */
   padding: 16px 8px;
 
   @media (min-width: 768px) {
     grid-template-columns: repeat(auto-fill, 160px);
     gap: 16px;
-    padding: 16px 24px; /* Su tablet/desktop lasciamo più margine ai lati */
-  }
-}
-
-
-/* ===================================
-   POPOVER
-   =================================== */
-.dark-popover {
-  background: var(--ion-background-color);
-  
-  ion-item {
-    --background: var(--ion-background-color);
-    --color: var(--ion-color-primary, #b22222); 
-    --border-color: var(--ion-color-secondary);
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: opacity 0.2s ease;
-
-    &:hover { opacity: 0.8; }
-  }
-
-  .logout-item {
-    font-weight: 800;
-    letter-spacing: 0.5px;
+    padding: 16px 24px; 
   }
 }

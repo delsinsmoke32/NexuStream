@@ -17,5 +17,5 @@ export const GuestGuard: CanActivateFn = async (route, state) => {
   });
   await toast.present();
 
-  return router.parseUrl('/home'); 
+  return router.parseUrl('/tabs/home'); 
 };

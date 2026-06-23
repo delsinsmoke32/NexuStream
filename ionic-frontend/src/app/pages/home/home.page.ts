@@ -11,14 +11,14 @@ import { addIcons } from 'ionicons';
 import { 
   searchOutline, personCircleOutline, settingsOutline, 
   heartOutline, logOutOutline, playCircle, informationCircleOutline,
-  play, chevronBackOutline, chevronForwardOutline 
-} from 'ionicons/icons';
+  play, chevronBackOutline, chevronForwardOutline, logInOutline, personAddOutline, shieldCheckmarkOutline, libraryOutline, eyeOutline } from 'ionicons/icons';
 
 import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
 import { ShowCardComponent } from '@app/components/show-card/show-card.component';
 import { HomeService } from '@app/services/home';
 import { AuthService } from '@app/services/auth';
 import { HomeShow, ContinueWatchingItem, ContinueWatchingInteractPayload } from '../../models/home';
+import { jwtDecodeHelper } from '@app/utils/jwt-helper';
 
 @Component({
   selector: 'app-home',
@@ -33,7 +33,6 @@ import { HomeShow, ContinueWatchingItem, ContinueWatchingInteractPayload } from 
   ]
 })
 export class HomePage implements OnDestroy {
-  @ViewChild('profilePopover') popover: any;
   
   @ViewChild('continueWatchingScroll') continueWatchingScroll!: ElementRef;
   @ViewChild('mostViewedScroll') mostViewedScroll!: ElementRef;
@@ -46,7 +45,6 @@ export class HomePage implements OnDestroy {
   private toastCtrl = inject(ToastController);
 
   isLoading = signal<boolean>(true);
-  isLoggedIn = signal<boolean>(false);
   
   // Dati tipizzati
   mostViewed = signal<HomeShow[]>([]);
@@ -59,16 +57,10 @@ export class HomePage implements OnDestroy {
   private heroInterval: any;
 
   constructor() {
-    addIcons({ 
-      searchOutline, personCircleOutline, settingsOutline, 
-      heartOutline, logOutOutline, playCircle, informationCircleOutline, 
-      play, chevronBackOutline, chevronForwardOutline 
-    });
+    addIcons({logInOutline,personAddOutline,searchOutline,personCircleOutline,play,informationCircleOutline,chevronBackOutline,chevronForwardOutline,settingsOutline,heartOutline,shieldCheckmarkOutline,libraryOutline,eyeOutline,logOutOutline,playCircle});
   }
 
   ionViewWillEnter() {
-    const token = localStorage.getItem('token');
-    this.isLoggedIn.set(!!token);
     this.loadHomeData();
   }
   
@@ -141,15 +133,6 @@ export class HomePage implements OnDestroy {
     if (event) event.stopPropagation();
     this.router.navigate(['/shows', showId]); 
   }
-  
-  async openProfileMenu(ev: any) {
-    this.popover.event = ev;
-    await this.popover.present();
-  }
-
-  onPopoverDismiss() {}
-  openUserSettings() { this.popover.dismiss(); }
-  openFavorites() { this.popover.dismiss(); }
 
   resumeEpisode(item: ContinueWatchingItem) {
     if (!item || !item.EpisodeID) return;
@@ -190,10 +173,5 @@ export class HomePage implements OnDestroy {
   private async showToast(message: string, color: 'success' | 'danger') {
     const toast = await this.toastCtrl.create({ message, duration: 2500, color, position: 'bottom' });
     await toast.present();
-  }
-
-  async logout() {
-    this.popover?.dismiss();
-    await this.authService.confirmLogout();
   }
 }

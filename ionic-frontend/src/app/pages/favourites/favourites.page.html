@@ -1,16 +1,6 @@
 <ion-header class="ion-no-border">
   <ion-toolbar class="transparent-toolbar">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home" color="primary"></ion-back-button>
-    </ion-buttons>
-    
     <ion-title i18n="@@myList" color="primary">La Mia Lista</ion-title>
-    
-    <ion-buttons slot="end">
-      <ion-button color="primary" (click)="openProfileMenu($event)">
-        <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
-      </ion-button>
-    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
@@ -28,7 +18,6 @@
         
         <div class="favorites-grid">
           @for (anime of favorites(); track anime.ShowID) {
-            
             <app-show-card 
               [show]="anime" 
               layout="portrait" 
@@ -37,7 +26,6 @@
               (info)="openSeriesInfo($event)"
               (remove)="removeFromFavorites($event)">
             </app-show-card>
-            
           }
         </div>
       </div>
@@ -49,7 +37,8 @@
         </div>
         <h2 i18n="@@emptyList">La tua lista è vuota</h2>
         <p i18n="@@messEmptyList">Esplora la home page per aggiungere i tuoi anime preferiti e non perderti nessun aggiornamento.</p>
-        <ion-button i18n="@@explore" color="primary" expand="block" routerLink="/home" class="explore-btn">
+        
+        <ion-button i18n="@@explore" color="primary" expand="block" routerLink="/tabs/home" class="explore-btn">
           Esplora Anime
         </ion-button>
       </div>
@@ -58,21 +47,3 @@
   }
 
 </ion-content>
-
-<ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
-  <ng-template>
-    <ion-list class="dark-popover">
-      <ion-item button (click)="openUserSettings()" i18n="@@settings">
-        <ion-icon slot="start" name="settings-outline"></ion-icon> Impostazioni
-      </ion-item>
-      <ion-item button routerLink="/favourites" (click)="openFavorites()" i18n="@@favourites">
-        <ion-icon slot="start" name="heart-outline"></ion-icon>
-        I miei preferiti
-      </ion-item>
-      <ion-item button (click)="logout()" i18n="@@logOut">
-        <ion-icon slot="start" name="log-out-outline"></ion-icon>
-        Esci
-      </ion-item>
-    </ion-list>
-  </ng-template>
-</ion-popover>

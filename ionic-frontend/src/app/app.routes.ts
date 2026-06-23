@@ -1,19 +1,21 @@
+// percorso: src/app/app.routes.ts
+
 import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth-guard';
-import { GuestGuard } from './guards/guest-guard';
-import { AdminGuard } from './guards/admin-guard'; // Assicurati che il percorso sia corretto
+import { GuestGuard } from '@app/guards/guest-guard';
+import { AdminGuard } from './guards/admin-guard'; 
 import { CataloguerGuard } from './guards/cataloguer-guard';
 import { ModGuard } from './guards/mod-guard';
 
 export const routes: Routes = [
-  // 1. Reindirizzamento iniziale: se l'utente apre l'app senza path, lo mandiamo alla home
+  // 1. Reindirizzamento iniziale: mandiamo l'utente direttamente dentro il guscio delle tab!
   {
     path: '',
-    redirectTo: 'home',
+    redirectTo: 'tabs/home', 
     pathMatch: 'full'
   },
   
-  // 2. Rotte di Autenticazione
+  // 2. Rotte di Autenticazione (Protette dalla GuestGuard: chi è loggato non le vede)
   {
     path: 'login',
     canActivate: [GuestGuard],
@@ -35,23 +37,13 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/forgot-password/forgot-password.page').then( m => m.ForgotPasswordPage)
   },
   
-  // 3. Struttura a Tab (se decidi di usarla per la navigazione principale)
+  // 3. IL CUORE DELL'APP: La struttura a Tab (Home, Cerca, Preferiti, Profilo)
   {
     path: 'tabs',
-    loadChildren: () => import('./tabs/tabs.routes').then((m) => m.routes),
+    loadChildren: () => import('./pages/tabs/tabs.routes').then((m) => m.routes),
   },
   
-  // 4. Pagine Principali Full-Screen (se esterne alle Tabs)
-  {
-    path: 'home',
-    loadComponent: () => import('./pages/home/home.page').then(m => m.HomePage)
-  },
-  {
-    path: 'search',
-    loadComponent: () => import('./pages/search/search.page').then(m => m.SearchPage)
-  },
-  
-  // 5. Pagine di Dettaglio con ID dinamico (fondamentali per caricare i dati corretti dal DB)
+  // 4. Pagine a Schermo Intero (Fuori dalle tab: la barra in basso qui scomparirà)
   {
     path: 'shows/:id',
     loadComponent: () => import('./pages/shows/shows.page').then(m => m.ShowsPage)
@@ -60,24 +52,13 @@ export const routes: Routes = [
     path: 'episode/:episodeId',
     loadComponent: () => import('./pages/episode/episode.page').then(m => m.EpisodePage)
   },
-  {
-    path: 'favourites',
-    canActivate: [AuthGuard],
-    loadComponent: () => import('./pages/favourites/favourites.page').then(m => m.FavouritesPage)
-  },
-  {
-    path: 'settings',
-    canActivate: [AuthGuard],
-    loadComponent: () => import('./pages/settings/settings.page').then(m => m.SettingsPage)
-  },
   
-  // 6. Pagine private (admin, mod, catalogatori)
+  // 5. Pannelli di Lavoro Privati (Tutti protetti dalle loro specifiche Guard)
   {
     path: 'admin',
     canActivate: [AdminGuard],
     loadComponent: () => import('./pages/admin/admin.page').then(m => m.AdminPage)
   },
-
   {
     path: 'cataloguer',
     canActivate: [CataloguerGuard],
@@ -89,27 +70,26 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/mod/mod.page').then( m => m.ModPage)
   },
   
-  // 7. Gestione Errori e Permessi
+  // 6. Gestione Errori
   {
     path: 'forbidden',
     loadComponent: () => import('./pages/forbidden/forbidden.page').then(m => m.ForbiddenPage)
   },
   {
-    path: 'not-found', // Standardizzato con il trattino
+    path: 'not-found', 
     loadComponent: () => import('./pages/notfound/notfound.page').then(m => m.NotfoundPage)
   },
 
-  // 8. Metaballs!
+  // 7. Easter Eggs
   {
     path: 'metaballs',
     loadComponent: () => import('./pages/metaballs/metaballs.page').then( m => m.MetaballsPage)
   },
   
-  // QUESTA DEVE ESSERE L'ULTIMA ROUTE, ALTRIMENTI REDIRECTA A 404 ANCHE QUANDO NON DOVREBBE
+  // QUESTA DEVE RIMANERE SEMPRE ALLA FINE
   {
     path: '**',
     redirectTo: 'not-found',
     pathMatch: 'full'
-  },
-
+  }
 ];

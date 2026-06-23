@@ -1,5 +1,10 @@
 <ion-header class="ion-no-border">
     <ion-toolbar color="dark" class="main-header">
+
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/tabs/home" text="Home"></ion-back-button>
+        </ion-buttons>
+
         @if (currentLevel() !== 'shows') {
         <ion-buttons slot="start">
             <button class="header-back-btn" (click)="navigateBack()">

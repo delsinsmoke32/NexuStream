@@ -1,24 +1,6 @@
 <ion-header class="ion-no-border">
-  <ion-toolbar class="show-toolbar">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/home" class="btn-icon-red"></ion-back-button>
-    </ion-buttons>
-    
-    <ion-title i18n="@@search" class="brand-title">RICERCA</ion-title>
-    
-    <ion-buttons slot="end">
-       @if (!isLoggedIn()) {
-        <ion-button i18n="@@logIn" class="auth-link" routerLink="/login">Accedi</ion-button>
-        <ion-button i18n="@@register" class="auth-link" routerLink="/register">Registrati</ion-button>
-      }
-      
-
-      @if (isLoggedIn()){ 
-      <ion-button class="btn-icon-red" (click)="openProfileMenu($event)">
-        <ion-icon slot="icon-only" name="person-circle-outline"></ion-icon>
-      </ion-button>
-    }
-    </ion-buttons>
+  <ion-toolbar class="transparent-toolbar">
+    <ion-title i18n="@@search" color="primary">Ricerca</ion-title>
   </ion-toolbar>
 
   <ion-toolbar class="search-toolbar">
@@ -38,31 +20,34 @@
         <ion-label i18n="@@all">Tutti</ion-label>
       </ion-chip>
 
-            @for (genre of genres(); track genre.GenreID) {
-            <ion-chip
-                [class.active-chip]="selectedGenre() === genre.GenreID"
-                (click)="selectGenre(genre.GenreID)"
-            >
-                <ion-label>{{ genre.Name }}</ion-label>
-            </ion-chip>
-            }
-        </div>
-    </ion-toolbar>
+      @for (genre of genres(); track genre.GenreID) {
+        <ion-chip
+          [class.active-chip]="selectedGenre() === genre.GenreID"
+          (click)="selectGenre(genre.GenreID)"
+        >
+          <ion-label>{{ genre.Name }}</ion-label>
+        </ion-chip>
+      }
+    </div>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-    <div class="main-container">
-        @if (isLoading()) {
-        <div class="loading-state">
-            <ion-spinner name="crescent" color="primary"></ion-spinner>
-        </div>
-        } @else { @if ((searchQuery().trim() !== '' || selectedGenre() !== null)
-        && filteredResults().length === 0) {
+  <div class="main-container">
+    @if (isLoading()) {
+      <div class="loading-state">
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
+      </div>
+    } @else { 
+      
+      @if ((searchQuery().trim() !== '' || selectedGenre() !== null) && filteredResults().length === 0) {
         <div class="no-results">
           <ion-icon name="alert-circle-outline"></ion-icon>
           <p i18n="@@noAnimeFound">Nessun anime trovato corrispondente ai filtri.</p>
         </div>
-        } @if (filteredResults().length > 0) {
+      } 
+      
+      @if (filteredResults().length > 0) {
         <div class="results-grid">
           @for (show of filteredResults(); track show.ShowID) {
             <app-show-card 
@@ -73,25 +58,8 @@
             </app-show-card>
           }
         </div>
-        } }
-    </div>
+      } 
+      
+    }
+  </div>
 </ion-content>
-
-<ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
-  <ng-template>
-    <ion-list color="dark">
-      <ion-item i18n="@@settings" button (click)="openUserSettings()" lines ="full">
-        <ion-icon slot="start" name="settings-outline"></ion-icon>
-        Impostazioni
-      </ion-item>
-      <ion-item i18n="@@favourites" button routerLink="/favourites" (click)="openFavorites()" lines="full">
-        <ion-icon color="danger" slot="start" name="heart-outline"></ion-icon>
-        I miei preferiti
-      </ion-item>
-      <ion-item i18n="@@logOut" button (click)="logout()" lines="none" class="logout-item">
-        <ion-icon slot="start" name="log-out-outline"></ion-icon>
-        Logout
-      </ion-item>
-    </ion-list>
-  </ng-template>
-</ion-popover>

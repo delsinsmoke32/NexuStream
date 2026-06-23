@@ -14,6 +14,7 @@ import {
     IonTitle,
     IonToolbar,
     IonHeader,
+    IonBackButton
 } from '@ionic/angular/standalone';
 
 import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
@@ -38,6 +39,7 @@ import { AdminUser, UpdateRolesPayload } from '../../models/admin';
         IonTitle,
         IonToolbar,
         IonHeader,
+        IonBackButton
     ],
 })
 export class AdminPage implements OnInit {

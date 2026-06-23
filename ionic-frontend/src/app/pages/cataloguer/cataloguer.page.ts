@@ -7,7 +7,7 @@ import { firstValueFrom } from 'rxjs';
 // IONIC STANDALONE
 import {
     IonHeader, IonToolbar, IonTitle, IonButtons, IonContent,
-    IonSearchbar, IonInfiniteScroll, IonInfiniteScrollContent,
+    IonSearchbar, IonInfiniteScroll, IonInfiniteScrollContent, IonBackButton,
     ModalController, ToastController, InfiniteScrollCustomEvent, SearchbarCustomEvent,
 } from '@ionic/angular/standalone';
 
@@ -27,7 +27,7 @@ import { PropicModalComponent } from '../../components/propic-modal/propic-modal
     styleUrls: ['./cataloguer.page.scss'],
     standalone: true,
     imports: [
-        CommonModule, FormsModule,
+        CommonModule, FormsModule, IonBackButton,
         IonHeader, IonToolbar, IonTitle, IonButtons, IonContent,
         IonSearchbar, IonInfiniteScroll, IonInfiniteScrollContent,
     ],

@@ -1,8 +1,10 @@
 <ion-header class="ion-no-border">
     <ion-toolbar color="dark" class="main-header">
-
         <ion-buttons slot="start">
-            <ion-back-button defaultHref="/tabs/home" text="Home"></ion-back-button>
+            <ion-back-button
+                defaultHref="/tabs/home"
+                text="Home"
+            ></ion-back-button>
         </ion-buttons>
 
         @if (currentLevel() !== 'shows') {
@@ -59,7 +61,7 @@
                 <span class="btn-text">Aggiungi</span>
             </button>
 
-            <button
+            <!-- <button
                 class="header-action-btn logout-btn"
                 (click)="logout()"
                 title="Logout"
@@ -74,7 +76,7 @@
                         d="M304 336v40a40 40 0 01-40 40H104a40 40 0 01-40-40V136a40 40 0 01-40-40h160a40 40 0 0140 40v40M392 256H112M328 192l64 64-64 64"
                     />
                 </svg>
-            </button>
+            </button> -->
         </ion-buttons>
     </ion-toolbar>
 
@@ -147,7 +149,9 @@
         track season.SeasonID) {
         <div class="catalog-card edge-secondary">
             <div class="card-body">
-                <span class="season-overline">STAGIONE {{ season.SeasonNumber }}</span>
+                <span class="season-overline"
+                    >STAGIONE {{ season.SeasonNumber }}</span
+                >
 
                 <h2 class="card-main-title">
                     {{ getLangText(season.Title, 'it') }}
@@ -155,10 +159,13 @@
                 <p class="card-description">
                     {{ getLangText(season.Description, 'it') }}
                 </p>
-                
+
                 <div class="card-metadata">
-                    <span>Rilascio: <strong>{{ season.DateStarted }}</strong></span>
-                    
+                    <span
+                        >Rilascio:
+                        <strong>{{ season.DateStarted }}</strong></span
+                    >
+
                     <span class="badge" [class.badge-ended]="season.DateEnded">
                         {{ season.DateEnded ? 'Conclusa' : 'In Corso' }}
                     </span>
@@ -205,7 +212,9 @@
                     <span class="ep-number"
                         >EPISODIO {{ episode.EpisodeNumber }}</span
                     >
-                    <span class="ep-duration">{{ episode.Duration / 60}} min</span>
+                    <span class="ep-duration"
+                        >{{ episode.Duration / 60}} min</span
+                    >
                 </div>
                 <h2 class="card-main-title">
                     "{{ getLangText(episode.Title, 'it') }}"

@@ -22,6 +22,7 @@ import {
     ModalController,
     ToastController,
     ActionSheetController,
+    IonBackButton
 } from '@ionic/angular/standalone'
 
 import { DiscussionModalComponent } from '../../components/discussion-modal/discussion-modal.component';
@@ -51,6 +52,7 @@ import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
         IonAccordion,
         IonSearchbar,
         IonSpinner,
+        IonBackButton
     ],
     providers: [DiscussionModalComponent],
 })

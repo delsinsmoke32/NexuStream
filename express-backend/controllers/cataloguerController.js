@@ -392,12 +392,12 @@ const addEpisode = async (req, res) => {
             thumbnailURI
         );
 
-        const episodeId = result.id;
+        const episodeId = parseInt(result.id, 10);
 
         if (times && Array.isArray(times)) {
             try {
                 // Usiamo la funzione del model che fa "Piazza pulita e Riscrivi"
-                await episodeModel.updateEpisodeTimes(newEpisodeId, times);
+                await episodeModel.updateEpisodeTimes(episodeId, times);
             } catch (err) {
                 console.error("Errore salvataggio marker durante la creazione:", err);
             }
@@ -455,7 +455,7 @@ const modifyEpisode = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
-    const episodeId = req.params.id;
+    const episodeId = parseInt(req.params.id, 10);
     const user = req.user;
     const applang = user.appLang;
     
@@ -500,7 +500,7 @@ const modifyEpisode = async (req, res) => {
 
         if (times && Array.isArray(times)) {
             try {
-                await episodeModel.updateEpisodeTimes(id, times);
+                await episodeModel.updateEpisodeTimes(episodeId, times);
             } catch (err) {
                 console.error("Errore salvataggio marker durante la modifica:", err);
             }
@@ -552,7 +552,7 @@ const removeEpisode = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
     
-    const episodeId = req.params.id;
+    const episodeId = parseInt(req.params.id, 10);
 
     const user = req.user;
     const applang = user.appLang;

@@ -103,7 +103,7 @@ export class LoginPage implements OnInit {
                 if (rolesArray.includes('admin')) {
                     this.router.navigate(['/admin'])
                 } else {
-                    this.router.navigate(['/home'])
+                    this.router.navigate(['/tabs/home'])
                 }
             },
             error: (err) => {

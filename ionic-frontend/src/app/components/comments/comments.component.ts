@@ -35,7 +35,7 @@ import {
     libraryOutline,
 } from 'ionicons/icons'
 import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
-import { jwtDecodeHelper } from '@app/guards/mod-guard'
+import { jwtDecodeHelper } from '@app/utils/jwt-helper'
 import { DomSanitizer } from '@lib/@angular/platform-browser'
 
 @Component({

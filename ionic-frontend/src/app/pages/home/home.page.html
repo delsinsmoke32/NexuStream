@@ -1,51 +1,3 @@
-<ion-header class="ion-no-border">
-    <ion-toolbar class="show-toolbar">
-        <ion-buttons slot="start">
-            <ion-menu-button class="btn-icon-red"></ion-menu-button>
-        </ion-buttons>
-
-        <ion-title routerLink="/home" color="primary" class="brand-title"
-            >NEXUSTREAM</ion-title
-        >
-
-        <ion-buttons slot="end">
-            @if (!isLoggedIn()) {
-            <ion-button class="auth-link" routerLink="/login" title="Accedi">
-                <ion-icon
-                    name="log-in-outline"
-                    class="auth-mobile-icon"
-                ></ion-icon>
-                <span class="auth-text" i18n="@@logIn">Accedi</span>
-            </ion-button>
-            <ion-button
-                class="auth-link"
-                routerLink="/register"
-                title="Registrati"
-            >
-                <ion-icon
-                    name="person-add-outline"
-                    class="auth-mobile-icon"
-                ></ion-icon>
-                <span class="auth-text" i18n="@@register">Registrati</span>
-            </ion-button>
-            }
-
-            <ion-button class="btn-icon-red" routerLink="/search">
-                <ion-icon slot="icon-only" name="search-outline"></ion-icon>
-            </ion-button>
-
-            @if (isLoggedIn()) {
-            <ion-button class="btn-icon-red" (click)="openProfileMenu($event)">
-                <ion-icon
-                    slot="icon-only"
-                    name="person-circle-outline"
-                ></ion-icon>
-            </ion-button>
-            }
-        </ion-buttons>
-    </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true">
     @if (isLoading()) {
     <div class="loading-state">
@@ -67,14 +19,12 @@
 
                 <div class="hero-actions">
                     <button
-                        i18n="@@play"
                         class="btn-hero-play"
                         (click)="playAnime(hero.ShowID)"
                     >
                         <ion-icon name="play"></ion-icon> Riproduci
                     </button>
                     <button
-                        i18n="@@otherInfos"
                         class="btn-hero-info"
                         (click)="openSeriesInfo(hero.ShowID)"
                     >
@@ -91,9 +41,7 @@
     <div class="main-container" [class.has-hero]="heroList().length > 0">
         @if (continueWatching().length > 0) {
         <div class="category-row">
-            <h2 i18n="@@continueWatching" class="row-title">
-                Continua a guardare
-            </h2>
+            <h2 class="row-title">Continua a guardare</h2>
 
             <div class="carousel-wrapper">
                 <button
@@ -127,9 +75,7 @@
         </div>
         } @if (mostViewed().length > 0) {
         <div class="category-row">
-            <h2 i18n="@@mostViewed" class="row-title">
-                I più visti questa settimana
-            </h2>
+            <h2 class="row-title">I più visti questa settimana</h2>
 
             <div class="carousel-wrapper">
                 <button
@@ -161,9 +107,7 @@
         </div>
         } @if (mostLiked().length > 0) {
         <div class="category-row">
-            <h2 i18n="@@mostLiked" class="row-title">
-                I più amati dagli utenti
-            </h2>
+            <h2 class="row-title">I più amati dagli utenti</h2>
 
             <div class="carousel-wrapper">
                 <button
@@ -196,53 +140,4 @@
         }
     </div>
     }
-
-    <ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
-        <ng-template>
-            <ion-list class="dark-popover">
-                <ion-item
-                    i18n="@@settings"
-                    button
-                    routerLink="/settings"
-                    (click)="openUserSettings()"
-                    lines="full"
-                >
-                    <ion-icon
-                        color="danger"
-                        slot="start"
-                        name="settings-outline"
-                    ></ion-icon>
-                    Impostazioni
-                </ion-item>
-                <ion-item
-                    i18n="@@favourites"
-                    button
-                    routerLink="/favourites"
-                    (click)="openFavorites()"
-                    lines="full"
-                >
-                    <ion-icon
-                        color="danger"
-                        slot="start"
-                        name="heart-outline"
-                    ></ion-icon>
-                    I miei preferiti
-                </ion-item>
-                <ion-item
-                    i18n="@@logOut"
-                    button
-                    (click)="logout()"
-                    lines="none"
-                    class="logout-item"
-                >
-                    <ion-icon
-                        color="danger"
-                        slot="start"
-                        name="log-out-outline"
-                    ></ion-icon>
-                    Esci
-                </ion-item>
-            </ion-list>
-        </ng-template>
-    </ion-popover>
 </ion-content>

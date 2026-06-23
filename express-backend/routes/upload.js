@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const isCataloguer = require('../middleware/isCataloguer');
 
 // Importiamo le istanze di Multer dal tuo file config
 const multerConfig = require('../middleware/multerConfig');
@@ -23,6 +24,8 @@ const catchMulterError = (uploadMiddleware) => {
 
 // Attenzione al nome del campo dentro .single('nome_campo')! 
 // È il nome esatto che si usa su Postman o su Angular nel FormData.
+
+router.use(isCataloguer);
 
 router.post('/show_thumbnails', catchMulterError(multerConfig.uploadShowThumbnail.single('thumbnail')), handleImageUpload);
 router.post('/banners', catchMulterError(multerConfig.uploadShowBanner.single('banner')), handleImageUpload);

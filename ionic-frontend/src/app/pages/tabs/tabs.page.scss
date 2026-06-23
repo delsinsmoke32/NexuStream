@@ -1,0 +1,100 @@
+/* percorso: src/app/pages/tabs/tabs.page.scss */
+
+/* 📱 CONFIGURAZIONE BASE (MOBILE) */
+.desktop-header {
+  display: none; 
+}
+
+ion-tab-bar {
+  --background: #121212;
+  --border-color: #222;
+}
+
+/* 💻 CONFIGURAZIONE SCHERMI GRANDI (PC) */
+@media (min-width: 768px) {
+  ion-tab-bar {
+    display: none !important;
+  }
+
+  .desktop-header {
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+  }
+
+  .brand-title {
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    color: var(--ion-color-primary);
+    transition: filter 0.2s ease-in-out;
+    
+    &:hover {
+      filter: brightness(1.2); 
+    }
+  }
+
+  .nav-links-desktop {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-right: 16px;
+
+    .nav-link {
+      color: #e0e0e0;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--ion-color-primary-tint);
+        transform: scale(1.05);
+      }
+
+      &.active-tab {
+        color: var(--ion-color-primary);
+        font-weight: 700;
+      }
+    }
+  }
+}
+
+/* ==========================================
+   STILE E ANIMAZIONE DEL POPOVER
+   ========================================== */
+ion-popover {
+  --background: var(--ion-color-secondary);
+  --backdrop-opacity: 0.5; 
+  --color: var(--ion-text-color); 
+}
+
+.dark-popover {
+  background: transparent;
+  padding: 6px 0; 
+
+  ion-item {
+    --background: transparent;
+    --color: var(--ion-text-color);
+    --border-color: transparent; 
+    
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    
+    /* 🚀 Transizione fluida per colore, ingrandimento e spostamento */
+    transition: transform 0.2s ease-in-out, --color 0.2s ease-in-out, padding 0.2s ease-in-out;
+
+    /* 🚀 EFFETTO HOVER SULLE OPZIONI */
+    &:hover {
+      --background: rgba(178, 34, 34, 0.08); /* Sfondo con un leggerissimo alone rosso */
+      --color: var(--ion-color-primary-tint) !important; /* Il testo diventa rosso chiaro */
+      
+      transform: scale(1.03); /* Si ingrandisce del 3% */
+      padding-left: 4px; /* Fa un leggerissimo micro-scostamento verso destra */
+    }
+  }
+}

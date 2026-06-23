@@ -1,6 +1,5 @@
 import { Component, ViewChild, ElementRef, OnDestroy, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
 import { 
   IonContent, IonHeader, IonTitle, IonToolbar, IonButton, 
@@ -12,11 +11,14 @@ import { addIcons } from 'ionicons';
 import { 
   searchOutline, personCircleOutline, settingsOutline, 
   heartOutline, logOutOutline, playCircle, informationCircleOutline,
-  play, chevronBackOutline, chevronForwardOutline // 🚀 Aggiunte icone frecce
-} from 'ionicons/icons';
+  play, chevronBackOutline, chevronForwardOutline, logInOutline, personAddOutline, shieldCheckmarkOutline, libraryOutline, eyeOutline } from 'ionicons/icons';
 
 import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
 import { ShowCardComponent } from '@app/components/show-card/show-card.component';
+import { HomeService } from '@app/services/home';
+import { AuthService } from '@app/services/auth';
+import { HomeShow, ContinueWatchingItem, ContinueWatchingInteractPayload } from '../../models/home';
+import { jwtDecodeHelper } from '@app/utils/jwt-helper';
 
 @Component({
   selector: 'app-home',
@@ -31,42 +33,34 @@ import { ShowCardComponent } from '@app/components/show-card/show-card.component
   ]
 })
 export class HomePage implements OnDestroy {
-  @ViewChild('profilePopover') popover: any;
   
-  // 🚀 Riferimenti alle 3 righe a scorrimento
   @ViewChild('continueWatchingScroll') continueWatchingScroll!: ElementRef;
   @ViewChild('mostViewedScroll') mostViewedScroll!: ElementRef;
   @ViewChild('mostLikedScroll') mostLikedScroll!: ElementRef;
   
-  private http = inject(HttpClient);
+  private homeService = inject(HomeService);
+  private authService = inject(AuthService);
   private router = inject(Router);
   private alertCtrl = inject(AlertController);
   private toastCtrl = inject(ToastController);
 
   isLoading = signal<boolean>(true);
-  isLoggedIn = signal<boolean>(false);
   
-  // Dati
-  mostViewed = signal<any[]>([]);
-  mostLiked = signal<any[]>([]);
-  continueWatching = signal<any[]>([]);
+  // Dati tipizzati
+  mostViewed = signal<HomeShow[]>([]);
+  mostLiked = signal<HomeShow[]>([]);
+  continueWatching = signal<ContinueWatchingItem[]>([]);
 
   // Gestione Hero Banner
-  heroList = signal<any[]>([]);
+  heroList = signal<HomeShow[]>([]);
   activeHeroIndex = signal<number>(0);
   private heroInterval: any;
 
   constructor() {
-    addIcons({ 
-      searchOutline, personCircleOutline, settingsOutline, 
-      heartOutline, logOutOutline, playCircle, informationCircleOutline, 
-      play, chevronBackOutline, chevronForwardOutline // 🚀 Registrate icone
-    });
+    addIcons({logInOutline,personAddOutline,searchOutline,personCircleOutline,play,informationCircleOutline,chevronBackOutline,chevronForwardOutline,settingsOutline,heartOutline,shieldCheckmarkOutline,libraryOutline,eyeOutline,logOutOutline,playCircle});
   }
 
   ionViewWillEnter() {
-    const token = localStorage.getItem('token');
-    this.isLoggedIn.set(!!token);
     this.loadHomeData();
   }
   
@@ -77,7 +71,7 @@ export class HomePage implements OnDestroy {
   loadHomeData() {
     this.isLoading.set(true);
     
-    this.http.get<any>('api/home').subscribe({
+    this.homeService.getHomeData().subscribe({
       next: (res) => {
         const viewed = res.mostViewed || [];
         this.mostViewed.set(viewed);
@@ -99,7 +93,6 @@ export class HomePage implements OnDestroy {
     });
   }
 
-  // 🚀 Funzione universale per scorrere qualsiasi riga!
   scrollRow(rowType: 'continueWatching' | 'mostViewed' | 'mostLiked', direction: 'left' | 'right') {
     let containerRef: ElementRef | undefined;
     
@@ -108,7 +101,7 @@ export class HomePage implements OnDestroy {
     else if (rowType === 'mostLiked') containerRef = this.mostLikedScroll;
 
     if (containerRef && containerRef.nativeElement) {
-      const scrollAmount = window.innerWidth > 768 ? 600 : 300; // Scorre di più su PC
+      const scrollAmount = window.innerWidth > 768 ? 600 : 300;
       containerRef.nativeElement.scrollBy({
         left: direction === 'left' ? -scrollAmount : scrollAmount,
         behavior: 'smooth'
@@ -116,7 +109,6 @@ export class HomePage implements OnDestroy {
     }
   }
 
-  // --- LOGICA CAROSELLO HERO ---
   startHeroCarousel() {
     this.stopHeroCarousel();
     this.heroInterval = setInterval(() => {
@@ -141,17 +133,8 @@ export class HomePage implements OnDestroy {
     if (event) event.stopPropagation();
     this.router.navigate(['/shows', showId]); 
   }
-  
-  async openProfileMenu(ev: any) {
-    this.popover.event = ev;
-    await this.popover.present();
-  }
 
-  onPopoverDismiss() {}
-  openUserSettings() { this.popover.dismiss(); }
-  openFavorites() { this.popover.dismiss(); }
-
-  resumeEpisode(item: any) {
+  resumeEpisode(item: ContinueWatchingItem) {
     if (!item || !item.EpisodeID) return;
     this.router.navigate(['/episode', item.EpisodeID], {
       queryParams: { 
@@ -163,27 +146,25 @@ export class HomePage implements OnDestroy {
   }
 
   removeFromContinueWatching(showId: number) {
-    // 1. Aggiornamento UI immediato: la card sparisce all'istante
     const oldList = this.continueWatching();
     this.continueWatching.update(list => list.filter(cw => cw.ShowID !== showId));
 
     const targetItem = oldList.find(cw => cw.ShowID === showId);
     if (!targetItem) return;
 
-    // 2. Chiamata al backend per rimuovere la cronologia
-    const body = {
+    const body: ContinueWatchingInteractPayload = {
       progress: 0,
       isCompleted: 0,
       isDropped: 1, 
       isLiked: targetItem.isLiked || 0
     };
 
-    this.http.post(`api/shows/${showId}/seasons/${targetItem.SeasonID}/episodes/${targetItem.EpisodeID}/interact`, body)
+    this.homeService.updateEpisodeInteraction(showId, targetItem.SeasonID, targetItem.EpisodeID, body)
       .subscribe({
         next: () => this.showToast('Rimosso dal "Continua a guardare"', 'success'),
         error: (err) => {
           console.error("Errore:", err);
-          this.continueWatching.set(oldList); // Rollback
+          this.continueWatching.set(oldList);
           this.showToast('Errore di connessione', 'danger');
         }
       });
@@ -193,30 +174,4 @@ export class HomePage implements OnDestroy {
     const toast = await this.toastCtrl.create({ message, duration: 2500, color, position: 'bottom' });
     await toast.present();
   }
-
-  async logout() {
-    const alert = await this.alertCtrl.create({
-      header: $localize `:@@disconnectHeader:Disconnetti`,
-      message:$localize `:@@disconnectMessage:Sei sicuro di voler uscire da NexuStream?`,
-      buttons: [
-        { text: $localize `:@@cancelBtn:Annulla`, role: 'cancel' },
-        {
-          text: $localize `:@@logOut:Esci`,
-          role: 'destructive',
-          handler: async () => {
-            const toast = await this.toastCtrl.create({
-              message: $localize `:@@closeSession:Sessione chiusa`,
-              duration: 2000,
-              color: 'dark'
-            });
-            await toast.present();
-            this.router.navigate(['/login']);
-          }
-        }
-      ]
-    });
-    await alert.present();
-    this.popover.dismiss();
-  }
-
 }

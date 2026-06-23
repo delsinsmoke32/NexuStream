@@ -1,22 +1,25 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { firstValueFrom, max } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 // IONIC STANDALONE
 import {
-    IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, IonContent,
-    IonSearchbar, IonInfiniteScroll, IonInfiniteScrollContent,
+    IonHeader, IonToolbar, IonTitle, IonButtons, IonContent,
+    IonSearchbar, IonInfiniteScroll, IonInfiniteScrollContent, IonBackButton,
     ModalController, ToastController, InfiniteScrollCustomEvent, SearchbarCustomEvent,
 } from '@ionic/angular/standalone';
 
-// IMPORT NUOVE MODALI SEPARATE
+// 🚀 SERVICE E MODELLI
+import { CataloguerService } from '../../services/cataloguer';
+import { AuthService } from '../../services/auth';
+import { CataloguerShow, CataloguerSeason, CataloguerEpisode } from '../../models/cataloguer';
+
 import { CataloguerShowModalComponent } from '../../components/cataloguer-show-modal/cataloguer-show-modal.component';
 import { CataloguerSeasonModalComponent } from '../../components/cataloguer-season-modal/cataloguer-season-modal.component';
 import { CataloguerEpisodeModalComponent } from '../../components/cataloguer-episode-modal/cataloguer-episode-modal.component';
-import { PropicModalComponent } from '@app/components/propic-modal/propic-modal.component';
+import { PropicModalComponent } from '../../components/propic-modal/propic-modal.component';
 
 @Component({
     selector: 'app-cataloguer',
@@ -24,22 +27,23 @@ import { PropicModalComponent } from '@app/components/propic-modal/propic-modal.
     styleUrls: ['./cataloguer.page.scss'],
     standalone: true,
     imports: [
-        CommonModule, FormsModule,
+        CommonModule, FormsModule, IonBackButton,
         IonHeader, IonToolbar, IonTitle, IonButtons, IonContent,
         IonSearchbar, IonInfiniteScroll, IonInfiniteScrollContent,
     ],
 })
 export class CataloguerPage implements OnInit {
-    private http = inject(HttpClient);
     private router = inject(Router);
+    private cataloguerService = inject(CataloguerService);
+    private authService = inject(AuthService);
     private toastController = inject(ToastController);
     private modalCtrl = inject(ModalController);
 
     currentLevel = signal<'shows' | 'seasons' | 'episodes'>('shows');
 
-    shows = signal<any[]>([]);
-    seasons = signal<any[]>([]);
-    episodes = signal<any[]>([]);
+    shows = signal<CataloguerShow[]>([]);
+    seasons = signal<CataloguerSeason[]>([]);
+    episodes = signal<CataloguerEpisode[]>([]);
 
     selectedShowId = signal<number | null>(null);
     selectedSeasonId = signal<number | null>(null);
@@ -48,15 +52,8 @@ export class CataloguerPage implements OnInit {
     pageSize = 20;
     currentSearchTerm = '';
 
-    private baseUrl = 'api/cataloguer';
-
     ngOnInit() {
         this.loadShows();
-    }
-
-    private getAuthHeaders(): HttpHeaders {
-        const token = localStorage.getItem('token');
-        return new HttpHeaders({ Authorization: `Bearer ${token}` });
     }
 
     getLangText(jsonString: string, lang: string = 'it'): string {
@@ -69,314 +66,296 @@ export class CataloguerPage implements OnInit {
     }
 
     // ==========================================
-// METODO UNIFICATO APERTURA MODALE (ADD)
-// ==========================================
-async openAddModal() {
-    const currentLvl = this.currentLevel();
-    let targetComponent: any;
-    let componentProps: any = {};
+    // METODO UNIFICATO APERTURA MODALE (ADD)
+    // ==========================================
+    async openAddModal() {
+        const currentLvl = this.currentLevel();
+        let targetComponent: any;
+        let componentProps: any = {};
 
-    // 1. Selezioniamo il componente corretto
-    if (currentLvl === 'shows') targetComponent = CataloguerShowModalComponent;
-    else if (currentLvl === 'seasons') {
-        targetComponent = CataloguerSeasonModalComponent;
-        const currentSeasons = this.seasons(); 
-    
-        const maxNum = currentSeasons.reduce((max, s) => {
-            const val = parseInt(s.SeasonNumber || s.seasonNumber, 10);
-            return (!isNaN(val) && val > max) ? val : max;
-        }, 0); 
-        componentProps = { autoSeasonNumber: maxNum + 1 }
+        if (currentLvl === 'shows') targetComponent = CataloguerShowModalComponent;
+        else if (currentLvl === 'seasons') {
+            targetComponent = CataloguerSeasonModalComponent;
+            const maxNum = this.seasons().reduce((max, s) => {
+                const val = parseInt(s.SeasonNumber || s['seasonNumber'], 10);
+                return (!isNaN(val) && val > max) ? val : max;
+            }, 0); 
+            componentProps = { autoSeasonNumber: maxNum + 1 };
+        }
+        else if (currentLvl === 'episodes') {
+            targetComponent = CataloguerEpisodeModalComponent;
+            const maxNum = this.episodes().reduce((max, e) => {
+                const val = parseInt(e.EpisodeNumber || e['episodeNumber'], 10);
+                return (!isNaN(val) && val > max) ? val : max;
+            }, 0);
+            componentProps = { 
+                seasonId: this.selectedSeasonId(),
+                autoEpisodeNumber: maxNum + 1 
+            };
+        }
+
+        const modal = await this.modalCtrl.create({
+            component: targetComponent,
+            componentProps: componentProps,
+        });
+        await modal.present();
+
+        const { data } = await modal.onWillDismiss();
+        if (!data) return;
+
+        let payload: any = {};
+
+        if (currentLvl === 'shows') {
+            payload = {
+                title_it: data.payload.title_it,
+                description_it: data.payload.description_it,
+                title_en: data.payload.title_en || null,
+                description_en: data.payload.description_en || null,
+                dateStarted: data.payload.dateStarted,
+                dateEnded: data.payload.dateEnded || null,
+                thumbnailURI: data.payload.thumbnailURI || null,
+                bannerURI: data.payload.bannerURI || null,
+            };
+        } else if (currentLvl === 'seasons') {
+            payload = {
+                title_it: data.payload.title_it,
+                description_it: data.payload.description_it,
+                title_en: data.payload.title_en || null,
+                description_en: data.payload.description_en || null,
+                dateStarted: data.payload.dateStarted,
+                dateEnded: data.payload.dateEnded || null,
+                seasonNumber: parseInt(data.payload.seasonNumber, 10),
+                refShow: this.selectedShowId(),
+            };
+        } else if (currentLvl === 'episodes') {
+            payload = {
+                title_it: data.payload.title_it,
+                description_it: data.payload.description_it,
+                title_en: data.payload.title_en || null,
+                description_en: data.payload.description_en || null,
+                releaseDate: data.payload.releaseDate,
+                duration: parseInt(data.payload.duration, 10),
+                refSeason: this.selectedSeasonId(),
+                episodeNumber: parseInt(data.payload.episodeNumber, 10),
+                audioTracks: data.payload.audioTracks || [], 
+                subTracks: data.payload.subTracks || [],
+                DubLanguages: ['it'], 
+                SubLanguages: ['it'], 
+                thumbnailURI: data.payload.thumbnailURI || null,
+                rawVideoURI: data.payload.rawVideoURI || null,
+                times: data.payload.times || []
+            };
+        }
+
+        this.cataloguerService.addItem(currentLvl, payload).subscribe({
+            next: (res: any) => {
+                this.presentToast('Elemento aggiunto con successo!', 'success');
+                
+                const newTitle = JSON.stringify({ it: data.payload.title_it, en: data.payload.title_en });
+                const newDesc = JSON.stringify({ it: data.payload.description_it, en: data.payload.description_en });
+
+                if (currentLvl === 'shows') {
+                    const newShow: CataloguerShow = {
+                        ShowID: res.showId || 1, 
+                        Title: newTitle,
+                        Description: newDesc,
+                        DateStarted: data.payload.dateStarted,
+                        hasEnded: data.payload.dateEnded ? 1 : 0
+                    };
+                    this.shows.update(items => [newShow, ...items]); 
+                } else if (currentLvl === 'seasons') {
+                    const newSeason: CataloguerSeason = {
+                        SeasonID: res.seasonId || 1,
+                        Title: newTitle,
+                        Description: newDesc,
+                        DateStarted: data.payload.dateStarted,
+                        SeasonNumber: parseInt(data.payload.seasonNumber, 10)
+                    };
+                    this.seasons.update(items => {
+                        const updated = [...items, newSeason];
+                        return updated.sort((a, b) => a.SeasonNumber - b.SeasonNumber);
+                    });
+                } else if (currentLvl === 'episodes') {
+                    const newEpisodeId = res.episodeId || 1;
+                    const newEpisode: CataloguerEpisode = {
+                        EpisodeID: newEpisodeId,
+                        Title: newTitle,
+                        Description: newDesc,
+                        Duration: parseInt(data.payload.duration, 10),
+                        EpisodeNumber: parseInt(data.payload.episodeNumber, 10),
+                        ReleaseDate: data.payload.releaseDate
+                    };
+                    this.episodes.update(items => {
+                        const updated = [...items, newEpisode];
+                        return updated.sort((a, b) => a.EpisodeNumber - b.EpisodeNumber);
+                    });
+                }
+            },
+            error: (err) => {
+                console.error("Dettaglio Errore Add:", err);
+                this.presentToast('Errore durante il salvataggio. Controlla la console.', 'danger');
+            },
+        });
     }
-    else if (currentLvl === 'episodes') {
-        targetComponent = CataloguerEpisodeModalComponent;
-        const currentEpisodes = this.episodes(); 
-        
-        const maxNum = currentEpisodes.reduce((max, e) => {
-            const val = parseInt(e.EpisodeNumber || e.episodeNumber, 10);
-            return (!isNaN(val) && val > max) ? val : max;
-        }, 0);
-        componentProps = { 
-            seasonId: this.selectedSeasonId(),
-            autoEpisodeNumber: maxNum + 1 
-        };
-    }
 
-    const modal = await this.modalCtrl.create({
-        component: targetComponent,
-        componentProps: componentProps,
-    });
-    await modal.present();
+    // ==========================================
+    // MODIFICA UNIFICATA E SUPER-BLINDATA (EDIT)
+    // ==========================================
+    async openEditModalData(item: any) {
+        const currentLvl = this.currentLevel();
+        let targetComponent: any;
+        let componentProps: any = { data: item };
 
-    const { data } = await modal.onWillDismiss();
-    if (!data) return;
+        if (currentLvl === 'shows') targetComponent = CataloguerShowModalComponent;
+        else if (currentLvl === 'seasons') targetComponent = CataloguerSeasonModalComponent;
+        else if (currentLvl === 'episodes') {
+            targetComponent = CataloguerEpisodeModalComponent;
+            componentProps.seasonId = this.selectedSeasonId();
+        }
 
-    let endpoint = '';
-    let payload: any = {};
+        const modal = await this.modalCtrl.create({
+            component: targetComponent,
+            componentProps: componentProps,
+        });
+        await modal.present();
 
-    // 2. Costruiamo il Payload pulito
-    if (currentLvl === 'shows') {
-        endpoint = `${this.baseUrl}/shows/add`;
-        payload = { /* ... dati show ... */
-            title_it: data.payload.title_it,
-            description_it: data.payload.description_it,
-            title_en: data.payload.title_en || null,
-            description_en: data.payload.description_en || null,
-            dateStarted: data.payload.dateStarted,
-            dateEnded: data.payload.dateEnded || null,
-            thumbnailURI: data.payload.thumbnailURI || null,
-            bannerURI: data.payload.bannerURI || null,
-        };
-    } else if (currentLvl === 'seasons') {
-        endpoint = `${this.baseUrl}/seasons/add`;
-        payload = { /* ... dati season ... */
-            title_it: data.payload.title_it,
-            description_it: data.payload.description_it,
-            title_en: data.payload.title_en || null,
-            description_en: data.payload.description_en || null,
-            dateStarted: data.payload.dateStarted,
-            dateEnded: data.payload.dateEnded || null,
-            seasonNumber: parseInt(data.payload.seasonNumber, 10),
-            refShow: this.selectedShowId(),
-        };
-    } else if (currentLvl === 'episodes') {
-        endpoint = `${this.baseUrl}/episodes/add`;
-        payload = {
-            title_it: data.payload.title_it,
-            description_it: data.payload.description_it,
-            title_en: data.payload.title_en || null,
-            description_en: data.payload.description_en || null,
-            releaseDate: data.payload.releaseDate,
-            duration: parseInt(data.payload.duration, 10),
-            refSeason: this.selectedSeasonId(),
-            episodeNumber: parseInt(data.payload.episodeNumber, 10),
-            audioTracks: data.payload.audioTracks || [], 
-            subTracks: data.payload.subTracks || [],
-            DubLanguages: ['it'], 
-            SubLanguages: ['it'], 
-            thumbnailURI: data.payload.thumbnailURI || null,
-            rawVideoURI: data.payload.rawVideoURI || null,
-            times: data.payload.times || []
-        };
-    }
+        const { data } = await modal.onWillDismiss();
+        if (!data || !data.payload) return;
 
-    this.http.post(endpoint, payload, { headers: this.getAuthHeaders() })
-    .subscribe({
-        next: async (res: any) => {
-            this.presentToast('Elemento aggiunto con successo!', 'success');
-            
-            const newTitle = JSON.stringify({ it: data.payload.title_it, en: data.payload.title_en });
-            const newDesc = JSON.stringify({ it: data.payload.description_it, en: data.payload.description_en });
+        const id = currentLvl === 'shows' ? item.ShowID : currentLvl === 'seasons' ? item.SeasonID : item.EpisodeID;
+
+        try {
+            const extraFields: any = {};
 
             if (currentLvl === 'shows') {
-                const newShow = {
-                    ShowID: res.showId || 1, 
-                    Title: newTitle,
-                    Description: newDesc,
-                    DateStarted: data.payload.dateStarted,
-                    hasEnded: data.payload.dateEnded ? 1 : 0
-                };
-                this.shows.update(items => [newShow, ...items]); 
-                
+                if (data.payload.dateEnded !== undefined) extraFields.dateEnded = data.payload.dateEnded;
+                if (data.payload.thumbnailURI) extraFields.thumbnailURI = data.payload.thumbnailURI;
+                if (data.payload.bannerURI) extraFields.bannerURI = data.payload.bannerURI;
             } else if (currentLvl === 'seasons') {
-                const newSeason = {
-                    SeasonID: res.seasonId || 1,
-                    Title: newTitle,
-                    Description: newDesc,
-                    DateStarted: data.payload.dateStarted,
-                    SeasonNumber: parseInt(data.payload.seasonNumber, 10)
-                };
-                this.seasons.update(items => {
-                    const updated = [...items, newSeason];
-                    return updated.sort((a, b) => a.SeasonNumber - b.SeasonNumber);
-                });
-
+                if (data.payload.dateEnded !== undefined) extraFields.dateEnded = data.payload.dateEnded;
             } else if (currentLvl === 'episodes') {
-                const newEpisodeId = res.episodeId || 1; // ID RESTITUITO DAL BACKEND DOPO LA POST!
+                if (data.payload.thumbnailURI) extraFields.thumbnailURI = data.payload.thumbnailURI;
+                
+                extraFields.DubLanguages = typeof item.DubLanguages === 'string' 
+                    ? item.DubLanguages.split(',').filter((l: string) => l.trim() !== '')
+                    : (item.DubLanguages || ['it']);
 
-                const newEpisode = {
-                    EpisodeID: newEpisodeId,
-                    Title: newTitle,
-                    Description: newDesc,
-                    Duration: parseInt(data.payload.duration, 10),
-                    EpisodeNumber: parseInt(data.payload.episodeNumber, 10),
-                    ReleaseDate: data.payload.releaseDate
+                extraFields.SubLanguages = typeof item.SubLanguages === 'string' 
+                    ? item.SubLanguages.split(',').filter((l: string) => l.trim() !== '')
+                    : (item.SubLanguages || []); 
+
+                if (data.payload.duration) extraFields.duration = parseInt(data.payload.duration, 10);
+                if (data.payload.episodeNumber) extraFields.episodeNumber = parseInt(data.payload.episodeNumber, 10);
+                if (data.payload.audioTracks && data.payload.audioTracks.length > 0) {
+                    extraFields.audioTracks = data.payload.audioTracks;
+                }
+                if (data.payload.subTracks && data.payload.subTracks.length > 0) {
+                    extraFields.subTracks = data.payload.subTracks;
+                }
+                if (data.payload.times) {
+                    extraFields.times = data.payload.times; 
+                }
+            }
+
+            const currentTitleIt = data.payload.title_it?.trim() || this.getLangText(item.Title, 'it');
+            const currentDescIt = data.payload.description_it?.trim() || this.getLangText(item.Description, 'it');
+            const currentTitleEn = data.payload.title_en?.trim() || this.getLangText(item.Title, 'en');
+            const currentDescEn = data.payload.description_en?.trim() || this.getLangText(item.Description, 'en');
+
+            // PATCH ITALIANO 
+            if (data.payload.title_it?.trim() || data.payload.description_it?.trim() || currentLvl === 'episodes') {
+                const payloadIt: any = { 
+                    title_it: currentTitleIt,       
+                    description_it: currentDescIt,  
+                    title: currentTitleIt,          
+                    description: currentDescIt,     
+                    lang: 'it',                     
+                    ...extraFields 
                 };
-                this.episodes.update(items => {
-                    const updated = [...items, newEpisode];
-                    return updated.sort((a, b) => a.EpisodeNumber - b.EpisodeNumber);
-                });
+                await firstValueFrom(this.cataloguerService.updateItem(currentLvl, id, payloadIt));
             }
-        },
-        error: (err) => {
-            console.error("Dettaglio Errore Add:", err);
-            this.presentToast('Errore durante il salvataggio. Controlla la console.', 'danger');
-        },
-    });
-}
 
+            // Pulizia campi per evitare ridondanze e crash sul DB
+            delete extraFields.audioTracks;
+            delete extraFields.subTracks;
+            delete extraFields.thumbnailURI;
+            delete extraFields.bannerURI;
+            delete extraFields.times;
 
-// ==========================================
-// MODIFICA UNIFICATA E SUPER-BLINDATA (EDIT)
-// ==========================================
-async openEditModalData(item: any) {
-    const currentLvl = this.currentLevel();
-    let targetComponent: any;
-    let componentProps: any = { data: item };
+            // PATCH INGLESE
+            if (data.payload.title_en?.trim() || data.payload.description_en?.trim()) {
+                const payloadEn: any = { 
+                    title_it: currentTitleIt,       
+                    description_it: currentDescIt,  
+                    title: currentTitleEn,          
+                    description: currentDescEn,     
+                    lang: 'en',
+                    ...extraFields 
+                };
+                await firstValueFrom(this.cataloguerService.updateItem(currentLvl, id, payloadEn));
+            }
 
-    if (currentLvl === 'shows') targetComponent = CataloguerShowModalComponent;
-    else if (currentLvl === 'seasons') targetComponent = CataloguerSeasonModalComponent;
-    else if (currentLvl === 'episodes') {
-        targetComponent = CataloguerEpisodeModalComponent;
-        componentProps.seasonId = this.selectedSeasonId();
+            this.presentToast('Elemento aggiornato con successo!', 'success');
+            const updatedTitle = JSON.stringify({ it: currentTitleIt, en: currentTitleEn });
+            const updatedDesc = JSON.stringify({ it: currentDescIt, en: currentDescEn });
+
+            if (currentLvl === 'shows') {
+                this.shows.update(items => items.map(showItem => {
+                    if (showItem.ShowID === id) {
+                        return {
+                            ...showItem,
+                            Title: updatedTitle,
+                            Description: updatedDesc,
+                            DateEnded: extraFields.dateEnded !== undefined ? extraFields.dateEnded : showItem.DateEnded,
+                            hasEnded: extraFields.dateEnded ? 1 : 0 
+                        };
+                    }
+                    return showItem;
+                }));
+            } else if (currentLvl === 'seasons') {
+                this.seasons.update(items => items.map(seasonItem => {
+                    if (seasonItem.SeasonID === id) {
+                        return { ...seasonItem, Title: updatedTitle, Description: updatedDesc };
+                    }
+                    return seasonItem;
+                }));
+            } else if (currentLvl === 'episodes') {
+                let updatedDubs = item.DubLanguages ? item.DubLanguages.split(',') : ['it'];
+                if (data.payload.audioTracks) {
+                    data.payload.audioTracks.forEach((t: any) => { 
+                        if (!updatedDubs.includes(t.lang)) updatedDubs.push(t.lang); 
+                    });
+                }
+                
+                let updatedSubs = item.SubLanguages ? item.SubLanguages.split(',') : [];
+                if (data.payload.subTracks) {
+                    data.payload.subTracks.forEach((t: any) => { 
+                        if (!updatedSubs.includes(t.lang)) updatedSubs.push(t.lang); 
+                    });
+                }
+
+                this.episodes.update(items => items.map(ep => {
+                    if (ep.EpisodeID === id) {
+                        return {
+                            ...ep,
+                            Title: updatedTitle,
+                            Description: updatedDesc,
+                            Duration: extraFields.duration !== undefined ? extraFields.duration : ep.Duration,
+                            EpisodeNumber: extraFields.episodeNumber !== undefined ? extraFields.episodeNumber : ep.EpisodeNumber,
+                            DubLanguages: updatedDubs.join(','),
+                            SubLanguages: updatedSubs.join(',')
+                        };
+                    }
+                    return ep;
+                }));
+                this.episodes.update(items => items.sort((a, b) => a.EpisodeNumber - b.EpisodeNumber));
+            }
+
+        } catch (err) {
+            console.error('Dettaglio Errore 400 Backend:', err);
+            this.presentToast('Errore 400: Controlla i campi obbligatori del server.', 'danger');
+        }
     }
-
-    const modal = await this.modalCtrl.create({
-        component: targetComponent,
-        componentProps: componentProps,
-    });
-    await modal.present();
-
-    const { data } = await modal.onWillDismiss();
-    if (!data || !data.payload) return;
-
-    const id = currentLvl === 'shows' ? item.ShowID : currentLvl === 'seasons' ? item.SeasonID : item.EpisodeID;
-    const subPath = currentLvl === 'shows' ? 'shows' : currentLvl === 'seasons' ? 'seasons' : 'episodes';
-
-    try {
-        const extraFields: any = {};
-
-        if (currentLvl === 'shows') {
-            if (data.payload.dateEnded !== undefined) extraFields.dateEnded = data.payload.dateEnded;
-            if (data.payload.thumbnailURI) extraFields.thumbnailURI = data.payload.thumbnailURI;
-            if (data.payload.bannerURI) extraFields.bannerURI = data.payload.bannerURI;
-        } else if (currentLvl === 'seasons') {
-            if (data.payload.dateEnded !== undefined) extraFields.dateEnded = data.payload.dateEnded;
-        } else if (currentLvl === 'episodes') {
-            if (data.payload.thumbnailURI) extraFields.thumbnailURI = data.payload.thumbnailURI;
-            
-            extraFields.DubLanguages = typeof item.DubLanguages === 'string' 
-                ? item.DubLanguages.split(',') 
-                : (item.DubLanguages || ['it']);
-
-            extraFields.SubLanguages = typeof item.SubLanguages === 'string' 
-                ? item.SubLanguages.split(',') 
-                : (item.SubLanguages || []); 
-
-            if (data.payload.duration) extraFields.duration = parseInt(data.payload.duration, 10);
-            if (data.payload.episodeNumber) extraFields.episodeNumber = parseInt(data.payload.episodeNumber, 10);
-            if (data.payload.audioTracks && data.payload.audioTracks.length > 0) {
-                extraFields.audioTracks = data.payload.audioTracks;
-            }
-            if (data.payload.subTracks && data.payload.subTracks.length > 0) {
-                extraFields.subTracks = data.payload.subTracks;
-            }
-
-            if (data.payload.times) {
-                extraFields.times = data.payload.times; 
-            }
-
-        }
-
-        const currentTitleIt = data.payload.title_it?.trim() || this.getLangText(item.Title, 'it');
-        const currentDescIt = data.payload.description_it?.trim() || this.getLangText(item.Description, 'it');
-        const currentTitleEn = data.payload.title_en?.trim() || this.getLangText(item.Title, 'en');
-        const currentDescEn = data.payload.description_en?.trim() || this.getLangText(item.Description, 'en');
-
-        // PATCH ITALIANO 
-        if (data.payload.title_it?.trim() || data.payload.description_it?.trim() || currentLvl === 'episodes') {
-            const payloadIt: any = { 
-                title_it: currentTitleIt,       
-                description_it: currentDescIt,  
-                title: currentTitleIt,          
-                description: currentDescIt,     
-                lang: 'it',                     
-                ...extraFields 
-            };
-            await firstValueFrom(this.http.patch(`${this.baseUrl}/${subPath}/${id}`, payloadIt, { headers: this.getAuthHeaders() }));
-        }
-
-        //per non appesantire la chiamata
-        delete extraFields.audioTracks;
-        delete extraFields.subTracks;
-        delete extraFields.thumbnailURI;
-        delete extraFields.bannerURI;
-
-        // PATCH INGLESE
-        if (data.payload.title_en?.trim() || data.payload.description_en?.trim()) {
-            const payloadEn: any = { 
-                title_it: currentTitleIt,       
-                description_it: currentDescIt,  
-                title: currentTitleEn,          
-                description: currentDescEn,     
-                lang: 'en',
-                ...extraFields 
-            };
-            await firstValueFrom(this.http.patch(`${this.baseUrl}/${subPath}/${id}`, payloadEn, { headers: this.getAuthHeaders() }));
-        }
-
-        
-        this.presentToast('Elemento aggiornato con successo!', 'success');
-        const updatedTitle = JSON.stringify({ it: currentTitleIt, en: currentTitleEn });
-        const updatedDesc = JSON.stringify({ it: currentDescIt, en: currentDescEn });
-
-        if (currentLvl === 'shows') {
-            this.shows.update(items => items.map(item => {
-                if (item.ShowID === id) {
-                    return {
-                        ...item,
-                        Title: updatedTitle,
-                        Description: updatedDesc,
-                        DateEnded: extraFields.dateEnded !== undefined ? extraFields.dateEnded : item.DateEnded,
-                        hasEnded: extraFields.dateEnded ? 1 : 0 
-                    };
-                }
-                return item;
-            }));
-        } else if (currentLvl === 'seasons') {
-            this.seasons.update(items => items.map(item => {
-                if (item.SeasonID === id) {
-                    return { ...item, Title: updatedTitle, Description: updatedDesc };
-                }
-                return item;
-            }));
-        } else if (currentLvl === 'episodes') {
-            let updatedDubs = item.DubLanguages ? item.DubLanguages.split(',') : ['it'];
-            if (data.payload.audioTracks) {
-                data.payload.audioTracks.forEach((t: any) => { 
-                    if (!updatedDubs.includes(t.lang)) updatedDubs.push(t.lang); 
-                });
-            }
-            
-            let updatedSubs = item.SubLanguages ? item.SubLanguages.split(',') : [];
-            if (data.payload.subTracks) {
-                data.payload.subTracks.forEach((t: any) => { 
-                    if (!updatedSubs.includes(t.lang)) updatedSubs.push(t.lang); 
-                });
-            }
-
-            this.episodes.update(items => items.map(ep => {
-                if (ep.EpisodeID === id) {
-                    return {
-                        ...ep,
-                        Title: updatedTitle,
-                        Description: updatedDesc,
-                        Duration: extraFields.duration !== undefined ? extraFields.duration : ep.Duration,
-                        EpisodeNumber: extraFields.episodeNumber !== undefined ? extraFields.episodeNumber : ep.EpisodeNumber,
-                        DubLanguages: updatedDubs.join(','),
-                        SubLanguages: updatedSubs.join(',')
-                    };
-                }
-                return ep;
-            }));
-            this.episodes.update(items => items.sort((a, b) => a.EpisodeNumber - b.EpisodeNumber));
-        }
-
-    } catch (err) {
-        console.error('Dettaglio Errore 400 Backend:', err);
-        this.presentToast('Errore 400: Controlla i campi obbligatori del server.', 'danger');
-    }
-}
 
     private refreshCurrentLevel() {
         if (this.currentLevel() === 'shows') {
@@ -390,10 +369,7 @@ async openEditModalData(item: any) {
     }
 
     loadShows(isAppend: boolean = false, event?: InfiniteScrollCustomEvent) {
-        let url = `${this.baseUrl}/shows?page=${this.currentPage}&limit=${this.pageSize}`;
-        if (this.currentSearchTerm) url += `&search=${this.currentSearchTerm}`;
-
-        this.http.get<any[]>(url, { headers: this.getAuthHeaders() }).subscribe({
+        this.cataloguerService.getShows(this.currentPage, this.pageSize, this.currentSearchTerm).subscribe({
             next: (res) => {
                 if (isAppend) this.shows.update((old) => [...old, ...res]);
                 else this.shows.set(res);
@@ -405,7 +381,7 @@ async openEditModalData(item: any) {
 
     deleteShow(showId: number) {
         if (!confirm('Eliminare la serie? Operazione irreversibile.')) return;
-        this.http.delete(`${this.baseUrl}/shows/${showId}`, { headers: this.getAuthHeaders() }).subscribe({
+        this.cataloguerService.deleteShow(showId).subscribe({
             next: () => {
                 this.presentToast('Serie eliminata con successo.', 'success');
                 this.currentPage = 1;
@@ -427,8 +403,8 @@ async openEditModalData(item: any) {
     }
 
     loadSeasons() {
-        const url = `${this.baseUrl}/seasons?refShow=${this.selectedShowId()}`;
-        this.http.get<any[]>(url, { headers: this.getAuthHeaders() }).subscribe({
+        if (!this.selectedShowId()) return;
+        this.cataloguerService.getSeasons(this.selectedShowId()!).subscribe({
             next: (res) => this.seasons.set(res),
             error: (err) => console.error(err),
         });
@@ -436,7 +412,7 @@ async openEditModalData(item: any) {
 
     deleteSeason(seasonId: number) {
         if (!confirm('Eliminare la stagione a cascata?')) return;
-        this.http.delete(`${this.baseUrl}/seasons/${seasonId}`, { headers: this.getAuthHeaders() }).subscribe({
+        this.cataloguerService.deleteSeason(seasonId).subscribe({
             next: () => {
                 this.presentToast('Stagione rimossa.', 'success');
                 this.seasons.update((old) => old.filter((s) => s.SeasonID !== seasonId));
@@ -451,8 +427,8 @@ async openEditModalData(item: any) {
     }
 
     loadEpisodes() {
-        const url = `${this.baseUrl}/episodes?refSeason=${this.selectedSeasonId()}`;
-        this.http.get<any[]>(url, { headers: this.getAuthHeaders() }).subscribe({
+        if (!this.selectedSeasonId()) return;
+        this.cataloguerService.getEpisodes(this.selectedSeasonId()!).subscribe({
             next: (res) => this.episodes.set(res),
             error: (err) => console.error(err),
         });
@@ -460,7 +436,7 @@ async openEditModalData(item: any) {
 
     deleteEpisode(episodeId: number) {
         if (!confirm("Rimuovere l'episodio dal server?")) return;
-        this.http.delete(`${this.baseUrl}/episodes/${episodeId}`, { headers: this.getAuthHeaders() }).subscribe({
+        this.cataloguerService.deleteEpisode(episodeId).subscribe({
             next: () => {
                 this.presentToast('Episodio rimosso.', 'success');
                 this.episodes.update((old) => old.filter((e) => e.EpisodeID !== episodeId));
@@ -503,14 +479,13 @@ async openEditModalData(item: any) {
     }
 
     private handleInfiniteScrollComplete(length: number, event?: InfiniteScrollCustomEvent) {
-    if (event && event.target) {
-        event.target.complete();
-        // Se riceviamo meno elementi di quelli richiesti, o esattamente 0, siamo alla fine.
-        if (length === 0 || length < this.pageSize) {
-            event.target.disabled = true;
+        if (event && event.target) {
+            event.target.complete();
+            if (length === 0 || length < this.pageSize) {
+                event.target.disabled = true;
+            }
         }
     }
-}
 
     async presentToast(message: string, color: 'success' | 'danger') {
         const toast = await this.toastController.create({
@@ -519,8 +494,7 @@ async openEditModalData(item: any) {
         await toast.present();
     }
 
-    logout() {
-        localStorage.clear();
-        this.router.navigate(['/login']);
+    async logout() {
+        await this.authService.confirmLogout();
     }
 }

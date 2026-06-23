@@ -1,5 +1,10 @@
 <ion-header class="ion-no-border">
     <ion-toolbar color="dark">
+
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/tabs/home" text="Home"></ion-back-button>
+        </ion-buttons>
+
         <ion-title>Dashboard Moderazione</ion-title>
         @if (currentTab() === 'discussions') {
         <ion-buttons slot="end">

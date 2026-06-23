@@ -201,6 +201,8 @@
 
   // Stile Frecce Desktop
   .scroll-arrow {
+    margin-top: 10px;
+    margin-bottom: 20px;
     position: absolute;
     z-index: 10;
     background: rgba(0, 0, 0, 0.7);
@@ -237,10 +239,11 @@
   align-items: flex-start;
   overflow-x: auto;
   overflow-y: visible;
-  /* Padding reale: 10px sopra, 24px destra, 20px sotto, 24px sinistra */
-  padding: 10px 24px 20px 24px; 
+  /* Padding reale: 10px sopra, 24px destra, 10px sotto, 24px sinistra */
+  padding: 10px 24px 10px 24px; 
   gap: 14px;
   width: 100%;
+  margin-bottom: 10px;
   
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;

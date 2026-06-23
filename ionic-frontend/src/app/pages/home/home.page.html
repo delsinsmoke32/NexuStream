@@ -8,18 +8,27 @@
             >NEXUSTREAM</ion-title
         >
 
-    <ion-buttons slot="end">
-      
-      @if (!isLoggedIn()) {
-        <ion-button class="auth-link" routerLink="/login" title="Accedi">
-            <ion-icon name="log-in-outline" class="auth-mobile-icon"></ion-icon>
-            <span class="auth-text" i18n="@@logIn">Accedi</span>
-        </ion-button>
-        <ion-button class="auth-link" routerLink="/register" title="Registrati">
-            <ion-icon name="person-add-outline" class="auth-mobile-icon"></ion-icon>
-            <span class="auth-text" i18n="@@register">Registrati</span>
-        </ion-button>
-      }
+        <ion-buttons slot="end">
+            @if (!isLoggedIn()) {
+            <ion-button class="auth-link" routerLink="/login" title="Accedi">
+                <ion-icon
+                    name="log-in-outline"
+                    class="auth-mobile-icon"
+                ></ion-icon>
+                <span class="auth-text" i18n="@@logIn">Accedi</span>
+            </ion-button>
+            <ion-button
+                class="auth-link"
+                routerLink="/register"
+                title="Registrati"
+            >
+                <ion-icon
+                    name="person-add-outline"
+                    class="auth-mobile-icon"
+                ></ion-icon>
+                <span class="auth-text" i18n="@@register">Registrati</span>
+            </ion-button>
+            }
 
             <ion-button class="btn-icon-red" routerLink="/search">
                 <ion-icon slot="icon-only" name="search-outline"></ion-icon>
@@ -53,17 +62,26 @@
             <div class="hero-gradient"></div>
 
             <div class="hero-content">
-              <h1 class="hero-title">{{ hero.Title }}</h1>
-              <p class="hero-description">{{ hero.Description }}</p>
-              
-              <div class="hero-actions">
-                <button i18n="@@play" class="btn-hero-play" (click)="playAnime(hero.ShowID)">
-                  <ion-icon name="play"></ion-icon> Riproduci
-                </button>
-                <button i18n="@@otherInfos" class="btn-hero-info" (click)="openSeriesInfo(hero.ShowID)">
-                  <ion-icon name="information-circle-outline"></ion-icon> Altre Info
-                </button>
-              </div>
+                <h1 class="hero-title">{{ hero.Title }}</h1>
+                <p class="hero-description">{{ hero.Description }}</p>
+
+                <div class="hero-actions">
+                    <button
+                        i18n="@@play"
+                        class="btn-hero-play"
+                        (click)="playAnime(hero.ShowID)"
+                    >
+                        <ion-icon name="play"></ion-icon> Riproduci
+                    </button>
+                    <button
+                        i18n="@@otherInfos"
+                        class="btn-hero-info"
+                        (click)="openSeriesInfo(hero.ShowID)"
+                    >
+                        <ion-icon name="information-circle-outline"></ion-icon>
+                        Altre Info
+                    </button>
+                </div>
             </div>
         </div>
         }
@@ -73,50 +91,65 @@
     <div class="main-container" [class.has-hero]="heroList().length > 0">
         @if (continueWatching().length > 0) {
         <div class="category-row">
-          <h2 i18n="@@continueWatching" class="row-title">Continua a guardare</h2>
-          
-          <div class="carousel-wrapper">
-            <button class="scroll-arrow left" (click)="scrollRow('continueWatching', 'left')">
-              <ion-icon name="chevron-back-outline"></ion-icon>
-            </button>
-            
-            <div class="horizontal-scroll" #continueWatchingScroll>
-              @for (cw of continueWatching(); track cw.EpisodeID) {
-                <app-show-card 
-                  [show]="cw" 
-                  layout="landscape" 
-                  [showDismiss]="true"  
-                  (play)="resumeEpisode($event)" 
-                  (info)="openSeriesInfo($event)"
-                  (dismiss)="removeFromContinueWatching($event)">
-                </app-show-card>
-              }
+            <h2 i18n="@@continueWatching" class="row-title">
+                Continua a guardare
+            </h2>
+
+            <div class="carousel-wrapper">
+                <button
+                    class="scroll-arrow left"
+                    (click)="scrollRow('continueWatching', 'left')"
+                >
+                    <ion-icon name="chevron-back-outline"></ion-icon>
+                </button>
+
+                <div class="horizontal-scroll" #continueWatchingScroll>
+                    @for (cw of continueWatching(); track cw.EpisodeID) {
+                    <app-show-card
+                        [show]="cw"
+                        layout="landscape"
+                        [showDismiss]="true"
+                        (play)="resumeEpisode($event)"
+                        (info)="openSeriesInfo($event)"
+                        (dismiss)="removeFromContinueWatching($event)"
+                    >
+                    </app-show-card>
+                    }
+                </div>
+
+                <button
+                    class="scroll-arrow right"
+                    (click)="scrollRow('continueWatching', 'right')"
+                >
+                    <ion-icon name="chevron-forward-outline"></ion-icon>
+                </button>
             </div>
-            
-            <button class="scroll-arrow right" (click)="scrollRow('continueWatching', 'right')">
-              <ion-icon name="chevron-forward-outline"></ion-icon>
-            </button>
-          </div>
         </div>
         } @if (mostViewed().length > 0) {
         <div class="category-row">
-          <h2 i18n="@@mostViewed" class="row-title">I più visti questa settimana</h2>
-          
-          <div class="carousel-wrapper">
-            <button class="scroll-arrow left" (click)="scrollRow('mostViewed', 'left')">
-              <ion-icon name="chevron-back-outline"></ion-icon>
-            </button>
-            
-            <div class="horizontal-scroll" #mostViewedScroll>
-              @for (show of mostViewed(); track show.ShowID) {
-                <app-show-card 
-                  [show]="show" 
-                  layout="portrait" 
-                  (play)="playAnime($event.ShowID)" 
-                  (info)="openSeriesInfo($event)">
-                </app-show-card>
-              }
-            </div>
+            <h2 i18n="@@mostViewed" class="row-title">
+                I più visti questa settimana
+            </h2>
+
+            <div class="carousel-wrapper">
+                <button
+                    class="scroll-arrow left"
+                    (click)="scrollRow('mostViewed', 'left')"
+                >
+                    <ion-icon name="chevron-back-outline"></ion-icon>
+                </button>
+
+                <div class="horizontal-scroll" #mostViewedScroll>
+                    @for (show of mostViewed(); track show.ShowID) {
+                    <app-show-card
+                        [show]="show"
+                        layout="portrait"
+                        (play)="playAnime($event.ShowID)"
+                        (info)="openSeriesInfo($event)"
+                    >
+                    </app-show-card>
+                    }
+                </div>
 
                 <button
                     class="scroll-arrow right"
@@ -128,23 +161,29 @@
         </div>
         } @if (mostLiked().length > 0) {
         <div class="category-row">
-          <h2 i18n="@@mostLiked" class="row-title">I più amati dagli utenti</h2>
-          
-          <div class="carousel-wrapper">
-            <button class="scroll-arrow left" (click)="scrollRow('mostLiked', 'left')">
-              <ion-icon name="chevron-back-outline"></ion-icon>
-            </button>
-            
-            <div class="horizontal-scroll" #mostLikedScroll>
-              @for (show of mostLiked(); track show.ShowID) {
-                <app-show-card 
-                  [show]="show" 
-                  layout="portrait" 
-                  (play)="playAnime($event.ShowID)" 
-                  (info)="openSeriesInfo($event)">
-                </app-show-card>
-              }
-            </div>
+            <h2 i18n="@@mostLiked" class="row-title">
+                I più amati dagli utenti
+            </h2>
+
+            <div class="carousel-wrapper">
+                <button
+                    class="scroll-arrow left"
+                    (click)="scrollRow('mostLiked', 'left')"
+                >
+                    <ion-icon name="chevron-back-outline"></ion-icon>
+                </button>
+
+                <div class="horizontal-scroll" #mostLikedScroll>
+                    @for (show of mostLiked(); track show.ShowID) {
+                    <app-show-card
+                        [show]="show"
+                        layout="portrait"
+                        (play)="playAnime($event.ShowID)"
+                        (info)="openSeriesInfo($event)"
+                    >
+                    </app-show-card>
+                    }
+                </div>
 
                 <button
                     class="scroll-arrow right"
@@ -158,23 +197,52 @@
     </div>
     }
 
-  <ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
-    <ng-template>
-      <ion-list class="dark-popover">
-        <ion-item i18n="@@settings" button routerLink="/settings" (click)="openUserSettings()" lines="full">
-          <ion-icon color="danger" slot="start" name="settings-outline"></ion-icon> 
-          Impostazioni
-        </ion-item>
-        <ion-item i18n="@@favourites" button routerLink="/favourites" (click)="openFavorites()" lines="full">
-          <ion-icon color="danger" slot="start" name="heart-outline"></ion-icon> 
-          I miei preferiti
-        </ion-item>
-        <ion-item i18n="@@logOut" button (click)="logout()" lines="none" class="logout-item">
-          <ion-icon color="danger" slot="start" name="log-out-outline"></ion-icon> 
-          Esci
-        </ion-item>
-      </ion-list>
-    </ng-template>
-  </ion-popover>
-
+    <ion-popover #profilePopover (didDismiss)="onPopoverDismiss()">
+        <ng-template>
+            <ion-list class="dark-popover">
+                <ion-item
+                    i18n="@@settings"
+                    button
+                    routerLink="/settings"
+                    (click)="openUserSettings()"
+                    lines="full"
+                >
+                    <ion-icon
+                        color="danger"
+                        slot="start"
+                        name="settings-outline"
+                    ></ion-icon>
+                    Impostazioni
+                </ion-item>
+                <ion-item
+                    i18n="@@favourites"
+                    button
+                    routerLink="/favourites"
+                    (click)="openFavorites()"
+                    lines="full"
+                >
+                    <ion-icon
+                        color="danger"
+                        slot="start"
+                        name="heart-outline"
+                    ></ion-icon>
+                    I miei preferiti
+                </ion-item>
+                <ion-item
+                    i18n="@@logOut"
+                    button
+                    (click)="logout()"
+                    lines="none"
+                    class="logout-item"
+                >
+                    <ion-icon
+                        color="danger"
+                        slot="start"
+                        name="log-out-outline"
+                    ></ion-icon>
+                    Esci
+                </ion-item>
+            </ion-list>
+        </ng-template>
+    </ion-popover>
 </ion-content>

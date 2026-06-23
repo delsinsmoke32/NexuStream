@@ -23,6 +23,7 @@ import {
     IonSelectOption,
     IonSelect,
     IonSpinner,
+    IonFooter,
 } from '@ionic/angular/standalone'
 import {
     pencil,
@@ -38,6 +39,7 @@ import { Router } from '@angular/router'
 import { AlertController, ToastController } from '@ionic/angular'
 import { HttpClient } from '@angular/common/http'
 import { HttpHeaders } from '@angular/common/http'
+import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
 
 @Component({
     selector: 'app-settings',
@@ -67,6 +69,8 @@ import { HttpHeaders } from '@angular/common/http'
         IonSelect,
         CommonModule,
         FormsModule,
+        BackendUrlPipe,
+        IonFooter,
     ],
 })
 export class SettingsPage implements OnInit {
@@ -94,11 +98,11 @@ export class SettingsPage implements OnInit {
             pencil,
             checkmark,
             lockClosedOutline,
+            logOutOutline,
             notificationsOutline,
             videocamOutline,
             wifiOutline,
             helpCircleOutline,
-            logOutOutline,
         })
     }
 

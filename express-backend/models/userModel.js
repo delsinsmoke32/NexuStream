@@ -121,6 +121,17 @@ const getUserFavorites = async (userId, applang = "it") => {
     return await db.allAsync(sql, [applang, applang, userId]);
 }
 
+/**
+ * Ottiene la password di un determinato utente nel database.
+ * @param {number} userId - L'ID univoco dell'utente di cui aggiornare le credenziali.
+ * @returns {Promise<Object>} Una Promise che si risolve con l'oggetto di stato del database (es. verifica delle righe modificate tramite `changes`).
+ * @throws {Error} Se si verifica un errore durante l'esecuzione della query SQL.
+ */
+const getUserPassword = async (userId) => {
+    const sql = `SELECT password FROM Users WHERE UserID = ?`;
+
+    return await db.getAsync(sql, [userId]);
+}
 
 module.exports = {
     getUserByEmail,
@@ -130,5 +141,6 @@ module.exports = {
     validateResetToken,
     updatePassword,
     deleteResetToken,
-    getUserFavorites
+    getUserFavorites,
+    getUserPassword
 };

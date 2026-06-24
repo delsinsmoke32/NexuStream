@@ -11,6 +11,12 @@
   --border-width: 0;
 }
 
+.phone-toolbar {
+  @media (min-width: 768px) {
+      display: none !important;
+    }
+}
+
 /* 2. La seconda toolbar (Cerca + Filtri) */
 .search-toolbar {
   --background: var(--ion-color-dark, #121212);

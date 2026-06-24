@@ -1,43 +1,3 @@
-<ion-header class="desktop-header ion-no-border">
-    <ion-toolbar color="dark">
-        <ion-title slot="start" class="brand-title" routerLink="/tabs/home">
-            NexuStream
-        </ion-title>
-
-        <ion-buttons slot="end" class="nav-links-desktop">
-            <a
-                class="nav-link"
-                routerLink="/tabs/home"
-                routerLinkActive="active-tab"
-                >Home</a
-            >
-            <a
-                class="nav-link"
-                routerLink="/tabs/search"
-                routerLinkActive="active-tab"
-                >Cerca</a
-            >
-            <a
-                class="nav-link"
-                routerLink="/tabs/favourites"
-                routerLinkActive="active-tab"
-                >Preferiti</a
-            >
-
-            <ion-button
-                fill="clear"
-                class="profile-icon-btn"
-                (click)="openProfileMenu($event)"
-            >
-                <ion-icon
-                    slot="icon-only"
-                    name="person-circle-outline"
-                ></ion-icon>
-            </ion-button>
-        </ion-buttons>
-    </ion-toolbar>
-</ion-header>
-
 <ion-popover #profilePopover dismissOnSelect="true">
     <ng-template>
         <ion-list class="dark-popover">
@@ -92,6 +52,45 @@
 </ion-popover>
 
 <ion-tabs>
+    <ion-header class="desktop-header ion-no-border">
+        <ion-toolbar color="dark">
+            <ion-title slot="start" class="brand-title" routerLink="/tabs/home">
+                NexuStream
+            </ion-title>
+
+            <ion-buttons slot="end" class="nav-links-desktop">
+                <a
+                    class="nav-link"
+                    routerLink="/tabs/home"
+                    routerLinkActive="active-tab"
+                    >Home</a
+                >
+                <a
+                    class="nav-link"
+                    routerLink="/tabs/search"
+                    routerLinkActive="active-tab"
+                    >Cerca</a
+                >
+                <a
+                    class="nav-link"
+                    routerLink="/tabs/favourites"
+                    routerLinkActive="active-tab"
+                    >Preferiti</a
+                >
+
+                <ion-button
+                    fill="clear"
+                    class="profile-icon-btn"
+                    (click)="openProfileMenu($event)"
+                >
+                    <ion-icon
+                        slot="icon-only"
+                        name="person-circle-outline"
+                    ></ion-icon>
+                </ion-button>
+            </ion-buttons>
+        </ion-toolbar>
+    </ion-header>
     <ion-tab-bar slot="bottom">
         <ion-tab-button tab="home">
             <ion-icon name="home-outline"></ion-icon>

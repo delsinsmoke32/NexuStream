@@ -1,16 +1,4 @@
-<ion-header class="ion-no-border">
-    <ion-toolbar>
-        <ion-buttons slot="start">
-            <ion-back-button
-                defaultHref="/home"
-                color="primary"
-            ></ion-back-button>
-        </ion-buttons>
-        <ion-title i18n="@@settings">Impostazioni</ion-title>
-    </ion-toolbar>
-</ion-header>
-
-<ion-content class="ion-padding-top">
+<ion-content>
     <ion-item-group>
         <ion-item-divider color="dark">
             <ion-label>Account</ion-label>
@@ -45,7 +33,7 @@
             </ion-label>
         </ion-item>
 
-        <ion-modal
+        <!-- <ion-modal
             id="avatar-modal"
             [isOpen]="isAvatarModalOpen"
             (didDismiss)="isAvatarModalOpen = false"
@@ -81,13 +69,13 @@
                                 <div
                                     class="avatar-option"
                                     [class.selected]="avatar === currentAvatar()"
-                                    (click)="selectAvatar(avatar)"
+                                    (click)="selectAvatar()"
                                 >
-                                    <img [src]="avatar" alt="Opzione Avatar" />
-                                    <div
-                                        class="checkmark-badge"
-                                        *ngIf="avatar === currentAvatar()"
-                                    >
+                                    <img
+                                        [src]="selectedAvatar() | backendUrl: 'static'"
+                                        alt="Opzione Avatar"
+                                    />
+                                    <div class="checkmark-badge">
                                         <ion-icon name="checkmark"></ion-icon>
                                     </div>
                                 </div>
@@ -96,14 +84,13 @@
                     </ion-grid>
                 </ion-content>
             </ng-template>
-        </ion-modal>
+        </ion-modal> -->
 
         <ion-item
             lines="full"
             detail="true"
             button
-            routerLink="/reset-password"
-            (click)="changePassword()"
+            (click)="openModifyPasswordModal()"
         >
             <ion-icon
                 slot="start"

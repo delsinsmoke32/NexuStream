@@ -24,6 +24,7 @@ import {
     IonSelect,
     IonSpinner,
     IonFooter,
+    ModalController,
 } from '@ionic/angular/standalone'
 import {
     pencil,
@@ -40,6 +41,8 @@ import { AlertController, ToastController } from '@ionic/angular'
 import { HttpClient } from '@angular/common/http'
 import { HttpHeaders } from '@angular/common/http'
 import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
+import { AvatarPickerModalComponent } from '@app/components/avatar-picker-modal/avatar-picker-modal.component'
+import { ChangePasswordModalComponent } from '@app/components/change-password-modal/change-password-modal.component'
 
 @Component({
     selector: 'app-settings',
@@ -71,6 +74,7 @@ import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
         FormsModule,
         BackendUrlPipe,
         IonFooter,
+        AvatarPickerModalComponent,
     ],
 })
 export class SettingsPage implements OnInit {
@@ -78,6 +82,9 @@ export class SettingsPage implements OnInit {
 
     username = signal<string>('')
     isLoading = signal<boolean>(true)
+
+    selected = signal('avatars/avatar-003.png')
+    private modalCtrl = inject(ModalController)
     // Controllo visibilità della finestra di scelta
     isAvatarModalOpen = false
 
@@ -96,9 +103,9 @@ export class SettingsPage implements OnInit {
     ) {
         addIcons({
             pencil,
-            checkmark,
             lockClosedOutline,
             logOutOutline,
+            checkmark,
             notificationsOutline,
             videocamOutline,
             wifiOutline,
@@ -176,16 +183,35 @@ export class SettingsPage implements OnInit {
     }
 
     // Apre la schermata di selezione
-    openAvatarSelector() {
-        this.isAvatarModalOpen = true
-    }
+    // openAvatarSelector() {
+    //     this.isAvatarModalOpen = true
+    // }
 
     // Cambia l'avatar e chiude la finestra
-    selectAvatar(avatarUrl: string) {
-        this.currentAvatar.set(avatarUrl)
-        this.isAvatarModalOpen = false // Chiude il pannello dopo la scelta
-        localStorage.setItem('REF_PropicURI', 'avatarURL')
-        console.log('Nuovo avatar salvato:', avatarUrl)
+    // selectAvatar(avatarUrl: string) {
+    //     this.currentAvatar.set(avatarUrl)
+    //     this.isAvatarModalOpen = false // Chiude il pannello dopo la scelta
+    //     localStorage.setItem('REF_PropicURI', 'avatarURL')
+    //     console.log('Nuovo avatar salvato:', avatarUrl)
+    // }
+
+    async openAvatarSelector() {
+        console.log(this.currentAvatar())
+        const modal = await this.modalCtrl.create({
+            component: AvatarPickerModalComponent,
+            componentProps: { propic: this.currentAvatar() },
+        })
+        await modal.present()
+
+        const { data } = await modal.onDidDismiss()
+
+        console.log(data)
+        console.log(this.currentAvatar())
+        // Se l'utente ha selezionato un avatar, aggiorna il signal della pagina principale
+        if (data && data.selectedAvatar) {
+            this.currentAvatar.set(data.selectedAvatar)
+            // this.registerForm.patchValue({ propic: this.selected() })
+        }
     }
 
     // Funzioni click fittizie
@@ -230,5 +256,15 @@ export class SettingsPage implements OnInit {
             ],
         })
         await alert.present()
+    }
+
+    async openModifyPasswordModal() {
+        const modal = await this.modalCtrl.create({
+            component: ChangePasswordModalComponent,
+            componentProps: {},
+        })
+        await modal.present()
+
+        const { data } = await modal.onDidDismiss()
     }
 }

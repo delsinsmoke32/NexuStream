@@ -6,10 +6,10 @@ const db = require("../db/db");
  */
 
 const getAllPropics = async () => {
-    const sql = `SELECT bundle, propicURI
+    const sql = `SELECT Bundle, PropicURI
                  FROM Propics
                  WHERE 1=1
-                 ORDER BY bundle ASC`;
+                 ORDER BY Bundle ASC`;
     return await db.allAsync(sql);
 }
 

@@ -10,7 +10,7 @@
                 Impostazioni
             </ion-item>
 
-            @if (isAdmin()) {
+            @if (isLoggedIn()) { @if (isAdmin()) {
             <ion-item button routerLink="/admin">
                 <ion-icon
                     color="primary"
@@ -47,6 +47,24 @@
                 ></ion-icon>
                 Esci
             </ion-item>
+            } @if (!isLoggedIn()) {
+            <ion-item button routerLink="/login">
+                <ion-icon
+                    color="primary"
+                    slot="start"
+                    name="log-in-outline"
+                ></ion-icon>
+                Accedi
+            </ion-item>
+            <ion-item button routerLink="/register">
+                <ion-icon
+                    color="primary"
+                    slot="start"
+                    name="person-add-outline"
+                ></ion-icon>
+                Registrati
+            </ion-item>
+            }
         </ion-list>
     </ng-template>
 </ion-popover>

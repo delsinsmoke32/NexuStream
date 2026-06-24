@@ -33,6 +33,12 @@ export interface CataloguerEpisode {
     [key: string]: any;
 }
 
+// PROPIC
+export interface PropicGroup {
+    bundle: string;
+    images: string[];
+}
+
 // --- SHOW MODAL ---
 export interface ShowModalData {
     Title: string;

@@ -1,4 +1,3 @@
-// percorso: src/app/pages/tabs/tabs.page.ts
 import { Component, signal, inject, ViewChild } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { 
@@ -7,7 +6,7 @@ import {
   IonPopover, IonList, IonItem 
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { homeOutline, searchOutline, heartOutline, personOutline, personCircleOutline, settingsOutline, shieldCheckmarkOutline, libraryOutline, eyeOutline, logOutOutline } from 'ionicons/icons';
+import { homeOutline, searchOutline, heartOutline, personOutline, personCircleOutline, settingsOutline, shieldCheckmarkOutline, libraryOutline, eyeOutline, logOutOutline, logInOutline, personAddOutline } from 'ionicons/icons';
 import { jwtDecodeHelper } from '@app/utils/jwt-helper';
 import { AuthService } from "@app/services/auth"; // Adatta il percorso se necessario
 
@@ -34,17 +33,15 @@ export class TabsPage {
   isAdmin = signal(false);
   isCat = signal(false);
   isMod = signal(false);
+  isLoggedIn = signal(false);
 
   constructor() {
-    addIcons({ 
-      homeOutline, searchOutline, heartOutline, personOutline, 
-      personCircleOutline, settingsOutline, shieldCheckmarkOutline, 
-      libraryOutline, eyeOutline, logOutOutline 
-    });
+    addIcons({personCircleOutline,settingsOutline,shieldCheckmarkOutline,libraryOutline,eyeOutline,logOutOutline,logInOutline,personAddOutline,homeOutline,searchOutline,heartOutline,personOutline});
   }
 
   ionViewWillEnter() {
     const token = localStorage.getItem('token');
+    this.isLoggedIn.set(!!token);
     if (token) {
       const decoded = jwtDecodeHelper(token);
       this.isAdmin.set(decoded?.isAdmin === 1);

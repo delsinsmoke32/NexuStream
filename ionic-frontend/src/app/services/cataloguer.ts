@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { 
-    EpisodeMarker, CataloguerShow, CataloguerSeason, CataloguerEpisode 
+    EpisodeMarker, CataloguerShow, CataloguerSeason, CataloguerEpisode, PropicGroup
 } from '../models/cataloguer';
 
 /**
@@ -62,6 +62,20 @@ export class CataloguerService {
         return this.http.delete(`${this.baseUrl}/episodes/${episodeId}`, { headers: this.getAuthHeaders() });
     }
 
+    getPropics(): Observable<PropicGroup[]> {
+        return this.http.get<PropicGroup[]>(`${this.baseUrl}/propics`, {
+            headers: this.getAuthHeaders()
+        });
+    }
+
+    deletePropic(propicURI: string): Observable<any> {
+        // In Angular, per mandare un body con una richiesta DELETE, devi usare questa struttura:
+        return this.http.delete(`${this.baseUrl}/propics`, {
+            headers: this.getAuthHeaders(),
+            body: { propicURI }
+        });
+    }
+
     // ==========================================
     // METODI CREAZIONE (ADD) E MODIFICA (PATCH)
     // ==========================================
@@ -75,6 +89,20 @@ export class CataloguerService {
     updateItem(level: 'shows' | 'seasons' | 'episodes', id: number, payload: any): Observable<any> {
         return this.http.patch<any>(`${this.baseUrl}/${level}/${id}`, payload, { 
             headers: this.getAuthHeaders() 
+        });
+    }
+
+    uploadPropic(bundleName: string, file: File): Observable<any> {
+        const formData = new FormData();
+        
+        // Il campo 'img' deve corrispondere al nome che Multer si aspetta nel tuo backend
+        formData.append('img', file, file.name); 
+        formData.append('bundle', bundleName);
+
+        // NOTA: Non impostiamo il Content-Type! 
+        // Angular e il browser lo imposteranno automaticamente a 'multipart/form-data' calcolando il boundary corretto.
+        return this.http.post<any>(`${this.baseUrl}/propics/add`, formData, {
+            headers: this.getAuthHeaders()
         });
     }
 

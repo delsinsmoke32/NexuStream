@@ -2,6 +2,17 @@
   --ion-background-color: #121212; // Coerente con la ShowsPage
 }
 
+.transparent-toolbar {
+  --background: transparent;
+  --border-width: 0;
+  
+  ion-button {
+    --color: var(--ion-color-primary, #b22222);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+}
+
 .streaming-content {
   --background: var(--ion-background-color);
 }

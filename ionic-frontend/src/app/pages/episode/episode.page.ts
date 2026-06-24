@@ -7,12 +7,12 @@ import {
     ViewChild,
 } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { ActivatedRoute, RouterModule, Router } from '@angular/router'
+import { ActivatedRoute, RouterModule, Router, RouterLink } from '@angular/router'
 import { HttpClient } from '@angular/common/http'
 import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
 import { combineLatest } from 'rxjs'
 import {
-    IonContent,
+    IonContent, // 🚀 Fondamentale per lo scroll
     IonButton,
     IonCard,
     IonCardContent,
@@ -21,6 +21,11 @@ import {
     ToastController,
     ModalController,
     AlertController,
+    IonBackButton,
+    IonToolbar,
+    IonButtons,
+    IonHeader,
+    NavController
 } from '@ionic/angular/standalone'
 import {
     addCircleOutline,
@@ -31,8 +36,7 @@ import {
     chatbubblesOutline,
     chevronForwardOutline,
     createOutline,
-    trashOutline,
-} from 'ionicons/icons'
+    trashOutline, arrowBackOutline } from 'ionicons/icons'
 import { addIcons } from 'ionicons'
 import { CommentsComponent } from '@app/components/comments/comments.component'
 import { DiscussionModalComponent } from '@app/components/discussion-modal/discussion-modal.component'
@@ -55,7 +59,12 @@ import { VideoPlayerComponent } from '@app/components/video-player/video-player.
         RouterModule,
         CommentsComponent,
         VideoPlayerComponent,
-        BackendUrlPipe
+        BackendUrlPipe,
+        IonBackButton,
+        RouterLink,
+        IonToolbar,
+        IonHeader,
+        IonButtons
     ],
     providers: [BackendUrlPipe],
 })
@@ -63,10 +72,11 @@ export class EpisodePage implements OnInit, OnDestroy {
     private route = inject(ActivatedRoute)
     private router = inject(Router)
     private http = inject(HttpClient)
-    public backendUrl = inject(BackendUrlPipe) // Reso public così l'HTML può usarlo liberamente
+    public backendUrl = inject(BackendUrlPipe)
     private modalCtrl = inject(ModalController)
     private alertCtrl = inject(AlertController)
     private toastCtrl = inject(ToastController)
+    private navCtrl = inject(NavController);
 
     isLoading = signal<boolean>(true)
     episode = signal<any>(null)
@@ -83,13 +93,15 @@ export class EpisodePage implements OnInit, OnDestroy {
     expandedDiscussionId = signal<string | null>(null)
 
     private lastKnownProgress = 0
-    private isNavigating = false
     private saveTimeout: any
-    // Componente del player
+
+    // 🚀 1. Catturiamo IonContent per poter fare lo scroll
+    @ViewChild(IonContent) content!: IonContent
+    
     @ViewChild(VideoPlayerComponent) videoPlayerComponent!: VideoPlayerComponent
 
     constructor() {
-        addIcons({chatbubblesOutline,createOutline,trashOutline,shareSocialOutline,addCircleOutline,playCircle,heartOutline,heart,chevronForwardOutline,});
+        addIcons({arrowBackOutline,chatbubblesOutline,createOutline,trashOutline,shareSocialOutline,addCircleOutline,playCircle,heartOutline,heart,chevronForwardOutline,});
     }
 
     ngOnInit() {
@@ -106,14 +118,13 @@ export class EpisodePage implements OnInit, OnDestroy {
         ]).subscribe(async ([params, queryParams]) => {
             const epId = params.get('id') || params.get('episodeId')
 
-            // CONTROLLO DEL LUCCHETTO (Mancava questo!)
-            if (epId && !this.isNavigating) {
-                this.isNavigating = true
-
+            // 🚀 Rimosso il blocco isNavigating che causava conflitti
+            if (epId) {
+                
+                // Se l'ID dell'episodio sta cambiando (l'utente naviga ad un altro episodio)
                 if (this.episodeId() && this.episodeId() !== epId) {
                     this.saveProgress(this.lastKnownProgress, 0, true)
                     if (this.videoPlayerComponent) {
-                        // 🚀 AWAIT SU KILLPLAYER
                         await this.videoPlayerComponent.killPlayer()
                     }
                 }
@@ -133,7 +144,6 @@ export class EpisodePage implements OnInit, OnDestroy {
                 this.loadEpisodeData(sId, seaId, epId)
                 this.loadSeasonEpisodes(sId, seaId)
                 this.loadDiscussions(sId, seaId, epId)
-                this.isNavigating = true
             }
         })
     }
@@ -146,7 +156,7 @@ export class EpisodePage implements OnInit, OnDestroy {
             .subscribe({
                 next: (res) => {
                     this.episode.set(res)
-                    this.isLoading.set(false) // Il timeout non serve più!
+                    this.isLoading.set(false) 
                 },
                 error: (err) => {
                     console.error('Errore nel recupero episodio:', err)
@@ -199,20 +209,34 @@ export class EpisodePage implements OnInit, OnDestroy {
         this.saveProgress(currentTime, 0, true)
     }
 
-    handleNextEpisode() {
+    handleCommentTimestamp(seconds: number) {
+        if (this.videoPlayerComponent) {
+            this.videoPlayerComponent.seekTo(seconds);
+            // 🚀 2. Scorriamo fluidamente in cima alla pagina per mostrare il video!
+            if (this.content) {
+                this.content.scrollToTop(500); // 500 = millisecondi di durata dell'animazione
+            }
+        }
+    }
+
+    // 🚀 Modificato in ASYNC per attendere la morte del player prima di navigare
+    async handleNextEpisode() {
         const currentEpId = parseInt(this.episodeId(), 10)
         const eps = this.seasonEpisodes()
 
         const currentEp = eps.find((e) => e.EpisodeID === currentEpId)
         if (!currentEp) return
 
-        // 1. Cerchiamo l'episodio successivo nella STESSA stagione
+        // Uccidiamo il player PRIMA di cambiare URL
+        if (this.videoPlayerComponent) {
+            await this.videoPlayerComponent.killPlayer();
+        }
+
         const nextEp = eps.find(
             (e) => e.EpisodeNumber === currentEp.EpisodeNumber + 1
         )
 
         if (nextEp) {
-            // Caso normale
             this.router.navigate(['/episode', nextEp.EpisodeID], {
                 queryParams: {
                     showId: this.showId(),
@@ -220,14 +244,16 @@ export class EpisodePage implements OnInit, OnDestroy {
                 },
             })
         } else {
-            // 2. FINE STAGIONE! Inneschiamo la ricerca della stagione successiva
             this.checkAndNavigateToNextSeason()
         }
     }
 
-    // Salto di stagione
-    checkAndNavigateToNextSeason() {
-        // 1. Recuperiamo l'elenco di tutte le stagioni dello show
+    async checkAndNavigateToNextSeason() {
+        // Uccidiamo il player anche nel caso di salto di stagione
+        if (this.videoPlayerComponent) {
+            await this.videoPlayerComponent.killPlayer();
+        }
+
         this.http.get<any[]>(`api/shows/${this.showId()}/seasons`).subscribe({
             next: (seasons) => {
                 const currentSeasonId = parseInt(this.seasonId(), 10)
@@ -237,20 +263,17 @@ export class EpisodePage implements OnInit, OnDestroy {
 
                 if (!currentSeason) return
 
-                // 2. Cerchiamo se esiste una stagione con il numero successivo
                 const nextSeason = seasons.find(
                     (s) => s.SeasonNumber === currentSeason.SeasonNumber + 1
                 )
 
                 if (nextSeason) {
-                    // 3. Abbiamo trovato la nuova stagione! Ora peschiamo i suoi episodi
                     this.http
                         .get<
                             any[]
                         >(`api/shows/${this.showId()}/seasons/${nextSeason.SeasonID}/episodes`)
                         .subscribe({
                             next: (nextSeasonEps) => {
-                                // Troviamo l'Episodio 1 della nuova stagione
                                 const firstEp = nextSeasonEps.find(
                                     (e) => e.EpisodeNumber === 1
                                 )
@@ -273,7 +296,6 @@ export class EpisodePage implements OnInit, OnDestroy {
                             },
                         })
                 } else {
-                    // Se non c'è una prossima stagione, la serie è davvero finita!
                     this.showToast('Hai concluso la serie!', 'success')
                 }
             },
@@ -477,7 +499,23 @@ export class EpisodePage implements OnInit, OnDestroy {
         await toast.present()
     }
 
-    ngOnDestroy() {
-        // Nessuna logica qui, il VideoPlayerComponent emette onDestroySave prima di morire
+    async goBackToSeries() {
+        // Uccidiamo il player PRIMA di cambiare pagina
+        if (this.videoPlayerComponent) {
+            await this.videoPlayerComponent.killPlayer();
+        }
+        // Navighiamo all'indietro usando NavController per l'animazione corretta
+        this.navCtrl.navigateBack(['/shows', this.showId()]);
     }
+
+    // 🚀 2. GESTIONE SWIPE iOS / TASTO FISICO ANDROID
+    async ionViewWillLeave() {
+        // Questo evento scatta un attimo prima che la pagina sparisca,
+        // garantendo la morte del player in qualsiasi caso l'utente abbandoni l'episodio.
+        if (this.videoPlayerComponent) {
+            await this.videoPlayerComponent.killPlayer();
+        }
+    }
+
+    ngOnDestroy() {}
 }

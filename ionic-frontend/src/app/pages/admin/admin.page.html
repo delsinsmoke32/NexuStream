@@ -1,12 +1,12 @@
 <ion-header class="ion-no-border">
     <ion-toolbar color="dark" class="main-header">
         <ion-buttons slot="start">
-            <ion-back-button
-                defaultHref="/tabs/home"
-                text="Home"
-            ></ion-back-button>
+            <ion-button routerLink="/tabs/home" routerDirection="back">
+                <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+                Home
+            </ion-button>
         </ion-buttons>
-
+        
         <ion-title>Gestione Utenti & Ruoli</ion-title>
 
         <!-- <ion-buttons slot="end">

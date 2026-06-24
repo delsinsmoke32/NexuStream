@@ -1,3 +1,14 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBackToSeries()" color="primary" fill="clear">
+        <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+        Serie
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content [fullscreen]="true" class="streaming-content">
     @if (isLoading()) {
     <div class="loading-state">
@@ -160,6 +171,7 @@
                             [episodeId]="episodeId()"
                             [discussionId]="disc.DiscussionID"
                             [isMod]="isMod()"
+                            (timestampClick)="handleCommentTimestamp($event)"
                         >
                         </app-comments>
                     </div>

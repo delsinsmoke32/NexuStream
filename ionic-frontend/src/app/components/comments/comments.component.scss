@@ -299,6 +299,19 @@
   align-items: start;
 }
 
+.timestamp-link {
+  color: var(--ion-color-primary, #b22222);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    text-decoration: underline;
+    filter: brightness(1.2);
+  }
+}
+
 // .custom-ban-alert {
 //   // Seleziona il contenitore nativo del radio button dentro l'alert
 //   .alert-radio-inner {

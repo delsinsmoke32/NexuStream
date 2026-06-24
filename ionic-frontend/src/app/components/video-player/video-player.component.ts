@@ -144,6 +144,35 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     this.clearNextEpTimer(); // 🚀 Ferma l'autoplay se decide di guardare i titoli!
   }
 
+
+  // 🚀 NUOVA FUNZIONE PER I TIMESTAMP DEI COMMENTI (Con controlli di sicurezza!)
+  public seekTo(seconds: number) {
+    if (this.player) {
+      // Otteniamo la durata totale del video (se è già stata caricata)
+      const duration = this.player.duration();
+
+      // 1. Clamping: Il tempo non può essere minore di 0
+      let safeSeconds = Math.max(0, seconds);
+      
+      // 2. Clamping: Il tempo non può superare la durata del video
+      if (duration && duration > 0) {
+         // Se l'utente ha messo un tempo fuori limite, lo portiamo agli ultimi 2 secondi del video
+         safeSeconds = Math.min(safeSeconds, duration - 2); 
+      }
+
+      // 3. Sposta il video al secondo SICURO
+      this.player.currentTime(safeSeconds);
+      
+      // 4. Forza il play in modo sicuro
+      this.playPromise = this.player.play();
+      if (this.playPromise !== undefined) {
+        this.playPromise.catch(() => {
+           // Ignoriamo silenziamente se il browser blocca l'autoplay
+        });
+      }
+    }
+  }
+
   triggerNextEpisode() {
     this.clearNextEpTimer();
     

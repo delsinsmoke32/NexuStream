@@ -131,9 +131,15 @@
                                     {{ '@' + comment.replyTag }}
                                 </span>
                             }
-                            <span [innerHTML]="comment.parsedText"></span>
+                            
+                            @for (chunk of comment.parsedChunks; track $index) {
+                                @if (chunk.isTimestamp) {
+                                    <a class="timestamp-link" (click)="onTimestampClicked(chunk.seconds)">{{ chunk.text }}</a>
+                                } @else {
+                                    <span [innerHTML]="chunk.html"></span>
+                                }
+                            }
                         </p>
-
                         @if (
                             comment.isAdmin ||
                             comment.isMod ||

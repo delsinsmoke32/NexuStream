@@ -1,5 +1,5 @@
 import { Component, OnInit, signal, inject } from '@angular/core'
-import { Router } from '@angular/router'
+import { Router, RouterLink } from '@angular/router'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import {
@@ -15,7 +15,11 @@ import {
     IonToolbar,
     IonHeader,
     IonBackButton,
+    IonIcon
 } from '@ionic/angular/standalone'
+
+import { addIcons } from 'ionicons'
+import { arrowBackOutline } from 'ionicons/icons'
 
 import { BackendUrlPipe } from '../../pipes/backend-url-pipe'
 import { AdminService } from '@app/services/admin'
@@ -40,6 +44,8 @@ import { AdminUser, UpdateRolesPayload } from '../../models/admin'
         IonToolbar,
         IonHeader,
         IonBackButton,
+        RouterLink,
+        IonIcon
     ],
 })
 export class AdminPage implements OnInit {
@@ -52,6 +58,11 @@ export class AdminPage implements OnInit {
     currentPage = 1
     pageSize = 20
     currentSearchTerm = ''
+
+    constructor() {
+        // 🚀 4. Registra l'icona della freccia se non l'avevi già fatto
+        addIcons({ arrowBackOutline }); 
+    }
 
     ngOnInit() {
         this.loadUsers()

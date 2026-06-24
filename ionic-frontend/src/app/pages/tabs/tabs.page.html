@@ -19,29 +19,42 @@
 <ion-popover #profilePopover dismissOnSelect="true">
   <ng-template>
     <ion-list class="dark-popover">
-      <ion-item button routerLink="/settings">
+      
+      <ion-item button routerLink="/tabs/settings">
         <ion-icon color="primary" slot="start" name="settings-outline"></ion-icon> Impostazioni
       </ion-item>
       
-      @if (isAdmin()) {
-        <ion-item button routerLink="/admin">
-          <ion-icon color="primary" slot="start" name="shield-checkmark-outline"></ion-icon> Admin
-        </ion-item>
-      }
-      @if (isCat()) {
-        <ion-item button routerLink="/cataloguer">
-          <ion-icon color="primary" slot="start" name="library-outline"></ion-icon> Catalogatore
-        </ion-item>
-      }
-      @if (isMod()) {
-        <ion-item button routerLink="/mod">
-          <ion-icon color="primary" slot="start" name="eye-outline"></ion-icon> Moderazione
+      @if (isLoggedIn()) {
+        @if (isAdmin()) {
+          <ion-item button routerLink="/admin">
+            <ion-icon color="primary" slot="start" name="shield-checkmark-outline"></ion-icon> Admin
+          </ion-item>
+        }
+        @if (isCat()) {
+          <ion-item button routerLink="/cataloguer">
+            <ion-icon color="primary" slot="start" name="library-outline"></ion-icon> Catalogatore
+          </ion-item>
+        }
+        @if (isMod()) {
+          <ion-item button routerLink="/mod">
+            <ion-icon color="primary" slot="start" name="eye-outline"></ion-icon> Moderazione
+          </ion-item>
+        }
+
+        <ion-item button (click)="logout()">
+          <ion-icon color="primary" slot="start" name="log-out-outline"></ion-icon> Esci
         </ion-item>
       }
 
-      <ion-item button (click)="logout()">
-        <ion-icon color="primary" slot="start" name="log-out-outline"></ion-icon> Esci
-      </ion-item>
+      @if (!isLoggedIn()) {
+        <ion-item button routerLink="/login">
+          <ion-icon color="primary" slot="start" name="log-in-outline"></ion-icon> Accedi
+        </ion-item>
+        <ion-item button routerLink="/register">
+          <ion-icon color="primary" slot="start" name="person-add-outline"></ion-icon> Registrati
+        </ion-item>
+      }
+
     </ion-list>
   </ng-template>
 </ion-popover>

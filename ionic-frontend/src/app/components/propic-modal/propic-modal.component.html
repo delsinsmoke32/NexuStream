@@ -1,22 +1,27 @@
-<ion-header>
+<ion-header class="ion-no-border">
     <ion-toolbar color="dark">
-        <ion-title>Aggiungi avatar</ion-title>
+        <ion-title>Aggiungi Avatar</ion-title>
         <ion-buttons slot="end">
-            <ion-button (click)="dismiss()">Annulla</ion-button>
+            <ion-button color="medium" (click)="dismiss()">Annulla</ion-button>
         </ion-buttons>
     </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
     <form [formGroup]="propicForm" (ngSubmit)="uploadPicture()">
-        <ion-item fill="outline" mode="md">
-            <ion-label position="stacked">Bundle</ion-label>
+        
+        <h3 class="form-section-title">Dettagli Pacchetto</h3>
+        
+        <ion-item fill="outline" mode="md" lines="none" class="custom-input">
+            <ion-label position="stacked">Nome Bundle</ion-label>
             <ion-input
                 type="text"
                 formControlName="bundle"
-                placeholder="Inserisci bundle"
+                placeholder="Es. Halloween, Default, VIP..."
             ></ion-input>
         </ion-item>
+
+        <h3 class="form-section-title" style="margin-top: 24px;">Immagine Avatar</h3>
 
         <div class="upload-container">
             <input
@@ -27,56 +32,41 @@
                 style="display: none"
             />
 
-            <ion-button expand="block" fill="outline" (click)="triggerSelect()">
-                <ion-icon name="camera-outline" slot="start"></ion-icon>
-                Select Picture
-            </ion-button>
-
-            @if (imagePreview()) {
-                <div class="ion-text-center ion-padding-top">
-                    <ion-avatar
-                        style="margin: 0 auto; width: 120px; height: 120px"
-                    >
-                        <img [src]="imagePreview()" alt="Preview" />
-                    </ion-avatar>
-                </div>
-            }
+            <div class="upload-box" (click)="triggerSelect()" [class.has-image]="imagePreview()">
+                @if (imagePreview()) {
+                    <img [src]="imagePreview()" alt="Preview" class="preview-image" />
+                    <div class="overlay-change">
+                        <ion-icon name="image-outline"></ion-icon>
+                        <span>Cambia Immagine</span>
+                    </div>
+                } @else {
+                    <div class="empty-state-upload">
+                        <ion-icon name="cloud-upload-outline"></ion-icon>
+                        <span>Tocca per selezionare un'immagine</span>
+                        <small>Si consiglia un formato circolare se possibile</small>
+                    </div>
+                }
+            </div>
 
             @if (selectedFile(); as file) {
-                <ion-text color="medium" class="ion-text-center">
-                    <p style="margin: 15px 0">Selected: {{ file.name }}</p>
-                </ion-text>
+                <p class="file-name-text">
+                    File selezionato: <strong>{{ file.name }}</strong>
+                </p>
             }
 
             <ion-button
                 expand="block"
                 type="submit"
-                [disabled]="
-                    propicForm.invalid || !selectedFile() || isUploading()
-                "
+                class="submit-btn ion-margin-top"
+                [disabled]="propicForm.invalid || !selectedFile() || isUploading()"
             >
-                {{ isUploading() ? 'Uploading...' : 'Upload to Server' }}
+                @if (isUploading()) {
+                    <ion-spinner name="crescent"></ion-spinner>
+                    <span style="margin-left: 8px;">Caricamento...</span>
+                } @else {
+                    Salva nel Catalogo
+                }
             </ion-button>
         </div>
-
-        <!-- <ion-button
-            expand="block"
-            type="submit"
-            [disabled]="propicForm.invalid"
-            color="primary"
-            class="ion-margin-top"
-        >
-            <svg viewBox="0 0 512 512" class="btn-svg">
-                <path
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="32"
-                    d="M380.93 57.37A32 32 0 00358.3 48H92a44 44 0 00-44 44v328a44 44 0 0044 44h328a44 44 0 0044-44V153.7a32 32 0 00-9.37-22.63zM256 416a64 64 0 1164-64 64 64 0 01-64 64zm48-224H112a16 16 0 01-16-16v-64a16 16 0 0116-16h192a16 16 0 0116 16v64a16 16 0 01-16 16z"
-                />
-            </svg>
-            {{ isEditMode ? 'Aggiorna Dati' : 'Salva nel Catalogo' }}
-        </ion-button> -->
     </form>
 </ion-content>

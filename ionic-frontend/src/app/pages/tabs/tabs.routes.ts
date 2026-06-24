@@ -22,7 +22,7 @@ export const routes: Routes = [
         loadComponent: () => import('../favourites/favourites.page').then(m => m.FavouritesPage)
       },
       {
-        path: 'profile',
+        path: 'settings',
         // In futuro creerai una profile.page, ma per ora puoi rimandare a settings se vuoi
         loadComponent: () => import('../settings/settings.page').then(m => m.SettingsPage) 
       },

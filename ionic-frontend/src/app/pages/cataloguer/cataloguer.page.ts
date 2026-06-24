@@ -19,7 +19,15 @@ import {
     ToastController,
     InfiniteScrollCustomEvent,
     SearchbarCustomEvent,
+    IonSegment,
+    IonSegmentButton, 
+    IonLabel, 
+    IonIcon,
+    IonButton
 } from '@ionic/angular/standalone'
+import { trashOutline, addCircleOutline } from 'ionicons/icons';
+import { addIcons } from 'ionicons';
+import { BackendUrlPipe } from '@app/pipes/backend-url-pipe';
 
 // 🚀 SERVICE E MODELLI
 import { CataloguerService } from '../../services/cataloguer'
@@ -28,6 +36,7 @@ import {
     CataloguerShow,
     CataloguerSeason,
     CataloguerEpisode,
+    PropicGroup
 } from '../../models/cataloguer'
 
 import { CataloguerShowModalComponent } from '../../components/cataloguer-show-modal/cataloguer-show-modal.component'
@@ -52,27 +61,39 @@ import { PropicModalComponent } from '../../components/propic-modal/propic-modal
         IonSearchbar,
         IonInfiniteScroll,
         IonInfiniteScrollContent,
+        IonSegment, 
+        IonSegmentButton, 
+        IonLabel, 
+        IonIcon,
+        BackendUrlPipe,
+        IonButton
     ],
 })
 export class CataloguerPage implements OnInit {
-    private router = inject(Router)
-    private cataloguerService = inject(CataloguerService)
-    private authService = inject(AuthService)
-    private toastController = inject(ToastController)
-    private modalCtrl = inject(ModalController)
+    private router = inject(Router);
+    private cataloguerService = inject(CataloguerService);
+    private authService = inject(AuthService);
+    private toastController = inject(ToastController);
+    private modalCtrl = inject(ModalController);
 
-    currentLevel = signal<'shows' | 'seasons' | 'episodes'>('shows')
+    currentLevel = signal<'shows' | 'seasons' | 'episodes'>('shows');
+    activeTab = signal<'catalogo' | 'propics'>('catalogo');
+    groupedPropics = signal<PropicGroup[]>([]);
 
-    shows = signal<CataloguerShow[]>([])
-    seasons = signal<CataloguerSeason[]>([])
-    episodes = signal<CataloguerEpisode[]>([])
+    shows = signal<CataloguerShow[]>([]);
+    seasons = signal<CataloguerSeason[]>([]);
+    episodes = signal<CataloguerEpisode[]>([]);
 
-    selectedShowId = signal<number | null>(null)
-    selectedSeasonId = signal<number | null>(null)
+    selectedShowId = signal<number | null>(null);
+    selectedSeasonId = signal<number | null>(null);
 
-    currentPage = 1
-    pageSize = 20
-    currentSearchTerm = ''
+    currentPage = 1;
+    pageSize = 20;
+    currentSearchTerm = '';
+
+    constructor() {
+        addIcons({addCircleOutline, trashOutline});
+    }
 
     ngOnInit() {
         this.loadShows()
@@ -475,6 +496,65 @@ export class CataloguerPage implements OnInit {
         }
     }
 
+    // ==========================================
+    // LOGICA TAB E GESTIONE PROPIC (AVATAR)
+    // ==========================================
+
+    onTabChange(event: any) {
+        const selectedTab = event.detail.value;
+        this.activeTab.set(selectedTab);
+
+        // Se apriamo le propic per la prima volta (o se l'array è vuoto), le carichiamo
+        if (selectedTab === 'propics' && this.groupedPropics().length === 0) {
+            this.loadPropics();
+        }
+    }
+
+    async openPropicModal(prefillBundle: string = '') {
+        const modal = await this.modalCtrl.create({
+            component: PropicModalComponent,
+            componentProps: { 
+                level: this.currentLevel(), 
+                bundleName: prefillBundle // Passiamo il bundle
+            },
+        });
+        await modal.present();
+
+        // 🚀 Attendi la chiusura della modale
+        const { data } = await modal.onDidDismiss();
+        
+        // Se siamo nella tab delle propic, ricarichiamo la galleria per mostrare le novità
+        if (this.activeTab() === 'propics') {
+            this.loadPropics();
+        }
+    }
+
+
+    loadPropics() {
+        this.cataloguerService.getPropics().subscribe({
+            next: (res) => this.groupedPropics.set(res),
+            error: (err) => {
+                console.error("Errore caricamento propics:", err);
+                this.presentToast("Errore nel caricamento delle immagini.", "danger");
+            }
+        });
+    }
+
+    deletePropic(uri: string) {
+        if (!confirm("Sei sicuro di voler eliminare questa immagine? Verrà rimossa fisicamente dal server.")) return;
+
+        this.cataloguerService.deletePropic(uri).subscribe({
+            next: () => {
+                this.presentToast("Immagine eliminata con successo.", "success");
+                this.loadPropics(); // Ricarichiamo la griglia dopo l'eliminazione
+            },
+            error: (err) => {
+                console.error(err);
+                this.presentToast("Impossibile eliminare l'immagine.", "danger");
+            }
+        });
+    }
+
     private refreshCurrentLevel() {
         if (this.currentLevel() === 'shows') {
             this.currentPage = 1
@@ -570,14 +650,7 @@ export class CataloguerPage implements OnInit {
         })
     }
 
-    async openPropicModal() {
-        const modal = await this.modalCtrl.create({
-            component: PropicModalComponent,
-            componentProps: { level: this.currentLevel() },
-        })
-        await modal.present()
-    }
-
+    
     navigateBack() {
         if (this.currentLevel() === 'episodes') {
             this.currentLevel.set('seasons')

@@ -270,10 +270,11 @@ const deleteEpisode = async (episodeId) => {
 // ==========================================
 // BI_LOGICA PROPIC
 // ==========================================
+
 /**
  * Aggiunge un URI propic al DB.
  * @param {number} bundle 
- * @param {number} propicURI
+ * @param {string} propicURI
  * @returns {Promise<{id: number, changes: number}>}
  */
 const insertPropic = async (bundle, propicURI) => {
@@ -283,7 +284,7 @@ const insertPropic = async (bundle, propicURI) => {
 
 /**
  * Cancella un URI propic dal DB, prendendo come argomento l'URI.
- * @param {number} propicURI 
+ * @param {string} propicURI 
  * @returns {Promise<{id: number, changes: number}>}
  */
 const deletePropicByURI = async (propicURI) => {

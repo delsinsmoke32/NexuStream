@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 const cataloguerController = require('../controllers/cataloguerController');
 const episodeController = require('../controllers/episodeController');
+const propicController = require('../controllers/propicController');
+const multerMiddleware = require("../middleware/multerConfig");
 const isCataloguer = require("../middleware/isCataloguer");
 const { query, body, param } = require('express-validator');
 
@@ -560,8 +562,9 @@ router.get('/episodes/:id/times', [
 // ROTTE IMMAGINI PROFILO (PROPICS)
 // ==========================================
 
-const multerMiddleware = require("../middleware/multerConfig")
-router.post('/propic/add', [
+router.get('/propics', propicController.getPropics);
+
+router.post('/propics/add', [
     multerMiddleware.validateAvatar,
     body('bundle').isString().trim().notEmpty().withMessage("Il bundle della propic non è valido"),
 ], cataloguerController.addPropic);
@@ -591,11 +594,11 @@ router.post('/propic/add', [
  *         description: Aggiunta con successo
  */
 
-
+/*
 router.post('/propic', [
     body('propicURI').isString().trim().notEmpty().withMessage("L'URI della propic non è valido")
 ], cataloguerController.addPropic);
-
+*/
 
 /**
  * @swagger
@@ -623,7 +626,7 @@ router.post('/propic', [
  */
 
 
-router.delete('/propic', [
+router.delete('/propics', [
     body('propicURI').isString().trim().notEmpty().withMessage("L'URI della propic non è valido")
 ], cataloguerController.removePropic);
 

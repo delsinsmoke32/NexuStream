@@ -58,4 +58,8 @@ router.post('/change-password', auth, [
     body('newPassword').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("La password deve essere composta da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri.")
 ], userController.modifyPassword)
 
+router.post('/change-propic', auth, [
+    body('propicURI').isString().notEmpty().trim().withMessage("La nuova propic non deve essere vuota.")
+], userController.modifyPropic)
+
 module.exports = router;

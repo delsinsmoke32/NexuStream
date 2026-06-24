@@ -1,4 +1,5 @@
 const db = require("../db/db");
+const { check } = require("express-validator");
 
 /**
  * Recupera tutte le propic del db
@@ -13,6 +14,16 @@ const getAllPropics = async () => {
     return await db.allAsync(sql);
 }
 
+// TODO DOCS
+
+const checkPropic = async(propicURI) => {
+    const sql = `SELECT 1
+                 FROM Propics
+                 WHERE Propic = ?`
+    return await db.getAsync(sql, [propicURI])
+}
+
 module.exports = {
-    getAllPropics
+    getAllPropics,
+    checkPropic
 }

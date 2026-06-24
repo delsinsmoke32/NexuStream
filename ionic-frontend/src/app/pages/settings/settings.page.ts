@@ -43,6 +43,7 @@ import { HttpHeaders } from '@angular/common/http'
 import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
 import { AvatarPickerModalComponent } from '@app/components/avatar-picker-modal/avatar-picker-modal.component'
 import { ChangePasswordModalComponent } from '@app/components/change-password-modal/change-password-modal.component'
+import { Settings } from '@app/services/settings'
 
 @Component({
     selector: 'app-settings',
@@ -79,6 +80,7 @@ import { ChangePasswordModalComponent } from '@app/components/change-password-mo
 })
 export class SettingsPage implements OnInit {
     private http = inject(HttpClient)
+    private settingsService = inject(Settings)
 
     username = signal<string>('')
     isLoading = signal<boolean>(true)
@@ -92,10 +94,6 @@ export class SettingsPage implements OnInit {
     currentAvatar = signal<string>('')
 
     // Elenco degli avatar che l'utente può scegliere
-    availableAvatars = [
-        'assets/imgs/avatars/aot-eren.jpg',
-        'assets/imgs/avatars/tobi.jpg',
-    ]
     constructor(
         private router: Router,
         private alertController: AlertController,
@@ -211,9 +209,34 @@ export class SettingsPage implements OnInit {
         if (data && data.selectedAvatar) {
             this.currentAvatar.set(data.selectedAvatar)
             // this.registerForm.patchValue({ propic: this.selected() })
+            this.settingsService
+                .changePropic({ propicURI: data.selectedAvatar })
+                .subscribe({
+                    next: async () => {
+                        this.presentToast(
+                            'Propic aggiornata con successo!',
+                            'success'
+                        )
+                    },
+                    error: async (err) => {
+                        const errorMsg =
+                            err.error?.message ||
+                            "Errore durante l'aggiornamento."
+                        this.presentToast(errorMsg, 'danger')
+                    },
+                })
         }
     }
 
+    private async presentToast(message: string, color: string) {
+        const toast = await this.toastCtrl.create({
+            message,
+            duration: 3000,
+            color,
+            position: 'bottom',
+        })
+        await toast.present()
+    }
     // Funzioni click fittizie
     changePassword() {
         console.log('Cambia password...')

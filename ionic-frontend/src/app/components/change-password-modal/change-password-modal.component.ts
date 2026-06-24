@@ -21,6 +21,7 @@ import {
     IonInputPasswordToggle,
 } from '@ionic/angular/standalone'
 import { HttpClient } from '@angular/common/http'
+import { Settings } from '@app/services/settings'
 
 @Component({
     selector: 'app-change-password-modal',
@@ -45,6 +46,7 @@ export class ChangePasswordModalComponent implements OnInit {
     private loadingCtrl = inject(LoadingController)
     private toastCtrl = inject(ToastController)
     private http = inject(HttpClient)
+    private settingsService = inject(Settings)
 
     passwordForm!: FormGroup
 
@@ -148,8 +150,8 @@ export class ChangePasswordModalComponent implements OnInit {
 
         const { currentPassword, newPassword } = this.passwordForm.getRawValue()
 
-        this.http
-            .post('api/users/change-password', { currentPassword, newPassword })
+        this.settingsService
+            .changePassword({ currentPassword, newPassword })
             .subscribe({
                 next: async () => {
                     await loading.dismiss()

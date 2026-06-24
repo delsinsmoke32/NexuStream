@@ -8,11 +8,11 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-    @for (bundle of avatars(); track bundle.name) {
-        <div class="form-section-title">{{ bundle.name }}</div>
+    @for (bundle of avatars(); track bundle.bundle) {
+        <div class="form-section-title">{{ bundle.bundle }}</div>
 
         <div class="image-row">
-            @for (avatar of bundle.items; track avatar) {
+            @for (avatar of bundle.images; track avatar) {
                 <div
                     class="red-sphere"
                     (click)="select(avatar)"

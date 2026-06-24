@@ -104,10 +104,42 @@ const modifyPassword = async (req, res) => {
     }
 }
 
+const propicModel = require("../models/propicModel")
+
+const modifyPropic = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
+    
+    try {
+        // const { newPropic } = req.body;
+        const { propicURI } = req.body;
+        const userId = req.user.id; // Recuperato dal middleware di autenticazione
+
+        // 2. Cerca l'utente nel database
+        const user = await userModel.getUserPassword(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'Utente non trovato.' });
+        }
+        // check esistenza propic
+        // .....
+        await userModel.changePropic(userId, propicURI)
+
+        return res.status(200).json({ message: 'Propic aggiornata con successo.' });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Errore interno del server.' });
+    }
+}
+
 
 module.exports = {
     getMyProfile,
     getGuestLanguage,
     getFavorites,
-    modifyPassword
+    modifyPassword,
+    modifyPropic
 };

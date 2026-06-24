@@ -71,12 +71,12 @@
 
 <ion-tabs>
     <ion-header class="desktop-header ion-no-border">
-        <ion-toolbar color="dark">
+        <ion-toolbar color="dark" mode="md">
             <ion-title slot="start" class="brand-title" routerLink="/tabs/home">
                 NexuStream
             </ion-title>
 
-            <ion-buttons slot="end" class="nav-links-desktop">
+            <ion-buttons slot="end" class="nav-links-desktop" [class.profile-menu-open]="isPopoverOpen">
                 <a
                     class="nav-link"
                     routerLink="/tabs/home"
@@ -99,6 +99,7 @@
                 <ion-button
                     fill="clear"
                     class="profile-icon-btn"
+                    [class.active-profile]="isPopoverOpen"
                     (click)="openProfileMenu($event)"
                 >
                     <ion-icon
@@ -109,7 +110,7 @@
             </ion-buttons>
         </ion-toolbar>
     </ion-header>
-    <ion-tab-bar slot="bottom">
+    <ion-tab-bar slot="bottom" [class.profile-menu-open]="isPopoverOpen">
         <ion-tab-button tab="home">
             <ion-icon name="home-outline"></ion-icon>
             <ion-label>Home</ion-label>
@@ -125,7 +126,7 @@
             <ion-label>Preferiti</ion-label>
         </ion-tab-button>
 
-        <ion-tab-button (click)="openProfileMenu($event)">
+        <ion-tab-button (click)="openProfileMenu($event)" class="profile-btn">
             <ion-icon name="person-outline"></ion-icon>
             <ion-label>Profilo</ion-label>
         </ion-tab-button>

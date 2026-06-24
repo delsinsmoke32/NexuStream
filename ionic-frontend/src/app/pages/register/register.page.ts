@@ -77,7 +77,7 @@ export class RegisterPage implements OnInit {
         }),
         password: new FormControl('', {
             nonNullable: true,
-            validators: [Validators.required, Validators.minLength(8)],
+            validators: [Validators.required, Validators.minLength(8), Validators.maxLength(24)],
         }),
         conf_password: new FormControl('', {
             nonNullable: true,

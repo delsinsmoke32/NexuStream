@@ -83,7 +83,7 @@ export class AuthService {
                         });
                         await toast.present();
 
-                        this.router.navigate(['/login']);
+                        window.location.href = '/login'; //per ripulire i dati delle pagine (ad es., refreshare definitvamente i continua a guardare)
                     }
                 }
             ]

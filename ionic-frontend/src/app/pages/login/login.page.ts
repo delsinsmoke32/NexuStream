@@ -100,6 +100,12 @@ export class LoginPage implements OnInit {
                 const rolesArray = this.buildRolesArray(userData)
                 localStorage.setItem('user_roles', JSON.stringify(rolesArray))
 
+                if (res.user && res.user.REF_PropicURI) {
+                    localStorage.setItem('propic', res.user.REF_PropicURI);
+                } else {
+                    localStorage.removeItem('propic'); // Pulisce se non ce l'ha
+                }
+
                 if (rolesArray.includes('admin')) {
                     this.router.navigate(['/admin'])
                 } else {

@@ -28,11 +28,17 @@ export const routes: Routes = [
             },
             {
                 path: 'settings',
-                // In futuro creerai una profile.page, ma per ora puoi rimandare a settings se vuoi
                 loadComponent: () =>
                     import('../settings/settings.page').then(
                         (m) => m.SettingsPage
                     ),
+            },
+            {
+                path: 'profile',
+                loadComponent: () =>
+                    import('../home/home.page').then(
+                        (m) => m.HomePage
+                    )
             },
             {
                 path: '',

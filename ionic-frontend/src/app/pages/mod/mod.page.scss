@@ -33,6 +33,18 @@
     &:active {
       transform: scale(0.97);
     }
+
+    @media (max-width: 576px) {
+      padding: 8px; /* Riduce i margini per farlo diventare quadrato */
+      font-size: 0; /* Nasconde il testo senza toccare l'HTML */
+      gap: 0;
+      margin-right: 4px;
+
+      .svg-icon {
+        width: 22px; /* Ingrandiamo un po' l'icona per compensare l'assenza del testo */
+        height: 22px;
+      }
+    }
   }
 
   .tab-segment-bar {

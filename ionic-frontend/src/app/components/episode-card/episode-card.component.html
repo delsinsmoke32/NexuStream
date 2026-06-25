@@ -9,16 +9,16 @@
             [alt]="episode.Title"
         />
 
-        @if (episode.Progress > 0 && episode.Progress < 100) {
+        @if (episode?.progress >= 100 || episode?.isCompleted === 1) {
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill completed" style="width: 100%"></div>
+            </div>
+        } @else if (episode?.progress > 0) {
             <div class="progress-bar-bg">
                 <div
                     class="progress-bar-fill"
-                    [style.width]="episode.Progress + '%'"
+                    [style.width]="episode!.progress + '%'"
                 ></div>
-            </div>
-        } @else if (episode.Progress === 100) {
-            <div class="progress-bar-bg">
-                <div class="progress-bar-fill completed"></div>
             </div>
         }
 
@@ -26,7 +26,7 @@
             <ion-icon name="play-circle"></ion-icon>
         </div>
 
-        <span class="duration-badge">{{ episode.Duration / 60 }} min</span>
+        <span class="duration-badge">{{ episode.Duration / 60 | number:'1.0-0' }} min</span>
     </div>
 
   <div class="ep-info">

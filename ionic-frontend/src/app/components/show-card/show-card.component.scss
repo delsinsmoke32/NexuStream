@@ -99,12 +99,39 @@
     }
   }
 
+  /* 🚀 STILE PER TESTI DEL CONTINUA A GUARDARE */
+  .landscape-meta {
+    padding: 10px 12px 0 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+
+    .meta-show-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #ffffff;
+      white-space: nowrap;      /* Impedisce al testo di andare a capo */
+      overflow: hidden;         /* Nasconde il testo che sborda */
+      text-overflow: ellipsis;  /* Aggiunge i 3 puntini finali */
+    }
+
+    .meta-episode-info {
+      font-size: 0.8rem;
+      color: #aaaaaa;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-bottom: 5px;
+    }
+  }
+
   /* RIGA INFORMAZIONI IN BASSO */
   .card-info-bottom {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding-top: 8px;
+    padding-top: 4px;
     padding-bottom: 8px;
     width: 100%;
     cursor: pointer;

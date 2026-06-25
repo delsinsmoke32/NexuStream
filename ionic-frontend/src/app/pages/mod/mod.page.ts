@@ -21,18 +21,23 @@ import {
     ModalController,
     ToastController,
     ActionSheetController,
-    IonBackButton
+    IonBackButton,
+    IonButton
 } from '@ionic/angular/standalone'
 
 import { addIcons } from 'ionicons';
-import { addCircleOutline, optionsOutline, trashOutline, shieldCheckmarkOutline, timeOutline, peopleOutline } from 'ionicons/icons';
+import { addCircleOutline, optionsOutline, trashOutline, shieldCheckmarkOutline, timeOutline, peopleOutline, closeCircleOutline, eyeOutline, eyeOffOutline, checkmarkCircleOutline } from 'ionicons/icons';
 
-import { DiscussionModalComponent } from '../../components/discussion-modal/discussion-modal.component';
-import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
+import { BackendUrlPipe } from '@app/pipes/backend-url-pipe';
 
-// 🚀 IMPORT SERVIZIO E MODELLI
-import { ModService } from '../../services/mod';
-import { ModDiscussion, ModUser, ModComment } from '../../models/mod';
+// IMPORT SERVIZIO E MODELLI
+import { ModService } from '@app/services/mod';
+import { ModDiscussion, ModUser, ModComment } from '@app/models/mod';
+
+// IMPORT COMPONENTI
+import { DiscussionModalComponent } from '@app/components/discussion-modal/discussion-modal.component';
+import { ModDiscussionCardComponent } from '@app/components/mod-discussion-card/mod-discussion-card.component';
+import { ModUserCommentComponent } from '@app/components/mod-user-comment/mod-user-comment.component';
 
 @Component({
     selector: 'app-mod',
@@ -58,12 +63,14 @@ import { ModDiscussion, ModUser, ModComment } from '../../models/mod';
         IonAccordion,
         IonSearchbar,
         IonSpinner,
-        IonBackButton
-    ],
-    providers: [DiscussionModalComponent],
+        IonBackButton,
+        IonButton,
+        ModDiscussionCardComponent,
+        ModUserCommentComponent
+    ]
 })
 export class ModPage implements OnInit {
-    private modService = inject(ModService); // 🚀 Usiamo il nuovo servizio
+    private modService = inject(ModService);
     private modalCtrl = inject(ModalController)
     private toastCtrl = inject(ToastController)
     private actionSheetCtrl = inject(ActionSheetController)
@@ -80,7 +87,7 @@ export class ModPage implements OnInit {
     userLimit = signal<number>(50)
 
     constructor(){
-        addIcons({addCircleOutline, optionsOutline, trashOutline, shieldCheckmarkOutline, timeOutline, peopleOutline});
+        addIcons({addCircleOutline, optionsOutline, trashOutline, shieldCheckmarkOutline, timeOutline, peopleOutline, closeCircleOutline, eyeOutline, eyeOffOutline, checkmarkCircleOutline});
     }
 
     ngOnInit() {
@@ -197,6 +204,28 @@ export class ModPage implements OnInit {
         }
     }
 
+    toggleApprove(comment: ModComment) {
+        const newStatus = comment.isApproved ? 0 : 1;
+        this.modService.moderateCommentApprove(comment.REF_UserID, comment.CommentID, newStatus).subscribe({
+            next: () => {
+                comment.isApproved = newStatus;
+                this.showToast(newStatus ? 'Commento approvato' : 'Approvazione rimossa', 'success');
+            },
+            error: () => this.showToast('Errore durante la modifica dello stato', 'danger')
+        });
+    }
+
+    toggleHide(comment: ModComment) {
+        const newStatus = comment.isHidden ? 0 : 1;
+        this.modService.moderateCommentHide(comment.REF_UserID, comment.CommentID, newStatus).subscribe({
+            next: () => {
+                comment.isHidden = newStatus;
+                this.showToast(newStatus ? 'Commento nascosto' : 'Commento reso visibile', 'success');
+            },
+            error: () => this.showToast('Errore durante la modifica dello stato', 'danger')
+        });
+    }
+
     async openBanActionSheet(user: ModUser) {
         const actionSheet = await this.actionSheetCtrl.create({
             header: `Restringi permessi di commento per: ${user.Username}`,
@@ -259,17 +288,6 @@ export class ModPage implements OnInit {
                 }
             },
         })
-    }
-
-    parseLang(jsonStr?: string, lang: string = 'it'): string {
-        if (!jsonStr) return 'Titolo non disponibile'; // Controllo di sicurezza
-        
-        try {
-            const obj = JSON.parse(jsonStr);
-            return obj[lang] || obj['en'] || 'Titolo non disponibile';
-        } catch {
-            return jsonStr;
-        }
     }
 
     private async showToast(message: string, color: 'success' | 'danger') {

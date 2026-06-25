@@ -68,6 +68,14 @@ export class ModService {
         });
     }
 
+    moderateCommentApprove(userId: number, commentId: number, status: number) {
+        return this.http.patch(`${this.baseUrl}/users/${userId}/comments/${commentId}/approve`, { isApproved: status });
+    }
+
+    moderateCommentHide(userId: number, commentId: number, status: number) {
+        return this.http.patch(`${this.baseUrl}/users/${userId}/comments/${commentId}/hide`, { isHidden: status });
+    }
+
     banUser(userId: number, durationDays: number): Observable<any> {
         const payload: BanPayload = { targetUserId: userId, durationDays };
         return this.http.post(`${this.baseUrl}/users/${userId}/ban`, payload, {

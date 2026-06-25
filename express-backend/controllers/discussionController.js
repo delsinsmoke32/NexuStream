@@ -4,6 +4,7 @@ const { validationResult } = require('express-validator');
 const getDiscussions = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()){
+        console.error(errors.array());
         return res.status(400).json({ errors: errors.array() });
     }
 
@@ -21,6 +22,7 @@ const getDiscussions = async (req, res) => {
 const getDiscussionById = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()){
+        console.error(errors.array());
         return res.status(400).json({ errors: errors.array() });
     }
 

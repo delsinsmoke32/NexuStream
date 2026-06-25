@@ -62,4 +62,10 @@ router.post('/change-propic', auth, [
     body('propicURI').isString().notEmpty().trim().withMessage("La nuova propic non deve essere vuota.")
 ], userController.modifyPropic)
 
+router.patch('/preferences', auth, [
+    body('appLanguageId').isString().notEmpty().withMessage("ID lingua app non valido"),
+    body('textLanguageId').isString().notEmpty().withMessage("ID lingua testo non valido"),
+    body('audioLanguageId').optional().isString().withMessage("ID lingua audio non valido"),
+], userController.changeLanguages)
+
 module.exports = router;

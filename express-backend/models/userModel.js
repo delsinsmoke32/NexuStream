@@ -146,6 +146,19 @@ const changePropic = async (userId, propicURI) => {
     return await db.runAsync(sql, [propicURI, userId]);
 }
 
+
+const changeLanguages = async (userId, appLanguageId, textLanguageId, audioLanguageId = "") => {
+    // Se audioLanguageId è vuoto, aggiorniamo solo app e text
+    if (audioLanguageId === "") {
+        const sql = `UPDATE Users SET REF_App_Language = ?, REF_Text_Language = ? WHERE UserID = ?`;
+        return await db.runAsync(sql, [appLanguageId, textLanguageId, userId]);
+    } else {
+        // Aggiorniamo tutti e tre
+        const sql = `UPDATE Users SET REF_App_Language = ?, REF_Text_Language = ?, REF_Audio_Language = ? WHERE UserID = ?`;
+        return await db.runAsync(sql, [appLanguageId, textLanguageId, audioLanguageId, userId]);
+    }
+}
+
 module.exports = {
     getUserByEmail,
     createUser,
@@ -156,5 +169,6 @@ module.exports = {
     deleteResetToken,
     getUserFavorites,
     getUserPassword,
-    changePropic
+    changePropic,
+    changeLanguages
 };

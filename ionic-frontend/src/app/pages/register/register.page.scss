@@ -5,6 +5,44 @@
   --input-placeholder: #b3b3b3;
 }
 
+// Inserisci questo in cima o dove preferisci nel file SCSS
+ion-toolbar {
+  --padding-start: 16px;
+  --padding-end: 16px;
+
+  @media (max-width: 576px) {
+    --padding-start: 10px;
+    --padding-end: 10px;
+  }
+}
+
+.return-home-container {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  color: var(--ion-color-medium, #888888);
+  white-space: nowrap;
+
+  .full-text {
+    margin-right: 4px;
+  }
+
+  .home-link {
+    color: var(--ion-color-primary, #b22222);
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+
+    &:hover { opacity: 0.8; }
+  }
+
+  @media (max-width: 576px) {
+    font-size: 0.85rem;
+    .full-text { display: none; }
+    .home-link::before { content: '← '; font-weight: bold; }
+  }
+}
+
 .login-content {
   --background: var(--ion-color-secondary);
 }
@@ -159,3 +197,5 @@
     font-weight: 500;
   }
 }
+
+

@@ -1,4 +1,5 @@
 const modModel = require('../models/modModel');
+const commentModel = require('../models/commentModel');
 const { validationResult } = require('express-validator');
 
 //-----------------------
@@ -134,6 +135,46 @@ const getUserComments = async (req, res) => {
     }
 }
 
+// Non vengono usati direttamente i controller del comment controller per hide e approve perchè
+// richiedono per via di express validator anche gli id di show, season ed episode,
+// nonchè di discussion. Visto che sono funzioni corte, vengono riportate qui
+// per consistency generale, ma i model vengono riutilizzati visto che sono
+// compatibili con quello che si deve fare.
+
+const hideComment = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() })
+    }
+    const { commentId } = req.params;
+    const { isHidden } = req.body;
+
+    try {
+        await commentModel.updateHiddenStatus(commentId, isHidden);
+        return res.json({ message: `Commento ${isHidden ? 'nascosto' : 'mostrato'} con successo.` });
+    } catch (err) {
+        return res.status(500).json({ message: err instanceof Error ? err.message : "Errore interno del server." });
+    }
+}
+
+const approveComment = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() })
+    }
+    const { commentId } = req.params;
+    const { isApproved } = req.body;
+
+    try {
+        await commentModel.updateApprovalStatus(commentId, isApproved);
+        return res.json({ message: `Commento ${isApproved ? 'approvato' : 'non approvato'} con successo.` });
+    } catch (err) {
+        return res.status(500).json({ message: err instanceof Error ? err.message : "Errore interno del server." });
+    }
+}
+
 //----------------
 // GESTIONE BAN
 //----------------
@@ -245,6 +286,8 @@ module.exports = {
     deleteDiscussion,
     getUsersList,
     getUserComments,
+    hideComment,
+    approveComment,
     handleUserBan,
     handleUserUnban
 };

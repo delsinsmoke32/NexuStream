@@ -160,7 +160,7 @@ const getTopStreamed = async (applang = 'it') => {
 const getContinueWatching = async (userId, applang = 'it') => {
     const sql = `
         SELECT 
-            sh.ShowID, sh.ThumbnailURI, sh.BannerURI,
+            sh.ShowID, sh.ThumbnailURI, sh.BannerURI, e.ThumbnailURI AS EpisodeThumbnailURI, 
             s.SeasonID,
             COALESCE(sh.Title->>?, sh.Title->>'it') AS ShowTitle,
             e.EpisodeID, 

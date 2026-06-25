@@ -43,7 +43,7 @@ const processVideoHLS = (inputFilePath, episodeId) => {
                 '-hls_playlist_type', 'vod', // Video On Demand (Playlist statica)
                 '-hls_segment_type', 'fmp4', // Usa fMP4 invece del vecchio formato .ts
                 '-hls_segment_filename', path.join(videoOutputDir, 'segment_%03d.m4s'), // Nomi dei segmenti
-                '-hls_fmp4_init_filename', 'init_v.mp4', // Il file di inizializzazione
+                '-hls_fmp4_init_filename', path.join(videoOutputDir, 'init_v.mp4'), // Il file di inizializzazione
                 '-hls_flags', 'independent_segments',
                 '-max_muxing_queue_size', '1024'
             ])

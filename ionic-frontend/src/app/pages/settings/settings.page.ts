@@ -114,7 +114,7 @@ export class SettingsPage implements OnInit {
     // Oggetto per mappare le preferenze dell'utente
     userPreferences = {
         appLanguage: 'it',
-        defaultAudio: 'ja',
+        defaultAudio: 'jp',
         defaultSubtitles: 'it',
     }
 

@@ -165,7 +165,7 @@ const setTimes = async (req, res) => {
 // ================================================================================================
 
 
-const stream = async (req, res) => {
+const stream2 = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()){
         return res.status(400).json({ errors: errors.array() });
@@ -205,7 +205,7 @@ const stream = async (req, res) => {
 };
 
 
-/*
+
 const stream = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
@@ -215,7 +215,7 @@ const stream = async (req, res) => {
     const port = process.env.PORT || 3000;
     const baseUri = `http://${host}:${port}/static/videos/${episodeId}/`;
 
-    const langNames = { 'it': 'Italiano', 'en': 'English', 'ja': 'Giapponese', 'es': 'Español' };
+    const langNames = { 'it': 'Italiano', 'en': 'English', 'jp': '日本語'};
 
     try {
         // AGGIUNTO #EXT-X-INDEPENDENT-SEGMENTS per forzare l'avvio immediato senza blocchi sul timestamp 0
@@ -267,7 +267,6 @@ const stream = async (req, res) => {
         return res.status(500).json({ error: "Errore durante la generazione dello stream" });
     }
 };
-*/
 
 
 module.exports = {

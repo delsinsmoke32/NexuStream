@@ -8,7 +8,7 @@ const { body, param } = require('express-validator');
 // SWAGGER TODO
 
 router.get('/getAllBundled', authOptional, [
-], propicController.getBundledPropics);
+], propicController.getPropics);
 
 // Sotto-rotta per agganciare le stagioni correlati
 

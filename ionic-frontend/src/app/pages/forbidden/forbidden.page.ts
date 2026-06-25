@@ -24,6 +24,6 @@ export class ForbiddenPage implements OnInit {
 
     goToHome() {
         console.log('Ritorno alla home avviato...')
-        this.router.navigate(['/home'])
+        this.router.navigate(['/tabs/home'])
     }
 }

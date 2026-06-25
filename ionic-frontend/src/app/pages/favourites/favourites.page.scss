@@ -10,11 +10,11 @@ ion-toolbar {
   --border-width: 0;
   --color: var(--ion-text-color, #ffffff);
   
-  /* Effetto vetro sfocato come nella Home e Ricerca */
+  /* Effetto vetro sfocato */
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   
-  /* 🚀 Il separatore richiesto: una riga sottilissima ed elegante */
+  /* Linea di separazione elegante */
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -29,20 +29,20 @@ ion-toolbar {
 }
 
 .favorites-container {
-  padding-bottom: 60px; /* Spazio in basso come nella ricerca */
+  padding-bottom: 60px;
 }
 
 .results-count {
   color: #888888;
   font-size: 0.9rem;
-  margin: 16px 16px 4px 16px; /* Allineato col padding della griglia */
+  margin: 16px 16px 4px 16px;
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: 600;
 }
 
 /* ===================================
-   GRIGLIA (Stessa spaziatura della Ricerca)
+   GRIGLIA (Coerente con Search)
    =================================== */
 .favorites-grid {
   display: grid;
@@ -50,17 +50,13 @@ ion-toolbar {
   
   grid-template-columns: repeat(auto-fill, 130px);
   gap: 10px; 
-  
-  /* Sposta tutto verso il bordo sinistro invece di centrare */
   justify-content: flex-start; 
-  
-  /* Riduciamo il padding (16px sopra/sotto, 8px ai lati) per farle stare più larghe */
   padding: 16px 8px;
 
   @media (min-width: 768px) {
     grid-template-columns: repeat(auto-fill, 160px);
     gap: 16px;
-    padding: 16px 24px; /* Su tablet/desktop lasciamo più margine ai lati */
+    padding: 16px 24px;
   }
 }
 
@@ -72,7 +68,7 @@ ion-toolbar {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 70vh; /* Centrato a schermo */
+  height: 70vh; 
   text-align: center;
   padding: 20px;
 
@@ -82,7 +78,7 @@ ion-toolbar {
     ion-icon {
       font-size: 4.5rem;
       color: var(--ion-color-primary, #b22222);
-      opacity: 0.8; /* Coerente con l'icona no-results della ricerca */
+      opacity: 0.8;
     }
   }
 
@@ -106,28 +102,5 @@ ion-toolbar {
     max-width: 250px; 
     font-weight: 700; 
     --border-radius: 6px; 
-  }
-}
-
-/* ===================================
-   POPOVER
-   =================================== */
-.dark-popover {
-  background: var(--ion-background-color);
-  
-  ion-item {
-    --background: var(--ion-background-color);
-    --color: var(--ion-color-primary, #b22222); 
-    --border-color: var(--ion-color-secondary);
-    font-size: 0.9rem;
-    font-weight: 500;
-    transition: opacity 0.2s ease;
-
-    &:hover { opacity: 0.8; }
-  }
-
-  .logout-item {
-    font-weight: 800;
-    letter-spacing: 0.5px;
   }
 }

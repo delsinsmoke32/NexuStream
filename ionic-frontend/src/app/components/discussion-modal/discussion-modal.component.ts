@@ -7,6 +7,12 @@ import {
   IonSelectOption, IonToggle, IonIcon, ModalController 
 } from '@ionic/angular/standalone';
 
+import { addIcons } from 'ionicons';
+import { saveOutline } from 'ionicons/icons';
+
+// 🚀 IMPORT DEL MODELLO
+import { DiscussionPayload, ModDiscussion } from '../../models/mod';
+
 @Component({
   selector: 'app-discussion-modal',
   templateUrl: './discussion-modal.component.html',
@@ -19,8 +25,10 @@ import {
   ]
 })
 export class DiscussionModalComponent implements OnInit {
-  @Input() discussion: any; 
-  @Input() episodeId!: string | number;
+  @Input() discussion?: ModDiscussion; 
+  @Input() episodeId?: string | number;
+
+  hasProvidedEpisodeId = false;
   
   private fb = inject(FormBuilder);
   private modalCtrl = inject(ModalController);
@@ -28,24 +36,29 @@ export class DiscussionModalComponent implements OnInit {
   discussionForm!: FormGroup;
   isEditMode = false;
 
+  constructor() {
+    addIcons({saveOutline});
+  }
+
   ngOnInit() {
     this.isEditMode = !!this.discussion;
 
+    this.hasProvidedEpisodeId = !!this.episodeId || !!this.discussion;
+
     this.discussionForm = this.fb.group({
-      // Se c'è una discussione usiamo il suo ID, altrimenti l'episodeId passato, altrimenti stringa vuota
       REF_EpisodeID: [
-        this.discussion?.['REF EpisodeID'] || this.discussion?.REF_EpisodeID || this.episodeId || '', 
+        this.discussion?.['REF EpisodeID'] || this.discussion?.['REF_EpisodeID'] || this.episodeId || '', 
         this.isEditMode ? [] : [Validators.required, Validators.min(1)]
       ],
       type: [
-        this.discussion?.Type || this.discussion?.type || 'standard', 
+        this.discussion?.Type || this.discussion?.['type'] || 'standard', 
         this.isEditMode ? [] : [Validators.required]
       ],
       closeDate: [
-        this.discussion?.CloseDate || this.discussion?.closeDate || '', 
+        this.discussion?.CloseDate || this.discussion?.['closeDate'] || '', 
         [Validators.required, Validators.pattern(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/)]
       ],
-      forceClosed: [this.discussion?.ForceClosed === 1 || this.discussion?.forceClosed === 1]
+      forceClosed: [this.discussion?.ForceClosed === 1 || this.discussion?.['forceClosed'] === 1]
     });
   }
 
@@ -56,34 +69,28 @@ export class DiscussionModalComponent implements OnInit {
   save() {
     if (this.discussionForm.invalid) return;
 
-    // 🚀 FIX: getRawValue() assicura che venga catturato anche l'ID in sola lettura!
     const formRaw = this.discussionForm.getRawValue(); 
-    let payload: any;
+    let payload: DiscussionPayload; // 🚀 Tipizziamo il payload
 
     if (this.isEditMode) {
-      // Modifica
       payload = {
         closeDate: formRaw.closeDate, 
         forceClosed: formRaw.forceClosed ? 1 : 0,
         type: formRaw.type 
       };
     } else {
-      // 🚀 SICUREZZA ANTI-CRASH: Assicuriamoci che non sia NaN
       const epId = parseInt(formRaw.REF_EpisodeID, 10);
       if (isNaN(epId)) {
-         console.error("ERRORE: ID Episodio non ricevuto. Controlla il passaggio dati da episode.page.ts!");
-         return; // Blocchiamo la chiamata inutile al backend
+         console.error("ERRORE: ID Episodio non ricevuto.");
+         return; 
       }
 
-      // Creazione
       payload = {
         REF_EpisodeID: epId, 
         closeDate: formRaw.closeDate, 
         type: formRaw.type 
       };
     }
-
-    console.log("🚀 PAYLOAD INVIATO AL BACKEND:", payload);
 
     this.dismiss({ 
       payload, 

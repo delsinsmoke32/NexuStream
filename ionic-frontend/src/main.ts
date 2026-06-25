@@ -13,8 +13,6 @@ import {
     isPlatform,
 } from '@ionic/angular/standalone'
 
-
-
 import { routes } from './app/app.routes'
 import { AppComponent } from './app/app.component'
 import {
@@ -24,7 +22,6 @@ import {
 } from '@angular/common/http'
 import { httpInterceptor } from '@app/http.interceptor'
 
-
 bootstrapApplication(AppComponent, {
     providers: [
         { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
@@ -32,6 +29,7 @@ bootstrapApplication(AppComponent, {
             // Disattiva lo spostamento se l'app gira su desktop
             scrollPadding: !isPlatform('desktop'),
             scrollAssist: !isPlatform('desktop'),
+            innerHTMLTemplatesEnabled: true,
         }),
         provideRouter(routes, withPreloading(PreloadAllModules)),
         provideHttpClient(withInterceptors([httpInterceptor]), withFetch()),

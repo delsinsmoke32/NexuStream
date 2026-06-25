@@ -1,7 +1,15 @@
 <ion-header class="ion-no-border">
     <ion-toolbar color="dark" class="main-header">
+        <ion-buttons slot="start">
+            <ion-button routerLink="/tabs/home" routerDirection="back">
+                <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+                Home
+            </ion-button>
+        </ion-buttons>
+        
         <ion-title>Gestione Utenti & Ruoli</ion-title>
-        <ion-buttons slot="end">
+
+        <!-- <ion-buttons slot="end">
             <button
                 class="header-action-btn logout-btn"
                 (click)="logout()"
@@ -18,7 +26,7 @@
                     />
                 </svg>
             </button>
-        </ion-buttons>
+        </ion-buttons> -->
     </ion-toolbar>
 
     <ion-toolbar color="dark" class="search-bar-container">

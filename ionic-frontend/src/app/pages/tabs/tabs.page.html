@@ -1,0 +1,134 @@
+<ion-popover #profilePopover dismissOnSelect="true">
+    <ng-template>
+        <ion-list class="dark-popover">
+            <ion-item button routerLink="/tabs/settings">
+                <ion-icon
+                    color="primary"
+                    slot="start"
+                    name="settings-outline"
+                ></ion-icon>
+                Impostazioni
+            </ion-item>
+
+            @if (isLoggedIn()) { @if (isAdmin()) {
+            <ion-item button routerLink="/admin">
+                <ion-icon
+                    color="primary"
+                    slot="start"
+                    name="shield-checkmark-outline"
+                ></ion-icon>
+                Admin
+            </ion-item>
+            } @if (isCat()) {
+            <ion-item button routerLink="/cataloguer">
+                <ion-icon
+                    color="primary"
+                    slot="start"
+                    name="library-outline"
+                ></ion-icon>
+                Catalogatore
+            </ion-item>
+            } @if (isMod()) {
+            <ion-item button routerLink="/mod">
+                <ion-icon
+                    color="primary"
+                    slot="start"
+                    name="eye-outline"
+                ></ion-icon>
+                Moderazione
+            </ion-item>
+            }
+
+            <ion-item button (click)="logout()">
+                <ion-icon
+                    color="primary"
+                    slot="start"
+                    name="log-out-outline"
+                ></ion-icon>
+                Esci
+            </ion-item>
+            } @if (!isLoggedIn()) {
+            <ion-item button routerLink="/login">
+                <ion-icon
+                    color="primary"
+                    slot="start"
+                    name="log-in-outline"
+                ></ion-icon>
+                Accedi
+            </ion-item>
+            <ion-item button routerLink="/register">
+                <ion-icon
+                    color="primary"
+                    slot="start"
+                    name="person-add-outline"
+                ></ion-icon>
+                Registrati
+            </ion-item>
+            }
+        </ion-list>
+    </ng-template>
+</ion-popover>
+
+<ion-tabs>
+    <ion-header class="desktop-header ion-no-border">
+        <ion-toolbar color="dark" mode="md">
+            <ion-title slot="start" class="brand-title" routerLink="/tabs/home">
+                NexuStream
+            </ion-title>
+
+            <ion-buttons slot="end" class="nav-links-desktop" [class.profile-menu-open]="isPopoverOpen">
+                <a
+                    class="nav-link"
+                    routerLink="/tabs/home"
+                    routerLinkActive="active-tab"
+                    >Home</a
+                >
+                <a
+                    class="nav-link"
+                    routerLink="/tabs/search"
+                    routerLinkActive="active-tab"
+                    >Cerca</a
+                >
+                <a
+                    class="nav-link"
+                    routerLink="/tabs/favourites"
+                    routerLinkActive="active-tab"
+                    >Preferiti</a
+                >
+
+                <ion-button
+                    fill="clear"
+                    class="profile-icon-btn"
+                    [class.active-profile]="isPopoverOpen"
+                    (click)="openProfileMenu($event)"
+                >
+                    <ion-icon
+                        slot="icon-only"
+                        name="person-circle-outline"
+                    ></ion-icon>
+                </ion-button>
+            </ion-buttons>
+        </ion-toolbar>
+    </ion-header>
+    <ion-tab-bar slot="bottom" [class.profile-menu-open]="isPopoverOpen">
+        <ion-tab-button tab="home">
+            <ion-icon name="home-outline"></ion-icon>
+            <ion-label>Home</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button tab="search">
+            <ion-icon name="search-outline"></ion-icon>
+            <ion-label>Cerca</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button tab="favourites">
+            <ion-icon name="heart-outline"></ion-icon>
+            <ion-label>Preferiti</ion-label>
+        </ion-tab-button>
+
+        <ion-tab-button (click)="openProfileMenu($event)" class="profile-btn">
+            <ion-icon name="person-outline"></ion-icon>
+            <ion-label>Profilo</ion-label>
+        </ion-tab-button>
+    </ion-tab-bar>
+</ion-tabs>

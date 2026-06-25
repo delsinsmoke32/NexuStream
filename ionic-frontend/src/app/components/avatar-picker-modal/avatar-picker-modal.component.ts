@@ -27,18 +27,14 @@ import {
     IonButtons,
     IonButton,
     IonContent,
-    IonItem,
-    IonLabel,
-    IonInput,
     ModalController,
-    IonText,
-    IonIcon,
-    IonAvatar,
 } from '@ionic/angular/standalone'
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { addIcons } from '@lib/ionicons'
 import { cameraOutline } from '@lib/ionicons/icons'
 import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
+import { AvatarPicker } from '@app/services/avatar-picker'
+import { PropicGroup } from '@app/models/cataloguer'
 
 @Component({
     selector: 'app-avatar-picker-modal',
@@ -54,39 +50,24 @@ import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
         IonButtons,
         IonButton,
         IonContent,
-        IonItem,
-        IonLabel,
-        IonInput,
-        IonText,
-        IonIcon,
-        IonAvatar,
         BackendUrlPipe,
     ],
 })
 export class AvatarPickerModalComponent implements OnInit {
     // selectedImg = signal<string>('')
-
-    avatars = signal<any>([])
+    avatarService = inject(AvatarPicker)
+    avatars = signal<PropicGroup[]>([])
     baseUrl = 'api'
+
     loadPropics() {
-        const url = `${this.baseUrl}/propics/getAllBundled`
-        this.http
-            .get<
-                Record<string, string[]>
-            >(url, { headers: this.getAuthHeaders() })
-            .subscribe({
-                next: (res) => {
-                    console.log(res)
-                    this.avatars.set(
-                        Object.keys(res).map((key) => ({
-                            name: key,
-                            items: res[key],
-                        }))
-                    )
-                    // ;(this.avatars.set(res), console.log(res))
-                },
-                error: (err) => console.error(err),
-            })
+        this.avatarService.getPropics().subscribe({
+            next: (res) => {
+                console.log(res)
+                this.avatars.set(res)
+                // ;(this.avatars.set(res), console.log(res))
+            },
+            error: (err) => console.error(err),
+        })
     }
 
     http = inject(HttpClient)

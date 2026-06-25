@@ -3,12 +3,11 @@ const db = require("../db/db");
 /**
  * Ottiene la lista dei commenti per una determinata discussione
  * @param {number} discussionId 
- * @param {boolean} isMod (0 o 1)
  * @param {number} userId
  * @returns {Promise<Array<Object>>}
  */
 
-const getCommentsByDiscussion = async (discussionId, isMod, userId) => {
+const getCommentsByDiscussion = async (discussionId, userId) => {
     // 🚀 Aggiunta la JOIN con le interazioni dell'utente per sapere se HA GIÀ messo like o segnalato!
     let sql = `SELECT c.*, u.Username, u.REF_PropicURI, u.isAdmin, u.isMod, u.isCataloguer,
                       COALESCE(i.isLiked, 0) AS isLiked,
@@ -18,9 +17,6 @@ const getCommentsByDiscussion = async (discussionId, isMod, userId) => {
                LEFT JOIN LINKs_User_Interacts_Comment i ON c.CommentID = i.REF_CommentID AND i.REF_UserID = ?
                WHERE c.REF_DiscussionID = ?`;
 
-    if (!isMod) {
-        sql += ` AND c.isHidden = 0`;
-    }
     sql += ` ORDER BY c.DateCommented DESC`;
     
     // Passiamo prima l'userId per la JOIN, e poi il discussionId per la WHERE

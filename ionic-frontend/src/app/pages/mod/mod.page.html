@@ -1,36 +1,23 @@
 <ion-header class="ion-no-border">
     <ion-toolbar color="dark">
-        <ion-title>Dashboard Moderazione</ion-title>
-        @if (currentTab() === 'discussions') {
-        <ion-buttons slot="end">
-            <button
-                type="button"
-                class="create-btn-native"
-                (click)="openCreateModal()"
-            >
-                <svg viewBox="0 0 512 512" class="svg-icon">
-                    <path
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="32"
-                        d="M256 112v288M400 256H112"
-                    />
-                </svg>
-                Nuova Discussione
-            </button>
+        <ion-buttons slot="start">
+            <ion-back-button defaultHref="/tabs/home" text="Home"></ion-back-button>
         </ion-buttons>
+
+        <ion-title>Dashboard Moderazione</ion-title>
+        
+        @if (currentTab() === 'discussions') {
+            <ion-buttons slot="end">
+                <button type="button" class="create-btn-native" (click)="openCreateModal()">
+                    <ion-icon name="add-circle-outline" class="svg-icon"></ion-icon>
+                    Nuova Discussione
+                </button>
+            </ion-buttons>
         }
     </ion-toolbar>
 
     <ion-toolbar color="dark" class="tab-segment-bar">
-        <ion-segment
-            [value]="currentTab()"
-            (ionChange)="segmentChanged($event)"
-            mode="md"
-            color="primary"
-        >
+        <ion-segment [value]="currentTab()" (ionChange)="segmentChanged($event)" mode="md" color="primary">
             <ion-segment-button value="discussions">
                 <ion-label>Discussioni</ion-label>
             </ion-segment-button>
@@ -40,284 +27,159 @@
         </ion-segment>
     </ion-toolbar>
 
-    @if (currentTab() === 'discussions') {
     <ion-toolbar color="dark" class="filter-bar">
-        <ion-item lines="none" color="none">
-            <ion-label
-                >Mostra anche discussioni chiuse o scadute (Archivio)</ion-label
-            >
-            <ion-toggle
-                [checked]="showClosed() === 1"
-                (ionChange)="toggleFilter($event)"
-                color="primary"
-            ></ion-toggle>
-        </ion-item>
+        @if (currentTab() === 'discussions') {
+            <ion-item lines="none" color="none">
+                <ion-label>Mostra anche discussioni chiuse o scadute (Archivio)</ion-label>
+                <ion-toggle [checked]="showClosed() === 1" (ionChange)="toggleFilter($event)" color="primary"></ion-toggle>
+            </ion-item>
+        } @else {
+            <ion-searchbar
+                placeholder="Cerca utente per username o email..." animated="true" debounce="400"
+                (ionInput)="handleSearch($event)">
+            </ion-searchbar>
+        }
     </ion-toolbar>
-    } @else {
-    <ion-toolbar color="dark" class="filter-bar">
-        <ion-searchbar
-            placeholder="Cerca utente per username o email..."
-            animated="true"
-            debounce="400"
-            (ionInput)="handleSearch($event)"
-        >
-        </ion-searchbar>
-    </ion-toolbar>
-    }
 </ion-header>
 
 <ion-content class="ion-padding" color="secondary">
+    
     @if (currentTab() === 'discussions') {
-    <div class="dashboard-grid">
-        @for (disc of discussions(); track disc.DiscussionID) {
-        <div class="discussion-card" [class.is-closed]="disc.ForceClosed">
-            <div class="card-top">
-                <h2 class="show-title">{{ parseLang(disc.ShowTitle) }}</h2>
-                <span
-                    class="status-badge"
-                    [class.active]="!disc.ForceClosed"
-                    [class.closed]="disc.ForceClosed"
-                >
-                    {{ disc.ForceClosed ? 'Chiusa' : 'Attiva' }}
-                </span>
-            </div>
-
-            <div class="card-middle">
-                <span class="episode-details">
-                    Stagione {{ disc.SeasonNumber }} • Episodio {{
-                    disc.EpisodeNumber }}
-                </span>
-                <h3 class="episode-title">
-                    "{{ parseLang(disc.EpisodeTitle) }}"
-                </h3>
-            </div>
-
-            <div class="card-info-rows">
-                <div class="info-row">
-                    <span class="label">Tipologia Stanza:</span>
-                    <span class="value type-highlight">{{ disc.Type }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Data Scadenza:</span>
-                    <span class="value">{{ disc.CloseDate }}</span>
-                </div>
-            </div>
-
-            <div class="card-buttons">
-                <button
-                    type="button"
-                    class="mod-btn btn-manage"
-                    (click)="openEditModal(disc)"
-                >
-                    <svg viewBox="0 0 512 512" class="svg-icon">
-                        <path
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="32"
-                            d="M368 128h80M64 128h240M368 384h80M64 384h240M208 256h240M64 256h80"
-                        />
-                        <circle
-                            cx="336"
-                            cy="128"
-                            r="32"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="32"
-                        />
-                        <circle
-                            cx="176"
-                            cy="256"
-                            r="32"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="32"
-                        />
-                        <circle
-                            cx="336"
-                            cy="384"
-                            r="32"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="32"
-                        />
-                    </svg>
-                    Gestisci
-                </button>
-
-                <button
-                    type="button"
-                    class="mod-btn btn-delete"
-                    (click)="deleteDiscussion(disc.DiscussionID)"
-                >
-                    <svg viewBox="0 0 512 512" class="svg-icon">
-                        <path
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="32"
-                            d="M112 112l20 320c1.2 19.3 17.3 34 36.7 34h174.6c19.3 0 35.5-14.7 36.7-34l20-320M336 64v32H176V64a16 16 0 0116-16h128a16 16 0 0116 16zM448 112H64M256 176v224M184 176l8 224M328 176l-8 224"
-                        />
-                    </svg>
-                    Elimina
-                </button>
-            </div>
-        </div>
-        } @empty {
-        <div class="empty-dashboard">
-            <ion-icon name="shield-checkmark-outline"></ion-icon>
-            <h3>Tutto Specchiato!</h3>
-            <p>
-                Non ci sono discussioni attive da moderare corrispondenti ai
-                filtri impostati.
-            </p>
-        </div>
-        }
-    </div>
-    } @if (currentTab() === 'users') {
-    <div class="users-dashboard-container">
-        <ion-accordion-group (ionChange)="onUserAccordionChange($event)">
-            @for (user of usersList(); track user.UserID) {
-            <ion-accordion
-                [value]="user.UserID.toString()"
-                class="user-mod-accordion"
-            >
-                <ion-item
-                    slot="header"
-                    color="none"
-                    class="user-accordion-header"
-                >
-                    <div class="user-avatar-wrapper">
-                        <img
-                            [src]="user.REF_PropicURI ? (user.REF_PropicURI | backendUrl: 'static') : 'assets/default-avatar.png'"
-                            alt="propic"
-                        />
+        <div class="dashboard-grid">
+            @for (disc of discussions(); track disc.DiscussionID) {
+                <div class="discussion-card" [class.is-closed]="disc.ForceClosed">
+                    
+                    <div class="card-top">
+                        <h2 class="show-title">{{ parseLang(disc.ShowTitle) }}</h2>
+                        <span class="status-badge" [class.active]="!disc.ForceClosed" [class.closed]="disc.ForceClosed">
+                            {{ disc.ForceClosed ? 'Chiusa' : 'Attiva' }}
+                        </span>
                     </div>
-                    <ion-label class="user-meta-label">
-                        <h2>{{ user.Username }}</h2>
-                        <p>{{ user.Email }}</p>
-                    </ion-label>
 
-                    <span
-                        class="user-status-tag"
-                        [class.banned]="user.canComment === 0"
-                    >
-                        {{ user.canComment === 1 ? 'Attivo' : 'Bannato' }}
-                    </span>
-                </ion-item>
+                    <div class="card-middle">
+                        <span class="episode-details">Stagione {{ disc.SeasonNumber }} • Episodio {{ disc.EpisodeNumber }}</span>
+                        <h3 class="episode-title">"{{ parseLang(disc.EpisodeTitle) }}"</h3>
+                    </div>
 
-                <div slot="content" class="user-accordion-inner">
-                    <div class="control-actions-panel">
-                        @if (user.canComment === 1) {
-                        <button
-                            type="button"
-                            class="action-trigger btn-ban"
-                            (click)="openBanActionSheet(user)"
-                        >
-                            Restringi Permessi (Ban)
-                        </button>
-                        } @else {
-                        <button
-                            type="button"
-                            class="action-trigger btn-unban"
-                            (click)="executeUnban(user)"
-                        >
-                            Revoca Restrizione (Sban)
-                        </button>
-                        } @if (user.canComment === 0 && user.BannedUntil) {
-                        <div class="ban-expiration-info">
-                            <svg viewBox="0 0 512 512" class="mini-svg">
-                                <path
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="32"
-                                    d="M256 64C150 64 64 150 64 256s86 192 192 192 192-86 192-192S362 64 256 64zM256 128v144h96"
-                                />
-                            </svg>
-                            Scadenza: {{ user.BannedUntil | date:'dd/MM/yyyy
-                            HH:mm' }}
+                    <div class="card-info-rows">
+                        <div class="info-row">
+                            <span class="label">Tipologia Stanza:</span>
+                            <span class="value type-highlight">{{ disc.Type }}</span>
                         </div>
-                        } @else if (user.canComment === 0) {
-                        <div class="ban-expiration-info status-permanent">
-                            Sanzione Permanente
+                        <div class="info-row">
+                            <span class="label">Data Scadenza:</span>
+                            <span class="value">{{ disc.CloseDate }}</span>
                         </div>
-                        }
                     </div>
 
-                    <h4 class="section-divider-title">
-                        Cronologia Commenti (Ordinati per Report)
-                    </h4>
-
-                    @if (user.comments === null) {
-                    <div class="lazy-spinner-box">
-                        <ion-spinner
-                            name="crescent"
-                            color="primary"
-                        ></ion-spinner>
-                        <p>Recupero cronologia commenti...</p>
+                    <div class="card-buttons">
+                        <button type="button" class="mod-btn btn-manage" (click)="openEditModal(disc)">
+                            <ion-icon name="options-outline" class="svg-icon"></ion-icon>
+                            Gestisci
+                        </button>
+                        <button type="button" class="mod-btn btn-delete" (click)="deleteDiscussion(disc.DiscussionID)">
+                            <ion-icon name="trash-outline" class="svg-icon"></ion-icon>
+                            Elimina
+                        </button>
                     </div>
-                    } @else {
-                    <div class="comments-scroller-list">
-                        @for (comment of user.comments; track comment.CommentID)
-                        {
-                        <div class="mod-comment-row">
-                            <div class="comment-row-header">
-                                <span class="comment-timestamp"
-                                    >{{ comment.DateCommented | date:'dd/MM/yyyy
-                                    HH:mm' }}</span
-                                >
-                                @if (comment.ReportCount > 0) {
-                                <span class="comment-report-badge">
-                                    {{ comment.ReportCount }} {{
-                                    comment.ReportCount === 1 ? 'Segnalazione' :
-                                    'Segnalazioni' }}
-                                </span>
+
+                </div>
+            } @empty {
+                <div class="empty-dashboard">
+                    <ion-icon name="shield-checkmark-outline"></ion-icon>
+                    <h3>Tutto Specchiato!</h3>
+                    <p>Non ci sono discussioni attive da moderare corrispondenti ai filtri impostati.</p>
+                </div>
+            }
+        </div>
+    } 
+    
+    @if (currentTab() === 'users') {
+        <div class="users-dashboard-container">
+            <ion-accordion-group (ionChange)="onUserAccordionChange($event)">
+                
+                @for (user of usersList(); track user.UserID) {
+                    <ion-accordion [value]="user.UserID.toString()" class="user-mod-accordion">
+                        
+                        <ion-item slot="header" color="none" class="user-accordion-header">
+                            <div class="user-avatar-wrapper">
+                                <img [src]="user.REF_PropicURI ? (user.REF_PropicURI | backendUrl: 'static') : 'assets/default-avatar.png'" alt="propic"/>
+                            </div>
+                            <ion-label class="user-meta-label">
+                                <h2>{{ user.Username }}</h2>
+                                <p>{{ user.Email }}</p>
+                            </ion-label>
+                            <span class="user-status-tag" [class.banned]="user.canComment === 0">
+                                {{ user.canComment === 1 ? 'Attivo' : 'Bannato' }}
+                            </span>
+                        </ion-item>
+
+                        <div slot="content" class="user-accordion-inner">
+                            <div class="control-actions-panel">
+                                @if (user.canComment === 1) {
+                                    <button type="button" class="action-trigger btn-ban" (click)="openBanActionSheet(user)">
+                                        Restringi Permessi (Ban)
+                                    </button>
+                                } @else {
+                                    <button type="button" class="action-trigger btn-unban" (click)="executeUnban(user)">
+                                        Revoca Restrizione (Sban)
+                                    </button>
+                                } 
+                                
+                                @if (user.canComment === 0 && user.BannedUntil) {
+                                    <div class="ban-expiration-info">
+                                        <ion-icon name="time-outline" class="mini-svg"></ion-icon>
+                                        Scadenza: {{ user.BannedUntil | date:'dd/MM/yyyy HH:mm' }}
+                                    </div>
+                                } @else if (user.canComment === 0) {
+                                    <div class="ban-expiration-info status-permanent">
+                                        Sanzione Permanente
+                                    </div>
                                 }
                             </div>
-                            <p class="comment-row-text">
-                                {{ comment.CommentText }}
-                            </p>
-                            <div class="comment-row-footer">
-                                <span>Likes: {{ comment.Likes }}</span>
-                                <span
-                                    >Stato: {{ comment.isHidden ? 'Nascosto' :
-                                    'Visibile' }}</span
-                                >
-                            </div>
+
+                            <h4 class="section-divider-title">Cronologia Commenti (Ordinati per Report)</h4>
+
+                            @if (user.comments === null) {
+                                <div class="lazy-spinner-box">
+                                    <ion-spinner name="crescent" color="primary"></ion-spinner>
+                                    <p>Recupero cronologia commenti...</p>
+                                </div>
+                            } @else {
+                                <div class="comments-scroller-list">
+                                    @for (comment of user.comments; track comment.CommentID) {
+                                        <div class="mod-comment-row">
+                                            <div class="comment-row-header">
+                                                <span class="comment-timestamp">{{ comment.DateCommented | date:'dd/MM/yyyy HH:mm' }}</span>
+                                                @if ((comment.ReportCount || 0) > 0) {
+                                                    <span class="comment-report-badge">
+                                                        {{ comment.ReportCount }} {{ comment.ReportCount === 1 ? 'Segnalazione' : 'Segnalazioni' }}
+                                                    </span>
+                                                }
+                                            </div>
+                                            <p class="comment-row-text">{{ comment.CommentText }}</p>
+                                            <div class="comment-row-footer">
+                                                <span>Likes: {{ comment.Likes }}</span>
+                                                <span>Stato: {{ comment.isHidden ? 'Nascosto' : 'Visibile' }}</span>
+                                            </div>
+                                        </div>
+                                    } @empty {
+                                        <div class="empty-comments-state">
+                                            <p>Questo utente non ha ancora pubblicato alcun commento.</p>
+                                        </div>
+                                    }
+                                </div>
+                            }
                         </div>
-                        } @empty {
-                        <div class="empty-comments-state">
-                            <p>
-                                Questo utente non ha ancora pubblicato alcun
-                                commento sulla piattaforma.
-                            </p>
-                        </div>
-                        }
+                    </ion-accordion>
+                } @empty {
+                    <div class="empty-dashboard">
+                        <ion-icon name="people-outline"></ion-icon>
+                        <h3>Nessun Utente trovato</h3>
+                        <p>La ricerca non ha prodotto risultati utili tra gli utenti standard della piattaforma.</p>
                     </div>
-                    }
-                </div>
-            </ion-accordion>
-            } @empty {
-            <div class="empty-dashboard">
-                <ion-icon name="people-outline"></ion-icon>
-                <h3>Nessun Utente trovato</h3>
-                <p>
-                    La ricerca non ha prodotto risultati utili tra gli utenti
-                    standard della piattaforma.
-                </p>
-            </div>
-            }
-        </ion-accordion-group>
-    </div>
+                }
+            </ion-accordion-group>
+        </div>
     }
 </ion-content>

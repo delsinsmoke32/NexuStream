@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const auth = require('../middleware/auth');
+const { body } = require('express-validator');
 
 
 /**
@@ -51,5 +52,14 @@ const auth = require('../middleware/auth');
 
 
 router.get('/me', auth, userController.getMyProfile);
+
+router.post('/change-password', auth, [
+    body('currentPassword').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("La password deve essere composta da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri."),
+    body('newPassword').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("La password deve essere composta da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri.")
+], userController.modifyPassword)
+
+router.post('/change-propic', auth, [
+    body('propicURI').isString().notEmpty().trim().withMessage("La nuova propic non deve essere vuota.")
+], userController.modifyPropic)
 
 module.exports = router;

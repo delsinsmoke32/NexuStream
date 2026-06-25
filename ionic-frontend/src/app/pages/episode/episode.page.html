@@ -1,146 +1,211 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBackToSeries()" color="primary" fill="clear">
+        <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+        Serie
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content [fullscreen]="true" class="streaming-content">
-  
-  @if (isLoading()) {
+    @if (isLoading()) {
     <div class="loading-state">
-      <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
     </div>
-  } @else if (episode()) {
-    
+    } @else if (episode()) {
+
     <div class="video-layout-wrapper">
-      
-      <div class="main-video-section">
-        
-        <app-video-player
-          [url]="backendUrl.transform('api/shows/' + showId() + '/seasons/' + seasonId() + '/episodes/' + episodeId() + '/stream')"
-          [times]="episode().EpisodeTimes || []"
-          [startAtTime]="getComputedStartTime()"
-          (onPause)="handlePlayerPause($event)"
-          (onEnded)="handlePlayerEnded($event)"
-          (onDestroySave)="handlePlayerDestroySave($event)"
-          (onNextEpisode)="handleNextEpisode()">
-        </app-video-player>
-
-        <div class="episode-details">
-          <div class="title-row">
-            <div>
-              <h2 i18n="@@episode" class="ep-number">Episodio {{ episode().EpisodeNumber }}</h2>
-              <h1 class="ep-title">{{ episode().Title }}</h1>
-            </div>
-            
-            <div class="action-buttons">
-              <button class="btn-icon-secondary" (click)="toggleLike()">
-                <ion-icon [name]="episode().userInteraction?.isLiked ? 'heart' : 'heart-outline'"></ion-icon>
-                <span>{{ episode().Likes || 0 }}</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="meta-row">
-            <span class="meta-chip">{{ episode().Duration / 60 }} min</span>
-            @if (episode().Streams) {
-              <span i18n="@@views" class="meta-chip views">{{ episode().Streams | number }} visualizzazioni</span>
-            }
-            <div class="lang-info uppercase-lang">
-              <strong>SUB:</strong> {{ episode().SubLanguages?.length > 0 ? episode().SubLanguages.join(', ') : 'N/D' }} 
-              <span class="separator">|</span>
-              <strong>DUB:</strong> {{ episode().DubLanguages?.length > 0 ? episode().DubLanguages.join(', ') : 'N/D' }}
-            </div>
-          </div>
-
-          <p class="description">{{ episode().Description }}</p>
-        </div>
-
-        <div class="divider"></div>
-        
-        <div class="discussions-section">
-          <div class="discussions-header">
-            <h2 i18n="@@discussion">Discussioni dell'episodio</h2>
-            
-            @if (isMod()) {
-              <ion-button i18n="@@new" fill="outline" class="btn-new-discussion" (click)="openDiscussionModal()">
-                <ion-icon slot="start" name="chatbubbles-outline"></ion-icon>
-                Nuova
-              </ion-button>
-            }
-          </div>
-
-          @if (discussions().length === 0) {
-            <div class="no-discussions">
-              <p i18n="@@noDiscussion">Nessuna discussione aperta per questo episodio.</p>
-            </div>
-          } @else {
-            <div class="discussions-list">
-              @for (disc of discussions(); track disc.DiscussionID) {
-                
-                <div class="discussion-card" (click)="toggleDiscussion(disc.DiscussionID)">
-                  <div class="disc-info">
-                    <h3>{{ disc.Type | uppercase }} ZONE</h3>
-                    <p i18n="@@expiration">Scadenza: {{ disc.CloseDate }} • {{ disc.forceClosed ? '(Chiusa)' : '(Aperta)' }}</p>
-                  </div>
-                  
-                  <div class="disc-actions">
-                    @if (isMod()) {
-                      <ion-button fill="clear" color="warning" (click)="openDiscussionModal(disc, $event)">
-                        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-                      </ion-button>
-                      
-                      <ion-button fill="clear" color="danger" (click)="deleteDiscussion(disc.DiscussionID, $event)">
-                        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-                      </ion-button>
-                    }
+        <div class="main-video-section">
+            @if (isLoggedIn()) {
+                <app-video-player
+                    [url]="backendUrl.transform('api/shows/' + showId() + '/seasons/' + seasonId() + '/episodes/' + episodeId() + '/stream')"
+                    [times]="episode()?.EpisodeTimes || []"
+                    [startAtTime]="getComputedStartTime()"
+                    (onPause)="handlePlayerPause($event)"
+                    (onEnded)="handlePlayerEnded($event)"
+                    (onDestroySave)="handlePlayerDestroySave($event)"
+                    (onNextEpisode)="handleNextEpisode()"
+                >
+                </app-video-player>
+            } 
+            @else {
+                <div class="guest-paywall-container">
+                    <img [src]="episode()?.ThumbnailURI ? ((episode()?.ThumbnailURI || '') | backendUrl: 'static') : 'assets/placeholder-episode.jpg'" alt="Thumbnail" />
                     
-                    <ion-icon 
-                      [name]="expandedDiscussionId() === disc.DiscussionID ? 'chevron-down-outline' : 'chevron-forward-outline'" 
-                      class="nav-arrow">
-                    </ion-icon>
-                  </div>
+                    <div class="paywall-overlay">
+                        <h3>Per guardare il video devi effettuare l'accesso</h3>
+                        <ion-button routerLink="/login">Accedi Ora</ion-button>
+                    </div>
+                </div>
+            }
+
+            <div class="episode-details">
+                <div class="title-row">
+                    <div>
+                        <h2 i18n="@@episode" class="ep-number">
+                            Episodio {{ episode()?.EpisodeNumber }}
+                        </h2>
+                        <h1 class="ep-title">{{ episode()?.Title }}</h1>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button
+                            class="btn-icon-secondary"
+                            (click)="toggleLike()"
+                        >
+                            <ion-icon
+                                [name]="episode()?.userInteraction?.isLiked ? 'heart' : 'heart-outline'"
+                            ></ion-icon>
+                            <span>{{ episode()?.Likes || 0 }}</span>
+                        </button>
+                    </div>
                 </div>
 
-                @if (expandedDiscussionId() === disc.DiscussionID) {
-                  <div class="discussion-dropdown-content">
-                    <app-comments 
-                      [showId]="showId()" 
-                      [seasonId]="seasonId()" 
-                      [episodeId]="episodeId()" 
-                      [discussionId]="disc.DiscussionID" 
-                      [isMod]="isMod()">
-                    </app-comments>
-                  </div>
-                }
+                <div class="meta-row">
+                    <span class="meta-chip"
+                        >{{ (episode()?.Duration || 0) / 60 }} min</span
+                    >
+                    @if (episode()?.Streams) {
+                    <span i18n="@@views" class="meta-chip views"
+                        >{{ episode()?.Streams | number }} visualizzazioni</span
+                    >
+                    }
+                    <div class="lang-info uppercase-lang">
+                        <strong>SUB:&nbsp;</strong> {{
+                        (episode()?.SubLanguages?.length || 0) > 0 ?
+                        episode()?.SubLanguages?.join(', ') : 'N/D' }}
+                        <span class="separator">|</span>
+                        <strong>DUB:&nbsp;</strong> {{
+                        (episode()?.DubLanguages?.length || 0) > 0 ?
+                        episode()?.DubLanguages?.join(', ') : 'N/D' }}
+                    </div>
+                </div>
 
-              }
+                <p class="description">{{ episode()?.Description }}</p>
             </div>
-          }   
-        </div>
 
-      </div> 
-    
+            <div class="divider"></div>
 
-     <div class="episode-sidebar">
-        <h2 i18n="@@sameSeason" class="sidebar-title">Nella stessa stagione</h2>
+            <div class="discussions-section">
+                <div class="discussions-header">
+                    <h2 i18n="@@discussion">Discussioni dell'episodio</h2>
 
-        <div class="playlist-container">
-          @for (ep of seasonEpisodes(); track ep.EpisodeID) {
-            <ion-card 
-              class="sidebar-ep-card" 
-              [class.active]="ep.EpisodeID.toString() === episodeId()"
-              [routerLink]="['/episode', ep.EpisodeID]"
-              [queryParams]="{ showId: showId(), seasonId: seasonId() }"> 
-              
-              <ion-card-content>
-                <div class="ep-num">{{ ep.EpisodeNumber }}</div>
-                <div class="ep-info">
-                  <h3>{{ ep.Title }}</h3>
-                  <p>{{ ep.Duration / 60 }} min</p>
+                    @if (isMod()) {
+                    <ion-button
+                        i18n="@@new"
+                        fill="outline"
+                        class="btn-new-discussion"
+                        (click)="openDiscussionModal()"
+                    >
+                        <ion-icon
+                            slot="start"
+                            name="chatbubbles-outline"
+                        ></ion-icon>
+                        Nuova
+                    </ion-button>
+                    }
                 </div>
-              </ion-card-content>
 
-            </ion-card>
-          }
+                @if (discussions().length === 0) {
+                <div class="no-discussions">
+                    <p i18n="@@noDiscussion">
+                        Nessuna discussione aperta per questo episodio.
+                    </p>
+                </div>
+                } @else {
+                <div class="discussions-list">
+                    @for (disc of discussions(); track disc.DiscussionID) {
+
+                    <div
+                        class="discussion-card"
+                        (click)="toggleDiscussion(disc.DiscussionID)"
+                    >
+                        <div class="disc-info">
+                            <h3>{{ disc.Type | uppercase }} ZONE</h3>
+                            <p i18n="@@expiration">
+                                Scadenza: {{ disc.CloseDate }} • {{
+                                disc.forceClosed ? '(Chiusa)' : '(Aperta)' }}
+                            </p>
+                        </div>
+
+                        <div class="disc-actions">
+                            @if (isMod()) {
+                            <ion-button
+                                fill="clear"
+                                color="warning"
+                                (click)="openDiscussionModal(disc, $event)"
+                            >
+                                <ion-icon
+                                    slot="icon-only"
+                                    name="create-outline"
+                                ></ion-icon>
+                            </ion-button>
+
+                            <ion-button
+                                fill="clear"
+                                color="danger"
+                                (click)="deleteDiscussion(disc.DiscussionID, $event)"
+                            >
+                                <ion-icon
+                                    slot="icon-only"
+                                    name="trash-outline"
+                                ></ion-icon>
+                            </ion-button>
+                            }
+
+                            <ion-icon
+                                [name]="expandedDiscussionId() === disc.DiscussionID ? 'chevron-down-outline' : 'chevron-forward-outline'"
+                                class="nav-arrow"
+                            >
+                            </ion-icon>
+                        </div>
+                    </div>
+
+                    @if (expandedDiscussionId() === disc.DiscussionID) {
+                    <div class="discussion-dropdown-content">
+                        <app-comments
+                            [showId]="showId()"
+                            [seasonId]="seasonId()"
+                            [episodeId]="episodeId()"
+                            [discussionId]="disc.DiscussionID"
+                            [isMod]="isMod()"
+                            (timestampClick)="handleCommentTimestamp($event)"
+                        >
+                        </app-comments>
+                    </div>
+                    } }
+                </div>
+                }
+            </div>
         </div>
-      </div>
 
+        <div class="episode-sidebar">
+            <h2 i18n="@@sameSeason" class="sidebar-title">
+                Nella stessa stagione
+            </h2>
+
+            <div class="playlist-container">
+                @for (ep of seasonEpisodes(); track ep.EpisodeID) {
+                <ion-card
+                    class="sidebar-ep-card"
+                    [class.active]="ep.EpisodeID.toString() === episodeId()"
+                    [routerLink]="['/episode', ep.EpisodeID]"
+                    [queryParams]="{ showId: showId(), seasonId: seasonId() }"
+                >
+                    <ion-card-content>
+                        <div class="ep-num">{{ ep.EpisodeNumber }}</div>
+                        <div class="ep-info">
+                            <h3>{{ ep.Title }}</h3>
+                            <p>{{ (ep.Duration || 0) / 60 }} min</p>
+                        </div>
+                    </ion-card-content>
+                </ion-card>
+                }
+            </div>
+        </div>
     </div>
-    
-  }
+
+    }
 </ion-content>

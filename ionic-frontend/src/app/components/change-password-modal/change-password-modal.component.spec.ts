@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { MetaballsScreenSaverComponent } from './metaballs.component';
+import { ChangePasswordModalComponent } from './change-password-modal.component';
 
-describe('MetaballsScreenSaverComponent', () => {
-  let component: MetaballsScreenSaverComponent;
-  let fixture: ComponentFixture<MetaballsScreenSaverComponent>;
+describe('ChangePasswordModalComponent', () => {
+  let component: ChangePasswordModalComponent;
+  let fixture: ComponentFixture<ChangePasswordModalComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ MetaballsScreenSaverComponent ],
+      declarations: [ ChangePasswordModalComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(MetaballsScreenSaverComponent);
+    fixture = TestBed.createComponent(ChangePasswordModalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));

@@ -7,27 +7,37 @@ const { validationResult } = require('express-validator');
  * @param {Object} res - Oggetto della risposta Express
  */
 
-const getBundledPropics = async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+const getPropics = async (req, res) => {
     try {
         const propics = await propicModel.getAllPropics();
-        // Raggruppa i dati nel formato richiesto
-        const formattedData = propics.reduce((acc, row) => {
-            // Se il bundle non esiste ancora nell'array, crealo
-            if (!acc[row.Bundle]) {
-                acc[row.Bundle] = [];
+        
+        // 1. Raggruppiamo le propic usando reduce
+        // Output atteso: { "Bundle1": ["uri1.png", "uri2.png"], "Bundle2": ["uri3.png"] }
+        const groupedMap = propics.reduce((acc, current) => {
+            // Se il bundle non esiste ancora nell'oggetto, lo creiamo come array vuoto
+            if (!acc[current.Bundle]) {
+                acc[current.Bundle] = [];
             }
-            // Aggiungi l'URI dell'avatar al rispettivo bundle
-            acc[row.Bundle].push(row.PropicURI);
+            // Inseriamo l'URI della propic nel bundle corrispondente
+            acc[current.Bundle].push(current.PropicURI);
             return acc;
         }, {});
-        return res.json(formattedData);
-    } catch (err) {
+
+        // 2. Trasformiamo l'oggetto in un Array di oggetti per far felice Angular
+        // Output finale: [ { bundle: 'Bundle1', images: ['uri1', 'uri2'] }, ... ]
+        const result = Object.keys(groupedMap).map(bundleName => ({
+            bundle: bundleName,
+            images: groupedMap[bundleName]
+        }));
+
+        return res.json(result);
+
+    } catch (error) {
+        console.error("Errore durante il recupero delle propic:", error);
         return res.status(500).json({ error: "Errore interno del server" });
     }
 };
 
 module.exports = {
-    getBundledPropics
+    getPropics
 }

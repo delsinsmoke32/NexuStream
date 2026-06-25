@@ -49,7 +49,7 @@
             "scripts": [],
             "browser": "src/main.ts",
             "localize": true,
-            "i18nMissingTranslation": "error"
+            "i18nMissingTranslation": "warning"
           },
           "configurations": {
             "production": {

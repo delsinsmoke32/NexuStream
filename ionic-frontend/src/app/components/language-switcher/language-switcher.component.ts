@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, inject, OnInit } from '@angular/core'
 import {
     IonItem,
     IonIcon,
     IonSelect,
     IonSelectOption,
+    ToastController,
 } from '@ionic/angular/standalone'
 import { addIcons } from 'ionicons'
 import { globeOutline, chevronDownOutline } from 'ionicons/icons'
@@ -17,16 +18,19 @@ import { globeOutline, chevronDownOutline } from 'ionicons/icons'
 })
 export class LanguageSwitcherComponent {
     currentLang: string
+    private serveMode = false
+    private toastController = inject(ToastController)
 
     constructor() {
         addIcons({ globeOutline, chevronDownOutline })
         // Extract language code from the current URL path (e.g., /en/dashboard)
         const langs = ['it', 'en']
-        this.currentLang = langs.includes(
-            window.location.pathname.split('/')[1]
-        )
-            ? window.location.pathname.split('/')[1]
-            : 'it'
+        if (langs.includes(window.location.pathname.split('/')[1])) {
+            this.currentLang = window.location.pathname.split('/')[1]
+        } else {
+            this.currentLang = 'it'
+            this.serveMode = true
+        }
     }
 
     switchLanguage(event: Event) {
@@ -34,11 +38,27 @@ export class LanguageSwitcherComponent {
         const nextLang = target.value
 
         // Replace the language segment in the URL
-        const segments = window.location.pathname.split('/')
-        segments[1] = nextLang
+        if (!this.serveMode) {
+            const segments = window.location.pathname.split('/')
+            segments[1] = nextLang
 
-        console.log(segments)
-        // Reload the page with the new language bundle
-        window.location.href = window.location.origin + segments.join('/')
+            console.log(segments)
+            // Reload the page with the new language bundle
+            window.location.href = window.location.origin + segments.join('/')
+        } else {
+            this.presentToast(
+                'Non è possibile cambiare lingua in questa modalità.',
+                'warning'
+            )
+        }
+    }
+    async presentToast(message: string, color: 'warning') {
+        const toast = await this.toastController.create({
+            message,
+            duration: 2500,
+            position: 'bottom',
+            color,
+        })
+        await toast.present()
     }
 }

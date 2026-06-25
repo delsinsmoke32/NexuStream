@@ -14,7 +14,9 @@
     <form [formGroup]="registerForm" (ngSubmit)="register()">
         <div class="split-wrapper">
             <div class="column left-column">
-                <h1 i18n="@@Welcome_to_NexuStream" class="title">Benvenuto su NexuStream</h1>
+                <h1 i18n="@@Welcome_to_NexuStream" class="title">
+                    Benvenuto su NexuStream
+                </h1>
 
                 <ion-card class="form-log-in-card">
                     <ion-card-content>
@@ -70,7 +72,8 @@
                         </div>
 
                         <div class="button-container" style="margin-top: 25px">
-                            <ion-button i18n="@@register"
+                            <ion-button
+                                i18n="@@register"
                                 type="submit"
                                 expand="block"
                                 class="register-button"
@@ -78,6 +81,17 @@
                             >
                                 Registrati
                             </ion-button>
+                        </div>
+                        <div
+                            class="text-link"
+                            style="margin-top: 0px; text-align: center"
+                        >
+                            <a
+                                routerLink="/login"
+                                style="font-size: 0.9rem"
+                                i18n="@@goToLogin"
+                                >Hai già un account? Vai al login!</a
+                            >
                         </div>
                     </ion-card-content>
                 </ion-card>
@@ -89,7 +103,9 @@
                 <ion-card class="form-log-in-card">
                     <ion-card-content>
                         <div class="input-group">
-                            <ion-label i18n="@@username" position="stacked">Nome utente</ion-label>
+                            <ion-label i18n="@@username" position="stacked"
+                                >Nome utente</ion-label
+                            >
                             <ion-item lines="none" class="custom-input">
                                 <ion-input
                                     formControlName="username"

@@ -24,7 +24,7 @@ import {
     IonText,
     ToastController,
 } from '@ionic/angular/standalone'
-
+import { LanguageSwitcherComponent } from '@app/components/language-switcher/language-switcher.component'
 @Component({
     selector: 'app-forgot-password',
     templateUrl: './forgot-password.page.html',
@@ -47,6 +47,7 @@ import {
         IonCardSubtitle,
         IonCardContent,
         IonText,
+        LanguageSwitcherComponent,
     ],
 })
 export class ForgotPasswordPage {
@@ -61,38 +62,48 @@ export class ForgotPasswordPage {
 
     isLoading: boolean = false
 
-  onSubmit() {
-    if (this.forgotForm.invalid) {
-      this.presentToast($localize `:@@invalidForm: Inserisci un indirizzo email valido.`, "danger");
-      return;
+    onSubmit() {
+        if (this.forgotForm.invalid) {
+            this.presentToast(
+                $localize`:@@invalidForm: Inserisci un indirizzo email valido.`,
+                'danger'
+            )
+            return
+        }
+
+        const rawEmail = this.forgotForm.value.email?.trim()
+        if (!rawEmail) {
+            this.presentToast(
+                $localize`:@@rawEmail: Il campo email non può contenere solo spazi vuoti.`,
+                'danger'
+            )
+            return
+        }
+
+        this.isLoading = true
+        const payload = { email: rawEmail }
+
+        this.authService.forgotPassword(payload).subscribe({
+            next: (res: any) => {
+                this.presentToast(
+                    res.message ||
+                        $localize`:@@forgotSuccessToast: Controlla la tua casella di posta!`,
+                    'success'
+                )
+                this.isLoading = false
+                this.router.navigate(['/login'])
+            },
+            error: (err) => {
+                console.error('Errore HTTP Forgot Password:', err)
+                this.isLoading = false
+                this.presentToast(
+                    err.error?.error ||
+                        $localize`:@@forgotErrorToast: Errore durante l'invio della richiesta.`,
+                    'danger'
+                )
+            },
+        })
     }
-
-    const rawEmail = this.forgotForm.value.email?.trim();
-    if (!rawEmail) {
-      this.presentToast($localize `:@@rawEmail: Il campo email non può contenere solo spazi vuoti.`, "danger");
-      return;
-    }
-
-    this.isLoading = true;
-    const payload = { email: rawEmail };
-
-    
-    this.authService.forgotPassword(payload).subscribe({
-      next: (res: any) => {
-        this.presentToast(res.message || $localize `:@@forgotSuccessToast: Controlla la tua casella di posta!`, 'success');
-        this.isLoading = false;
-        this.router.navigate(['/login']);
-      },
-      error: (err) => {
-        console.error("Errore HTTP Forgot Password:", err);
-        this.isLoading = false;
-        this.presentToast(
-          err.error?.error || $localize `:@@forgotErrorToast: Errore durante l'invio della richiesta.`,
-          'danger'
-        );
-      }
-    });
-  }
 
     async presentToast(message: string, color: 'success' | 'danger') {
         const toast = await this.toastCtrl.create({

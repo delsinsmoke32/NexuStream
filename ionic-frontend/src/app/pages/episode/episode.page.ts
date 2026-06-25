@@ -1,16 +1,28 @@
 import { Component, inject, OnInit, OnDestroy, signal, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute, RouterModule, Router, RouterLink } from '@angular/router';
 import { BackendUrlPipe } from '@app/pipes/backend-url-pipe';
 import { combineLatest } from 'rxjs';
-import { IonContent, IonButton, IonCard, IonCardContent, IonIcon, IonSpinner, ToastController, ModalController, AlertController } from '@ionic/angular/standalone';
-import { addCircleOutline, playCircle, shareSocialOutline, heartOutline, heart, chatbubblesOutline, chevronForwardOutline, createOutline, trashOutline } from 'ionicons/icons';
+import {
+    IonContent, IonButton, IonCard, IonCardContent, IonIcon, IonSpinner,
+    ToastController, ModalController, AlertController, IonBackButton,
+    IonToolbar, IonButtons, IonHeader, NavController
+} from '@ionic/angular/standalone';
+import {
+    addCircleOutline, playCircle, shareSocialOutline, heartOutline, heart,
+    chatbubblesOutline, chevronForwardOutline, createOutline, trashOutline, arrowBackOutline 
+} from 'ionicons/icons';
 import { addIcons } from 'ionicons';
+
 import { CommentsComponent } from '@app/components/comments/comments.component';
 import { DiscussionModalComponent } from '@app/components/discussion-modal/discussion-modal.component';
-import { jwtDecodeHelper } from '@app/guards/mod-guard';
 import { VideoPlayerComponent } from '@app/components/video-player/video-player.component';
+import { jwtDecodeHelper } from '@app/utils/jwt-helper';
+
+// 🚀 NUOVI SERVIZI IMPORTATI
+import { EpisodeService } from '@app/services/episode';
+import { ModService } from '@app/services/mod'; // Usiamo quello già creato per le discussioni
+import { StreamingEpisode } from '@app/models/streaming';
 
 @Component({
     selector: 'app-episode',
@@ -19,23 +31,29 @@ import { VideoPlayerComponent } from '@app/components/video-player/video-player.
     standalone: true,
     imports: [
         IonContent, IonButton, IonCard, IonCardContent, CommonModule, IonIcon, IonSpinner,
-        BackendUrlPipe, RouterModule, CommentsComponent, VideoPlayerComponent
+        RouterModule, CommentsComponent, VideoPlayerComponent, BackendUrlPipe,
+        IonBackButton, RouterLink, IonToolbar, IonHeader, IonButtons
     ],
     providers: [BackendUrlPipe],
 })
 export class EpisodePage implements OnInit, OnDestroy {
     private route = inject(ActivatedRoute);
     private router = inject(Router);
-    private http = inject(HttpClient);
-    public backendUrl = inject(BackendUrlPipe); // Reso public così l'HTML può usarlo liberamente
+    public backendUrl = inject(BackendUrlPipe);
     private modalCtrl = inject(ModalController);
     private alertCtrl = inject(AlertController);
     private toastCtrl = inject(ToastController);
+    private navCtrl = inject(NavController);
+    
+    // 🚀 INIEZIONE DEI SERVIZI
+    private episodeService = inject(EpisodeService);
+    private modService = inject(ModService); 
 
     isLoading = signal<boolean>(true);
-    episode = signal<any>(null);
+    episode = signal<StreamingEpisode | null>(null);
     seasonEpisodes = signal<any[]>([]);
     discussions = signal<any[]>([]);
+    isLoggedIn = signal<boolean>(false);
 
     showId = signal<string>('');
     seasonId = signal<string>('');
@@ -45,87 +63,70 @@ export class EpisodePage implements OnInit, OnDestroy {
     isMod = signal<boolean>(false);
     expandedDiscussionId = signal<string | null>(null);
 
-    private lastKnownProgress = 0; 
-    private isNavigating = false;
+    private lastKnownProgress = 0;
     private saveTimeout: any;
-    // Componente del player
+
+    @ViewChild(IonContent) content!: IonContent;
     @ViewChild(VideoPlayerComponent) videoPlayerComponent!: VideoPlayerComponent;
 
     constructor() {
-        addIcons({chatbubblesOutline,createOutline,trashOutline,shareSocialOutline,addCircleOutline,playCircle,heartOutline,heart,chevronForwardOutline});
+        addIcons({arrowBackOutline,chatbubblesOutline,createOutline,trashOutline,shareSocialOutline,addCircleOutline,playCircle,heartOutline,heart,chevronForwardOutline});
     }
 
     ngOnInit() {
         const token = localStorage.getItem('token');
+        this.isLoggedIn.set(!!token);
         if (token) {
             const decodedToken = jwtDecodeHelper(token);
             if (decodedToken && decodedToken.isMod === 1) this.isMod.set(true);
         }
 
-        combineLatest([
-            this.route.paramMap,
-            this.route.queryParamMap
-        ]).subscribe(async ([params, queryParams]) => {
+        combineLatest([this.route.paramMap, this.route.queryParamMap]).subscribe(async ([params, queryParams]) => {
             const epId = params.get('id') || params.get('episodeId');
-            
 
-            // 🚀 CONTROLLO DEL LUCCHETTO (Mancava questo!)
-            if (epId && !this.isNavigating) {
-                this.isNavigating = true; 
-
+            if (epId) {
                 if (this.episodeId() && this.episodeId() !== epId) {
                     this.saveProgress(this.lastKnownProgress, 0, true);
                     if (this.videoPlayerComponent) {
-                        // 🚀 AWAIT SU KILLPLAYER
                         await this.videoPlayerComponent.killPlayer();
                     }
                 }
-            
 
                 const sId = queryParams.get('showId') || '1';
-                const seaId = queryParams.get('seasonId') || '1'; 
+                const seaId = queryParams.get('seasonId') || '1';
                 const startParam = queryParams.get('startAt');
 
                 this.startAtTime.set(startParam ? parseInt(startParam, 10) : 0);
-
                 this.showId.set(sId);
                 this.seasonId.set(seaId);
                 this.episodeId.set(epId);
-
                 this.isLoading.set(true);
-                
+
                 this.loadEpisodeData(sId, seaId, epId);
                 this.loadSeasonEpisodes(sId, seaId);
                 this.loadDiscussions(sId, seaId, epId);
-                this.isNavigating = true;
             }
         });
     }
 
     loadEpisodeData(showId: string, seasonId: string, episodeId: string) {
-        this.http.get<any>(`api/shows/${showId}/seasons/${seasonId}/episodes/${episodeId}`).subscribe({
-            next: (res) => {
-                this.episode.set(res);
-                this.isLoading.set(false); // Il timeout non serve più!
-            },
-            error: (err) => {
-                console.error('Errore nel recupero episodio:', err);
-                this.isLoading.set(false);
-            }
+        this.episodeService.getEpisode(showId, seasonId, episodeId).subscribe({
+            next: (res) => { this.episode.set(res); this.isLoading.set(false); },
+            error: (err) => { console.error(err); this.isLoading.set(false); }
         });
     }
 
     loadSeasonEpisodes(showId: string, seasonId: string) {
-        this.http.get<any[]>(`api/shows/${showId}/seasons/${seasonId}/episodes`).subscribe({
+        this.episodeService.getSeasonEpisodes(showId, seasonId).subscribe({
             next: (res) => this.seasonEpisodes.set(res),
-            error: (err) => console.error('Errore nel recupero stagione:', err)
+            error: (err) => console.error(err)
         });
     }
 
     loadDiscussions(showId: string, seasonId: string, episodeId: string) {
-        this.http.get<any[]>(`api/shows/${showId}/seasons/${seasonId}/episodes/${episodeId}/discussions`).subscribe({
+        this.episodeService.getDiscussions(showId, seasonId, episodeId).subscribe({
             next: (res) => this.discussions.set(res || []),
-            error: (err) => this.discussions.set([])
+            error: () => this.discussions.set([]),
         });
     }
 
@@ -148,47 +149,47 @@ export class EpisodePage implements OnInit, OnDestroy {
         this.saveProgress(currentTime, 0, true);
     }
 
-    handleNextEpisode() {
+    handleCommentTimestamp(seconds: number) {
+        if (this.videoPlayerComponent) {
+            this.videoPlayerComponent.seekTo(seconds);
+            if (this.content) this.content.scrollToTop(500);
+        }
+    }
+
+    async handleNextEpisode() {
         const currentEpId = parseInt(this.episodeId(), 10);
         const eps = this.seasonEpisodes();
+        const currentEp = eps.find((e) => e.EpisodeID === currentEpId);
         
-        const currentEp = eps.find(e => e.EpisodeID === currentEpId);
         if (!currentEp) return;
+        if (this.videoPlayerComponent) await this.videoPlayerComponent.killPlayer();
 
-        // 1. Cerchiamo l'episodio successivo nella STESSA stagione
-        const nextEp = eps.find(e => e.EpisodeNumber === currentEp.EpisodeNumber + 1);
-        
+        const nextEp = eps.find((e) => e.EpisodeNumber === currentEp.EpisodeNumber + 1);
+
         if (nextEp) {
-            // Caso normale
             this.router.navigate(['/episode', nextEp.EpisodeID], {
                 queryParams: { showId: this.showId(), seasonId: this.seasonId() }
             });
         } else {
-            // 2. FINE STAGIONE! Inneschiamo la ricerca della stagione successiva
             this.checkAndNavigateToNextSeason();
         }
     }
 
-    // Salto di stagione
-    checkAndNavigateToNextSeason() {
-        // 1. Recuperiamo l'elenco di tutte le stagioni dello show
-        this.http.get<any[]>(`api/shows/${this.showId()}/seasons`).subscribe({
+    async checkAndNavigateToNextSeason() {
+        if (this.videoPlayerComponent) await this.videoPlayerComponent.killPlayer();
+
+        this.episodeService.getShowSeasons(this.showId()).subscribe({
             next: (seasons) => {
                 const currentSeasonId = parseInt(this.seasonId(), 10);
-                const currentSeason = seasons.find(s => s.SeasonID === currentSeasonId);
-
+                const currentSeason = seasons.find((s) => s.SeasonID === currentSeasonId);
                 if (!currentSeason) return;
 
-                // 2. Cerchiamo se esiste una stagione con il numero successivo
-                const nextSeason = seasons.find(s => s.SeasonNumber === currentSeason.SeasonNumber + 1);
+                const nextSeason = seasons.find((s) => s.SeasonNumber === currentSeason.SeasonNumber + 1);
 
                 if (nextSeason) {
-                    // 3. Abbiamo trovato la nuova stagione! Ora peschiamo i suoi episodi
-                    this.http.get<any[]>(`api/shows/${this.showId()}/seasons/${nextSeason.SeasonID}/episodes`).subscribe({
+                    this.episodeService.getSeasonEpisodes(this.showId(), nextSeason.SeasonID.toString()).subscribe({
                         next: (nextSeasonEps) => {
-                            // Troviamo l'Episodio 1 della nuova stagione
-                            const firstEp = nextSeasonEps.find(e => e.EpisodeNumber === 1);
-                            
+                            const firstEp = nextSeasonEps.find((e) => e.EpisodeNumber === 1);
                             if (firstEp) {
                                 this.showToast(`Inizio Stagione ${nextSeason.SeasonNumber}...`, 'success');
                                 this.router.navigate(['/episode', firstEp.EpisodeID], {
@@ -198,11 +199,10 @@ export class EpisodePage implements OnInit, OnDestroy {
                         }
                     });
                 } else {
-                    // Se non c'è una prossima stagione, la serie è davvero finita!
                     this.showToast('Hai concluso la serie!', 'success');
                 }
             },
-            error: (err) => console.error("Errore salto di stagione:", err)
+            error: (err) => console.error('Errore salto di stagione:', err),
         });
     }
 
@@ -213,18 +213,20 @@ export class EpisodePage implements OnInit, OnDestroy {
             progress: currentTime,
             isCompleted: isCompleted,
             isDropped: 0,
-            isLiked: this.episode()?.isLiked ?? this.episode()?.userInteraction?.isLiked ?? 0
+            isLiked: this.episode()?.isLiked ?? this.episode()?.userInteraction?.isLiked ?? 0,
         };
 
         if (this.saveTimeout) clearTimeout(this.saveTimeout);
 
         if (immediate) {
-            this.http.post(`api/shows/${this.showId()}/seasons/${this.seasonId()}/episodes/${this.episodeId()}/interact`, body)
-                .subscribe({ error: (err) => console.error('Errore salvataggio in chiusura:', err) });
+            this.episodeService.interact(this.showId(), this.seasonId(), this.episodeId(), body).subscribe({
+                error: (err) => console.error('Errore salvataggio in chiusura:', err),
+            });
         } else {
             this.saveTimeout = setTimeout(() => {
-                this.http.post(`api/shows/${this.showId()}/seasons/${this.seasonId()}/episodes/${this.episodeId()}/interact`, body)
-                    .subscribe({ error: (err) => console.error('Errore salvataggio ritardato:', err) });
+                this.episodeService.interact(this.showId(), this.seasonId(), this.episodeId(), body).subscribe({
+                    error: (err) => console.error('Errore salvataggio ritardato:', err),
+                });
             }, 1000);
         }
     }
@@ -233,89 +235,86 @@ export class EpisodePage implements OnInit, OnDestroy {
         const currentEp = this.episode();
         if (!currentEp) return;
 
-        const userToken = localStorage.getItem('token'); 
+        const userToken = localStorage.getItem('token');
         if (!userToken) {
-            this.showToast($localize `:@@logInToLike:Devi accedere per mettere Mi Piace!`, 'danger');
-            return; 
+            this.showToast($localize`:@@logInToLike:Devi accedere per mettere Mi Piace!`, 'danger');
+            return;
         }
 
         const wasLiked = currentEp.isLiked || currentEp.userInteraction?.isLiked ? 1 : 0;
         const newStatus = wasLiked ? 0 : 1;
 
-        this.episode.update(ep => ({
-            ...ep,
+        this.episode.set({
+            ...currentEp, 
             isLiked: newStatus,
-            userInteraction: ep.userInteraction ? { ...ep.userInteraction, isLiked: newStatus } : undefined
-        }));
+            userInteraction: currentEp.userInteraction ? { ...currentEp.userInteraction, isLiked: newStatus } : undefined,
+        });
 
         const isCompleted = currentEp.isCompleted ?? currentEp.userInteraction?.isCompleted ?? 0;
         const body = { progress: this.lastKnownProgress, isCompleted: isCompleted, isDropped: 0, isLiked: newStatus };
 
-        this.http.post(`api/shows/${this.showId()}/seasons/${this.seasonId()}/episodes/${this.episodeId()}/interact`, body)
-            .subscribe({ error: (err) => {
-                this.episode.update(ep => ({
-                    ...ep, isLiked: wasLiked,
-                    userInteraction: ep.userInteraction ? { ...ep.userInteraction, isLiked: wasLiked } : undefined
-                }));
-                this.showToast($localize `:@@connessionErr:Errore di connessione.`, 'danger');
-            }});
+        this.episodeService.interact(this.showId(), this.seasonId(), this.episodeId(), body).subscribe({
+            error: () => {
+                this.episode.set({
+                    ...currentEp, 
+                    isLiked: wasLiked,
+                    userInteraction: currentEp.userInteraction ? { ...currentEp.userInteraction, isLiked: wasLiked } : undefined,
+                });
+                this.showToast($localize`:@@connessionErr:Errore di connessione.`, 'danger');
+            },
+        });
     }
 
     async openDiscussionModal(discussion?: any, event?: Event) {
-        if (event) {
-            event.stopPropagation();
-            event.preventDefault();
-        }
+        if (event) { event.stopPropagation(); event.preventDefault(); }
 
         const modal = await this.modalCtrl.create({
             component: DiscussionModalComponent,
-            componentProps: { discussion: discussion, episodeId: this.episodeId() }
+            componentProps: { discussion: discussion, episodeId: this.episodeId() },
         });
-
         await modal.present();
 
         const { data } = await modal.onDidDismiss();
         if (data?.payload) {
+            // 🚀 Usiamo il ModService!
             if (data.isEdit) {
-                this.http.patch(`api/mod/discussions/${data.discussionId}`, data.payload).subscribe({
+                this.modService.updateDiscussion(data.discussionId, data.payload).subscribe({
                     next: () => this.loadDiscussions(this.showId(), this.seasonId(), this.episodeId()),
-                    error: (err) => console.error("Errore aggiornamento:", err)
+                    error: (err) => console.error('Errore aggiornamento:', err),
                 });
             } else {
-                this.http.post(`api/mod/discussions`, data.payload).subscribe({
+                this.modService.createDiscussion(data.payload).subscribe({
                     next: () => this.loadDiscussions(this.showId(), this.seasonId(), this.episodeId()),
-                    error: (err) => console.error("Errore creazione:", err)
+                    error: (err) => console.error('Errore creazione:', err),
                 });
             }
         }
     }
 
     async deleteDiscussion(discussionId: string, event: Event) {
-        event.stopPropagation();
-        event.preventDefault();
+        event.stopPropagation(); event.preventDefault();
 
         const alert = await this.alertCtrl.create({
-         header: $localize `:@@deleteDiscussionHeader:Conferma Eliminazione`,
-         message: $localize `:@@deleteDiscussionMessage:Sei sicuro di voler eliminare questa discussione? L'azione è irreversibile.`,
-         buttons: [
-           { text: $localize `:@@cancelBtn:Annulla`, role: 'cancel' },
-           { 
-             text: $localize `:@@deleteBtn:Elimina`, 
-             role: 'destructive',
-             handler: () => {
-               this.http.delete(`api/mod/discussions/${discussionId}`).subscribe({
-                 next: () => this.loadDiscussions(this.showId(), this.seasonId(), this.episodeId()),
-                 error: (err) => console.error("Errore eliminazione:", err)
-                });
-             }
-           }
-         ]
-       });
-       await alert.present();
+            header: $localize`:@@deleteDiscussionHeader:Conferma Eliminazione`,
+            message: $localize`:@@deleteDiscussionMessage:Sei sicuro di voler eliminare questa discussione? L'azione è irreversibile.`,
+            buttons: [
+                { text: $localize`:@@cancelBtn:Annulla`, role: 'cancel' },
+                {
+                    text: $localize`:@@deleteBtn:Elimina`, role: 'destructive',
+                    handler: () => {
+                        this.modService.deleteDiscussion(parseInt(discussionId)).subscribe({
+                            next: () => this.loadDiscussions(this.showId(), this.seasonId(), this.episodeId()),
+                            error: (err) => console.error('Errore eliminazione:', err),
+                        });
+                    },
+                },
+            ],
+        });
+        await alert.present();
     }
 
     toggleDiscussion(discussionId: string) {
-        this.expandedDiscussionId.update(id => id === discussionId ? null : discussionId);
+        this.expandedDiscussionId.update((id) => id === discussionId ? null : discussionId);
     }
 
     private async showToast(message: string, color: 'success' | 'danger') {
@@ -323,7 +322,14 @@ export class EpisodePage implements OnInit, OnDestroy {
         await toast.present();
     }
 
-    ngOnDestroy() {
-        // Nessuna logica qui, il VideoPlayerComponent emette onDestroySave prima di morire
+    async goBackToSeries() {
+        if (this.videoPlayerComponent) await this.videoPlayerComponent.killPlayer();
+        this.navCtrl.navigateBack(['/shows', this.showId()]);
     }
+
+    async ionViewWillLeave() {
+        if (this.videoPlayerComponent) await this.videoPlayerComponent.killPlayer();
+    }
+
+    ngOnDestroy() {}
 }

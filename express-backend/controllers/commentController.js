@@ -7,14 +7,13 @@ const getDiscussionComments = async (req, res) => {
 
     const { discussionId } = req.params;
     const user = req.user;
-    const isMod = !!(user && user.isMod);
 
 
     try {
         if (!user){
             return res.status(403).json({ message: "Devi essere autenticato per vedere i commenti!" });
         }
-        const comments = await commentModel.getCommentsByDiscussion(discussionId, isMod, user.id);
+        const comments = await commentModel.getCommentsByDiscussion(discussionId, user.id);
         return res.json(comments);
     } catch (err) {
         console.error("Errore recupero commenti: ", err);

@@ -57,9 +57,23 @@ const swaggerOptions = {
     apis: ['./routes/*.js', './controllers/*.js'], 
 };
 
+// const corsOptions = {
+//     origin: 'http://localhost:8100', // <-- Cambia 8100 con 4200 se usi Angular liscio!
+//     credentials: true, // 🚀 IL PASS VIP CHE RISOLVE L'ERRORE
+// };
+
+const whitelist = ['http://localhost:8100', 'http://localhost:8101'];
+
 const corsOptions = {
-    origin: 'http://localhost:8100', // <-- Cambia 8100 con 4200 se usi Angular liscio!
-    credentials: true, // 🚀 IL PASS VIP CHE RISOLVE L'ERRORE
+    origin: function (origin, callback) {
+        // !origin permette il funzionamento di tool come Postman o curl
+        if (!origin || whitelist.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(new Error('Non consentito dalla politica CORS'));
+        }
+    },
+    credentials: true,
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);

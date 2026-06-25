@@ -74,7 +74,7 @@ const { body } = require('express-validator');
 router.post('/', [
     body('email').isEmail().notEmpty().withMessage("Email non valida"),
     body('password').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("La password deve essere composta da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri."),
-    body('username').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("L'username deve essere composto da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri."),
+    body('username').isString().isLength({ min: 3, max: 24 }).notEmpty().withMessage("L'username deve essere composto da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri."),
     body("audioLanguageId").isString().isLength({ min: 2 , max: 2 }).withMessage("Id non valido"),
     body("textLanguageId").isString().isLength({ min: 2 , max: 2 }).withMessage("Id non valido"),
     body("appLanguageId").isString().isLength({ min: 2 , max: 2 }).withMessage("Id non valido"),

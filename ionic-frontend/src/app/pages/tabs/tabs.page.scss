@@ -1,0 +1,155 @@
+/* percorso: src/app/pages/tabs/tabs.page.scss */
+
+/* 📱 CONFIGURAZIONE BASE (MOBILE) */
+.desktop-header {
+  display: none; 
+}
+
+ion-tab-bar {
+  --background: #121212;
+  --border-color: #222;
+}
+
+.tab-selected {
+    color: var(--ion-color-primary) !important;
+}
+
+/* 💻 CONFIGURAZIONE SCHERMI GRANDI (PC) */
+@media (min-width: 768px) {
+  ion-tab-bar {
+    display: none !important;
+  }
+
+  .desktop-header {
+    display: block;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+  }
+
+  .brand-title {
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    color: var(--ion-color-primary);
+    transition: filter 0.2s ease-in-out;
+    
+    &:hover {
+      filter: brightness(1.2); 
+    }
+  }
+
+  .nav-links-desktop {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-right: 16px;
+
+    .nav-link {
+      color: #e0e0e0;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 0.95rem;
+      transition: all 0.2s ease-in-out;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--ion-color-primary-tint);
+        transform: scale(1.05);
+      }
+
+      &.active-tab {
+        color: var(--ion-color-primary);
+        font-weight: 700;
+      }
+    }
+
+    /* Quando il menu profilo è aperto, spegniamo il link attivo */
+    &.profile-menu-open {
+      .nav-link.active-tab {
+        color: #e0e0e0 !important; /* Torna al grigio di base */
+        font-weight: 500 !important; /* Toglie il grassetto */
+      }
+    }
+  }
+}
+
+/* Quando il menu del profilo è APERTO... */
+.profile-menu-open {
+  
+  /* 1. Colpiamo ESATTAMENTE la tab che Ionic crede sia attiva (ignorando la nostra) */
+  ion-tab-button.tab-selected:not(.profile-btn) {
+    --color: #888888 !important;
+    --color-selected: #888888 !important;
+    color: #888888 !important;
+    
+    ion-icon, ion-label {
+      color: #888888 !important;
+    }
+  }
+
+  /* 2. Accendiamo SOLO il bottone del profilo */
+  ion-tab-button.profile-btn {
+    --color: var(--ion-color-primary) !important;
+    --color-selected: var(--ion-color-primary) !important;
+    color: var(--ion-color-primary) !important;
+
+    ion-icon, ion-label {
+      color: var(--ion-color-primary) !important;
+    }
+  }
+}
+
+.profile-icon-btn {
+    --color: #e0e0e0; /* Colore di base, come gli altri link */
+    margin: 0;
+    transition: all 0.2s ease-in-out;
+
+    /* Effetto Hover (Rosso più chiaro e leggero ingrandimento) */
+    &:hover {
+      --color: var(--ion-color-primary-tint);
+      transform: scale(1.05);
+    }
+
+    /* Effetto Attivo quando il menu è aperto (Rosso scuro/primary) */
+    &.active-profile {
+      --color: var(--ion-color-primary) !important;
+    }
+  }
+
+/* ==========================================
+   STILE E ANIMAZIONE DEL POPOVER
+   ========================================== */
+ion-popover {
+  --background: var(--ion-color-secondary);
+  --backdrop-opacity: 0.5; 
+  --color: var(--ion-text-color); 
+}
+
+.dark-popover {
+  background: transparent;
+  padding: 6px 0; 
+
+  ion-item {
+    --background: transparent;
+    --color: var(--ion-text-color);
+    --border-color: transparent; 
+    
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    
+    /* 🚀 Transizione fluida per colore, ingrandimento e spostamento */
+    transition: transform 0.2s ease-in-out, --color 0.2s ease-in-out, padding 0.2s ease-in-out;
+
+    /* 🚀 EFFETTO HOVER SULLE OPZIONI */
+    &:hover {
+      --background: rgba(178, 34, 34, 0.08); /* Sfondo con un leggerissimo alone rosso */
+      --color: var(--ion-color-primary-tint) !important; /* Il testo diventa rosso chiaro */
+      
+      transform: scale(1.03); /* Si ingrandisce del 3% */
+      padding-left: 4px; /* Fa un leggerissimo micro-scostamento verso destra */
+    }
+  }
+}

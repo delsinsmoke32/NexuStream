@@ -15,12 +15,16 @@
         <target>Security Account</target>
       </trans-unit>
       <trans-unit id="langEnglish" datatype="html">
-        <source>Inglese</source>
-        <target>English</target>
+        <source>English</source>
+        <target state="new">English</target>
       </trans-unit>
       <trans-unit id="langItalian" datatype="html">
         <source>Italiano</source>
         <target>Italian</target>
+      </trans-unit>
+      <trans-unit id="langJapanese" datatype="html">
+        <source>Giapponese</source>
+        <target state="new">Giapponese</target>
       </trans-unit>
       <trans-unit id="logIn" datatype="html">
         <source>Accedi</source>
@@ -51,8 +55,8 @@
         <target>Default audio</target>
       </trans-unit>
       <trans-unit id="backHome" datatype="html">
-        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;arrow-back-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Torna alla Home </source>
-        <target><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;arrow-back-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Back to Home </target>
+        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;home-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Torna alla Home </source>
+        <target state="new"><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;arrow-back-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Back to Home </target>
       </trans-unit>
       <trans-unit id="backLogin" datatype="html">
         <source>Torna alla pagina di Accesso</source>
@@ -127,8 +131,8 @@
         <target> Error while sending request.</target>
       </trans-unit>
       <trans-unit id="forgotPass" datatype="html">
-        <source>Password dimenticata?</source>
-        <target>Forgot password?</target>
+        <source>Hai dimenticato la password?</source>
+        <target state="new">Forgot password?</target>
       </trans-unit>
       <trans-unit id="forgotSuccessToast" datatype="html">
         <source> Controlla la tua casella di posta!</source>
@@ -239,8 +243,8 @@
         <target>Most viewed this week</target>
       </trans-unit>
       <trans-unit id="myFavouritesCount" datatype="html">
-        <source>Hai salvato <x id="INTERPOLATION" equiv-text="{{ favorites.length }}"/> anime</source>
-        <target>You have saved <x id="INTERPOLATION" equiv-text="{{ favorites.length }}"/> anime</target>
+        <source>Hai salvato <x id="INTERPOLATION" equiv-text="{{ favorites().length }}"/> anime</source>
+        <target state="new">You have saved <x id="INTERPOLATION" equiv-text="{{ favorites.length }}"/> anime</target>
       </trans-unit>
       <trans-unit id="myList" datatype="html">
         <source>La Mia Lista</source>
@@ -355,8 +359,8 @@
         <target><x id="START_BLOCK_IF" equiv-text="@if (isLoading) {"/> Sending... <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Send Reset Link <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></target>
       </trans-unit>
       <trans-unit id="settings" datatype="html">
-        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon color=&quot;light&quot; slot=&quot;start&quot; name=&quot;settings-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Impostazioni </source>
-        <target>Settings</target>
+        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;settings-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Impostazioni </source>
+        <target state="new">Settings</target>
       </trans-unit>
       <trans-unit id="startWatching" datatype="html">
         <source>Inizia a guardare</source>

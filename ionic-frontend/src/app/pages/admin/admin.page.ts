@@ -1,9 +1,7 @@
 import { Component, OnInit, signal, inject } from '@angular/core'
-import { Router } from '@angular/router'
-import { HttpClient, HttpHeaders } from '@angular/common/http'
+import { Router, RouterLink } from '@angular/router'
 import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
-import { firstValueFrom } from 'rxjs'
 import {
     ToastController,
     InfiniteScrollCustomEvent,
@@ -16,9 +14,17 @@ import {
     IonTitle,
     IonToolbar,
     IonHeader,
+    IonBackButton,
+    IonIcon
 } from '@ionic/angular/standalone'
 
+import { addIcons } from 'ionicons'
+import { arrowBackOutline } from 'ionicons/icons'
+
 import { BackendUrlPipe } from '../../pipes/backend-url-pipe'
+import { AdminService } from '@app/services/admin'
+import { AuthService } from '@app/services/auth'
+import { AdminUser, UpdateRolesPayload } from '../../models/admin'
 
 @Component({
     selector: 'app-admin',
@@ -37,39 +43,35 @@ import { BackendUrlPipe } from '../../pipes/backend-url-pipe'
         IonTitle,
         IonToolbar,
         IonHeader,
+        IonBackButton,
+        RouterLink,
+        IonIcon
     ],
 })
 export class AdminPage implements OnInit {
-    private http = inject(HttpClient)
     private router = inject(Router)
     private toastController = inject(ToastController)
+    private adminService = inject(AdminService)
+    private authService = inject(AuthService)
 
-    users = signal<any[]>([])
+    users = signal<AdminUser[]>([])
     currentPage = 1
     pageSize = 20
     currentSearchTerm = ''
-    private baseUrl = 'api/admin/users'
+
+    constructor() {
+        // 🚀 4. Registra l'icona della freccia se non l'avevi già fatto
+        addIcons({ arrowBackOutline }); 
+    }
 
     ngOnInit() {
         this.loadUsers()
     }
 
-    private getAuthHeaders(): HttpHeaders {
-        const token = localStorage.getItem('token')
-        return new HttpHeaders({
-            Authorization: `Bearer ${token}`,
-        })
-    }
-
     loadUsers(isAppend: boolean = false, event?: InfiniteScrollCustomEvent) {
-        let url = `${this.baseUrl}?page=${this.currentPage}&limit=${this.pageSize}`
-
-        if (this.currentSearchTerm) {
-            url += `&search=${this.currentSearchTerm}`
-        }
-
-        this.http
-            .get<any[]>(url, { headers: this.getAuthHeaders() })
+        // 🚀 Chiamata pulita al Service
+        this.adminService
+            .getUsers(this.currentPage, this.pageSize, this.currentSearchTerm)
             .subscribe({
                 next: (res) => {
                     if (isAppend) {
@@ -86,7 +88,10 @@ export class AdminPage implements OnInit {
                     }
                 },
                 error: (err) => {
-                    console.error('Errore HTTP durante il fetch degli utenti:', err)
+                    console.error(
+                        'Errore HTTP durante il fetch degli utenti:',
+                        err
+                    )
                     if (event && event.target) {
                         event.target.complete()
                     }
@@ -94,55 +99,56 @@ export class AdminPage implements OnInit {
             })
     }
 
-    /**
-     * NUOVO METODO: Gestisce l'interruttore dei ruoli direttamente tramite click sulle chip neon.
-     * Costruisce il payload corretto per SQLite e aggiorna il Signal in tempo reale.
-     */
-    toggleRoleDirectly(user: any, role: 'mod' | 'cataloguer') {
-        if (user.isAdmin === 1) return; // Protezione di sicurezza per gli amministratori di sistema
+    toggleRoleDirectly(user: AdminUser, role: 'mod' | 'cataloguer') {
+        if (user.isAdmin === 1) return
 
-        // Calcoliamo i nuovi bit invertendo lo stato attuale del flag selezionato
-        const nextModState = role === 'mod' ? (user.isMod === 1 ? 0 : 1) : user.isMod;
-        const nextCataloguerState = role === 'cataloguer' ? (user.isCataloguer === 1 ? 0 : 1) : user.isCataloguer;
+        const nextModState =
+            role === 'mod' ? (user.isMod === 1 ? 0 : 1) : user.isMod
+        const nextCataloguerState =
+            role === 'cataloguer'
+                ? user.isCataloguer === 1
+                    ? 0
+                    : 1
+                : user.isCataloguer
 
-        const bodyPayload = {
+        const bodyPayload: UpdateRolesPayload = {
             isMod: nextModState,
             isCataloguer: nextCataloguerState,
         }
 
-        this.http
-            .patch(`${this.baseUrl}/${user.UserID}/roles`, bodyPayload, {
-                headers: this.getAuthHeaders(),
-            })
-            .subscribe({
-                next: () => {
-                    this.presentToast('Privilegi utente aggiornati!', 'success')
+        this.adminService.updateUserRoles(user.UserID, bodyPayload).subscribe({
+            next: () => {
+                this.presentToast('Privilegi utente aggiornati!', 'success')
 
-                    // Aggiornamento atomico reattivo dello stato del Signal locale
-                    this.users.update((currentUsers) =>
-                        currentUsers.map((u) =>
-                            u.UserID === user.UserID
-                                ? {
-                                      ...u,
-                                      isMod: bodyPayload.isMod,
-                                      isCataloguer: bodyPayload.isCataloguer,
-                                  }
-                                : u
-                        )
+                this.users.update((currentUsers) =>
+                    currentUsers.map((u) =>
+                        u.UserID === user.UserID
+                            ? {
+                                  ...u,
+                                  isMod: bodyPayload.isMod,
+                                  isCataloguer: bodyPayload.isCataloguer,
+                              }
+                            : u
                     )
-                },
-                error: (err) => {
-                    console.error("Errore salvataggio ruolo:", err)
-                    this.presentToast("Impossibile aggiornare i privilegi.", "danger")
-                },
-            })
+                )
+            },
+            error: (err) => {
+                console.error('Errore salvataggio ruolo:', err)
+                this.presentToast(
+                    'Impossibile aggiornare i privilegi.',
+                    'danger'
+                )
+            },
+        })
     }
 
     onSearch(event: SearchbarCustomEvent) {
         this.currentSearchTerm = event.detail.value?.trim() || ''
         this.currentPage = 1
 
-        const infiniteScroll = document.querySelector('ion-infinite-scroll') as any
+        const infiniteScroll = document.querySelector(
+            'ion-infinite-scroll'
+        ) as any
         if (infiniteScroll) infiniteScroll.disabled = false
 
         this.loadUsers(false)
@@ -163,8 +169,7 @@ export class AdminPage implements OnInit {
         await toast.present()
     }
 
-    logout() {
-        localStorage.clear()
-        this.router.navigate(['/login'])
-    }
+    // async logout() {
+    //     await this.authService.confirmLogout();
+    // }
 }

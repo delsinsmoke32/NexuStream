@@ -1,247 +1,184 @@
 <ion-header class="ion-no-border">
     <ion-toolbar color="dark" class="main-header">
-        @if (currentLevel() !== 'shows') {
         <ion-buttons slot="start">
-            <button class="header-back-btn" (click)="navigateBack()">
-                <svg viewBox="0 0 512 512">
-                    <path
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="48"
-                        d="M328 112L184 256l144 144"
-                    />
-                </svg>
-            </button>
+            <ion-back-button defaultHref="/tabs/home" text="Home"></ion-back-button>
+            
+            @if (activeTab() === 'catalogo' && currentLevel() !== 'shows') {
+                <button class="header-back-btn nested-back" (click)="navigateBack()">
+                    <svg viewBox="0 0 512 512">
+                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="48" d="M328 112L184 256l144 144" />
+                    </svg>
+                </button>
+            }
         </ion-buttons>
-        }
 
         <ion-title>
-            @if (currentLevel() === 'shows') { Catalogo Serie TV } @if
-            (currentLevel() === 'seasons') { Gestione Stagioni } @if
-            (currentLevel() === 'episodes') { Elenco Episodi }
+            @if (activeTab() === 'catalogo') {
+                @if (currentLevel() === 'shows') { Catalogo Serie TV } 
+                @if (currentLevel() === 'seasons') { Gestione Stagioni } 
+                @if (currentLevel() === 'episodes') { Elenco Episodi }
+            } @else {
+                Gestione Avatar
+            }
         </ion-title>
 
         <ion-buttons slot="end">
-            <button
-                class="header-action-btn propic-btn"
-                (click)="openPropicModal()"
-                title="Gestisci Propic"
-                color="#b22222"
-            >
+            <button class="create-btn-native" (click)="activeTab() === 'catalogo' ? openAddModal() : openPropicModal()">
                 <svg viewBox="0 0 512 512">
-                    <path
-                        d="M432 112H80a48 48 0 00-48 48v256a48 48 0 0048 48h352a48 48 0 0048-48V160a48 48 0 00-48-48zM96 432a32 32 0 1132-32 32 32 0 01-32 32zm272-128a48 48 0 1148-48 48 48 0 01-48 48z"
-                    />
-                    <path
-                        d="M432 432H192a16 16 0 01-14-8.2l-40-68.5a16 16 0 010-15.6l24-41.1a16 16 0 0128 0l16 27.4 112 112a16 16 0 01-14 26z"
-                    />
-                </svg>
-            </button>
-
-            <button class="create-btn-native" (click)="openAddModal()">
-                <svg viewBox="0 0 512 512">
-                    <path
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="32"
-                        d="M256 112v288M400 256H112"
-                    />
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M256 112v288M400 256H112" />
                 </svg>
                 <span class="btn-text">Aggiungi</span>
-            </button>
-
-            <button
-                class="header-action-btn logout-btn"
-                (click)="logout()"
-                title="Logout"
-            >
-                <svg viewBox="0 0 512 512">
-                    <path
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="32"
-                        d="M304 336v40a40 40 0 01-40 40H104a40 40 0 01-40-40V136a40 40 0 01-40-40h160a40 40 0 0140 40v40M392 256H112M328 192l64 64-64 64"
-                    />
-                </svg>
             </button>
         </ion-buttons>
     </ion-toolbar>
 
-    @if (currentLevel() === 'shows') {
-    <ion-toolbar color="dark" class="search-bar-container">
-        <ion-searchbar
-            placeholder="Cerca serie per titolo..."
-            mode="md"
-            [debounce]="500"
-            (ionInput)="onSearch($event)"
-        >
-        </ion-searchbar>
+    <ion-toolbar color="dark">
+        <ion-segment color="primary" [value]="activeTab()" (ionChange)="onTabChange($event)">
+            <ion-segment-button value="catalogo">
+                <ion-label>Catalogo Anime</ion-label>
+            </ion-segment-button>
+            <ion-segment-button value="propics">
+                <ion-label>Libreria Avatar</ion-label>
+            </ion-segment-button>
+        </ion-segment>
     </ion-toolbar>
+
+    @if (activeTab() === 'catalogo' && currentLevel() === 'shows') {
+        <ion-toolbar color="dark" class="search-bar-container">
+            <ion-searchbar
+                placeholder="Cerca serie per titolo..."
+                mode="md"
+                [debounce]="500"
+                (ionInput)="onSearch($event)"
+            >
+            </ion-searchbar>
+        </ion-toolbar>
     }
 </ion-header>
 
 <ion-content class="ion-padding">
-    <div class="cataloguer-grid">
-        @if (currentLevel() === 'shows') { @for (show of shows(); track
-        show.ShowID) {
-        <div class="catalog-card edge-primary">
-            <div class="card-body">
-                <h2 class="card-main-title">
-                    {{ getLangText(show.Title, 'it') }}
-                </h2>
-                <p class="card-description">
-                    {{ getLangText(show.Description, 'it') }}
-                </p>
-                <div class="card-metadata">
-                    <span>Inizio: <strong>{{ show.DateStarted }}</strong></span>
-                    <span class="badge" [class.badge-ended]="show.hasEnded"
-                        >{{ show.hasEnded ? 'Conclusa' : 'In Corso' }}</span
-                    >
+    
+    @if (activeTab() === 'catalogo') {
+        <div class="cataloguer-grid">
+            @if (currentLevel() === 'shows') { 
+                @for (show of shows(); track show.ShowID) {
+                <div class="catalog-card edge-primary">
+                    <div class="card-body">
+                        <h2 class="card-main-title">{{ getLangText(show.Title, 'it') }}</h2>
+                        <p class="card-description">{{ getLangText(show.Description, 'it') }}</p>
+                        <div class="card-metadata">
+                            <div class="dates-column">
+                                <span>Inizio: <strong>{{ show.DateStarted }}</strong></span>
+                                @if (show.hasEnded && show.DateEnded) {
+                                    <span>Fine: <strong>{{ show.DateEnded }}</strong></span>
+                                }
+                            </div>
+                            <span class="badge" [class.badge-ended]="show.hasEnded">{{ show.hasEnded ? 'Conclusa' : 'In Corso' }}</span>
+                        </div>
+                    </div>
+                    <div class="card-actions-row">
+                        <button class="card-action-btn btn-explore" (click)="navigateToSeasons(show.ShowID)">
+                            <svg viewBox="0 0 512 512"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M48 320h416M48 256h416M48 192h416M48 128h416" /></svg>
+                            Sfoglia Stagioni
+                        </button>
+                        <button class="card-action-btn btn-edit" (click)="openEditModalData(show)">Edit</button>
+                        <button class="card-action-btn btn-delete" (click)="deleteShow(show.ShowID)">Elimina</button>
+                    </div>
                 </div>
-            </div>
-            <div class="card-actions-row">
-                <button
-                    class="card-action-btn btn-explore"
-                    (click)="navigateToSeasons(show.ShowID)"
-                >
-                    <svg viewBox="0 0 512 512">
-                        <path
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="32"
-                            d="M48 320h416M48 256h416M48 192h416M48 128h416"
-                        />
-                    </svg>
-                    Sfoglia Stagioni
-                </button>
-                <button
-                    class="card-action-btn btn-edit"
-                    (click)="openEditModalData(show)"
-                >
-                    Edit
-                </button>
-                <button
-                    class="card-action-btn btn-delete"
-                    (click)="deleteShow(show.ShowID)"
-                >
-                    Elimina
-                </button>
-            </div>
+                } @empty {
+                <div class="empty-state"><p>Nessuna serie TV in archivio.</p></div>
+                } 
+            } 
+            
+            @if (currentLevel() === 'seasons') { 
+                @for (season of seasons(); track season.SeasonID) {
+                <div class="catalog-card edge-secondary">
+                    <div class="card-body">
+                        <span class="season-overline">STAGIONE {{ season.SeasonNumber }}</span>
+                        <h2 class="card-main-title">{{ getLangText(season.Title, 'it') }}</h2>
+                        <p class="card-description">{{ getLangText(season.Description, 'it') }}</p>
+                        <div class="card-metadata">
+                            <div class="dates-column">
+                                <span>Rilascio: <strong>{{ season.DateStarted }}</strong></span>
+                                @if (season.DateEnded) {
+                                    <span>Fine: <strong>{{ season.DateEnded }}</strong></span>
+                                }
+                            </div>
+                            <span class="badge" [class.badge-ended]="season.DateEnded">
+                                {{ season.DateEnded ? 'Conclusa' : 'In Corso' }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card-actions-row">
+                        <button class="card-action-btn btn-explore" (click)="navigateToEpisodes(season.SeasonID)">
+                            <svg viewBox="0 0 512 512"><path d="M440 424V88a40 40 0 00-40-40H112a40 40 0 00-40 40v336M120 424h272M72 144h368M72 336h368M224 216l80 40-80 40v-80z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/></svg>
+                            Vedi Episodi
+                        </button>
+                        <button class="card-action-btn btn-edit" (click)="openEditModalData(season)">Edit</button>
+                        <button class="card-action-btn btn-delete" (click)="deleteSeason(season.SeasonID)">Elimina</button>
+                    </div>
+                </div>
+                } @empty {
+                <div class="empty-state"><p>Nessuna stagione inserita.</p></div>
+                } 
+            } 
+            
+            @if (currentLevel() === 'episodes') { 
+                @for (episode of episodes(); track episode.EpisodeID) {
+                <div class="catalog-card edge-episode">
+                    <div class="card-body">
+                        <div class="episode-header-row">
+                            <span class="ep-number">EPISODIO {{ episode.EpisodeNumber }}</span>
+                            <span class="ep-duration">{{ episode.Duration / 60}} min</span>
+                        </div>
+                        <h2 class="card-main-title">"{{ getLangText(episode.Title, 'it') }}"</h2>
+                        <p class="card-description">{{ getLangText(episode.Description, 'it') }}</p>
+                        <div class="card-metadata">
+                            <span>Uscita: <strong>{{ episode.ReleaseDate }}</strong></span>
+                        </div>
+                    </div>
+                    <div class="card-actions-row split-two">
+                        <button class="card-action-btn btn-edit" (click)="openEditModalData(episode)">Modifica Dettagli</button>
+                        <button class="card-action-btn btn-delete" (click)="deleteEpisode(episode.EpisodeID)">Elimina</button>
+                    </div>
+                </div>
+                } @empty {
+                <div class="empty-state"><p>Nessun episodio in questa stagione.</p></div>
+                } 
+            }
         </div>
-        } @empty {
-        <div class="empty-state"><p>Nessuna serie TV in archivio.</p></div>
-        } } @if (currentLevel() === 'seasons') { @for (season of seasons();
-        track season.SeasonID) {
-        <div class="catalog-card edge-secondary">
-            <div class="card-body">
-                <span class="season-overline">STAGIONE {{ season.SeasonNumber }}</span>
 
-                <h2 class="card-main-title">
-                    {{ getLangText(season.Title, 'it') }}
-                </h2>
-                <p class="card-description">
-                    {{ getLangText(season.Description, 'it') }}
-                </p>
-                
-                <div class="card-metadata">
-                    <span>Rilascio: <strong>{{ season.DateStarted }}</strong></span>
-                    
-                    <span class="badge" [class.badge-ended]="season.DateEnded">
-                        {{ season.DateEnded ? 'Conclusa' : 'In Corso' }}
-                    </span>
-                </div>
-            </div>
-            <div class="card-actions-row">
-                <button
-                    class="card-action-btn btn-explore"
-                    (click)="navigateToEpisodes(season.SeasonID)"
-                >
-                    <svg viewBox="0 0 512 512">
-                        <path
-                            d="M440 424V88a40 40 0 00-40-40H112a40 40 0 00-40 40v336M120 424h272M72 144h368M72 336h368M224 216l80 40-80 40v-80z"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="32"
-                        />
-                    </svg>
-                    Vedi Episodi
-                </button>
-                <button
-                    class="card-action-btn btn-edit"
-                    (click)="openEditModalData(season)"
-                >
-                    Edit
-                </button>
-                <button
-                    class="card-action-btn btn-delete"
-                    (click)="deleteSeason(season.SeasonID)"
-                >
-                    Elimina
-                </button>
-            </div>
-        </div>
-        } @empty {
-        <div class="empty-state"><p>Nessuna stagione inserita.</p></div>
-        } } @if (currentLevel() === 'episodes') { @for (episode of episodes();
-        track episode.EpisodeID) {
-        <div class="catalog-card edge-episode">
-            <div class="card-body">
-                <div class="episode-header-row">
-                    <span class="ep-number"
-                        >EPISODIO {{ episode.EpisodeNumber }}</span
-                    >
-                    <span class="ep-duration">{{ episode.Duration / 60}} min</span>
-                </div>
-                <h2 class="card-main-title">
-                    "{{ getLangText(episode.Title, 'it') }}"
-                </h2>
-                <p class="card-description">
-                    {{ getLangText(episode.Description, 'it') }}
-                </p>
-                <div class="card-metadata">
-                    <span
-                        >Uscita:
-                        <strong>{{ episode.ReleaseDate }}</strong></span
-                    >
-                </div>
-            </div>
-            <div class="card-actions-row split-two">
-                <button
-                    class="card-action-btn btn-edit"
-                    (click)="openEditModalData(episode)"
-                >
-                    Modifica Dettagli
-                </button>
-                <button
-                    class="card-action-btn btn-delete"
-                    (click)="deleteEpisode(episode.EpisodeID)"
-                >
-                    Elimina
-                </button>
-            </div>
-        </div>
-        } @empty {
-        <div class="empty-state">
-            <p>Nessun episodio in questa stagione.</p>
-        </div>
-        } }
-    </div>
+        @if (currentLevel() === 'shows') {
+            <ion-infinite-scroll threshold="150px" (ionInfinite)="loadMoreData($event)">
+                <ion-infinite-scroll-content loadingSpinner="bubbles"></ion-infinite-scroll-content>
+            </ion-infinite-scroll>
+        }
+    }
 
-    @if (currentLevel() === 'shows') {
-    <ion-infinite-scroll threshold="150px" (ionInfinite)="loadMoreData($event)">
-        <ion-infinite-scroll-content
-            loadingSpinner="bubbles"
-        ></ion-infinite-scroll-content>
-    </ion-infinite-scroll>
+    @if (activeTab() === 'propics') {
+        <div class="propics-workspace">
+            @for (group of groupedPropics(); track group.bundle) {
+                <div class="bundle-section">
+                    <h3 class="bundle-title">
+                        Pacchetto: {{ group.bundle }}
+                        <ion-button fill="clear" size="small" (click)="openPropicModal(group.bundle)">
+                            <ion-icon name="add-circle-outline"></ion-icon>
+                        </ion-button>
+                    </h3>
+                    <div class="propics-grid">
+                        @for (uri of group.images; track uri) {
+                            <div class="propic-card">
+                                <img [src]="uri | backendUrl: 'static'" alt="Propic">
+                                <ion-button class="delete-propic-btn" color="danger" fill="clear" (click)="deletePropic(uri)">
+                                    <ion-icon name="trash-outline"></ion-icon>
+                                </ion-button>
+                            </div>
+                        }
+                    </div>
+                </div>
+            } @empty {
+                <div class="empty-state"><p>Nessun avatar presente nel database.</p></div>
+            }
+        </div>
     }
 </ion-content>

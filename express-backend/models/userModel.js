@@ -121,6 +121,30 @@ const getUserFavorites = async (userId, applang = "it") => {
     return await db.allAsync(sql, [applang, applang, userId]);
 }
 
+/**
+ * Ottiene la password di un determinato utente nel database.
+ * @param {number} userId - L'ID univoco dell'utente di cui ottenere la password.
+ * @returns {Promise<Object>} Una Promise che si risolve con l'oggetto di stato del database (es. verifica delle righe modificate tramite `changes`).
+ * @throws {Error} Se si verifica un errore durante l'esecuzione della query SQL.
+ */
+const getUserPassword = async (userId) => {
+    const sql = `SELECT password FROM Users WHERE UserID = ?`;
+
+    return await db.getAsync(sql, [userId]);
+}
+
+/**
+ * Modifica la propic di un utente, se la propic desiderata esiste
+ * @param {number} userId - L'ID univoco dell'utente di cui aggiornare la propic.
+ * @param {string} propicURI - L'URI della nuova propic.
+ * @returns {Promise<Object>} Una Promise che si risolve con l'oggetto di stato del database (es. verifica delle righe modificate tramite `changes`).
+ * @throws {Error} Se si verifica un errore durante l'esecuzione della query SQL.
+ */
+const changePropic = async (userId, propicURI) => {
+    const sql = `UPDATE Users SET REF_PropicURI = ? WHERE UserID = ?`;
+
+    return await db.runAsync(sql, [propicURI, userId]);
+}
 
 module.exports = {
     getUserByEmail,
@@ -130,5 +154,7 @@ module.exports = {
     validateResetToken,
     updatePassword,
     deleteResetToken,
-    getUserFavorites
+    getUserFavorites,
+    getUserPassword,
+    changePropic
 };

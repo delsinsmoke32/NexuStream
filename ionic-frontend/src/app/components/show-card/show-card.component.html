@@ -3,11 +3,13 @@
         @if (layout() === 'landscape') {
             <img
                 [src]="
-                    show().BannerURI
-                        ? (show().BannerURI | backendUrl: 'static')
-                        : 'assets/placeholder-banner.png'
+                    show().EpisodeThumbnailURI
+                        ? (show().EpisodeThumbnailURI | backendUrl: 'static')
+                        : (show().BannerURI 
+                            ? (show().BannerURI | backendUrl: 'static') 
+                            : 'assets/placeholder-banner.png')
                 "
-                [alt]="show().Title || show().ShowTitle"
+                [alt]="parseLang(show().Title || show().ShowTitle)"
             />
         } @else {
             <img
@@ -16,7 +18,7 @@
                         ? (show().ThumbnailURI | backendUrl: 'static')
                         : 'assets/placeholder-poster.png'
                 "
-                [alt]="show().Title || show().ShowTitle"
+                [alt]="parseLang(show().Title || show().ShowTitle)"
             />
         }
 
@@ -46,7 +48,17 @@
         }
     </div>
 
-    <div class="card-info-bottom" (click)="onInfo($event)">
-        <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
-    </div>
+    @if (layout() === 'landscape') {
+        <div class="landscape-meta" (click)="onPlay($event)">
+            <span class="meta-show-title">{{ parseLang(show().Title || show().ShowTitle) }}</span>
+            <span class="meta-episode-info">
+                S{{ show().SeasonNumber || 1 }} E{{ show().EpisodeNumber || 1 }} - {{ parseLang(show().EpisodeTitle) }}
+            </span>
+        </div>
+    }
+    @if (layout() !== 'landscape') {
+        <div class="card-info-bottom" (click)="onInfo($event)">
+            <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
+        </div>
+    }
 </div>

@@ -1,13 +1,14 @@
-import { Component, inject, OnInit } from '@angular/core'
+import { Component, inject, OnInit } from '@angular/core';
 import {
     IonItem,
     IonIcon,
     IonSelect,
     IonSelectOption,
     ToastController,
-} from '@ionic/angular/standalone'
-import { addIcons } from 'ionicons'
-import { globeOutline, chevronDownOutline } from 'ionicons/icons'
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { globeOutline, chevronDownOutline } from 'ionicons/icons';
+import { LanguageService } from '@app/services/language';
 
 @Component({
     selector: 'app-language-switcher',
@@ -20,6 +21,7 @@ export class LanguageSwitcherComponent {
     currentLang: string
     private serveMode = false
     private toastController = inject(ToastController)
+    private langService = inject(LanguageService);
 
     constructor() {
         addIcons({ globeOutline, chevronDownOutline })
@@ -36,6 +38,8 @@ export class LanguageSwitcherComponent {
     switchLanguage(event: Event) {
         const target = event.target as HTMLSelectElement
         const nextLang = target.value
+
+        this.langService.setLanguages(nextLang, nextLang);
 
         // Replace the language segment in the URL
         if (!this.serveMode) {

@@ -202,9 +202,13 @@
         <source>Token sessione non valido.</source>
         <target>Invalid session token.</target>
       </trans-unit>
-      <trans-unit id="loginOn" datatype="html">
-        <source> Accesso su <x id="START_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;ion-text color=&quot;primary&quot;&gt;"/><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/> NexuStream <x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="CLOSE_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;/ion-text&gt;"/></source>
-        <target> Login on <x id="START_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;ion-text color=&quot;primary&quot;&gt;"/><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/> NexuStream <x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="CLOSE_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;/ion-text&gt;"/></target>
+      <trans-unit id="dontWantLogin" datatype="html">
+        <source>Non vuoi fare login? </source>
+        <target>Don't want to log in? </target>
+      </trans-unit>
+      <trans-unit id="backToHome" datatype="html">
+        <source>Torna alla home</source>
+        <target>Back to home</target>
       </trans-unit>
       <trans-unit id="loginRequiredFavouritesToast" datatype="html">
         <source>Devi accedere per aggiungere ai preferiti!</source>
@@ -227,8 +231,8 @@
         <target> The resource you are looking for may have been removed, changed its name, or be temporarily unavailable. </target>
       </trans-unit>
       <trans-unit id="minimumCharPassError" datatype="html">
-        <source>Minimo 8 caratteri richiesti</source>
-        <target>Minimum 8 characters required</target>
+        <source>Minimo 8 caratteri richiesti, max 24</source>
+        <target>Minimum 8 characters required, max 24</target>
       </trans-unit>
       <trans-unit id="missingToken" datatype="html">
         <source>Token di ripristino mancante o scaduto.</source>
@@ -279,8 +283,8 @@
         <target> You do not have the required permissions to view this resource. </target>
       </trans-unit>
       <trans-unit id="obligatoryUser" datatype="html">
-        <source>Lo username è obbligatorio (min 3 caratteri)</source>
-        <target>Username is obligatory (min 3 characters)</target>
+        <source>Lo username è obbligatorio (min 3 caratteri, max 24)</source>
+        <target>Username is obligatory (min 3 characters, max 24)</target>
       </trans-unit>
       <trans-unit id="otherInfos" datatype="html">
         <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon name=&quot;information-circle-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Altre Info </source>
@@ -322,9 +326,14 @@
         <source> Compila tutti i campi correttamente. La password richiede almeno 8 caratteri.</source>
         <target> Please fill out all fields correctly. The password requires at least 8 characters.</target>
       </trans-unit>
-      <trans-unit id="registerON" datatype="html">
-        <source> Registrati su <x id="START_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;ion-text color=&quot;primary&quot;&gt;"/><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/> NexuStream <x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="CLOSE_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;/ion-text&gt;"/></source>
-        <target> Register on <x id="START_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;ion-text color=&quot;primary&quot;&gt;"/><x id="START_TAG_STRONG" ctype="x-strong" equiv-text="&lt;strong&gt;"/> NexuStream <x id="CLOSE_TAG_STRONG" ctype="x-strong" equiv-text="&lt;/strong&gt;"/><x id="CLOSE_TAG_ION_TEXT" ctype="x-ion_text" equiv-text="&lt;/ion-text&gt;"/></target>
+      <trans-unit id="dontWantRegister" datatype="html">
+        <source>Non vuoi registrarti? </source>
+        <target>Don't want to register? </target>
+      </trans-unit>
+
+      <trans-unit id="backToHome" datatype="html">
+        <source>Torna alla home</source>
+        <target>Back to home</target>
       </trans-unit>
       <trans-unit id="registerSuccess" datatype="html">
         <source> Registrazione completata con successo! Ora puoi accedere.</source>

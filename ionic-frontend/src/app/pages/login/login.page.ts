@@ -26,6 +26,7 @@ import {
     ToastController,
     IonText,
 } from '@ionic/angular/standalone'
+import { LanguageService } from '@app/services/language';
 
 @Component({
     selector: 'app-login',
@@ -53,9 +54,10 @@ import {
     ],
 })
 export class LoginPage implements OnInit {
-    private authService = inject(AuthService)
-    private router = inject(Router)
-    private toastController = inject(ToastController)
+    private authService = inject(AuthService);
+    private router = inject(Router);
+    private toastController = inject(ToastController);
+    private langService = inject(LanguageService);
 
     // Form reattivo configurato correttamente
     loginForm = new FormGroup({
@@ -74,7 +76,6 @@ export class LoginPage implements OnInit {
     ngOnInit() {}
 
     login() {
-        // Usiamo la validazione nativa dei Reactive Forms
         if (this.loginForm.invalid) {
             this.presentToast(
                 $localize `:@@insertLogin: Inserisci un'email valida e una password di almeno 8 caratteri.`,
@@ -83,33 +84,50 @@ export class LoginPage implements OnInit {
             return
         }
 
-        // Estraiamo i dati in modo Type-Safe grazie a getRawValue()
         const credentials = this.loginForm.getRawValue()
 
         this.authService.login(credentials).subscribe({
             next: (res: any) => {
                 console.log('Risposta esatta del server:', res)
 
-                localStorage.setItem('token', res.token)
-
-                // Se i dati dell'utente sono dentro res.user usa quello, altrimenti usa direttamente res
                 const userData = res.user ? res.user : res
+
+                // 🚀 1. Aggiorniamo le lingue IN LOCALE prima del token!
+                // (Assicurati che i nomi corrispondano a come il tuo DB ti restituisce i campi)
+                const appLang = userData.REF_App_Language || 'it';
+                const textLang = userData.REF_Text_Language || 'it';
+                const audioLang = userData.REF_Audio_Language || 'jp';
+                
+                // Salviamo le preferenze (non farà chiamate API perché il token non c'è ancora)
+                this.langService.setLanguages(appLang, textLang, audioLang);
+
+                // 🚀 2. ORA salviamo il token e il resto
+                localStorage.setItem('token', res.token)
                 localStorage.setItem('user', JSON.stringify(userData))
 
-                // Mappiamo i ruoli usando la funzione helper
                 const rolesArray = this.buildRolesArray(userData)
                 localStorage.setItem('user_roles', JSON.stringify(rolesArray))
 
                 if (res.user && res.user.REF_PropicURI) {
                     localStorage.setItem('propic', res.user.REF_PropicURI);
                 } else {
-                    localStorage.removeItem('propic'); // Pulisce se non ce l'ha
+                    localStorage.removeItem('propic'); 
                 }
 
-                if (rolesArray.includes('admin')) {
-                    this.router.navigate(['/admin'])
+                // 🚀 3. Controllo URL: Se la lingua dell'utente è diversa da quella dell'URL, 
+                // ricarichiamo la pagina con la lingua corretta (come nei Settings)
+                const currentUrlLang = window.location.pathname.split('/')[1];
+                const targetRoute = rolesArray.includes('admin') ? '/admin' : '/tabs/home';
+                
+                // Controlliamo se stiamo girando in "serve mode" (senza cartelle lingua)
+                const isServeMode = !['it', 'en'].includes(currentUrlLang);
+
+                // Se NON siamo in serve mode, E la lingua è diversa, facciamo il redirect rigido
+                if (!isServeMode && currentUrlLang !== appLang && ['it', 'en'].includes(appLang)) {
+                    window.location.href = window.location.origin + `/${appLang}` + targetRoute;
                 } else {
-                    this.router.navigate(['/tabs/home'])
+                    // Se siamo in locale (ionic serve) o la lingua coincide, usiamo il router standard!
+                    this.router.navigate([targetRoute]);
                 }
             },
             error: (err) => {

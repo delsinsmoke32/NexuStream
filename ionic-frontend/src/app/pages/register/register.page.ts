@@ -31,6 +31,7 @@ import { addIcons } from 'ionicons'
 import { LanguageSwitcherComponent } from '@app/components/language-switcher/language-switcher.component'
 import { swapHorizontalOutline } from '@lib/ionicons/icons'
 import { AvatarPickerModalComponent } from '@app/components/avatar-picker-modal/avatar-picker-modal.component'
+import { LanguageService } from '@app/services/language'
 
 @Component({
     selector: 'app-register',
@@ -64,12 +65,13 @@ export class RegisterPage implements OnInit {
     private toastController = inject(ToastController)
     private authService = inject(AuthService)
     private modalCtrl = inject(ModalController)
+    private langService = inject(LanguageService)
 
     // Configurazione del Form Reattivo
     registerForm = new FormGroup({
         username: new FormControl('', {
             nonNullable: true,
-            validators: [Validators.required, Validators.minLength(3)],
+            validators: [Validators.required, Validators.minLength(3), Validators.maxLength(24)],
         }),
         email: new FormControl('', {
             nonNullable: true,
@@ -81,7 +83,7 @@ export class RegisterPage implements OnInit {
         }),
         conf_password: new FormControl('', {
             nonNullable: true,
-            validators: [Validators.required],
+            validators: [Validators.required, Validators.minLength(8), Validators.maxLength(24)],
         }),
         // propic: new FormControl('', {
         //     nonNullable: true,
@@ -91,7 +93,7 @@ export class RegisterPage implements OnInit {
 
     selected = signal('avatars/avatar-003.png')
     constructor() {
-        addIcons({ swapHorizontalOutline })
+        addIcons({swapHorizontalOutline});
         // this.registerForm.patchValue({ propic: this.selected() })
     }
 
@@ -102,7 +104,7 @@ export class RegisterPage implements OnInit {
         if (this.registerForm.invalid) {
             this.presentToast(
                 $localize`:@@registerFormInvalid: 
-                Compila tutti i campi correttamente. La password richiede almeno 8 caratteri.`,
+                Compila tutti i campi correttamente. La password richiede almeno 8 caratteri e massimo 24.`,
                 'danger'
             )
             return
@@ -119,16 +121,14 @@ export class RegisterPage implements OnInit {
             return
         }
 
-        // Costruiamo il payload finale unendo i dati del form ai tuoi fallback strutturali
-        // NOTA: AGGIUNGERE MODO PER SELEZIONARE LE LINGUE (menu a tendina?)
-        // NOTA: AGGIUNGERE MODO PER SELEZIONARE LA PROPIC (rendi mob funzionale)
+        
         const payload = {
             username: formData.username.trim(),
             email: formData.email.trim(),
             password: formData.password,
-            audioLanguageId: 'it',
-            textLanguageId: 'it',
-            appLanguageId: 'it',
+            audioLanguageId: this.langService.getAudioLang(),
+            textLanguageId: this.langService.getTextLang(),
+            appLanguageId: this.langService.getAppLang(),
             propicURI: this.selected(),
         }
 

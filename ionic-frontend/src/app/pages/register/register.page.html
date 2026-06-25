@@ -1,11 +1,10 @@
-<ion-header [translucent]="true">
+<ion-header [translucent]="true" class="ion-no-border">
     <ion-toolbar>
-        <ion-title i18n="@@registerON" slot="start">
-            Registrati su
-            <ion-text color="primary">
-                <strong> NexuStream </strong>
-            </ion-text>
-        </ion-title>
+        <div slot="start" class="return-home-container">
+            <span class="full-text" i18n="@@dontWantRegister">Non vuoi registrarti? </span>
+            <a routerLink="/tabs/home" class="home-link" i18n="@@backToHome">Torna alla home</a>
+        </div>
+        
         <app-language-switcher slot="end"></app-language-switcher>
     </ion-toolbar>
 </ion-header>
@@ -39,7 +38,7 @@
                             <ion-item lines="none" class="custom-input">
                                 <ion-input
                                     formControlName="password"
-                                    errorText="Minimo 8 caratteri richiesti"
+                                    errorText="Minimo 8 caratteri richiesti, max 24"
                                     i18n-errorText="@@minimumCharPassError"
                                     type="password"
                                     placeholder="password"
@@ -109,7 +108,7 @@
                             <ion-item lines="none" class="custom-input">
                                 <ion-input
                                     formControlName="username"
-                                    errorText="Lo username è obbligatorio (min 3 caratteri)"
+                                    errorText="Lo username è obbligatorio (min 3 caratteri, max 24)"
                                     i18n-errorText="@@obligatoryUser"
                                     type="text"
                                     placeholder="nome utente"

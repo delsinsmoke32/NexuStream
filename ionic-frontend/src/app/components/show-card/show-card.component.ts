@@ -16,13 +16,13 @@ export class ShowCardComponent {
   show = input.required<any>();
   layout = input<'portrait' | 'landscape'>('portrait');
   
-  showDelete = input<boolean>(false); // Cestino (Preferiti)
-  showDismiss = input<boolean>(false); // X di chiusura (Continua a guardare)
+  showDelete = input<boolean>(false);
+  showDismiss = input<boolean>(false);
 
   play = output<any>(); 
   info = output<number>(); 
   remove = output<number>(); 
-  dismiss = output<number>(); // Output per il continua a guardare
+  dismiss = output<number>();
 
   constructor() {
     addIcons({ playCircle, informationCircleOutline, trash, close });
@@ -43,10 +43,18 @@ export class ShowCardComponent {
     this.remove.emit(this.show().ShowID || this.show().id);
   }
 
-  // Funzione per il click sulla X
   onDismiss(event: Event) {
     event.stopPropagation();
-    // Emette l'ID dello Show o dell'Episodio (dipende da come gestisci il backend)
     this.dismiss.emit(this.show().ShowID || this.show().id);
+  }
+
+  parseLang(jsonStr?: string, lang: string = 'it'): string {
+    if (!jsonStr) return '';
+    try {
+      const obj = JSON.parse(jsonStr);
+      return obj[lang] || obj['en'] || 'Titolo non disponibile';
+    } catch {
+      return jsonStr; // Se è già una stringa normale
+    }
   }
 }

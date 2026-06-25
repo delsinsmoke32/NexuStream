@@ -3,7 +3,10 @@ const { validationResult } = require('express-validator');
 
 const getDiscussionComments = async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()){
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
 
     const { discussionId } = req.params;
     const user = req.user;
@@ -23,7 +26,10 @@ const getDiscussionComments = async (req, res) => {
 
 const postComment = async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()){
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
 
     const { discussionId } = req.params;
     const { text, parentCommentId } = req.body;
@@ -45,7 +51,10 @@ const postComment = async (req, res) => {
 
 const interactWithComment = async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()){
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
 
     const { commentId } = req.params;
     const { isLiked, isReported } = req.body;
@@ -83,7 +92,10 @@ const interactWithComment = async (req, res) => {
 
 const hideComment = async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()){
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
 
     const { commentId } = req.params;
     const { isHidden } = req.body;
@@ -98,7 +110,10 @@ const hideComment = async (req, res) => {
 
 const approveComment = async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()){
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
 
     const { commentId } = req.params;
     const { isApproved } = req.body;

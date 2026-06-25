@@ -23,8 +23,8 @@ const getSeasonDetails = async (req, res) => {
     // Controllo errori dei validatori di Express
     const errors = validationResult(req);
     if (!errors.isEmpty()){
-    console.error(errors.array());
-    return res.status(400).json({ errors: errors.array() });
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() });
     }
 
     const { seasonId } = req.params;

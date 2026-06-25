@@ -17,8 +17,10 @@ export interface ModDiscussion {
 
 export interface ModComment {
     CommentID: number;
+    REF_UserID: number;
     Body?: string; 
     Timestamp?: number;
+    isApproved?: number;
     isHidden?: number;
     CommentText?: string;
     DateCommented?: string;

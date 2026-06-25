@@ -1,0 +1,35 @@
+<div class="discussion-card" [class.is-closed]="disc.ForceClosed">
+    <div class="card-top">
+        <h2 class="show-title">{{ parseLang(disc.ShowTitle) }}</h2>
+        <span class="status-badge" [class.active]="!disc.ForceClosed" [class.closed]="disc.ForceClosed">
+            {{ disc.ForceClosed ? 'Chiusa' : 'Attiva' }}
+        </span>
+    </div>
+
+    <div class="card-middle">
+        <span class="episode-details">Stagione {{ disc.SeasonNumber }} • Episodio {{ disc.EpisodeNumber }}</span>
+        <h3 class="episode-title">"{{ parseLang(disc.EpisodeTitle) }}"</h3>
+    </div>
+
+    <div class="card-info-rows">
+        <div class="info-row">
+            <span class="label">Tipologia Stanza:</span>
+            <span class="value type-highlight">{{ disc.Type }}</span>
+        </div>
+        <div class="info-row">
+            <span class="label">Data Scadenza:</span>
+            <span class="value">{{ disc.CloseDate }}</span>
+        </div>
+    </div>
+
+    <div class="card-buttons">
+        <button type="button" class="mod-btn btn-manage" (click)="onEdit()">
+            <ion-icon name="options-outline" class="svg-icon"></ion-icon>
+            Gestisci
+        </button>
+        <button type="button" class="mod-btn btn-delete" (click)="onDelete()">
+            <ion-icon name="trash-outline" class="svg-icon"></ion-icon>
+            Elimina
+        </button>
+    </div>
+</div>

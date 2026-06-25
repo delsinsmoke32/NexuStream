@@ -122,6 +122,11 @@ const interactWithEpisode = async (req, res) => {
 // GET: Rotta dedicata al recupero tempi
 // ==========================================
 const getTimes = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
     const { id } = req.params;
     try {
         const times = await episodeModel.getEpisodeTimes(id);
@@ -138,7 +143,8 @@ const getTimes = async (req, res) => {
 const setTimes = async (req, res) => {
     // Controllo validazione
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+    if (!errors.isEmpty()){
+        console.error(errors.array());
         return res.status(400).json({ errors: errors.array() });
     }
 
@@ -169,6 +175,7 @@ const fallbackStream = async (req, res) => {
     console.log("fallbacking")
     const errors = validationResult(req);
     if (!errors.isEmpty()){
+        console.error(errors.array());
         return res.status(400).json({ errors: errors.array() });
     }
     let id = "test"
@@ -209,7 +216,10 @@ const fallbackStream = async (req, res) => {
 
 const stream = async (req, res, next) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()){
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
 
     const episodeId = req.params.episodeId || req.params.id;
     const host = process.env.HOST || 'localhost';

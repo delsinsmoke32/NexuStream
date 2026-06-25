@@ -135,11 +135,31 @@ const modifyPropic = async (req, res) => {
     }
 }
 
+const changeLanguages = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { appLanguageId, textLanguageId, audioLanguageId } = req.body;
+    const user = req.user;
+
+    try {
+        await userModel.changeLanguages(user.id, appLanguageId, textLanguageId, audioLanguageId);
+        return res.status(200).json({message: "Lingue cambiate con successo!"})
+    } catch (err) {
+         console.error(err);
+        return res.status(500).json({ message: 'Errore interno del server.' });
+    }
+}
+
 
 module.exports = {
     getMyProfile,
     getGuestLanguage,
     getFavorites,
     modifyPassword,
-    modifyPropic
+    modifyPropic,
+    changeLanguages
 };

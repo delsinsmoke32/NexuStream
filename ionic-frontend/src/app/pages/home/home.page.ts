@@ -18,7 +18,7 @@ import { ShowCardComponent } from '@app/components/show-card/show-card.component
 import { HomeService } from '@app/services/home';
 import { AuthService } from '@app/services/auth';
 import { HomeShow, ContinueWatchingItem, ContinueWatchingInteractPayload } from '../../models/home';
-import { jwtDecodeHelper } from '@app/utils/jwt-helper';
+
 
 @Component({
   selector: 'app-home',

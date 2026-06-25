@@ -108,3 +108,61 @@ ion-card-content {
     color: var(--ion-color-primary, #b22222);
   }
 }
+
+// ==========================================
+// HEADER E NAVIGAZIONE
+// ==========================================
+
+/* Fix per il language picker che clippa: forziamo i margini interni della toolbar */
+ion-toolbar {
+  --padding-start: 16px;
+  --padding-end: 16px;
+
+  @media (max-width: 576px) {
+    --padding-start: 10px;
+    --padding-end: 10px;
+  }
+}
+
+/* Stile per il nuovo link di ritorno alla home */
+.return-home-container {
+  display: flex;
+  align-items: center;
+  font-size: 0.95rem;
+  color: var(--ion-color-medium, #888888);
+  white-space: nowrap; /* Evita che il testo si spezzi su più righe rompendosi male */
+
+  .full-text {
+    margin-right: 4px;
+  }
+
+  .home-link {
+    color: var(--ion-color-primary, #b22222);
+    font-weight: 600;
+    text-decoration: none;
+    transition: opacity 0.2s ease, text-decoration 0.2s ease;
+
+    &:hover {
+      opacity: 0.8;
+      text-decoration: underline;
+    }
+  }
+
+  /* 📱 MEDIA QUERY MOBILE: Salviamo lo spazio! */
+  @media (max-width: 576px) {
+    font-size: 0.85rem;
+    
+    .full-text {
+      /* Nascondiamo la frase lunga sui telefoni, lasciando solo "Torna alla home" */
+      display: none; 
+    }
+
+    .home-link {
+      /* Possiamo anche aggiungere un'iconina visiva via CSS per renderlo più chiaro su mobile */
+      &::before {
+        content: '← ';
+        font-weight: bold;
+      }
+    }
+  }
+}

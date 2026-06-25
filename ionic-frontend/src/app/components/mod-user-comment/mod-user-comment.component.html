@@ -1,0 +1,34 @@
+<div class="mod-comment-row">
+    <div class="comment-row-header">
+        <span class="comment-timestamp">{{ comment.DateCommented | date:'dd/MM/yyyy HH:mm' }}</span>
+        @if ((comment.ReportCount || 0) > 0) {
+            <span class="comment-report-badge">
+                {{ comment.ReportCount }} {{ comment.ReportCount === 1 ? 'Segnalazione' : 'Segnalazioni' }}
+            </span>
+        }
+    </div>
+    
+    <p class="comment-row-text">{{ comment.CommentText }}</p>
+    
+    <div class="comment-row-footer">
+        <div class="comment-stats">
+            <span>Likes: {{ comment.Likes }}</span>
+            <div class="status-indicators">
+                <span>Stato: </span>
+                @if (comment.isHidden) { <span class="tag tag-hidden">Nascosto</span> }
+                @if (comment.isApproved) { <span class="tag tag-approved">Approvato</span> }
+                @if (!comment.isHidden && !comment.isApproved) { <span class="tag tag-waiting">In attesa</span> }
+            </div>
+        </div>
+        
+        <div class="comment-mod-actions">
+            <ion-button fill="clear" size="small" [color]="comment.isApproved ? 'medium' : 'success'" (click)="onApprove()">
+                <ion-icon [name]="comment.isApproved ? 'close-circle-outline' : 'checkmark-circle-outline'" slot="icon-only"></ion-icon>
+            </ion-button>
+
+            <ion-button fill="clear" size="small" [color]="comment.isHidden ? 'medium' : 'warning'" (click)="onHide()">
+                <ion-icon [name]="comment.isHidden ? 'eye-outline' : 'eye-off-outline'" slot="icon-only"></ion-icon>
+            </ion-button>
+        </div>
+    </div>
+</div>

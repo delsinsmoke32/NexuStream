@@ -323,6 +323,18 @@ router.get('/users/:userId/comments', [
     param('userId').isInt({ min: 1 }).notEmpty().withMessage("ID utente non valido")
 ], modController.getUserComments);
 
+router.patch('/users/:userId/comments/:commentId/hide', [
+    param('userId').isInt({ min: 1 }).notEmpty().withMessage("ID utente non valido"),
+    param('commentId').isInt({ min: 1 }).notEmpty().withMessage("ID commento non valido"),
+    body('isHidden').isInt({min: 0, max: 1}).notEmpty().withMessage("Valore isHidden non valido")
+], modController.hideComment);
+
+router.patch('/users/:userId/comments/:commentId/approve', [
+    param('userId').isInt({ min: 1 }).notEmpty().withMessage("ID utente non valido"),
+    param('commentId').isInt({ min: 1 }).notEmpty().withMessage("ID commento non valido"),
+    body('isApproved').isInt({min: 0, max: 1}).notEmpty().withMessage("Valore isApproved non valido")
+], modController.approveComment);
+
 //----------------
 // GESTIONE BAN
 //----------------

@@ -40,6 +40,8 @@ import { Router } from '@angular/router'
 import { AlertController, ToastController } from '@ionic/angular'
 import { HttpClient } from '@angular/common/http'
 import { HttpHeaders } from '@angular/common/http'
+import { LanguageService } from '@app/services/language'; 
+import { AuthService } from '@app/services/auth';
 import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
 import { AvatarPickerModalComponent } from '@app/components/avatar-picker-modal/avatar-picker-modal.component'
 import { ChangePasswordModalComponent } from '@app/components/change-password-modal/change-password-modal.component'
@@ -79,19 +81,28 @@ import { Settings } from '@app/services/settings'
     ],
 })
 export class SettingsPage implements OnInit {
-    private http = inject(HttpClient)
-    private settingsService = inject(Settings)
+    private http = inject(HttpClient);
+    private settingsService = inject(Settings);
+    private langService = inject(LanguageService);
+    private authService = inject(AuthService);
+    private modalCtrl = inject(ModalController);
 
     username = signal<string>('')
     isLoading = signal<boolean>(true)
 
     selected = signal('avatars/avatar-003.png')
-    private modalCtrl = inject(ModalController)
+    
     // Controllo visibilità della finestra di scelta
     isAvatarModalOpen = false
 
     // Avatar attualmente selezionato (di base mostriamo un placeholder)
     currentAvatar = signal<string>('')
+
+    userPreferences = {
+        appLanguage: 'it',
+        defaultAudio: 'jp', // Usa 'jp' invece di 'ja' per coerenza col DB
+        defaultSubtitles: 'it',
+    };
 
     // Elenco degli avatar che l'utente può scegliere
     constructor(
@@ -111,12 +122,6 @@ export class SettingsPage implements OnInit {
         })
     }
 
-    // Oggetto per mappare le preferenze dell'utente
-    userPreferences = {
-        appLanguage: 'it',
-        defaultAudio: 'ja',
-        defaultSubtitles: 'it',
-    }
 
     ngOnInit() {
         this.loadSettingsData()
@@ -125,17 +130,13 @@ export class SettingsPage implements OnInit {
 
     // Carica le preferenze salvate o imposta i valori di default
     loadPreferences() {
-        this.isLoading.set(true)
-        const saved = localStorage.getItem('user_language_preferences')
-        if (saved) {
-            this.userPreferences = JSON.parse(saved)
-        } else {
-            // Se non c'è nulla, prova a leggere la lingua del browser dell'utente
-            const browserLang = navigator.language.split('-')[0]
-            this.userPreferences.appLanguage =
-                browserLang === 'en' ? 'en' : 'it'
-        }
-        this.isLoading.set(false)
+        this.isLoading.set(true);
+        this.userPreferences = {
+            appLanguage: this.langService.getAppLang(),
+            defaultSubtitles: this.langService.getTextLang(),
+            defaultAudio: this.langService.getAudioLang()
+        };
+        this.isLoading.set(false);
     }
 
     loadSettingsData() {
@@ -157,27 +158,26 @@ export class SettingsPage implements OnInit {
 
     // Salva le preferenze ogni volta che l'utente cambia un valore
     savePreferences() {
-        localStorage.setItem(
-            'user_language_preferences',
-            JSON.stringify(this.userPreferences)
-        )
-        // 2. Controlla la lingua attualmente attiva nell'URL
-        const currentLang = window.location.pathname.split('/')[1] // Prende 'it' o 'en'
-        const targetLang = this.userPreferences.appLanguage // La lingua appena scelta
+        // 1. Chiamiamo il service, che aggiornerà il localStorage E farà la chiamata PATCH al backend!
+        this.langService.setLanguages(
+            this.userPreferences.appLanguage,
+            this.userPreferences.defaultSubtitles,
+            this.userPreferences.defaultAudio
+        );
 
-        // 3. Se la lingua scelta è diversa da quella attuale, ricarica l'app sul nuovo percorso
+        // 2. Logica di refresh per la lingua dell'App (come avevi già fatto benissimo)
+        const currentLang = window.location.pathname.split('/')[1];
+        const targetLang = this.userPreferences.appLanguage;
+
         if (currentLang !== targetLang) {
-            // Costruisce il nuovo percorso (es. sostituisce /it/ con /en/)
             const newPath = window.location.pathname.replace(
                 `/${currentLang}/`,
                 `/${targetLang}/`
-            )
-
-            // Ricarica la pagina inviando l'utente alla nuova lingua
-            window.location.href =
-                window.location.origin + newPath + window.location.search
+            );
+            window.location.href = window.location.origin + newPath + window.location.search;
+        } else {
+            this.presentToast('Impostazioni aggiornate con successo!', 'success');
         }
-        console.log('Impostazioni salvate:', this.userPreferences)
     }
 
     // Apre la schermata di selezione
@@ -237,48 +237,9 @@ export class SettingsPage implements OnInit {
         })
         await toast.present()
     }
-    // Funzioni click fittizie
-    changePassword() {
-        console.log('Cambia password...')
-    }
-    //openQualitySettings() { console.log('Apro selezione qualità...'); }
-    openSupport() {
-        console.log('Apro assistenza...')
-    }
 
-    private async showToast(message: string, color: 'success' | 'danger') {
-        const toast = await this.toastCtrl.create({
-            message,
-            duration: 2500,
-            color,
-            position: 'bottom',
-        })
-        await toast.present()
-    }
-
-    // Funzione Logout con messaggio di conferma (Alert)
     async logout() {
-        const alert = await this.alertController.create({
-            header: $localize`:@@disconnectHeader:Disconnetti`,
-            message: $localize`:@@disconnectMessage:Sei sicuro di voler uscire da NexuStream?`,
-            buttons: [
-                { text: $localize`:@@cancelBtn:Annulla`, role: 'cancel' },
-                {
-                    text: $localize`:@@logOut:Esci`,
-                    role: 'destructive',
-                    handler: async () => {
-                        const toast = await this.toastCtrl.create({
-                            message: $localize`:@@closeSession:Sessione chiusa`,
-                            duration: 2000,
-                            color: 'dark',
-                        })
-                        await toast.present()
-                        this.router.navigate(['/login'])
-                    },
-                },
-            ],
-        })
-        await alert.present()
+        await this.authService.confirmLogout();
     }
 
     async openModifyPasswordModal() {

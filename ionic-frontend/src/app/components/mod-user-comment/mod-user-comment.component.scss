@@ -1,0 +1,103 @@
+:host {
+  display: block; /* Fondamentale affinché il componente prenda tutta la larghezza disponibile */
+
+  /* 1. CONTENITORE PRINCIPALE E TESTO */
+  .mod-comment-row {
+    background: #181818;
+    border: 1px solid #222222;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 10px;
+
+    .comment-row-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+
+      .comment-timestamp {
+        font-size: 0.75rem;
+        color: #555555;
+      }
+
+      .comment-report-badge {
+        background: rgba(var(--ion-color-warning-rgb, 255, 196, 9), 0.12);
+        color: var(--ion-color-warning, #ffc409);
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 4px;
+        border: 1px solid rgba(var(--ion-color-warning-rgb, 255, 196, 9), 0.25);
+      }
+    }
+
+    .comment-row-text {
+      font-size: 0.9rem;
+      color: #cccccc;
+      margin: 0 0 8px 0;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+  }
+
+  /* 2. FOOTER (STATISTICHE, TAG E BOTTONI DI MODERAZIONE) */
+  .comment-row-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Permette al footer di non "sbordare" su schermi stretti */
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #2a2a2a;
+    gap: 10px;
+
+    .comment-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      font-size: 0.75rem;
+      color: #666;
+      font-weight: 500;
+
+      .status-indicators {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+
+        .tag {
+          font-weight: 700;
+          &.tag-hidden { color: var(--ion-color-warning, #ffc409); }
+          &.tag-approved { color: var(--ion-color-success, #2dd36f); }
+          &.tag-waiting { color: #888888; }
+        }
+      }
+    }
+
+    .comment-mod-actions {
+      display: flex;
+      gap: 2px;
+      
+      /* Resettiamo i margini di default degli ion-button per farli stare compatti */
+      ion-button {
+        margin: 0;
+        --padding-start: 8px;
+        --padding-end: 8px;
+        height: 32px;
+      }
+    }
+
+    /* 3. MEDIA QUERY MOBILE (Si attiva in automatico sugli schermi piccoli) */
+    @media (max-width: 576px) {
+      flex-direction: column; /* Mettiamo tag e bottoni in colonna */
+      align-items: flex-start; /* Allineiamo i tag a sinistra */
+
+      .comment-mod-actions {
+        width: 100%;
+        justify-content: flex-end; /* Spingiamo i bottoni rotondi tutto a destra */
+        border-top: 1px dashed #333; /* Creiamo un divisore visivo leggerissimo */
+        padding-top: 8px;
+        margin-top: 4px;
+      }
+    }
+  }
+}

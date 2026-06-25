@@ -14,11 +14,14 @@
         @if (!isEditMode) {
             @if (!hasProvidedEpisodeId) {
                 <ion-item fill="outline" mode="md" class="ion-margin-bottom">
-                    <ion-label position="stacked">ID Episodio (Obbligatorio)</ion-label>
-                    <ion-input 
-                        type="number" 
-                        formControlName="REF_EpisodeID" 
-                        placeholder="Es. 14">
+                    <ion-label position="stacked"
+                        >ID Episodio (Obbligatorio)</ion-label
+                    >
+                    <ion-input
+                        type="number"
+                        formControlName="REF_EpisodeID"
+                        placeholder="Es. 14"
+                    >
                     </ion-input>
                 </ion-item>
             }
@@ -26,7 +29,8 @@
             @if (hasProvidedEpisodeId) {
                 <ion-item lines="none">
                     <ion-label color="medium">
-                        Creazione discussione per l'Episodio ID: <strong>{{ episodeId }}</strong>
+                        Creazione discussione per l'Episodio ID:
+                        <strong>{{ episodeId }}</strong>
                     </ion-label>
                 </ion-item>
             }
@@ -65,6 +69,7 @@
             <ion-item lines="none" class="toggle-item">
                 <ion-label>Forza Chiusura Canale</ion-label>
                 <ion-toggle
+                    slot="end"
                     formControlName="forceClosed"
                     color="danger"
                 ></ion-toggle>

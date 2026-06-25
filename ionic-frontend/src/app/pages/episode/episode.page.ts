@@ -1,28 +1,58 @@
-import { Component, inject, OnInit, OnDestroy, signal, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule, Router, RouterLink } from '@angular/router';
-import { BackendUrlPipe } from '@app/pipes/backend-url-pipe';
-import { combineLatest } from 'rxjs';
+import { CommonModule } from '@angular/common'
 import {
-    IonContent, IonButton, IonCard, IonCardContent, IonIcon, IonSpinner,
-    ToastController, ModalController, AlertController, IonBackButton,
-    IonToolbar, IonButtons, IonHeader, NavController
-} from '@ionic/angular/standalone';
+    Component,
+    inject,
+    OnDestroy,
+    OnInit,
+    signal,
+    ViewChild,
+} from '@angular/core'
 import {
-    addCircleOutline, playCircle, shareSocialOutline, heartOutline, heart,
-    chatbubblesOutline, chevronForwardOutline, createOutline, trashOutline, arrowBackOutline 
-} from 'ionicons/icons';
-import { addIcons } from 'ionicons';
+    ActivatedRoute,
+    Router,
+    RouterLink,
+    RouterModule,
+} from '@angular/router'
+import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
+import {
+    AlertController,
+    IonButton,
+    IonButtons,
+    IonCard,
+    IonCardContent,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonSpinner,
+    IonToolbar,
+    ModalController,
+    NavController,
+    ToastController,
+} from '@ionic/angular/standalone'
+import { addIcons } from 'ionicons'
+import {
+    addCircleOutline,
+    arrowBackOutline,
+    chatbubblesOutline,
+    chevronForwardOutline,
+    createOutline,
+    heart,
+    heartOutline,
+    playCircle,
+    shareSocialOutline,
+    trashOutline,
+} from 'ionicons/icons'
+import { combineLatest } from 'rxjs'
 
-import { CommentsComponent } from '@app/components/comments/comments.component';
-import { DiscussionModalComponent } from '@app/components/discussion-modal/discussion-modal.component';
-import { VideoPlayerComponent } from '@app/components/video-player/video-player.component';
-import { jwtDecodeHelper } from '@app/utils/jwt-helper';
+import { CommentsComponent } from '@app/components/comments/comments.component'
+import { DiscussionModalComponent } from '@app/components/discussion-modal/discussion-modal.component'
+import { VideoPlayerComponent } from '@app/components/video-player/video-player.component'
+import { jwtDecodeHelper } from '@app/utils/jwt-helper'
 
 // 🚀 NUOVI SERVIZI IMPORTATI
-import { EpisodeService } from '@app/services/episode';
-import { ModService } from '@app/services/mod'; // Usiamo quello già creato per le discussioni
-import { StreamingEpisode } from '@app/models/streaming';
+import { StreamingEpisode } from '@app/models/streaming'
+import { EpisodeService } from '@app/services/episode'
+import { ModService } from '@app/services/mod' // Usiamo quello già creato per le discussioni
 
 @Component({
     selector: 'app-episode',
@@ -30,269 +60,399 @@ import { StreamingEpisode } from '@app/models/streaming';
     styleUrls: ['./episode.page.scss'],
     standalone: true,
     imports: [
-        IonContent, IonButton, IonCard, IonCardContent, CommonModule, IonIcon, IonSpinner,
-        RouterModule, CommentsComponent, VideoPlayerComponent, BackendUrlPipe,
-        IonBackButton, RouterLink, IonToolbar, IonHeader, IonButtons
+        IonContent,
+        IonButton,
+        IonCard,
+        IonCardContent,
+        CommonModule,
+        IonIcon,
+        IonSpinner,
+        RouterModule,
+        CommentsComponent,
+        VideoPlayerComponent,
+        BackendUrlPipe,
+        RouterLink,
+        IonToolbar,
+        IonHeader,
+        IonButtons,
     ],
     providers: [BackendUrlPipe],
 })
 export class EpisodePage implements OnInit, OnDestroy {
-    private route = inject(ActivatedRoute);
-    private router = inject(Router);
-    public backendUrl = inject(BackendUrlPipe);
-    private modalCtrl = inject(ModalController);
-    private alertCtrl = inject(AlertController);
-    private toastCtrl = inject(ToastController);
-    private navCtrl = inject(NavController);
-    
+    private route = inject(ActivatedRoute)
+    private router = inject(Router)
+    public backendUrl = inject(BackendUrlPipe)
+    private modalCtrl = inject(ModalController)
+    private alertCtrl = inject(AlertController)
+    private toastCtrl = inject(ToastController)
+    private navCtrl = inject(NavController)
+
     // 🚀 INIEZIONE DEI SERVIZI
-    private episodeService = inject(EpisodeService);
-    private modService = inject(ModService); 
+    private episodeService = inject(EpisodeService)
+    private modService = inject(ModService)
 
-    isLoading = signal<boolean>(true);
-    episode = signal<StreamingEpisode | null>(null);
-    seasonEpisodes = signal<any[]>([]);
-    discussions = signal<any[]>([]);
-    isLoggedIn = signal<boolean>(false);
+    isLoading = signal<boolean>(true)
+    episode = signal<StreamingEpisode | null>(null)
+    seasonEpisodes = signal<any[]>([])
+    discussions = signal<any[]>([])
+    isLoggedIn = signal<boolean>(false)
 
-    showId = signal<string>('');
-    seasonId = signal<string>('');
-    episodeId = signal<string>('');
+    showId = signal<string>('')
+    seasonId = signal<string>('')
+    episodeId = signal<string>('')
 
-    startAtTime = signal<number>(0);
-    isMod = signal<boolean>(false);
-    expandedDiscussionId = signal<string | null>(null);
+    startAtTime = signal<number>(0)
+    isMod = signal<boolean>(false)
+    expandedDiscussionId = signal<string | null>(null)
 
-    private lastKnownProgress = 0;
-    private saveTimeout: any;
+    private lastKnownProgress = 0
+    private saveTimeout: any
 
-    @ViewChild(IonContent) content!: IonContent;
-    @ViewChild(VideoPlayerComponent) videoPlayerComponent!: VideoPlayerComponent;
+    @ViewChild(IonContent) content!: IonContent
+    @ViewChild(VideoPlayerComponent) videoPlayerComponent!: VideoPlayerComponent
 
     constructor() {
-        addIcons({arrowBackOutline,chatbubblesOutline,createOutline,trashOutline,shareSocialOutline,addCircleOutline,playCircle,heartOutline,heart,chevronForwardOutline});
+        addIcons({
+            arrowBackOutline,
+            chatbubblesOutline,
+            createOutline,
+            trashOutline,
+            shareSocialOutline,
+            addCircleOutline,
+            playCircle,
+            heartOutline,
+            heart,
+            chevronForwardOutline,
+        })
     }
 
     ngOnInit() {
-        const token = localStorage.getItem('token');
-        this.isLoggedIn.set(!!token);
+        const token = localStorage.getItem('token')
+        this.isLoggedIn.set(!!token)
         if (token) {
-            const decodedToken = jwtDecodeHelper(token);
-            if (decodedToken && decodedToken.isMod === 1) this.isMod.set(true);
+            const decodedToken = jwtDecodeHelper(token)
+            if (decodedToken && decodedToken.isMod === 1) this.isMod.set(true)
         }
 
-        combineLatest([this.route.paramMap, this.route.queryParamMap]).subscribe(async ([params, queryParams]) => {
-            const epId = params.get('id') || params.get('episodeId');
+        combineLatest([
+            this.route.paramMap,
+            this.route.queryParamMap,
+        ]).subscribe(async ([params, queryParams]) => {
+            const epId = params.get('id') || params.get('episodeId')
 
             if (epId) {
                 if (this.episodeId() && this.episodeId() !== epId) {
-                    this.saveProgress(this.lastKnownProgress, 0, true);
+                    this.saveProgress(this.lastKnownProgress, 0, true)
                     if (this.videoPlayerComponent) {
-                        await this.videoPlayerComponent.killPlayer();
+                        await this.videoPlayerComponent.killPlayer()
                     }
                 }
 
-                const sId = queryParams.get('showId') || '1';
-                const seaId = queryParams.get('seasonId') || '1';
-                const startParam = queryParams.get('startAt');
+                const sId = queryParams.get('showId') || '1'
+                const seaId = queryParams.get('seasonId') || '1'
+                const startParam = queryParams.get('startAt')
 
-                this.startAtTime.set(startParam ? parseInt(startParam, 10) : 0);
-                this.showId.set(sId);
-                this.seasonId.set(seaId);
-                this.episodeId.set(epId);
-                this.isLoading.set(true);
+                this.startAtTime.set(startParam ? parseInt(startParam, 10) : 0)
+                this.showId.set(sId)
+                this.seasonId.set(seaId)
+                this.episodeId.set(epId)
+                this.isLoading.set(true)
 
-                this.loadEpisodeData(sId, seaId, epId);
-                this.loadSeasonEpisodes(sId, seaId);
-                this.loadDiscussions(sId, seaId, epId);
+                this.loadEpisodeData(sId, seaId, epId)
+                this.loadSeasonEpisodes(sId, seaId)
+                this.loadDiscussions(sId, seaId, epId)
             }
-        });
+        })
     }
 
     loadEpisodeData(showId: string, seasonId: string, episodeId: string) {
         this.episodeService.getEpisode(showId, seasonId, episodeId).subscribe({
-            next: (res) => { this.episode.set(res); this.isLoading.set(false); },
-            error: (err) => { console.error(err); this.isLoading.set(false); }
-        });
+            next: (res) => {
+                this.episode.set(res)
+                this.isLoading.set(false)
+            },
+            error: (err) => {
+                console.error(err)
+                this.isLoading.set(false)
+            },
+        })
     }
 
     loadSeasonEpisodes(showId: string, seasonId: string) {
         this.episodeService.getSeasonEpisodes(showId, seasonId).subscribe({
             next: (res) => this.seasonEpisodes.set(res),
-            error: (err) => console.error(err)
-        });
+            error: (err) => console.error(err),
+        })
     }
 
     loadDiscussions(showId: string, seasonId: string, episodeId: string) {
-        this.episodeService.getDiscussions(showId, seasonId, episodeId).subscribe({
-            next: (res) => this.discussions.set(res || []),
-            error: () => this.discussions.set([]),
-        });
+        this.episodeService
+            .getDiscussions(showId, seasonId, episodeId)
+            .subscribe({
+                next: (res) => this.discussions.set(res || []),
+                error: () => this.discussions.set([]),
+            })
     }
 
     getComputedStartTime(): number {
-        if (this.startAtTime() > 0) return this.startAtTime();
-        return this.episode()?.userInteraction?.progress || this.episode()?.progress || 0;
+        if (this.startAtTime() > 0) return this.startAtTime()
+        return (
+            this.episode()?.userInteraction?.progress ||
+            this.episode()?.progress ||
+            0
+        )
     }
 
     handlePlayerPause(currentTime: number) {
-        this.lastKnownProgress = currentTime;
-        this.saveProgress(currentTime, 0);
+        this.lastKnownProgress = currentTime
+        this.saveProgress(currentTime, 0)
     }
 
     handlePlayerEnded(currentTime: number) {
-        this.lastKnownProgress = currentTime;
-        this.saveProgress(currentTime, 1, true);
+        this.lastKnownProgress = currentTime
+        this.saveProgress(currentTime, 1, true)
     }
 
     handlePlayerDestroySave(currentTime: number) {
-        this.saveProgress(currentTime, 0, true);
+        this.saveProgress(currentTime, 0, true)
     }
 
     handleCommentTimestamp(seconds: number) {
         if (this.videoPlayerComponent) {
-            this.videoPlayerComponent.seekTo(seconds);
-            if (this.content) this.content.scrollToTop(500);
+            this.videoPlayerComponent.seekTo(seconds)
+            if (this.content) this.content.scrollToTop(500)
         }
     }
 
     async handleNextEpisode() {
-        const currentEpId = parseInt(this.episodeId(), 10);
-        const eps = this.seasonEpisodes();
-        const currentEp = eps.find((e) => e.EpisodeID === currentEpId);
-        
-        if (!currentEp) return;
-        if (this.videoPlayerComponent) await this.videoPlayerComponent.killPlayer();
+        const currentEpId = parseInt(this.episodeId(), 10)
+        const eps = this.seasonEpisodes()
+        const currentEp = eps.find((e) => e.EpisodeID === currentEpId)
 
-        const nextEp = eps.find((e) => e.EpisodeNumber === currentEp.EpisodeNumber + 1);
+        if (!currentEp) return
+        if (this.videoPlayerComponent)
+            await this.videoPlayerComponent.killPlayer()
+
+        const nextEp = eps.find(
+            (e) => e.EpisodeNumber === currentEp.EpisodeNumber + 1
+        )
 
         if (nextEp) {
             this.router.navigate(['/episode', nextEp.EpisodeID], {
-                queryParams: { showId: this.showId(), seasonId: this.seasonId() }
-            });
+                queryParams: {
+                    showId: this.showId(),
+                    seasonId: this.seasonId(),
+                },
+            })
         } else {
-            this.checkAndNavigateToNextSeason();
+            this.checkAndNavigateToNextSeason()
         }
     }
 
     async checkAndNavigateToNextSeason() {
-        if (this.videoPlayerComponent) await this.videoPlayerComponent.killPlayer();
+        if (this.videoPlayerComponent)
+            await this.videoPlayerComponent.killPlayer()
 
         this.episodeService.getShowSeasons(this.showId()).subscribe({
             next: (seasons) => {
-                const currentSeasonId = parseInt(this.seasonId(), 10);
-                const currentSeason = seasons.find((s) => s.SeasonID === currentSeasonId);
-                if (!currentSeason) return;
+                const currentSeasonId = parseInt(this.seasonId(), 10)
+                const currentSeason = seasons.find(
+                    (s) => s.SeasonID === currentSeasonId
+                )
+                if (!currentSeason) return
 
-                const nextSeason = seasons.find((s) => s.SeasonNumber === currentSeason.SeasonNumber + 1);
+                const nextSeason = seasons.find(
+                    (s) => s.SeasonNumber === currentSeason.SeasonNumber + 1
+                )
 
                 if (nextSeason) {
-                    this.episodeService.getSeasonEpisodes(this.showId(), nextSeason.SeasonID.toString()).subscribe({
-                        next: (nextSeasonEps) => {
-                            const firstEp = nextSeasonEps.find((e) => e.EpisodeNumber === 1);
-                            if (firstEp) {
-                                this.showToast(`Inizio Stagione ${nextSeason.SeasonNumber}...`, 'success');
-                                this.router.navigate(['/episode', firstEp.EpisodeID], {
-                                    queryParams: { showId: this.showId(), seasonId: nextSeason.SeasonID }
-                                });
-                            }
-                        }
-                    });
+                    this.episodeService
+                        .getSeasonEpisodes(
+                            this.showId(),
+                            nextSeason.SeasonID.toString()
+                        )
+                        .subscribe({
+                            next: (nextSeasonEps) => {
+                                const firstEp = nextSeasonEps.find(
+                                    (e) => e.EpisodeNumber === 1
+                                )
+                                if (firstEp) {
+                                    this.showToast(
+                                        `Inizio Stagione ${nextSeason.SeasonNumber}...`,
+                                        'success'
+                                    )
+                                    this.router.navigate(
+                                        ['/episode', firstEp.EpisodeID],
+                                        {
+                                            queryParams: {
+                                                showId: this.showId(),
+                                                seasonId: nextSeason.SeasonID,
+                                            },
+                                        }
+                                    )
+                                }
+                            },
+                        })
                 } else {
-                    this.showToast('Hai concluso la serie!', 'success');
+                    this.showToast('Hai concluso la serie!', 'success')
                 }
             },
             error: (err) => console.error('Errore salto di stagione:', err),
-        });
+        })
     }
 
-    saveProgress(currentTime: number, isCompleted: number, immediate: boolean = false) {
-        if (!this.episode() || currentTime <= 5) return;
+    saveProgress(
+        currentTime: number,
+        isCompleted: number,
+        immediate: boolean = false
+    ) {
+        if (!this.episode() || currentTime <= 5) return
 
         const body = {
             progress: currentTime,
             isCompleted: isCompleted,
             isDropped: 0,
-            isLiked: this.episode()?.isLiked ?? this.episode()?.userInteraction?.isLiked ?? 0,
-        };
+            isLiked:
+                this.episode()?.isLiked ??
+                this.episode()?.userInteraction?.isLiked ??
+                0,
+        }
 
-        if (this.saveTimeout) clearTimeout(this.saveTimeout);
+        if (this.saveTimeout) clearTimeout(this.saveTimeout)
 
         if (immediate) {
-            this.episodeService.interact(this.showId(), this.seasonId(), this.episodeId(), body).subscribe({
-                error: (err) => console.error('Errore salvataggio in chiusura:', err),
-            });
+            this.episodeService
+                .interact(
+                    this.showId(),
+                    this.seasonId(),
+                    this.episodeId(),
+                    body
+                )
+                .subscribe({
+                    error: (err) =>
+                        console.error('Errore salvataggio in chiusura:', err),
+                })
         } else {
             this.saveTimeout = setTimeout(() => {
-                this.episodeService.interact(this.showId(), this.seasonId(), this.episodeId(), body).subscribe({
-                    error: (err) => console.error('Errore salvataggio ritardato:', err),
-                });
-            }, 1000);
+                this.episodeService
+                    .interact(
+                        this.showId(),
+                        this.seasonId(),
+                        this.episodeId(),
+                        body
+                    )
+                    .subscribe({
+                        error: (err) =>
+                            console.error('Errore salvataggio ritardato:', err),
+                    })
+            }, 1000)
         }
     }
 
     toggleLike() {
-        const currentEp = this.episode();
-        if (!currentEp) return;
+        const currentEp = this.episode()
+        if (!currentEp) return
 
-        const userToken = localStorage.getItem('token');
+        const userToken = localStorage.getItem('token')
         if (!userToken) {
-            this.showToast($localize`:@@logInToLike:Devi accedere per mettere Mi Piace!`, 'danger');
-            return;
+            this.showToast(
+                $localize`:@@logInToLike:Devi accedere per mettere Mi Piace!`,
+                'danger'
+            )
+            return
         }
 
-        const wasLiked = currentEp.isLiked || currentEp.userInteraction?.isLiked ? 1 : 0;
-        const newStatus = wasLiked ? 0 : 1;
+        const wasLiked =
+            currentEp.isLiked || currentEp.userInteraction?.isLiked ? 1 : 0
+        const newStatus = wasLiked ? 0 : 1
 
         this.episode.set({
-            ...currentEp, 
+            ...currentEp,
             isLiked: newStatus,
-            userInteraction: currentEp.userInteraction ? { ...currentEp.userInteraction, isLiked: newStatus } : undefined,
-        });
+            userInteraction: currentEp.userInteraction
+                ? { ...currentEp.userInteraction, isLiked: newStatus }
+                : undefined,
+        })
 
-        const isCompleted = currentEp.isCompleted ?? currentEp.userInteraction?.isCompleted ?? 0;
-        const body = { progress: this.lastKnownProgress, isCompleted: isCompleted, isDropped: 0, isLiked: newStatus };
+        const isCompleted =
+            currentEp.isCompleted ?? currentEp.userInteraction?.isCompleted ?? 0
+        const body = {
+            progress: this.lastKnownProgress,
+            isCompleted: isCompleted,
+            isDropped: 0,
+            isLiked: newStatus,
+        }
 
-        this.episodeService.interact(this.showId(), this.seasonId(), this.episodeId(), body).subscribe({
-            error: () => {
-                this.episode.set({
-                    ...currentEp, 
-                    isLiked: wasLiked,
-                    userInteraction: currentEp.userInteraction ? { ...currentEp.userInteraction, isLiked: wasLiked } : undefined,
-                });
-                this.showToast($localize`:@@connessionErr:Errore di connessione.`, 'danger');
-            },
-        });
+        this.episodeService
+            .interact(this.showId(), this.seasonId(), this.episodeId(), body)
+            .subscribe({
+                error: () => {
+                    this.episode.set({
+                        ...currentEp,
+                        isLiked: wasLiked,
+                        userInteraction: currentEp.userInteraction
+                            ? {
+                                  ...currentEp.userInteraction,
+                                  isLiked: wasLiked,
+                              }
+                            : undefined,
+                    })
+                    this.showToast(
+                        $localize`:@@connessionErr:Errore di connessione.`,
+                        'danger'
+                    )
+                },
+            })
     }
 
     async openDiscussionModal(discussion?: any, event?: Event) {
-        if (event) { event.stopPropagation(); event.preventDefault(); }
+        if (event) {
+            event.stopPropagation()
+            event.preventDefault()
+        }
 
         const modal = await this.modalCtrl.create({
             component: DiscussionModalComponent,
-            componentProps: { discussion: discussion, episodeId: this.episodeId() },
-        });
-        await modal.present();
+            componentProps: {
+                discussion: discussion,
+                episodeId: this.episodeId(),
+            },
+        })
+        await modal.present()
 
-        const { data } = await modal.onDidDismiss();
+        const { data } = await modal.onDidDismiss()
         if (data?.payload) {
             // 🚀 Usiamo il ModService!
             if (data.isEdit) {
-                this.modService.updateDiscussion(data.discussionId, data.payload).subscribe({
-                    next: () => this.loadDiscussions(this.showId(), this.seasonId(), this.episodeId()),
-                    error: (err) => console.error('Errore aggiornamento:', err),
-                });
+                this.modService
+                    .updateDiscussion(data.discussionId, data.payload)
+                    .subscribe({
+                        next: () =>
+                            this.loadDiscussions(
+                                this.showId(),
+                                this.seasonId(),
+                                this.episodeId()
+                            ),
+                        error: (err) =>
+                            console.error('Errore aggiornamento:', err),
+                    })
             } else {
                 this.modService.createDiscussion(data.payload).subscribe({
-                    next: () => this.loadDiscussions(this.showId(), this.seasonId(), this.episodeId()),
+                    next: () =>
+                        this.loadDiscussions(
+                            this.showId(),
+                            this.seasonId(),
+                            this.episodeId()
+                        ),
                     error: (err) => console.error('Errore creazione:', err),
-                });
+                })
             }
         }
     }
 
     async deleteDiscussion(discussionId: string, event: Event) {
-        event.stopPropagation(); event.preventDefault();
+        event.stopPropagation()
+        event.preventDefault()
 
         const alert = await this.alertCtrl.create({
             header: $localize`:@@deleteDiscussionHeader:Conferma Eliminazione`,
@@ -300,35 +460,53 @@ export class EpisodePage implements OnInit, OnDestroy {
             buttons: [
                 { text: $localize`:@@cancelBtn:Annulla`, role: 'cancel' },
                 {
-                    text: $localize`:@@deleteBtn:Elimina`, role: 'destructive',
+                    text: $localize`:@@deleteBtn:Elimina`,
+                    role: 'destructive',
                     handler: () => {
-                        this.modService.deleteDiscussion(parseInt(discussionId)).subscribe({
-                            next: () => this.loadDiscussions(this.showId(), this.seasonId(), this.episodeId()),
-                            error: (err) => console.error('Errore eliminazione:', err),
-                        });
+                        this.modService
+                            .deleteDiscussion(parseInt(discussionId))
+                            .subscribe({
+                                next: () =>
+                                    this.loadDiscussions(
+                                        this.showId(),
+                                        this.seasonId(),
+                                        this.episodeId()
+                                    ),
+                                error: (err) =>
+                                    console.error('Errore eliminazione:', err),
+                            })
                     },
                 },
             ],
-        });
-        await alert.present();
+        })
+        await alert.present()
     }
 
     toggleDiscussion(discussionId: string) {
-        this.expandedDiscussionId.update((id) => id === discussionId ? null : discussionId);
+        this.expandedDiscussionId.update((id) =>
+            id === discussionId ? null : discussionId
+        )
     }
 
     private async showToast(message: string, color: 'success' | 'danger') {
-        const toast = await this.toastCtrl.create({ message, duration: 3000, color, position: 'bottom' });
-        await toast.present();
+        const toast = await this.toastCtrl.create({
+            message,
+            duration: 3000,
+            color,
+            position: 'bottom',
+        })
+        await toast.present()
     }
 
     async goBackToSeries() {
-        if (this.videoPlayerComponent) await this.videoPlayerComponent.killPlayer();
-        this.navCtrl.navigateBack(['/shows', this.showId()]);
+        if (this.videoPlayerComponent)
+            await this.videoPlayerComponent.killPlayer()
+        this.navCtrl.navigateBack(['/shows', this.showId()])
     }
 
     async ionViewWillLeave() {
-        if (this.videoPlayerComponent) await this.videoPlayerComponent.killPlayer();
+        if (this.videoPlayerComponent)
+            await this.videoPlayerComponent.killPlayer()
     }
 
     ngOnDestroy() {}

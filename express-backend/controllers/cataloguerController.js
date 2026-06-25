@@ -694,11 +694,15 @@ const removePropic = async (req, res) => {
     
     try {
         const propicURI = req.body.propicURI;
-        
+        const fallbackURI = "avatars/avatar-003.png"
+        if (propicURI == fallbackURI) {
+            return res.status(400).json({ error: "Impossibile cancellare questa propic." });
+        }
+        const tmp = await cataloguerModel.updateMemberPropicBeforeDeletion(propicURI, fallbackURI)
+        console.log(`Modificata la propic a ${tmp.changes} utenti prima della cancellazione`)
         // Cancelliamo la riga dal Database
         const result = await cataloguerModel.deletePropicByURI(propicURI);
         if (result.changes === 0) return res.status(404).json({ error: "L'URI propic specificato non esiste." });
-
         // Cancelliamo fisicamente l'immagine dall'hard disk!
         // Ricostruiamo il percorso assoluto partendo dall'URI salvato nel DB
         const fullFilePath = path.join(__dirname, '../public', propicURI);

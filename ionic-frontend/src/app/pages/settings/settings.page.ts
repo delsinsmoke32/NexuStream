@@ -1,51 +1,40 @@
-import { Component, OnInit, inject, signal } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { addIcons } from '@lib/ionicons'
-import { FormsModule } from '@angular/forms'
-import {
-    IonContent,
-    IonHeader,
-    IonTitle,
-    IonToolbar,
-    IonButtons,
-    IonBackButton,
-    IonItemGroup,
-    IonItemDivider,
-    IonItem,
-    IonAvatar,
-    IonLabel,
-    IonIcon,
-    IonModal,
-    IonButton,
-    IonGrid,
-    IonRow,
-    IonCol,
-    IonSelectOption,
-    IonSelect,
-    IonSpinner,
-    IonFooter,
-    ModalController,
-} from '@ionic/angular/standalone'
-import {
-    pencil,
-    checkmark,
-    lockClosedOutline,
-    notificationsOutline,
-    videocamOutline,
-    wifiOutline,
-    helpCircleOutline,
-    logOutOutline,
-} from '@lib/ionicons/icons'
-import { Router } from '@angular/router'
-import { AlertController, ToastController } from '@ionic/angular'
 import { HttpClient } from '@angular/common/http'
-import { HttpHeaders } from '@angular/common/http'
-import { LanguageService } from '@app/services/language'
-import { AuthService } from '@app/services/auth'
-import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
+import { Component, OnInit, inject, signal } from '@angular/core'
+import { FormsModule } from '@angular/forms'
+import { Router } from '@angular/router'
 import { AvatarPickerModalComponent } from '@app/components/avatar-picker-modal/avatar-picker-modal.component'
 import { ChangePasswordModalComponent } from '@app/components/change-password-modal/change-password-modal.component'
+import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
+import { AuthService } from '@app/services/auth'
+import { LanguageService } from '@app/services/language'
 import { Settings } from '@app/services/settings'
+import { AlertController, ToastController } from '@ionic/angular'
+import {
+    IonAvatar,
+    IonContent,
+    IonFooter,
+    IonIcon,
+    IonItem,
+    IonItemDivider,
+    IonItemGroup,
+    IonLabel,
+    IonSelect,
+    IonSelectOption,
+    IonSpinner,
+    ModalController,
+} from '@ionic/angular/standalone'
+import { addIcons } from '@lib/ionicons'
+import {
+    checkmark,
+    helpCircleOutline,
+    lockClosedOutline,
+    logOutOutline,
+    notificationsOutline,
+    pencil,
+    videocamOutline,
+    wifiOutline,
+} from '@lib/ionicons/icons'
 
 @Component({
     selector: 'app-settings',
@@ -56,28 +45,17 @@ import { Settings } from '@app/services/settings'
         IonSpinner,
         IonIcon,
         IonContent,
-        IonHeader,
-        IonTitle,
-        IonToolbar,
-        IonButtons,
-        IonBackButton,
         IonItemGroup,
         IonItemDivider,
         IonItem,
         IonAvatar,
         IonLabel,
-        IonModal,
-        IonButton,
-        IonGrid,
-        IonRow,
-        IonCol,
         IonSelectOption,
         IonSelect,
         CommonModule,
         FormsModule,
         BackendUrlPipe,
         IonFooter,
-        AvatarPickerModalComponent,
     ],
 })
 export class SettingsPage implements OnInit {

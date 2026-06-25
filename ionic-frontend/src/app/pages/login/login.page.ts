@@ -1,4 +1,4 @@
-import { CommonModule, NgIfContext } from '@angular/common'
+import { CommonModule } from '@angular/common'
 import { Component, OnInit, inject } from '@angular/core'
 import {
     FormControl,
@@ -11,6 +11,7 @@ import {
 import { Router, RouterLink } from '@angular/router'
 import { LanguageSwitcherComponent } from '@app/components/language-switcher/language-switcher.component'
 import { AuthService } from '@app/services/auth'
+import { LanguageService } from '@app/services/language'
 import {
     IonButton,
     IonCard,
@@ -21,12 +22,9 @@ import {
     IonInputPasswordToggle,
     IonItem,
     IonLabel,
-    IonTitle,
     IonToolbar,
     ToastController,
-    IonText,
 } from '@ionic/angular/standalone'
-import { LanguageService } from '@app/services/language';
 
 @Component({
     selector: 'app-login',
@@ -36,7 +34,6 @@ import { LanguageService } from '@app/services/language';
     imports: [
         IonContent,
         IonHeader,
-        IonTitle,
         IonToolbar,
         IonCard,
         IonItem,
@@ -49,15 +46,14 @@ import { LanguageService } from '@app/services/language';
         IonInputPasswordToggle,
         ReactiveFormsModule,
         LanguageSwitcherComponent,
-        IonText,
-        RouterLink
+        RouterLink,
     ],
 })
 export class LoginPage implements OnInit {
-    private authService = inject(AuthService);
-    private router = inject(Router);
-    private toastController = inject(ToastController);
-    private langService = inject(LanguageService);
+    private authService = inject(AuthService)
+    private router = inject(Router)
+    private toastController = inject(ToastController)
+    private langService = inject(LanguageService)
 
     // Form reattivo configurato correttamente
     loginForm = new FormGroup({
@@ -78,7 +74,7 @@ export class LoginPage implements OnInit {
     login() {
         if (this.loginForm.invalid) {
             this.presentToast(
-                $localize `:@@insertLogin: Inserisci un'email valida e una password di almeno 8 caratteri.`,
+                $localize`:@@insertLogin: Inserisci un'email valida e una password di almeno 8 caratteri.`,
                 'danger'
             )
             return
@@ -94,12 +90,12 @@ export class LoginPage implements OnInit {
 
                 // 🚀 1. Aggiorniamo le lingue IN LOCALE prima del token!
                 // (Assicurati che i nomi corrispondano a come il tuo DB ti restituisce i campi)
-                const appLang = userData.REF_App_Language || 'it';
-                const textLang = userData.REF_Text_Language || 'it';
-                const audioLang = userData.REF_Audio_Language || 'jp';
-                
+                const appLang = userData.REF_App_Language || 'it'
+                const textLang = userData.REF_Text_Language || 'it'
+                const audioLang = userData.REF_Audio_Language || 'jp'
+
                 // Salviamo le preferenze (non farà chiamate API perché il token non c'è ancora)
-                this.langService.setLanguages(appLang, textLang, audioLang);
+                this.langService.setLanguages(appLang, textLang, audioLang)
 
                 // 🚀 2. ORA salviamo il token e il resto
                 localStorage.setItem('token', res.token)
@@ -109,31 +105,39 @@ export class LoginPage implements OnInit {
                 localStorage.setItem('user_roles', JSON.stringify(rolesArray))
 
                 if (res.user && res.user.REF_PropicURI) {
-                    localStorage.setItem('propic', res.user.REF_PropicURI);
+                    localStorage.setItem('propic', res.user.REF_PropicURI)
                 } else {
-                    localStorage.removeItem('propic'); 
+                    localStorage.removeItem('propic')
                 }
 
-                // 🚀 3. Controllo URL: Se la lingua dell'utente è diversa da quella dell'URL, 
+                // 🚀 3. Controllo URL: Se la lingua dell'utente è diversa da quella dell'URL,
                 // ricarichiamo la pagina con la lingua corretta (come nei Settings)
-                const currentUrlLang = window.location.pathname.split('/')[1];
-                const targetRoute = rolesArray.includes('admin') ? '/admin' : '/tabs/home';
-                
+                const currentUrlLang = window.location.pathname.split('/')[1]
+                const targetRoute = rolesArray.includes('admin')
+                    ? '/admin'
+                    : '/tabs/home'
+
                 // Controlliamo se stiamo girando in "serve mode" (senza cartelle lingua)
-                const isServeMode = !['it', 'en'].includes(currentUrlLang);
+                const isServeMode = !['it', 'en'].includes(currentUrlLang)
 
                 // Se NON siamo in serve mode, E la lingua è diversa, facciamo il redirect rigido
-                if (!isServeMode && currentUrlLang !== appLang && ['it', 'en'].includes(appLang)) {
-                    window.location.href = window.location.origin + `/${appLang}` + targetRoute;
+                if (
+                    !isServeMode &&
+                    currentUrlLang !== appLang &&
+                    ['it', 'en'].includes(appLang)
+                ) {
+                    window.location.href =
+                        window.location.origin + `/${appLang}` + targetRoute
                 } else {
                     // Se siamo in locale (ionic serve) o la lingua coincide, usiamo il router standard!
-                    this.router.navigate([targetRoute]);
+                    this.router.navigate([targetRoute])
                 }
             },
             error: (err) => {
                 console.error('Errore HTTP Login:', err)
                 this.presentToast(
-                    err.error?.message || $localize `:@@errorLogin: Errore durante l'accesso.`,
+                    err.error?.message ||
+                        $localize`:@@errorLogin: Errore durante l'accesso.`,
                     'danger'
                 )
             },

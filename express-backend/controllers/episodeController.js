@@ -172,7 +172,7 @@ const setTimes = async (req, res) => {
 
 
 const fallbackStream = async (req, res) => {
-    console.log("fallbacking")
+    console.log("Utilizzo Fallback Stream")
     const errors = validationResult(req);
     if (!errors.isEmpty()){
         console.error(errors.array());

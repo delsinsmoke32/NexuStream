@@ -51,7 +51,7 @@ const getEpisodesBySeasonAuth = async (userId, seasonId, applang = "it") => {
 const getEpisodeById = async (episodeId, applang = "it") => {
     const sql = `
         SELECT 
-            e.EpisodeID, e.ReleaseDate, e.REF_SeasonID, e.Duration, e.Likes, e.Streams, e.ThumbnailURI, e.EpisodeNumber,
+            e.EpisodeID, e.ReleaseDate, e.REF_SeasonID, e.Duration, e.Likes, e.Streams, e.ThumbnailURI, e.StreamURI, e.EpisodeNumber,
             COALESCE(e.Title->>?, e.Title->>'it') AS Title,
             COALESCE(e.Description->>?, e.Description->>'it') AS Description,
             (SELECT GROUP_CONCAT(REF_LanguageID) FROM EpisodeLanguage WHERE REF_EpisodeID = e.EpisodeID) AS DubLanguages,
@@ -146,6 +146,16 @@ const getEpisodeSubs = async (episodeId) => {
     return await db.allAsync(sql, [episodeId]);
 };
 
+const getEpisodeURI = async (episodeId) => {
+    // Esempio basato su una tabella "EpisodeDubs"
+    const sql = `
+        SELECT StreamURI
+        FROM Episodes
+        WHERE EpisodeID = ?
+    `;
+    return await db.getAsync(sql, [episodeId]);
+};
+
 // ==========================================
 // GET: Recupera i tempi di un episodio
 // ==========================================
@@ -190,5 +200,6 @@ module.exports = {
     getEpisodeDubs,
     getEpisodeSubs,
     getEpisodeTimes,
-    updateEpisodeTimes
+    updateEpisodeTimes,
+    getEpisodeURI
 };

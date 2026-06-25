@@ -7,14 +7,14 @@ const { exec } = require('child_process');
 /**
  * Trasforma un video raw (MP4/MKV) in un flusso HLS con segmenti fMP4.
  * @param {string} inputFilePath - Percorso del file video temporaneo
- * @param {string} episodeId - ID dell'episodio (usato per nominare la cartella)
+ * @param {string} episodeURI - ID dell'episodio (usato per nominare la cartella)
  * @returns {Promise<string>} - Risolve con il percorso della cartella creata
  */
-const processVideoHLS = (inputFilePath, episodeId) => {
+const processVideoHLS = (inputFilePath, episodeURI) => {
     return new Promise((resolve, reject) => {
         // 1. Definiamo le cartelle di destinazione
         // Es: public/videos/1/video/
-        const baseOutputDir = path.join(__dirname, '../public/videos', String(episodeId));
+        const baseOutputDir = path.join(__dirname, '../public/videos', String(episodeURI));
         const videoOutputDir = path.join(baseOutputDir, 'video');
 
         // Creiamo la cartella in modo sincrono se non esiste
@@ -24,7 +24,7 @@ const processVideoHLS = (inputFilePath, episodeId) => {
 
         const m3u8OutputPath = path.join(videoOutputDir, 'video.m3u8');
 
-        console.log(`Inizio transcodifica HLS per Episodio ${episodeId}...`);
+        console.log(`Inizio transcodifica HLS per Episodio ${episodeURI}...`);
 
         // 2. Avviamo FFmpeg
         ffmpeg(inputFilePath)
@@ -43,13 +43,13 @@ const processVideoHLS = (inputFilePath, episodeId) => {
                 '-hls_playlist_type', 'vod', // Video On Demand (Playlist statica)
                 '-hls_segment_type', 'fmp4', // Usa fMP4 invece del vecchio formato .ts
                 '-hls_segment_filename', path.join(videoOutputDir, 'segment_%03d.m4s'), // Nomi dei segmenti
-                '-hls_fmp4_init_filename', 'init_v.mp4', // Il file di inizializzazione
+                '-hls_fmp4_init_filename', path.join(videoOutputDir, 'init_v.mp4'), // Il file di inizializzazione
                 '-hls_flags', 'independent_segments',
                 '-max_muxing_queue_size', '1024'
             ])
             .output(m3u8OutputPath)
             .on('end', async () => {
-                console.log(`Transcodifica completata per Episodio ${episodeId}!`);
+                console.log(`Transcodifica completata per Episodio ${episodeURI}!`);
                 
                 // FIX: Puliamo il percorso di init_v.mp4 nel file M3U8
                 try {
@@ -63,7 +63,7 @@ const processVideoHLS = (inputFilePath, episodeId) => {
                     // 3. Sovrascrive il file pulito
                     await fs.writeFile(m3u8OutputPath, playlistData, 'utf8');
                     
-                    console.log(`Playlist ottimizzata per Episodio ${episodeId}.`);
+                    console.log(`Playlist ottimizzata per Episodio ${episodeURI}.`);
                     resolve(baseOutputDir);
                 } catch (err) {
                     console.error("Errore durante la pulizia della playlist:", err);
@@ -71,7 +71,7 @@ const processVideoHLS = (inputFilePath, episodeId) => {
                 }
             })
             .on('error', (err) => {
-                console.error(`Errore FFmpeg sull'Episodio ${episodeId}:`, err.message);
+                console.error(`Errore FFmpeg sull'Episodio ${episodeURI}:`, err.message);
                 reject(err);
             })
             .run();
@@ -81,12 +81,12 @@ const processVideoHLS = (inputFilePath, episodeId) => {
 /**
  * Sposta i file audio/sub temporanei nelle cartelle HLS definitive.
  * @param {string} tempFilePath - Percorso del file caricato
- * @param {string} episodeId - ID dell'episodio
+ * @param {string} episodeURI - ID dell'episodio
  * @param {string} type - 'audio' o 'subs'
  * @param {string} lang - Es: 'it', 'en'
  */
-const moveMediaFile = async (tempFilePath, episodeId, type, lang) => {
-    const baseDir = path.join(__dirname, '../public/videos', String(episodeId));
+const moveMediaFile = async (tempFilePath, episodeURI, type, lang) => {
+    const baseDir = path.join(__dirname, '../public/videos', String(episodeURI));
     
     if (type === 'audio') {
         const targetDir = path.join(baseDir, `audio_${lang}`);

@@ -40,8 +40,8 @@ import { Router } from '@angular/router'
 import { AlertController, ToastController } from '@ionic/angular'
 import { HttpClient } from '@angular/common/http'
 import { HttpHeaders } from '@angular/common/http'
-import { LanguageService } from '@app/services/language'; 
-import { AuthService } from '@app/services/auth';
+import { LanguageService } from '@app/services/language'
+import { AuthService } from '@app/services/auth'
 import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
 import { AvatarPickerModalComponent } from '@app/components/avatar-picker-modal/avatar-picker-modal.component'
 import { ChangePasswordModalComponent } from '@app/components/change-password-modal/change-password-modal.component'
@@ -81,17 +81,17 @@ import { Settings } from '@app/services/settings'
     ],
 })
 export class SettingsPage implements OnInit {
-    private http = inject(HttpClient);
-    private settingsService = inject(Settings);
-    private langService = inject(LanguageService);
-    private authService = inject(AuthService);
-    private modalCtrl = inject(ModalController);
+    private http = inject(HttpClient)
+    private settingsService = inject(Settings)
+    private langService = inject(LanguageService)
+    private authService = inject(AuthService)
+    private modalCtrl = inject(ModalController)
 
     username = signal<string>('')
     isLoading = signal<boolean>(true)
 
     selected = signal('avatars/avatar-003.png')
-    
+
     // Controllo visibilità della finestra di scelta
     isAvatarModalOpen = false
 
@@ -102,7 +102,7 @@ export class SettingsPage implements OnInit {
         appLanguage: 'it',
         defaultAudio: 'jp', // Usa 'jp' invece di 'ja' per coerenza col DB
         defaultSubtitles: 'it',
-    };
+    }
 
     // Elenco degli avatar che l'utente può scegliere
     constructor(
@@ -122,7 +122,6 @@ export class SettingsPage implements OnInit {
         })
     }
 
-
     ngOnInit() {
         this.loadSettingsData()
         this.loadPreferences()
@@ -130,13 +129,13 @@ export class SettingsPage implements OnInit {
 
     // Carica le preferenze salvate o imposta i valori di default
     loadPreferences() {
-        this.isLoading.set(true);
+        this.isLoading.set(true)
         this.userPreferences = {
             appLanguage: this.langService.getAppLang(),
             defaultSubtitles: this.langService.getTextLang(),
-            defaultAudio: this.langService.getAudioLang()
-        };
-        this.isLoading.set(false);
+            defaultAudio: this.langService.getAudioLang(),
+        }
+        this.isLoading.set(false)
     }
 
     loadSettingsData() {
@@ -163,20 +162,24 @@ export class SettingsPage implements OnInit {
             this.userPreferences.appLanguage,
             this.userPreferences.defaultSubtitles,
             this.userPreferences.defaultAudio
-        );
+        )
 
         // 2. Logica di refresh per la lingua dell'App (come avevi già fatto benissimo)
-        const currentLang = window.location.pathname.split('/')[1];
-        const targetLang = this.userPreferences.appLanguage;
+        const currentLang = window.location.pathname.split('/')[1]
+        const targetLang = this.userPreferences.appLanguage
 
         if (currentLang !== targetLang) {
             const newPath = window.location.pathname.replace(
                 `/${currentLang}/`,
                 `/${targetLang}/`
-            );
-            window.location.href = window.location.origin + newPath + window.location.search;
+            )
+            window.location.href =
+                window.location.origin + newPath + window.location.search
         } else {
-            this.presentToast('Impostazioni aggiornate con successo!', 'success');
+            this.presentToast(
+                'Impostazioni aggiornate con successo!',
+                'success'
+            )
         }
     }
 
@@ -239,7 +242,7 @@ export class SettingsPage implements OnInit {
     }
 
     async logout() {
-        await this.authService.confirmLogout();
+        await this.authService.confirmLogout()
     }
 
     async openModifyPasswordModal() {

@@ -1,49 +1,55 @@
-<ion-header class="ion-no-border">
-  <ion-toolbar class="transparent-toolbar">
-    <ion-title i18n="@@myList" color="primary">La Mia Lista</ion-title>
-  </ion-toolbar>
+<ion-header class="ion-no-border phone-header">
+    <ion-toolbar class="transparent-toolbar">
+        <ion-title i18n="@@myList" color="primary">La Mia Lista</ion-title>
+    </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
-
-  @if (isLoading()) {
+    @if (isLoading()) {
     <div class="loading-state">
-      <ion-spinner name="crescent" color="primary"></ion-spinner>
+        <ion-spinner name="crescent" color="primary"></ion-spinner>
     </div>
-  } @else {
-    
-    @if (favorites().length > 0) {
-      <div class="favorites-container">
-        <p i18n="@@myFavouritesCount" class="results-count">Hai salvato {{ favorites().length }} anime</p>
-        
+    } @else { @if (favorites().length > 0) {
+    <div class="favorites-container">
+        <p i18n="@@myFavouritesCount" class="results-count">
+            Hai salvato {{ favorites().length }} anime
+        </p>
+
         <div class="favorites-grid">
-          @for (anime of favorites(); track anime.ShowID) {
-            <app-show-card 
-              [show]="anime" 
-              layout="portrait" 
-              [showDelete]="true"
-              (play)="playAnime($event)"
-              (info)="openSeriesInfo($event)"
-              (remove)="removeFromFavorites($event)">
+            @for (anime of favorites(); track anime.ShowID) {
+            <app-show-card
+                [show]="anime"
+                layout="portrait"
+                [showDelete]="true"
+                (play)="playAnime($event)"
+                (info)="openSeriesInfo($event)"
+                (remove)="removeFromFavorites($event)"
+            >
             </app-show-card>
-          }
+            }
         </div>
-      </div>
-      
+    </div>
+
     } @else {
-      <div class="empty-state">
+    <div class="empty-state">
         <div class="icon-container">
-          <ion-icon name="heart-dislike-outline"></ion-icon>
+            <ion-icon name="heart-dislike-outline"></ion-icon>
         </div>
         <h2 i18n="@@emptyList">La tua lista è vuota</h2>
-        <p i18n="@@messEmptyList">Esplora la home page per aggiungere i tuoi anime preferiti e non perderti nessun aggiornamento.</p>
-        
-        <ion-button i18n="@@explore" color="primary" expand="block" routerLink="/tabs/home" class="explore-btn">
-          Esplora Anime
+        <p i18n="@@messEmptyList">
+            Esplora la home page per aggiungere i tuoi anime preferiti e non
+            perderti nessun aggiornamento.
+        </p>
+
+        <ion-button
+            i18n="@@explore"
+            color="primary"
+            expand="block"
+            routerLink="/tabs/home"
+            class="explore-btn"
+        >
+            Esplora Anime
         </ion-button>
-      </div>
-    }
-
-  }
-
+    </div>
+    } }
 </ion-content>

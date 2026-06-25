@@ -18,6 +18,11 @@ ion-toolbar {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
+.phone-header {
+  @media (min-width: 798px) {
+    display: none;
+  }
+}
 /* ===================================
    MAIN CONTAINER
    =================================== */

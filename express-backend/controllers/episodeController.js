@@ -165,7 +165,8 @@ const setTimes = async (req, res) => {
 // ================================================================================================
 
 
-const stream2 = async (req, res) => {
+const fallbackStream = async (req, res) => {
+    console.log("fallbacking")
     const errors = validationResult(req);
     if (!errors.isEmpty()){
         return res.status(400).json({ errors: errors.array() });
@@ -173,13 +174,13 @@ const stream2 = async (req, res) => {
     let id = "test"
     let baseUri = `http://${HOST}:${PORT}/static/videos/${id}/`;
     const audios = [
-        { name: 'Japanese (Original)', lang: 'jp', uri: 'audio1/audio1.m3u8', default: 'YES' },
-        { name: 'English', lang: 'en', uri: 'audio2/audio2.m3u8', default: 'NO' }
+        { name: 'Japanese (Original)', lang: 'jp', uri: 'audio_jp/audio.m3u8', default: 'YES' },
+        { name: 'English', lang: 'en', uri: 'audio_en/audio.m3u8', default: 'NO' }
     ];
 
     const subtitles = [
-        { name: 'English', lang: 'en', uri: 'subs/subs1.m3u8' },
-        { name: 'Japanese', lang: 'jp', uri: 'subs/subs2.m3u8' }
+        { name: 'English', lang: 'en', uri: 'subs_en/subs.m3u8' },
+        { name: 'Japanese', lang: 'jp', uri: 'subs_jp/subs.m3u8' }
     ];
 
     let m3u8 = '#EXTM3U\n#EXT-X-VERSION:6\n\n';
@@ -206,18 +207,24 @@ const stream2 = async (req, res) => {
 
 
 
-const stream = async (req, res) => {
+const stream = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
     const episodeId = req.params.episodeId || req.params.id;
     const host = process.env.HOST || 'localhost';
     const port = process.env.PORT || 3000;
-    const baseUri = `http://${host}:${port}/static/videos/${episodeId}/`;
 
     const langNames = { 'it': 'Italiano', 'en': 'English', 'jp': '日本語'};
 
     try {
+        const { StreamURI } = await episodeModel.getEpisodeURI(episodeId);
+        if (!StreamURI) {
+            return res.status(400).json({ error: "Impossibile trovare la stream per l'episodio" });
+        }
+        if (StreamURI === "test") return fallbackStream(req, res, next)
+
+        const baseUri = `http://${host}:${port}/static/videos/${StreamURI}/`;
         // AGGIUNTO #EXT-X-INDEPENDENT-SEGMENTS per forzare l'avvio immediato senza blocchi sul timestamp 0
         let m3u8 = '#EXTM3U\n#EXT-X-VERSION:6\n#EXT-X-INDEPENDENT-SEGMENTS\n#EXT-X-START:TIME-OFFSET=0\n\n';
 

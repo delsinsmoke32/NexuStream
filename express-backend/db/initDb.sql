@@ -46,6 +46,7 @@ CREATE TABLE IF NOT EXISTS "Episodes" (
     "Title" TEXT NOT NULL,
     "Description" TEXT NOT NULL,
     "ThumbnailURI" TEXT NOT NULL,
+    "StreamURI" TEXT NOT NULL,
     "EpisodeNumber" INTEGER NOT NULL,
     FOREIGN KEY ("REF_SeasonID") REFERENCES "Seasons" ("SeasonID") ON DELETE CASCADE
 );

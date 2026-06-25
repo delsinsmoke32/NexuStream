@@ -187,8 +187,8 @@ const deleteSeason = async (seasonId) => {
  * @returns {Promise<Object>} Il risultato del runAsync della tabella principale (contiene l'id)
  */
 
-const insertEpisodeFull = async (titleObj, descriptionObj, releaseDate, duration, refSeason, episodeNumber, dubs, subs, thumbnailURI) => {
-    const sql = `INSERT INTO Episodes (Title, Description, ReleaseDate, Duration, REF_SeasonID, Streams, Likes, EpisodeNumber, ThumbnailURI) VALUES (?, ?, ?, ?, ?, 0, 0, ?, ?)`;
+const insertEpisodeFull = async (titleObj, descriptionObj, releaseDate, duration, refSeason, episodeNumber, dubs, subs, thumbnailURI, streamURI) => {
+    const sql = `INSERT INTO Episodes (Title, Description, ReleaseDate, Duration, REF_SeasonID, Streams, Likes, EpisodeNumber, ThumbnailURI, StreamURI) VALUES (?, ?, ?, ?, ?, 0, 0, ?, ?, ?)`;
     
     // Convertiamo gli oggetti multilingua in stringhe JSON
     const result = await db.runAsync(sql, [
@@ -198,7 +198,8 @@ const insertEpisodeFull = async (titleObj, descriptionObj, releaseDate, duration
         duration, 
         refSeason,
         episodeNumber,
-        thumbnailURI
+        thumbnailURI,
+        streamURI
     ]);
     const newEpisodeId = result.id;
 

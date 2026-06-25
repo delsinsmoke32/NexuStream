@@ -379,6 +379,7 @@ const addEpisode = async (req, res) => {
             });
         }
 
+        const streamURI = 'stream-' + Date.now() + '-' + Math.round(Math.random() * 1E9)
         // 1. Salviamo l'episodio nel Database passando le lingue appena calcolate
         const result = await cataloguerModel.insertEpisodeFull(
             titleObj, 
@@ -389,7 +390,8 @@ const addEpisode = async (req, res) => {
             episodeNumber,
             finalDubs, 
             finalSubs, 
-            thumbnailURI
+            thumbnailURI,
+            streamURI
         );
 
         const episodeId = parseInt(result.id, 10);
@@ -408,7 +410,7 @@ const addEpisode = async (req, res) => {
             for (let track of audioTracks) {
                 const tempPath = path.join(__dirname, '../public', track.uri);
                 // Sposta il file mp3/aac in public/videos/34/audio_en.mp3
-                await videoProcessor.moveMediaFile(tempPath, episodeId, 'audio', track.lang);
+                await videoProcessor.moveMediaFile(tempPath, streamURI, 'audio', track.lang);
                 console.log(`[BACKEND] Traccia audio spostata con successo per lingua: ${track.lang}`);
             }
         }
@@ -417,7 +419,7 @@ const addEpisode = async (req, res) => {
             for (let track of subTracks) {
                 const tempPath = path.join(__dirname, '../public', track.uri);
                 // Sposta il file vtt in public/videos/34/subs_en.vtt
-                await videoProcessor.moveMediaFile(tempPath, episodeId, 'subs', track.lang);
+                await videoProcessor.moveMediaFile(tempPath, streamURI, 'subs', track.lang);
                 console.log(`[BACKEND] Sottotitolo spostato con successo per lingua: ${track.lang}`);
             }
         }
@@ -426,7 +428,7 @@ const addEpisode = async (req, res) => {
         if (rawVideoURI) {
             const absoluteTempVideoPath = path.join(__dirname, '../public', rawVideoURI);
             
-            videoProcessor.processVideoHLS(absoluteTempVideoPath, episodeId)
+            videoProcessor.processVideoHLS(absoluteTempVideoPath, streamURI)
                 .then(async () => {
                     console.log(`[BACKGROUND] Episodio ${episodeId} elaborato e pronto allo streaming!`);
                     try {
@@ -489,6 +491,7 @@ const modifyEpisode = async (req, res) => {
     try {
         oldEpisode = await episodeModel.getEpisodeById(episodeId, applang);
         if (!oldEpisode) return res.status(404).json({ error: "Episodio non trovato." });
+        const streamURI = oldEpisode.StreamURI;
 
         if (fields.length > 0 || DubLanguages || SubLanguages) {
             await cataloguerModel.updateEpisodeFull(episodeId, fields, fieldsParams, DubLanguages, SubLanguages);
@@ -512,7 +515,7 @@ const modifyEpisode = async (req, res) => {
                 const tempPath = path.join(__dirname, '../public', track.uri);
                 
                 // 1. Sposta e segmenta il file con FFmpeg
-                await videoProcessor.moveMediaFile(tempPath, episodeId, 'audio', track.lang);
+                await videoProcessor.moveMediaFile(tempPath, streamURI, 'audio', track.lang);
                 
                 // 2. Registra la lingua nel Database! (Se esiste già, la ignora senza dare errore)
                 await cataloguerModel.insertDubLang(episodeId, track.lang);
@@ -526,7 +529,7 @@ const modifyEpisode = async (req, res) => {
                 const tempPath = path.join(__dirname, '../public', track.uri);
                 
                 // 1. Sposta e segmenta il VTT
-                await videoProcessor.moveMediaFile(tempPath, episodeId, 'subs', track.lang);
+                await videoProcessor.moveMediaFile(tempPath, streamURI, 'subs', track.lang);
                 
                 // 2. Registra il sottotitolo nel Database!
                 await cataloguerModel.insertSubLang(episodeId, track.lang);
@@ -571,8 +574,9 @@ const removeEpisode = async (req, res) => {
             await fs.unlink(path.join(__dirname, '../public', episode.ThumbnailURI)).catch(() => {});
         }
 
+        const streamURI = episode.streamURI;
         // 4. NETTURBINO VIDEO: Rado al suolo l'intera cartella HLS (video, audio e sub)
-        const hlsFolder = path.join(__dirname, '../public/videos', String(episodeId));
+        const hlsFolder = path.join(__dirname, '../public/videos', String(streamURI));
         await fs.rm(hlsFolder, { recursive: true, force: true }).catch((err) => {
             console.log(`[NETTURBINO] Nessuna cartella video trovata per episodio ${episodeId} o già eliminata.`);
         });
@@ -602,8 +606,12 @@ const removeTrack = async (req, res) => {
 
         // 2. Eliminiamo fisicamente la cartella HLS di quella specifica lingua
         // Es: public/videos/19/audio_en oppure subs_en
+        const { StreamURI } = await episodeModel.getEpisodeURI(episodeId);
+        if (!StreamURI) {
+            return res.status(400).json({ error: "Impossibile trovare la stream per l'episodio" });
+        }
         const folderPrefix = type === 'audio' ? 'audio_' : 'subs_';
-        const targetFolder = path.join(__dirname, '../public/videos', String(id), `${folderPrefix}${lang}`);
+        const targetFolder = path.join(__dirname, '../public/videos', StreamURI, `${folderPrefix}${lang}`);
 
         await fs.rm(targetFolder, { recursive: true, force: true }).catch(() => {
             console.log(`[NETTURBINO TRACCE] Cartella ${targetFolder} non trovata, ma DB aggiornato.`);

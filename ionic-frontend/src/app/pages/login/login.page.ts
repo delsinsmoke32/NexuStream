@@ -118,17 +118,16 @@ export class LoginPage implements OnInit {
                 // ricarichiamo la pagina con la lingua corretta (come nei Settings)
                 const currentUrlLang = window.location.pathname.split('/')[1];
                 const targetRoute = rolesArray.includes('admin') ? '/admin' : '/tabs/home';
+                
+                // Controlliamo se stiamo girando in "serve mode" (senza cartelle lingua)
+                const isServeMode = !['it', 'en'].includes(currentUrlLang);
 
-                if (currentUrlLang !== appLang && ['it', 'en'].includes(appLang)) {
-                    // Cambiamo la cartella lingua nell'URL e reindirizziamo alla destinazione
-                    const newPath = window.location.pathname.replace(
-                        `/${currentUrlLang}/`,
-                        `/${appLang}/`
-                    );
+                // Se NON siamo in serve mode, E la lingua è diversa, facciamo il redirect rigido
+                if (!isServeMode && currentUrlLang !== appLang && ['it', 'en'].includes(appLang)) {
                     window.location.href = window.location.origin + `/${appLang}` + targetRoute;
                 } else {
-                    // Altrimenti navighiamo normalmente con Angular Router
-                    this.router.navigate([targetRoute])
+                    // Se siamo in locale (ionic serve) o la lingua coincide, usiamo il router standard!
+                    this.router.navigate([targetRoute]);
                 }
             },
             error: (err) => {

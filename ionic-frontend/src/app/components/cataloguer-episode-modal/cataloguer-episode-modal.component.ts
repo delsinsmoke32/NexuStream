@@ -124,6 +124,7 @@ export class CataloguerEpisodeModalComponent implements OnInit {
     private alertCtrl = inject(AlertController)
     private backendUrl = inject(BackendUrlPipe)
 
+    isMockEpisode = signal<boolean>(true)
     episodeForm!: FormGroup
     isEditMode = false
 
@@ -145,9 +146,9 @@ export class CataloguerEpisodeModalComponent implements OnInit {
 
     ngOnInit() {
         this.isEditMode = !!this.data
-
         console.log(this.data)
         if (this.isEditMode) {
+            this.isMockEpisode.set(this.data.StreamURI == 'test')
             if (this.data.ThumbnailURI) {
                 
                 this.thumbnailPreview.set(
@@ -165,6 +166,8 @@ export class CataloguerEpisodeModalComponent implements OnInit {
             )
 
             this.fetchExistingMarkers()
+        } else {
+            this.isMockEpisode.set(false)
         }
 
         this.initForm()

@@ -115,7 +115,7 @@
                 </div>
                 } @else {
                 <div class="discussions-list">
-                        @for (disc of discussions(); track disc.DiscussionID) {
+                    @for (disc of discussions(); track disc.DiscussionID) {
 
                             <div
                                 class="discussion-card"
@@ -131,18 +131,35 @@
                                     </p>
                                 </div>
 
-                                <div class="disc-actions">
-                                    @if (isMod()) {
-                                    <ion-button fill="clear" color="warning" (click)="openDiscussionModal(disc, $event)">
-                                        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-                                    </ion-button>
-                                    <ion-button fill="clear" color="danger" (click)="deleteDiscussion(disc.DiscussionID, $event)">
-                                        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-                                    </ion-button>
-                                    }
-                                    <ion-icon [name]="expandedDiscussionId() === disc.DiscussionID ? 'chevron-down-outline' : 'chevron-forward-outline'" class="nav-arrow"></ion-icon>
-                                </div>
-                            </div>
+                        <div class="disc-actions">
+                            @if (isMod()) {
+                            <ion-button
+                                fill="clear"
+                                color="warning"
+                                (click)="openDiscussionModal(disc, $event)"
+                            >
+                                <ion-icon
+                                    slot="icon-only"
+                                    name="create-outline"
+                                ></ion-icon>
+                            </ion-button>
+                            <ion-button
+                                fill="clear"
+                                color="danger"
+                                (click)="deleteDiscussion(disc.DiscussionID, $event)"
+                            >
+                                <ion-icon
+                                    slot="icon-only"
+                                    name="trash-outline"
+                                ></ion-icon>
+                            </ion-button>
+                            }
+                            <ion-icon
+                                [name]="expandedDiscussionId() === disc.DiscussionID ? 'chevron-down-outline' : 'chevron-forward-outline'"
+                                class="nav-arrow"
+                            ></ion-icon>
+                        </div>
+                    </div>
 
                             @if (expandedDiscussionId() === disc.DiscussionID) {
                             <div class="discussion-dropdown-content">

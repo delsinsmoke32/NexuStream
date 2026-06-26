@@ -77,6 +77,7 @@ export class CataloguerPage implements OnInit {
     private toastController = inject(ToastController)
     private modalCtrl = inject(ModalController)
     private alertController = inject(AlertController)
+    protected readonly Math = Math
 
     currentLevel = signal<'shows' | 'seasons' | 'episodes'>('shows')
     activeTab = signal<'catalogo' | 'propics'>('catalogo')
@@ -405,7 +406,9 @@ export class CataloguerPage implements OnInit {
     loadEpisodes() {
         if (!this.selectedSeasonId()) return
         this.cataloguerService.getEpisodes(this.selectedSeasonId()!).subscribe({
-            next: (res) => this.episodes.set(res),
+            next: (res) => {
+                ;(this.episodes.set(res), console.log(this.episodes()))
+            },
             error: (err) => console.error(err),
         })
     }

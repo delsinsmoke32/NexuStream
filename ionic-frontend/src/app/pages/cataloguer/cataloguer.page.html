@@ -212,9 +212,10 @@
                     <span class="ep-number"
                         >EPISODIO {{ episode.EpisodeNumber }}</span
                     >
-                    <span class="ep-duration"
-                        >{{ episode.Duration / 60}} min</span
-                    >
+                    <span class="ep-duration">
+                        {{ Math.floor(episode.Duration / 60) }} min {{
+                        episode.Duration % 60 }} sec
+                    </span>
                 </div>
                 <h2 class="card-main-title">
                     "{{ getLangText(episode.Title, 'it') }}"

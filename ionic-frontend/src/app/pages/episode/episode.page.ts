@@ -49,7 +49,7 @@ import { DiscussionModalComponent } from '@app/components/discussion-modal/discu
 import { VideoPlayerComponent } from '@app/components/video-player/video-player.component'
 import { jwtDecodeHelper } from '@app/utils/jwt-helper'
 
-//  NUOVI SERVIZI IMPORTATI
+// 🚀 NUOVI SERVIZI IMPORTATI
 import { StreamingEpisode } from '@app/models/streaming'
 import { EpisodeService } from '@app/services/episode'
 import { ModService } from '@app/services/mod'
@@ -158,6 +158,7 @@ export class EpisodePage implements OnInit, OnDestroy {
         this.isCurrentEpisodeCompleted.set(false);
         this.episodeService.getEpisode(showId, seasonId, episodeId).subscribe({
             next: (res) => {
+                this.checkMockEpisode(res)
                 this.episode.set(res)
                 this.isLoading.set(false)
             },
@@ -166,6 +167,16 @@ export class EpisodePage implements OnInit, OnDestroy {
                 this.isLoading.set(false)
             },
         })
+    }
+
+    checkMockEpisode(ep: StreamingEpisode) {
+        console.log(ep.StreamURI)
+        if (ep.StreamURI == 'test') {
+            this.showToast(
+                'Per motivi di spazio, la stream di questo episodio è un mock e non corrisponde al reale episodio.',
+                'warning'
+            )
+        }
     }
 
     loadSeasonEpisodes(showId: string, seasonId: string) {
@@ -474,7 +485,10 @@ export class EpisodePage implements OnInit, OnDestroy {
         )
     }
 
-    private async showToast(message: string, color: 'success' | 'danger') {
+    private async showToast(
+        message: string,
+        color: 'success' | 'danger' | 'warning'
+    ) {
         const toast = await this.toastCtrl.create({
             message,
             duration: 3000,
@@ -491,15 +505,15 @@ export class EpisodePage implements OnInit, OnDestroy {
     }
 
     isDiscussionClosed(disc: any): boolean {
-        const isForced = disc.ForceClosed === 1 || disc.ForceClosed === true;
-        if (isForced) return true;
+        const isForced = disc.ForceClosed === 1 || disc.ForceClosed === true
+        if (isForced) return true
 
         if (disc.CloseDate) {
             const closeDate = new Date(disc.CloseDate);
             return new Date() > closeDate; 
         }
-        
-        return false;
+
+        return false
     }
 
     async ionViewWillLeave() {
@@ -507,5 +521,21 @@ export class EpisodePage implements OnInit, OnDestroy {
             await this.videoPlayerComponent.killPlayer()
     }
 
+    getStreamWithParams() {
+        const audioLang = localStorage.getItem('audioLang')
+        const textLang = localStorage.getItem('textLang')
+        return this.backendUrl.transform(
+            'api/shows/' +
+                this.showId() +
+                '/seasons/' +
+                this.seasonId() +
+                '/episodes/' +
+                this.episodeId() +
+                '/stream?dub=' +
+                audioLang +
+                '&sub=' +
+                textLang
+        )
+    }
     ngOnDestroy() {}
 }

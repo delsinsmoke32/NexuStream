@@ -3,35 +3,16 @@
         <ion-buttons slot="start">
             <ion-button routerLink="/tabs/home" routerDirection="back">
                 <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
-                Home
+                <ng-container i18n="@@homeButton">Home</ng-container>
             </ion-button>
         </ion-buttons>
 
-        <ion-title>Gestione Utenti & Ruoli</ion-title>
-
-        <!-- <ion-buttons slot="end">
-            <button
-                class="header-action-btn logout-btn"
-                (click)="logout()"
-                title="Logout"
-            >
-                <svg viewBox="0 0 512 512">
-                    <path
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="32"
-                        d="M304 336v40a40 40 0 01-40 40H104a40 40 0 01-40-40V136a40 40 0 0140-40h160a40 40 0 0140 40v40M392 256H112M328 192l64 64-64 64"
-                    />
-                </svg>
-            </button>
-        </ion-buttons> -->
+        <ion-title i18n="@@userRolesManagement">Gestione Utenti & Ruoli</ion-title>
     </ion-toolbar>
 
     <ion-toolbar color="dark" class="search-bar-container">
         <ion-searchbar
-            placeholder="Cerca utente per username o email..."
+            [placeholder]="'Cerca utente per username o email...' | i18n: '@@searchUserPlaceholder'"
             mode="md"
             [debounce]="500"
             (ionInput)="onSearch($event)"
@@ -60,20 +41,20 @@
 
                 <div class="roles-indicator-row">
                     @if (user.isAdmin === 1) {
-                    <span class="badge badge-admin">Admin</span> } @if
+                    <span class="badge badge-admin" i18n="@@badgeAdmin">Admin</span> } @if
                     (user.isMod === 1) {
-                    <span class="badge badge-mod">Mod</span> } @if
+                    <span class="badge badge-mod" i18n="@@badgeMod">Mod</span> } @if
                     (user.isCataloguer === 1) {
-                    <span class="badge badge-cataloguer">Catalogatore</span> }
+                    <span class="badge badge-cataloguer" i18n="@@badgeCataloguer">Catalogatore</span> }
                     @if (user.isAdmin !== 1 && user.isMod !== 1 &&
                     user.isCataloguer !== 1) {
-                    <span class="badge badge-base">Utente Base</span>
+                    <span class="badge badge-base" i18n="@@badgeBase">Utente Base</span>
                     }
                 </div>
             </div>
 
             <div class="card-actions-panel">
-                <span class="panel-label">Assegna Privilegi:</span>
+                <span class="panel-label" i18n="@@assignPrivileges">Assegna Privilegi:</span>
                 <div class="chips-container">
                     <button
                         type="button"
@@ -81,6 +62,7 @@
                         [class.active]="user.isMod === 1"
                         [disabled]="user.isAdmin === 1"
                         (click)="toggleRoleDirectly(user, 'mod')"
+                        i18n="@@roleMod"
                     >
                         Moderatore
                     </button>
@@ -90,6 +72,7 @@
                         [class.active]="user.isCataloguer === 1"
                         [disabled]="user.isAdmin === 1"
                         (click)="toggleRoleDirectly(user, 'cataloguer')"
+                        i18n="@@roleCataloguer"
                     >
                         Catalogatore
                     </button>
@@ -103,8 +86,8 @@
                     d="M402 168c-2.93 40.67-33.1 72-73.16 72s-70.23-31.33-73.16-72c-4.24-58.32 35.66-104 86.43-104s90.67 45.68 86.43 104zM141.67 168c-2.93 40.67-33.1 72-73.16 72S-1.72 208.67-4.65 168c-4.24-58.32 35.66-104 86.43-104s90.67 45.68 86.43 104zM496 464v-56c0-61.17-48.4-112-108-112H236c-26.31 0-51.1 9.53-70.62 26.54A142.14 142.14 0 00124 296H80c-61.17 0-112 48.4-112 108v56z"
                 />
             </svg>
-            <h3>Nessun utente trovato</h3>
-            <p>Nessun record corrisponde ai criteri di ricerca impostati.</p>
+            <h3 i18n="@@noUsersFoundTitle">Nessun utente trovato</h3>
+            <p i18n="@@noUsersFoundDesc">Nessun record corrisponde ai criteri di ricerca impostati.</p>
         </div>
         }
     </div>

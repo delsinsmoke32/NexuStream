@@ -40,26 +40,29 @@
         <div class="loading-state">
             <ion-spinner name="crescent" color="primary"></ion-spinner>
         </div>
-        } @else { @if ((searchQuery().trim() !== '' || selectedGenre() !== null)
-        && filteredResults().length === 0) {
-        <div class="no-results">
-            <ion-icon name="alert-circle-outline"></ion-icon>
-            <p i18n="@@noAnimeFound">
-                Nessun anime trovato corrispondente ai filtri.
-            </p>
-        </div>
-        } @if (filteredResults().length > 0) {
-        <div class="results-grid">
-            @for (show of filteredResults(); track show.ShowID) {
-            <app-show-card
-                [show]="show"
-                layout="portrait"
-                (play)="openSeriesInfo($event.ShowID)"
-                (info)="openSeriesInfo($event)"
-            >
-            </app-show-card>
-            }
-        </div>
-        } }
+        } @else { 
+            @if ((searchQuery().trim() !== '' || selectedGenre() !== null) && filteredResults().length === 0) {
+            <div class="no-results">
+                <ion-icon name="alert-circle-outline"></ion-icon>
+                <p i18n="@@noAnimeFound">
+                    Nessun anime trovato corrispondente ai filtri.
+                </p>
+            </div>
+            } 
+            
+            @if (filteredResults().length > 0) {
+            <div class="results-grid">
+                @for (show of filteredResults(); track show.ShowID) {
+                <app-show-card
+                    [show]="show"
+                    layout="portrait"
+                    (play)="openSeriesInfo($event.ShowID)"
+                    (info)="openSeriesInfo($event)"
+                >
+                </app-show-card>
+                }
+            </div>
+            } 
+        }
     </div>
 </ion-content>

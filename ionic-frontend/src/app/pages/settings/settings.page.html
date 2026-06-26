@@ -1,7 +1,7 @@
 <ion-content>
     <ion-item-group>
         <ion-item-divider color="dark">
-            <ion-label>Account</ion-label>
+            <ion-label i18n="@@account">Account</ion-label>
         </ion-item-divider>
 
         <ion-item lines="full" class="profile-item">
@@ -21,75 +21,21 @@
                 </div>
             </div>
             @if (isLoading()) {
-            <!-- da mettere prima dell'avatar-->
             <div class="ion-text-center ion-padding">
                 <ion-spinner name="crescent"></ion-spinner>
-                <p>Caricamento profilo in corso...</p>
+                <p i18n="@@loadingProfile">Caricamento profilo in corso...</p>
             </div>
             }
             <ion-label>
                 <h2>{{username()}}</h2>
                 <div class="name-change" (click)="changeName()">
-                    <p>Modifica nome</p>
+                    <p i18n="@@editName">Modifica nome</p>
                     <div class="edit-badge">
                         <ion-icon name="pencil"></ion-icon>
                     </div>
                 </div>
             </ion-label>
         </ion-item>
-
-        <!-- <ion-modal
-            id="avatar-modal"
-            [isOpen]="isAvatarModalOpen"
-            (didDismiss)="isAvatarModalOpen = false"
-            class="avatar-modal"
-        >
-            <ng-template>
-                <ion-header class="ion-no-border">
-                    <ion-toolbar>
-                        <ion-title i18n="@@chooseAvatar"
-                            >Scegli il tuo Avatar</ion-title
-                        >
-                        <ion-buttons slot="end">
-                            <ion-button
-                                color="primary"
-                                (click)="isAvatarModalOpen = false"
-                                >Chiudi</ion-button
-                            >
-                        </ion-buttons>
-                    </ion-toolbar>
-                </ion-header>
-
-                <ion-content class="ion-padding">
-                    <p i18n="@@selectCharacter" class="subtitle">
-                        Seleziona uno dei personaggi di NexuStream
-                    </p>
-
-                    <ion-grid>
-                        <ion-row>
-                            <ion-col
-                                size="2"
-                                *ngFor="let avatar of availableAvatars"
-                            >
-                                <div
-                                    class="avatar-option"
-                                    [class.selected]="avatar === currentAvatar()"
-                                    (click)="selectAvatar()"
-                                >
-                                    <img
-                                        [src]="selectedAvatar() | backendUrl: 'static'"
-                                        alt="Opzione Avatar"
-                                    />
-                                    <div class="checkmark-badge">
-                                        <ion-icon name="checkmark"></ion-icon>
-                                    </div>
-                                </div>
-                            </ion-col>
-                        </ion-row>
-                    </ion-grid>
-                </ion-content>
-            </ng-template>
-        </ion-modal> -->
 
         <ion-item
             lines="full"
@@ -112,20 +58,14 @@
         </ion-item-divider>
 
         <ion-item>
-            <ion-label i18n="@@appLanguageLabel"
-                >Lingua dell'applicazione</ion-label
-            >
+            <ion-label i18n="@@appLanguageLabel">Lingua dell'applicazione</ion-label>
             <ion-select
                 [interface]="'action-sheet'"
                 [(ngModel)]="userPreferences.appLanguage"
                 (ionChange)="savePreferences(); warnAppLanguage()"
             >
-                <ion-select-option i18n="@@langItalian" value="it"
-                    >Italiano</ion-select-option
-                >
-                <ion-select-option i18n="@@langEnglish" value="en"
-                    >English</ion-select-option
-                >
+                <ion-select-option i18n="@@langItalian" value="it">Italiano</ion-select-option>
+                <ion-select-option i18n="@@langEnglish" value="en">English</ion-select-option>
             </ion-select>
         </ion-item>
 
@@ -136,58 +76,27 @@
                 [(ngModel)]="userPreferences.defaultAudio"
                 (ionChange)="savePreferences()"
             >
-                <ion-select-option value="it" i18n="@@langItalian"
-                    >Italiano</ion-select-option
-                >
-                <ion-select-option value="en" i18n="@@langEnglish"
-                    >Inglese</ion-select-option
-                >
-                <ion-select-option value="jp" i18n="@@langJapanese"
-                    >Giapponese</ion-select-option
-                >
+                <ion-select-option value="it" i18n="@@langItalian">Italiano</ion-select-option>
+                <ion-select-option value="en" i18n="@@langEnglish">Inglese</ion-select-option>
+                <ion-select-option value="jp" i18n="@@langJapanese">Giapponese</ion-select-option>
             </ion-select>
         </ion-item>
 
         <ion-item>
-            <ion-label i18n="@@subtitleLanguageLabel"
-                >Sottotitoli predefiniti</ion-label
-            >
+            <ion-label i18n="@@subtitleLanguageLabel">Sottotitoli predefiniti</ion-label>
             <ion-select
                 [interface]="'action-sheet'"
                 [(ngModel)]="userPreferences.defaultSubtitles"
                 (ionChange)="savePreferences()"
             >
-                <ion-select-option value="off" i18n="@@subtitlesOff"
-                    >Disattivati</ion-select-option
-                >
-                <ion-select-option value="it" i18n="@@langItalian"
-                    >Italiano</ion-select-option
-                >
-                <ion-select-option value="en" i18n="@@langEnglish"
-                    >Inglese</ion-select-option
-                >
+                <ion-select-option value="off" i18n="@@subtitlesOff">Disattivati</ion-select-option>
+                <ion-select-option value="it" i18n="@@langItalian">Italiano</ion-select-option>
+                <ion-select-option value="en" i18n="@@langEnglish">Inglese</ion-select-option>
             </ion-select>
         </ion-item>
-
-        <!--<ion-item lines="full" detail="true" (click)="openQualitySettings()">
-      <ion-icon slot="start" name="videocam-outline" color="primary"></ion-icon>
-      <ion-label>
-        <h2>Qualità Video</h2>
-        <p>Attuale: Automatica (Consigliata)</p>
-      </ion-label>
-    </ion-item>-->
     </ion-item-group>
 
     <ion-item-group class="ion-margin-top">
-        <!--<ion-item-divider color="dark">
-      <ion-label>Assistenza</ion-label>
-    </ion-item-divider>
-
-    <ion-item lines="full" detail="true" (click)="openSupport()">
-      <ion-icon slot="start" name="help-circle-outline" color="primary"></ion-icon>
-      <ion-label>Centro Assistenza</ion-label>
-    </ion-item>-->
-
         <ion-item
             lines="none"
             button="true"
@@ -199,9 +108,7 @@
                 name="log-out-outline"
                 color="primary"
             ></ion-icon>
-            <ion-label i18n="@@disconnectAccount" color="primary"
-                >Disconnetti Account</ion-label
-            >
+            <ion-label i18n="@@disconnectAccount" color="primary">Disconnetti Account</ion-label>
         </ion-item>
     </ion-item-group>
 </ion-content>

@@ -1,8 +1,8 @@
 <ion-header class="ion-no-border">
     <ion-toolbar color="dark">
-        <ion-title>Aggiungi Avatar</ion-title>
+        <ion-title i18n="@@propicModal_title">Aggiungi Avatar</ion-title>
         <ion-buttons slot="end">
-            <ion-button color="medium" (click)="dismiss()">Annulla</ion-button>
+            <ion-button color="medium" (click)="dismiss()" i18n="@@propicModal_cancel">Annulla</ion-button>
         </ion-buttons>
     </ion-toolbar>
 </ion-header>
@@ -10,18 +10,19 @@
 <ion-content class="ion-padding">
     <form [formGroup]="propicForm" (ngSubmit)="uploadPicture()">
         
-        <h3 class="form-section-title">Dettagli Pacchetto</h3>
+        <h3 class="form-section-title" i18n="@@propicModal_bundleSection">Dettagli Pacchetto</h3>
         
         <ion-item fill="outline" mode="md" lines="none" class="custom-input">
-            <ion-label position="stacked">Nome Bundle</ion-label>
+            <ion-label position="stacked" i18n="@@propicModal_bundleNameLabel">Nome Bundle</ion-label>
             <ion-input
                 type="text"
                 formControlName="bundle"
                 placeholder="Es. Halloween, Default, VIP..."
+                i18n-placeholder="@@propicModal_bundlePlaceholder"
             ></ion-input>
         </ion-item>
 
-        <h3 class="form-section-title" style="margin-top: 24px;">Immagine Avatar</h3>
+        <h3 class="form-section-title" style="margin-top: 24px;" i18n="@@propicModal_imageSection">Immagine Avatar</h3>
 
         <div class="upload-container">
             <input
@@ -37,20 +38,20 @@
                     <img [src]="imagePreview()" alt="Preview" class="preview-image" />
                     <div class="overlay-change">
                         <ion-icon name="image-outline"></ion-icon>
-                        <span>Cambia Immagine</span>
+                        <span i18n="@@propicModal_changeImage">Cambia Immagine</span>
                     </div>
                 } @else {
                     <div class="empty-state-upload">
                         <ion-icon name="cloud-upload-outline"></ion-icon>
-                        <span>Tocca per selezionare un'immagine</span>
-                        <small>Si consiglia un formato circolare se possibile</small>
+                        <span i18n="@@propicModal_tapToSelect">Tocca per selezionare un'immagine</span>
+                        <small i18n="@@propicModal_advice">Si consiglia un formato circolare se possibile</small>
                     </div>
                 }
             </div>
 
             @if (selectedFile(); as file) {
                 <p class="file-name-text">
-                    File selezionato: <strong>{{ file.name }}</strong>
+                    <ng-container i18n="@@propicModal_selectedFile">File selezionato:</ng-container> <strong>{{ file.name }}</strong>
                 </p>
             }
 
@@ -62,9 +63,9 @@
             >
                 @if (isUploading()) {
                     <ion-spinner name="crescent"></ion-spinner>
-                    <span style="margin-left: 8px;">Caricamento...</span>
+                    <span style="margin-left: 8px;" i18n="@@propicModal_uploading">Caricamento...</span>
                 } @else {
-                    Salva nel Catalogo
+                    <ng-container i18n="@@propicModal_saveToCatalog">Salva nel Catalogo</ng-container>
                 }
             </ion-button>
         </div>

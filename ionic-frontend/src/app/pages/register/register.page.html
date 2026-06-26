@@ -24,12 +24,12 @@
                 <ion-card class="form-log-in-card">
                     <ion-card-content>
                         <div class="input-group">
-                            <ion-label position="stacked">Email</ion-label>
+                            <ion-label i18n="@@emailLabel" position="stacked">Email</ion-label>
                             <ion-item lines="none" class="custom-input">
                                 <ion-input
                                     formControlName="email"
-                                    errorText="Indirizzo email non valido"
                                     i18n-errorText="@@invalidEmailError"
+                                    errorText="Indirizzo email non valido"
                                     type="email"
                                     placeholder="esempio@mail.com"
                                     i18n-placeholder="@@exampleEmail"
@@ -38,12 +38,12 @@
                         </div>
 
                         <div class="input-group" style="margin-top: 15px">
-                            <ion-label position="stacked">Password</ion-label>
+                            <ion-label i18n="@@passwordLabel" position="stacked">Password</ion-label>
                             <ion-item lines="none" class="custom-input">
                                 <ion-input
                                     formControlName="password"
-                                    errorText="Minimo 8 caratteri richiesti, massimo 24"
                                     i18n-errorText="@@minimumCharPassError"
+                                    errorText="Minimo 8 caratteri richiesti, massimo 24"
                                     type="password"
                                     placeholder="password"
                                 >
@@ -63,10 +63,10 @@
                                 <ion-input
                                     formControlName="conf_password"
                                     type="password"
-                                    placeholder="Ripeti la password"
-                                    errorText="Conferma la password"
-                                    i18n-errorText="@@differentConfPassError"
                                     i18n-placeholder="@@repeatPass"
+                                    placeholder="Ripeti la password"
+                                    i18n-errorText="@@differentConfPassError"
+                                    errorText="Conferma la password"
                                 >
                                     <ion-input-password-toggle
                                         slot="end"
@@ -114,11 +114,11 @@
                             <ion-item lines="none" class="custom-input">
                                 <ion-input
                                     formControlName="username"
-                                    errorText="Lo username è obbligatorio (min 3 caratteri, max 24)"
                                     i18n-errorText="@@obligatoryUser"
+                                    errorText="Lo username è obbligatorio (min 3 caratteri, max 24)"
                                     type="text"
-                                    placeholder="nome utente"
                                     i18n-placeholder="@@userPlaceHolder"
+                                    placeholder="nome utente"
                                 ></ion-input>
                             </ion-item>
                         </div>

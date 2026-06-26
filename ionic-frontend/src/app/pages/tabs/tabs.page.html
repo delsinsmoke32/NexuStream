@@ -7,7 +7,7 @@
                     slot="start"
                     name="settings-outline"
                 ></ion-icon>
-                Impostazioni
+                <ng-container i18n="@@settings">Impostazioni</ng-container>
             </ion-item>
 
             @if (isLoggedIn()) { @if (isAdmin()) {
@@ -17,7 +17,7 @@
                     slot="start"
                     name="shield-checkmark-outline"
                 ></ion-icon>
-                Admin
+                <ng-container i18n="@@admin">Admin</ng-container>
             </ion-item>
             } @if (isCat()) {
             <ion-item button routerLink="/cataloguer">
@@ -26,7 +26,7 @@
                     slot="start"
                     name="library-outline"
                 ></ion-icon>
-                Catalogatore
+                <ng-container i18n="@@cataloguer">Catalogatore</ng-container>
             </ion-item>
             } @if (isMod()) {
             <ion-item button routerLink="/mod">
@@ -35,7 +35,7 @@
                     slot="start"
                     name="eye-outline"
                 ></ion-icon>
-                Moderazione
+                <ng-container i18n="@@moderation">Moderazione</ng-container>
             </ion-item>
             }
 
@@ -45,7 +45,7 @@
                     slot="start"
                     name="log-out-outline"
                 ></ion-icon>
-                Esci
+                <ng-container i18n="@@logout">Esci</ng-container>
             </ion-item>
             } @if (!isLoggedIn()) {
             <ion-item button routerLink="/login">
@@ -54,7 +54,7 @@
                     slot="start"
                     name="log-in-outline"
                 ></ion-icon>
-                Accedi
+                <ng-container i18n="@@login">Accedi</ng-container>
             </ion-item>
             <ion-item button routerLink="/register">
                 <ion-icon
@@ -62,7 +62,7 @@
                     slot="start"
                     name="person-add-outline"
                 ></ion-icon>
-                Registrati
+                <ng-container i18n="@@register">Registrati</ng-container>
             </ion-item>
             }
         </ion-list>
@@ -85,18 +85,21 @@
                     class="nav-link"
                     routerLink="/tabs/home"
                     routerLinkActive="active-tab"
+                    i18n="@@home"
                     >Home</a
                 >
                 <a
                     class="nav-link"
                     routerLink="/tabs/search"
                     routerLinkActive="active-tab"
+                    i18n="@@research"
                     >Cerca</a
                 >
                 <a
                     class="nav-link"
                     routerLink="/tabs/favourites"
                     routerLinkActive="active-tab"
+                    i18n="@@favourites"
                     >Preferiti</a
                 >
 
@@ -120,22 +123,22 @@
     <ion-tab-bar slot="bottom" [class.profile-menu-open]="isPopoverOpen">
         <ion-tab-button tab="home">
             <ion-icon name="home-outline"></ion-icon>
-            <ion-label>Home</ion-label>
+            <ion-label i18n="@@home">Home</ion-label>
         </ion-tab-button>
 
         <ion-tab-button tab="search">
             <ion-icon name="search-outline"></ion-icon>
-            <ion-label>Cerca</ion-label>
+            <ion-label i18n="@@searchn">Cerca</ion-label>
         </ion-tab-button>
 
         <ion-tab-button tab="favourites">
             <ion-icon name="heart-outline"></ion-icon>
-            <ion-label>Preferiti</ion-label>
+            <ion-label i18n="@@favourites">Preferiti</ion-label>
         </ion-tab-button>
 
         <ion-tab-button (click)="openProfileMenu($event)" class="profile-btn">
             <ion-icon name="person-outline"></ion-icon>
-            <ion-label>Profilo</ion-label>
+            <ion-label i18n="@@profile">Profilo</ion-label>
         </ion-tab-button>
     </ion-tab-bar>
 </ion-tabs>

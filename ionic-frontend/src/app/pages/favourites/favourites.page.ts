@@ -54,13 +54,7 @@ export class FavouritesPage {
     favorites = signal<FavoriteShow[]>([])
 
     constructor() {
-        addIcons({
-            heartDislikeOutline,
-            personCircleOutline,
-            settingsOutline,
-            heartOutline,
-            logOutOutline,
-        })
+        addIcons({heartDislikeOutline,personCircleOutline,settingsOutline,heartOutline,logOutOutline,});
     }
 
     ionViewWillEnter() {

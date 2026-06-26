@@ -3,7 +3,7 @@
     <ion-buttons slot="start">
       <ion-button (click)="goBackToSeries()" color="primary" fill="clear">
         <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
-        Serie
+        <ng-container i18n="@@series">Serie</ng-container>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -35,8 +35,8 @@
                     <img [src]="episode()?.ThumbnailURI ? ((episode()?.ThumbnailURI || '') | backendUrl: 'static') : ('episode_thumbnails/bleach.png' | backendUrl: 'static')" alt="Thumbnail" />
                     
                     <div class="paywall-overlay">
-                        <h3>Per guardare il video devi effettuare l'accesso</h3>
-                        <ion-button routerLink="/login">Accedi Ora</ion-button>
+                        <h3 i18n="@@paywall">Per guardare il video devi effettuare l'accesso</h3>
+                        <ion-button routerLink="/login" i18n="@@loginNow">Accedi Ora</ion-button>
                     </div>
                 </div>
             }
@@ -44,8 +44,8 @@
             <div class="episode-details">
                 <div class="title-row">
                     <div>
-                        <h2 i18n="@@episode" class="ep-number">
-                            Episodio {{ episode()?.EpisodeNumber }}
+                        <h2 class="ep-number">
+                            <ng-container i18n="@@episode">Episodio</ng-container> {{ episode()?.EpisodeNumber }}
                         </h2>
                         <h1 class="ep-title">{{ episode()?.Title }}</h1>
                     </div>
@@ -68,16 +68,16 @@
                         >{{ (episode()?.Duration || 0) / 60 }} min</span
                     >
                     @if (episode()?.Streams) {
-                    <span i18n="@@views" class="meta-chip views"
+                    <span class="meta-chip views" i18n="@@views"
                         >{{ episode()?.Streams | number }} visualizzazioni</span
                     >
                     }
                     <div class="lang-info uppercase-lang">
-                        <strong>SUB:&nbsp;</strong> {{
+                        <strong i18n="@@subtitlesLabel">SUB:&nbsp;</strong> {{
                         (episode()?.SubLanguages?.length || 0) > 0 ?
                         episode()?.SubLanguages?.join(', ') : 'N/D' }}
                         <span class="separator">|</span>
-                        <strong>DUB:&nbsp;</strong> {{
+                        <strong i18n="@@dubLabel">DUB:&nbsp;</strong> {{
                         (episode()?.DubLanguages?.length || 0) > 0 ?
                         episode()?.DubLanguages?.join(', ') : 'N/D' }}
                     </div>
@@ -94,7 +94,6 @@
 
                     @if (isMod()) {
                     <ion-button
-                        i18n="@@new"
                         fill="outline"
                         class="btn-new-discussion"
                         (click)="openDiscussionModal()"
@@ -103,7 +102,7 @@
                             slot="start"
                             name="chatbubbles-outline"
                         ></ion-icon>
-                        Nuova
+                        <ng-container i18n="@@new">Nuova</ng-container>
                     </ion-button>
                     }
                 </div>
@@ -124,11 +123,11 @@
                             >
                                 <div class="disc-info">
                                     <h3 class="type-badge" [ngClass]="disc.Type">
-                                        {{ disc.Type === 'post-season' ? 'Discussione Fine Stagione' : 'Discussione Ufficiale' }}
+                                        {{ disc.Type === 'post-season' ? ('Discussione Fine Stagione' | i18n: '@@discPostSeason') : ('Discussione Ufficiale' | i18n: '@@discOfficial') }}
                                     </h3>
                                     <p i18n="@@expiration">
-                                        Scadenza: {{ disc.CloseDate ? (disc.CloseDate | date:'dd/MM/yyyy HH:mm') : 'Nessuna' }} 
-                                        • {{ isDiscussionClosed(disc) ? '(Chiusa)' : '(Aperta)' }}
+                                        Scadenza: {{ disc.CloseDate ? (disc.CloseDate | date:'dd/MM/yyyy HH:mm') : ('Nessuna' | i18n: '@@none') }} 
+                                        • {{ isDiscussionClosed(disc) ? ('(Chiusa)' | i18n: '@@closed') : ('(Aperta)' | i18n: '@@open') }}
                                     </p>
                                 </div>
 
@@ -153,7 +152,9 @@
                                     [episodeId]="episodeId()"
                                     [discussionId]="disc.DiscussionID"
                                     [isMod]="isMod()"
-                                    [discussion]="disc"            [isLoggedIn]="isLoggedIn()"    (timestampClick)="handleCommentTimestamp($event)"
+                                    [discussion]="disc"
+                                    [isLoggedIn]="isLoggedIn()"
+                                    (timestampClick)="handleCommentTimestamp($event)"
                                 >
                                 </app-comments>
                             </div>

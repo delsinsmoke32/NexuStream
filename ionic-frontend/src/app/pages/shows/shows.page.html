@@ -39,14 +39,14 @@
                 
                 <span class="action">
                  @if ((resumeEpisode()?.progress || 0) > 5) {
-                  <ng-container i18n="@@continueWatching">Continua a guardare</ng-container>
+                  <ng-container i18n="@@continueWatchingShow">Continua a guardare</ng-container>
                 } @else {
                   <ng-container i18n="@@startWatching">Inizia a guardare</ng-container>
                 }
                 </span>
                 
-                <span i18n="@@episode" class="ep-ref">
-                    S{{ $any(resumeEpisode())?.SeasonNumber || 1 }}E{{ resumeEpisode()?.EpisodeNumber || 1 }}
+                <span class="ep-ref">
+                    <ng-container i18n="@@episodeLabel">S</ng-container>{{ $any(resumeEpisode())?.SeasonNumber || 1 }}<ng-container i18n="@@episodeSeparator">E</ng-container>{{ resumeEpisode()?.EpisodeNumber || 1 }}
                 </span>
                 
               </div>
@@ -68,22 +68,22 @@
               @for (genre of show()?.genres; track $index) {
                 <span class="meta-chip">{{ genre }}</span>
               } @empty {
-                <span class="meta-text">N/D</span>
+                <span class="meta-text" i18n="@@notAvailable">N/D</span>
               }
             </div>
           </div>
           
           <div class="meta-block">
-            <span class="meta-label">Audio:</span>
+            <span i18n="@@audio" class="meta-label">Audio:</span>
             <span class="meta-text uppercase-lang">
-              {{ show()?.audio?.join(', ') || 'N/D' }}
+              {{ show()?.audio?.join(', ') || ('N/D' | i18n: '@@notAvailable') }}
             </span>
           </div>
           
           <div class="meta-block">
             <span i18n="@@subtitles" class="meta-label">Sottotitoli:</span>
             <span class="meta-text uppercase-lang">
-              {{ show()?.subs?.join(', ') || 'N/D' }}
+              {{ show()?.subs?.join(', ') || ('N/D' | i18n: '@@notAvailable') }}
             </span>
           </div>
 

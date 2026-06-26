@@ -59,7 +59,7 @@ export class AdminPage implements OnInit {
 
     constructor() {
         
-        addIcons({ arrowBackOutline })
+        addIcons({arrowBackOutline});
     }
 
     ngOnInit() {

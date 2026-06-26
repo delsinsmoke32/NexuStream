@@ -36,13 +36,13 @@
         </div>
 
         @if (showDelete()) {
-            <button class="action-top-btn" (click)="onRemove($event)">
+            <button class="action-top-btn" (click)="onRemove($event)" [title]="'Elimina' | i18n: '@@showCard_delete'">
                 <ion-icon name="trash"></ion-icon>
             </button>
         }
 
         @if (showDismiss()) {
-            <button class="action-top-btn" (click)="onDismiss($event)">
+            <button class="action-top-btn" (click)="onDismiss($event)" [title]="'Rimuovi' | i18n: '@@showCard_dismiss'">
                 <ion-icon name="close"></ion-icon>
             </button>
         }
@@ -52,12 +52,14 @@
         <div class="landscape-meta" (click)="onPlay($event)">
             <span class="meta-show-title">{{ parseLang(show().Title || show().ShowTitle) }}</span>
             <span class="meta-episode-info">
-                S{{ show().SeasonNumber || 1 }} E{{ show().EpisodeNumber || 1 }} - {{ parseLang(show().EpisodeTitle) }}
+                <ng-container i18n="@@showCard_seasonAbbr">S</ng-container>{{ show().SeasonNumber || 1 }} 
+                <ng-container i18n="@@showCard_episodeAbbr">E</ng-container>{{ show().EpisodeNumber || 1 }} 
+                - {{ parseLang(show().EpisodeTitle) }}
             </span>
         </div>
     }
     @if (layout() !== 'landscape') {
-        <div class="card-info-bottom" (click)="onInfo($event)">
+        <div class="card-info-bottom" (click)="onInfo($event)" [title]="'Altre info' | i18n: '@@showCard_moreInfo'">
             <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
         </div>
     }

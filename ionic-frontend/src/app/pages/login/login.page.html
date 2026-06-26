@@ -27,11 +27,12 @@
             <form [formGroup]="loginForm" (ngSubmit)="login()">
                 <ion-card-content>
                     <div class="input-group">
-                        <ion-label position="stacked">Email</ion-label>
+                        <ion-label position="stacked" i18n="@@emailLabel">Email</ion-label>
                         <ion-item lines="none" class="custom-input">
                             <ion-input
                                 type="email"
                                 formControlName="email"
+                                i18n-errorText="@@invalidEmailError"
                                 errorText="Inserisci un indirizzo email valido"
                                 placeholder="example@mail.com"
                             ></ion-input>
@@ -39,11 +40,12 @@
                     </div>
 
                     <div class="input-group" style="margin-top: 15px">
-                        <ion-label position="stacked">Password</ion-label>
+                        <ion-label position="stacked" i18n="@@passwordLabel">Password</ion-label>
                         <ion-item lines="none" class="custom-input">
                             <ion-input
                                 formControlName="password"
                                 type="password"
+                                i18n-errorText="@@invalidPasswordError"
                                 errorText="La password deve essere di almeno 8 caratteri"
                                 placeholder="password"
                             >

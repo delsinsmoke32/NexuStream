@@ -88,16 +88,7 @@ export class SettingsPage implements OnInit {
         private alertController: AlertController,
         private toastCtrl: ToastController
     ) {
-        addIcons({
-            pencil,
-            lockClosedOutline,
-            logOutOutline,
-            checkmark,
-            notificationsOutline,
-            videocamOutline,
-            wifiOutline,
-            helpCircleOutline,
-        })
+        addIcons({pencil,lockClosedOutline,logOutOutline,checkmark,notificationsOutline,videocamOutline,wifiOutline,helpCircleOutline,});
     }
 
     ngOnInit() {

@@ -71,16 +71,7 @@ export class SearchPage {
     genres = signal<Genre[]>([])
 
     constructor() {
-        addIcons({
-            alertCircleOutline,
-            searchOutline,
-            personCircleOutline,
-            settingsOutline,
-            heartOutline,
-            logOutOutline,
-            playCircle,
-            informationCircleOutline,
-        })
+        addIcons({alertCircleOutline,searchOutline,personCircleOutline,settingsOutline,heartOutline,logOutOutline,playCircle,informationCircleOutline,});
     }
 
     ionViewWillEnter() {

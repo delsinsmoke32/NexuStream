@@ -25,7 +25,7 @@
             cambiato nome o essere temporaneamente non disponibile.
         </p>
 
-        <ion-button i18n="@@backHome"
+        <ion-button
             color="primary"
             (click)="goToHome()"
             expand="block"
@@ -33,7 +33,7 @@
             routerLink="/home"
         >
             <ion-icon slot="start" name="home-outline"></ion-icon>
-            Torna alla Home
+            <ng-container i18n="@@backHome">Torna alla Home</ng-container>
         </ion-button>
     </div>
 </ion-content>

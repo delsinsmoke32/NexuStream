@@ -103,7 +103,7 @@ export class RegisterPage implements OnInit {
 
     selected = signal('avatars/avatar-003.png')
     constructor() {
-        addIcons({ swapHorizontalOutline })
+        addIcons({swapHorizontalOutline});
         
     }
 

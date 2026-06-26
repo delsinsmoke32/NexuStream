@@ -72,20 +72,7 @@ export class TabsPage {
     isPopoverOpen = false
 
     constructor() {
-        addIcons({
-            settingsOutline,
-            shieldCheckmarkOutline,
-            libraryOutline,
-            eyeOutline,
-            logOutOutline,
-            logInOutline,
-            personAddOutline,
-            personCircleOutline,
-            homeOutline,
-            searchOutline,
-            heartOutline,
-            personOutline,
-        })
+        addIcons({settingsOutline,shieldCheckmarkOutline,libraryOutline,eyeOutline,logOutOutline,logInOutline,personAddOutline,personCircleOutline,homeOutline,searchOutline,heartOutline,personOutline,});
     }
 
     ionViewWillEnter() {

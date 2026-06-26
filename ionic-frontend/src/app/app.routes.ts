@@ -8,14 +8,14 @@ import { CataloguerGuard } from './guards/cataloguer-guard';
 import { ModGuard } from './guards/mod-guard';
 
 export const routes: Routes = [
-  // 1. Reindirizzamento iniziale: mandiamo l'utente direttamente dentro il guscio delle tab!
+  // Reindirizzamento iniziale: mandiamo l'utente direttamente dentro il guscio delle tab!
   {
     path: '',
     redirectTo: 'tabs/home', 
     pathMatch: 'full'
   },
   
-  // 2. Rotte di Autenticazione (Protette dalla GuestGuard: chi è loggato non le vede)
+  // Rotte di Autenticazione (Protette dalla GuestGuard: chi è loggato non le vede)
   {
     path: 'login',
     canActivate: [GuestGuard],
@@ -37,13 +37,13 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/forgot-password/forgot-password.page').then( m => m.ForgotPasswordPage)
   },
   
-  // 3. IL CUORE DELL'APP: La struttura a Tab (Home, Cerca, Preferiti, Profilo)
+  // IL CUORE DELL'APP: La struttura a Tab (Home, Cerca, Preferiti, Profilo)
   {
     path: 'tabs',
     loadChildren: () => import('./pages/tabs/tabs.routes').then((m) => m.routes),
   },
   
-  // 4. Pagine a Schermo Intero (Fuori dalle tab: la barra in basso qui scomparirà)
+  // Pagine a Schermo Intero (Fuori dalle tab: la barra in basso qui scomparirà)
   {
     path: 'shows/:id',
     loadComponent: () => import('./pages/shows/shows.page').then(m => m.ShowsPage)
@@ -53,7 +53,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/episode/episode.page').then(m => m.EpisodePage)
   },
   
-  // 5. Pannelli di Lavoro Privati (Tutti protetti dalle loro specifiche Guard)
+  // Pannelli di Lavoro Privati (Tutti protetti dalle loro specifiche Guard)
   {
     path: 'admin',
     canActivate: [AdminGuard],
@@ -70,7 +70,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/mod/mod.page').then( m => m.ModPage)
   },
   
-  // 6. Gestione Errori
+  // Gestione Errori
   {
     path: 'forbidden',
     loadComponent: () => import('./pages/forbidden/forbidden.page').then(m => m.ForbiddenPage)
@@ -80,7 +80,7 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/notfound/notfound.page').then(m => m.NotfoundPage)
   },
 
-  // 7. Easter Eggs
+  // Easter Egg...?
   {
     path: 'metaballs',
     loadComponent: () => import('./pages/metaballs/metaballs.page').then( m => m.MetaballsPage)

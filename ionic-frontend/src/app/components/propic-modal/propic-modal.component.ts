@@ -75,7 +75,7 @@ export class PropicModalComponent implements OnInit {
     propicForm!: FormGroup
 
     constructor() {
-        addIcons({ cloudUploadOutline, imageOutline })
+        addIcons({imageOutline,cloudUploadOutline});
     }
 
     ngOnInit() {

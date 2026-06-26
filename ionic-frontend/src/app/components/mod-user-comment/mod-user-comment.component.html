@@ -3,7 +3,7 @@
         <span class="comment-timestamp">{{ comment.DateCommented | date:'dd/MM/yyyy HH:mm' }}</span>
         @if ((comment.ReportCount || 0) > 0) {
             <span class="comment-report-badge">
-                {{ comment.ReportCount }} {{ comment.ReportCount === 1 ? 'Segnalazione' : 'Segnalazioni' }}
+                {{ comment.ReportCount }} {{ (comment.ReportCount === 1 ? 'Segnalazione' : 'Segnalazioni') | i18n: (comment.ReportCount === 1 ? '@@modUserComment_reportSingle' : '@@modUserComment_reportPlural') }}
             </span>
         }
     </div>
@@ -14,10 +14,10 @@
         <div class="comment-stats">
             <span>Likes: {{ comment.Likes }}</span>
             <div class="status-indicators">
-                <span>Stato: </span>
-                @if (comment.isHidden) { <span class="tag tag-hidden">Nascosto</span> }
-                @if (comment.isApproved) { <span class="tag tag-approved">Approvato</span> }
-                @if (!comment.isHidden && !comment.isApproved) { <span class="tag tag-waiting">In attesa</span> }
+                <span i18n="@@modUserComment_status">Stato: </span>
+                @if (comment.isHidden) { <span class="tag tag-hidden" i18n="@@modUserComment_hidden">Nascosto</span> }
+                @if (comment.isApproved) { <span class="tag tag-approved" i18n="@@modUserComment_approved">Approvato</span> }
+                @if (!comment.isHidden && !comment.isApproved) { <span class="tag tag-waiting" i18n="@@modUserComment_waiting">In attesa</span> }
             </div>
         </div>
         

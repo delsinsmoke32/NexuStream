@@ -17,7 +17,7 @@ export class ForbiddenPage implements OnInit {
     private router = inject(Router)
 
     constructor() {
-        addIcons({ shieldOutline, homeOutline })
+        addIcons({shieldOutline,homeOutline});
     }
 
     ngOnInit() {}

@@ -241,16 +241,16 @@ const updateEpisodeFull = async (episodeId, fields, fieldsParams, dubs, subs) =>
     if (result.changes > 0) {
         // Tracce Audio: Svuota e ripopola
         if (dubs && Array.isArray(dubs)) {
-            await db.runAsync(`DELETE FROM "EpisodeLanguage" WHERE "REF_EpisodeID" = ?`, [episodeId]);
+            // await db.runAsync(`DELETE FROM "EpisodeLanguage" WHERE "REF_EpisodeID" = ?`, [episodeId]);
             for (const lang of dubs) {
-                await db.runAsync(`INSERT INTO "EpisodeLanguage" ("REF_EpisodeID", "REF_LanguageID") VALUES (?, ?)`, [episodeId, lang]);
+                await db.runAsync(`INSERT OR IGNORE INTO "EpisodeLanguage" ("REF_EpisodeID", "REF_LanguageID") VALUES (?, ?)`, [episodeId, lang]);
             }
         }
         // Sottotitoli: Svuota e ripopola
         if (subs && Array.isArray(subs)) {
-            await db.runAsync(`DELETE FROM "EpisodeSubtitles" WHERE "REF_EpisodeID" = ?`, [episodeId]);
+            // await db.runAsync(`DELETE FROM "EpisodeSubtitles" WHERE "REF_EpisodeID" = ?`, [episodeId]);
             for (const lang of subs) {
-                await db.runAsync(`INSERT INTO "EpisodeSubtitles" ("REF_EpisodeID", "REF_LanguageID") VALUES (?, ?)`, [episodeId, lang]);
+                await db.runAsync(`INSERT OR IGNORE INTO "EpisodeSubtitles" ("REF_EpisodeID", "REF_LanguageID") VALUES (?, ?)`, [episodeId, lang]);
             }
         }
     }
@@ -353,6 +353,26 @@ const deleteSubLang = async (episodeId, lang) => {
 }
 
 
+/**
+ * Ottiene la lista dei sottotitoli disponibili per un episodio.
+ * @param {number} episodeId
+ * @returns {Promise<Array<{REF_LanguageID: string}>>}
+ */
+const getSubLangsByEpisode = async (episodeId) => {
+    const sql = `SELECT "REF_LanguageID" FROM "EpisodeSubtitles" WHERE "REF_EpisodeID" = ?`;
+    return await db.allAsync(sql, [episodeId]);
+}
+
+/**
+ * Ottiene la lista degli audio disponibili per un episodio.
+ * @param {number} episodeId
+ * @returns {Promise<Array<{REF_LanguageID: string}>>}
+ */
+const getDubLangsByEpisode = async (episodeId) => {
+    const sql = `SELECT "REF_LanguageID" FROM "EpisodeLanguage" WHERE "REF_EpisodeID" = ?`;
+    return await db.allAsync(sql, [episodeId]);
+}
+
 
 module.exports = {
     getAllShows,
@@ -373,5 +393,7 @@ module.exports = {
     insertSubLang,
     deleteDubLang,
     deleteSubLang,
-    updateMemberPropicBeforeDeletion
+    updateMemberPropicBeforeDeletion,
+    getDubLangsByEpisode,
+    getSubLangsByEpisode,
 };

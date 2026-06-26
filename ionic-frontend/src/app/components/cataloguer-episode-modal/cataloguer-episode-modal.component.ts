@@ -150,27 +150,60 @@ export class CataloguerEpisodeModalComponent implements OnInit {
         if (this.isEditMode) {
             this.isMockEpisode.set(this.data.StreamURI == 'test')
             if (this.data.ThumbnailURI) {
-                //  Niente localhost, usiamo il pipe!
                 this.thumbnailPreview.set(
                     this.backendUrl.transform(this.data.ThumbnailURI)
                 )
             }
 
-            this.existingDubs.set(
-                this.data.DubLanguages
-                    ? this.data.DubLanguages.split(',')
-                    : ['it']
-            )
-            this.existingSubs.set(
-                this.data.SubLanguages ? this.data.SubLanguages.split(',') : []
-            )
-
+            // CORREZIONE 1: Rimosso il fallback a 'it' e inserito .filter(Boolean) per evitare stringhe vuote [""]
+            // this.existingDubs.set(
+            //     this.data.DubLanguages
+            //         ? this.data.DubLanguages.split(',')
+            //               .map((s: string) => s.trim())
+            //               .filter(Boolean)
+            //         : []
+            // )
+            // this.existingSubs.set(
+            //     this.data.SubLanguages
+            //         ? this.data.SubLanguages.split(',')
+            //               .map((s: string) => s.trim())
+            //               .filter(Boolean)
+            //         : []
+            // )
+            this.refreshTracks()
             this.fetchExistingMarkers()
+            this.audioTracksList.set([])
+            this.subTracksList.set([])
         } else {
             this.isMockEpisode.set(false)
+            // In creazione assicurati che partano puliti
+            this.existingDubs.set([])
+            this.existingSubs.set([])
         }
 
         this.initForm()
+    }
+
+    refreshTracks(): void {
+        const id = this.data.EpisodeID
+
+        // Recupera tracce Audio
+        this.cataloguerService.getEpisodeTracks(id, 'audio').subscribe({
+            next: (response: any) => {
+                console.log(response)
+                // Se il backend risponde con l'oggetto intero del controller precedente
+                this.existingDubs.set(response.tracks)
+            },
+            error: (err) => console.error('Errore audio:', err),
+        })
+
+        // Recupera tracce Sottotitoli
+        this.cataloguerService.getEpisodeTracks(id, 'subs').subscribe({
+            next: (response: any) => {
+                this.existingSubs.set(response.tracks)
+            },
+            error: (err) => console.error('Errore subs:', err),
+        })
     }
 
     private fetchExistingMarkers() {
@@ -192,11 +225,13 @@ export class CataloguerEpisodeModalComponent implements OnInit {
 
     private initForm() {
         const getLangText = (jsonStr: string, lang: string) => {
+            if (!jsonStr) return ''
             try {
                 const obj = JSON.parse(jsonStr)
                 return obj[lang] || ''
             } catch {
-                return jsonStr || ''
+                // Se non è un JSON (stringa nativa), la usiamo solo se la lingua richiesta è l'italiano
+                return lang === 'it' ? jsonStr : ''
             }
         }
 
@@ -425,10 +460,11 @@ export class CataloguerEpisodeModalComponent implements OnInit {
                 marker.StartTime === null ||
                 marker.EndTime === null ||
                 marker.StartTime >= marker.EndTime ||
-                marker.StartTime < 0
+                marker.StartTime < 0 ||
+                marker.EndTime > this.data!.Duration
             ) {
                 this.presentToast(
-                    "Errore nei Marker: i tempi non possono essere vuoti e la Fine deve essere maggiore dell'Inizio.",
+                    "Errore nei Marker: i tempi non possono essere vuoti e la Fine deve essere maggiore dell'Inizio, e un tempo non può andare oltre la durata dell'episodio.",
                     'warning'
                 )
                 return
@@ -496,6 +532,8 @@ export class CataloguerEpisodeModalComponent implements OnInit {
                 subTracks: uploadedSubTracks,
                 times: currentMarkers,
             }
+
+            console.log('this is payload', payload)
 
             this.dismiss({ payload, isEdit: this.isEditMode })
         } catch (error) {

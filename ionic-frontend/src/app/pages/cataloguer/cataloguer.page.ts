@@ -105,7 +105,7 @@ export class CataloguerPage implements OnInit {
     getLangText(jsonString: string, lang: string = 'it'): string {
         try {
             const obj = JSON.parse(jsonString)
-            return obj[lang] || obj['it'] || ''
+            return obj[lang] || ''
         } catch (e) {
             return jsonString || ''
         }
@@ -549,8 +549,8 @@ export class CataloguerPage implements OnInit {
                 episodeNumber: parseInt(rawData.episodeNumber, 10),
                 audioTracks: rawData.audioTracks || [],
                 subTracks: rawData.subTracks || [],
-                DubLanguages: ['it'],
-                SubLanguages: ['it'],
+                DubLanguages: [],
+                SubLanguages: [],
                 thumbnailURI: rawData.thumbnailURI || null,
                 rawVideoURI: rawData.rawVideoURI || null,
                 times: rawData.times || [],
@@ -647,7 +647,7 @@ export class CataloguerPage implements OnInit {
                     ? item.DubLanguages.split(',').filter(
                           (l: string) => l.trim() !== ''
                       )
-                    : item.DubLanguages || ['it']
+                    : item.DubLanguages || []
             extraFields.SubLanguages =
                 typeof item.SubLanguages === 'string'
                     ? item.SubLanguages.split(',').filter(
@@ -789,7 +789,7 @@ export class CataloguerPage implements OnInit {
         } else if (currentLvl === 'episodes') {
             let updatedDubs = item.DubLanguages
                 ? item.DubLanguages.split(',')
-                : ['it']
+                : []
             payload.audioTracks?.forEach((t: any) => {
                 if (!updatedDubs.includes(t.lang)) updatedDubs.push(t.lang)
             })

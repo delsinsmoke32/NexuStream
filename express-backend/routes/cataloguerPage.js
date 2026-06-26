@@ -553,6 +553,11 @@ router.delete('/episodes/:id/tracks/:type/:lang', [
     param('lang').isString().trim().notEmpty().withMessage("ID lingua non valido")
 ], cataloguerController.removeTrack);
 
+router.get('/episodes/:id/tracks/:type', [
+    param('id').isInt({ min: 1 }).withMessage("ID episodio non valido"),
+    param('type').isIn(['audio', 'subs']).withMessage("Tipo non valido")
+], cataloguerController.getTrack);
+
 
 router.get('/episodes/:id/times', [
     param('id').isInt({ min: 1 }).withMessage("ID episodio non valido")

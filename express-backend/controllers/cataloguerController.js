@@ -740,11 +740,46 @@ const removePropic = async (req, res) => {
     }
 };
 
+const getTrack = async (req, res) => {
+    // 1. Gestione errori di validazione di express-validator
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const episodeId = parseInt(req.params.id, 10);
+    const trackType = req.params.type;
+
+    try {
+        let tracks = [];
+
+        // 2. Smistamento in base al tipo richiesto
+        if (trackType === 'audio') {
+            const data = await cataloguerModel.getDubLangsByEpisode(episodeId);
+            tracks = data.map(row => row.REF_LanguageID);
+        } else if (trackType === 'subs') {
+            const data = await cataloguerModel.getSubLangsByEpisode(episodeId);
+            tracks = data.map(row => row.REF_LanguageID);
+        }
+
+        // 3. Risposta di successo
+        return res.status(200).json({
+            episodeId,
+            type: trackType,
+            tracks
+        });
+
+    } catch (error) {
+        // 4. Gestione degli errori del database
+        console.error(`Errore nel recupero delle tracce per l'episodio ${episodeId}:`, error);
+        return res.status(500).json({ error: "Errore interno del server" });
+    }
+};
 
 module.exports = {
     getShows, getSeasons, getEpisodes,
     addShow, modifyShow, removeShow,
     addSeason, modifySeason, removeSeason,
     addEpisode, modifyEpisode, removeEpisode, removeTrack,
-    addPropic, removePropic
+    addPropic, removePropic, getTrack
 };

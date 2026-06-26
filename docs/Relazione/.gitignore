@@ -1,0 +1,8 @@
+macro.tex
+*.log
+Copertina/
+*.fdb_latexmk
+*.fls
+*.out
+*.gz
+*.toc

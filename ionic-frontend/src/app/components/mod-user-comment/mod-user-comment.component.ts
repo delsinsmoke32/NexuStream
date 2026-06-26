@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonIcon, IonButton } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { checkmarkCircleOutline, closeCircleOutline, eyeOffOutline, eyeOutline } from 'ionicons/icons';
-import { ModComment } from '../../models/mod'; // Aggiusta il percorso!
+import { ModComment } from '../../models/mod';
 
 @Component({
   selector: 'app-mod-user-comment',

@@ -70,19 +70,19 @@ export class SettingsPage implements OnInit {
 
     selected = signal('avatars/avatar-003.png')
 
-    // Controllo visibilità della finestra di scelta
+    
     isAvatarModalOpen = false
 
-    // Avatar attualmente selezionato (di base mostriamo un placeholder)
+    
     currentAvatar = signal<string>('')
 
     userPreferences = {
         appLanguage: 'it',
-        defaultAudio: 'jp', // Usa 'jp' invece di 'ja' per coerenza col DB
+        defaultAudio: 'jp', 
         defaultSubtitles: 'it',
     }
 
-    // Elenco degli avatar che l'utente può scegliere
+    
     constructor(
         private router: Router,
         private alertController: AlertController,
@@ -105,7 +105,7 @@ export class SettingsPage implements OnInit {
         this.loadPreferences()
     }
 
-    // Carica le preferenze salvate o imposta i valori di default
+    
     loadPreferences() {
         this.isLoading.set(true)
         this.userPreferences = {
@@ -117,14 +117,14 @@ export class SettingsPage implements OnInit {
     }
 
     loadSettingsData() {
-        // 1. Recupera la stringa dal localStorage
+       
         const userString = localStorage.getItem('user')
 
         if (userString) {
-            // 2. Trasforma la stringa di testo nuovamente in un oggetto JavaScript reale
+            
             const user = JSON.parse(userString)
 
-            // 3. Assegna l'username (fai attenzione a come si chiama il campo esatto nell'oggetto, es. user.username o user.name)
+            
             this.username.set(user.Username)
             console.log('Username recuperato dal localStorage:', this.username)
             this.currentAvatar.set(user.REF_PropicURI)
@@ -133,16 +133,16 @@ export class SettingsPage implements OnInit {
         }
     }
 
-    // Salva le preferenze ogni volta che l'utente cambia un valore
+    
     savePreferences() {
-        // 1. Chiamiamo il service, che aggiornerà il localStorage E farà la chiamata PATCH al backend!
+        
         this.langService.setLanguages(
             this.userPreferences.appLanguage,
             this.userPreferences.defaultSubtitles,
             this.userPreferences.defaultAudio
         )
 
-        // 2. Logica di refresh per la lingua dell'App (come avevi già fatto benissimo)
+        
         const currentLang = window.location.pathname.split('/')[1]
         if (['it', 'en'].includes(currentLang)) {
             const targetLang = this.userPreferences.appLanguage
@@ -181,28 +181,28 @@ export class SettingsPage implements OnInit {
 
         console.log(data)
         console.log(this.currentAvatar())
-        // Se l'utente ha selezionato un avatar, aggiorna il signal della pagina principale
+        
         if (data && data.selectedAvatar) {
             this.currentAvatar.set(data.selectedAvatar)
-            // this.registerForm.patchValue({ propic: this.selected() })
+            
             this.settingsService
                 .changePropic({ propicURI: data.selectedAvatar })
                 .subscribe({
                     next: async () => {
-                        // Recupera l'oggetto 'user' intero dal localStorage
+                        
                         const userString = localStorage.getItem('user');
                         
                         if (userString) {
                             const user = JSON.parse(userString);
                             
-                            // 2Aggiorna SOLO il campo dell'avatar nell'oggetto
+                            
                             user.REF_PropicURI = data.selectedAvatar;
                             
-                            // Risalva l'oggetto nel localStorage
+                            
                             localStorage.setItem('user', JSON.stringify(user));
                         }
 
-                        // Aggiorna il signal per la UI (con timestamp per evitare cache)
+                       
                         const timestamp = new Date().getTime();
                         this.currentAvatar.set(`${data.selectedAvatar}?t=${timestamp}`);
                         
@@ -271,13 +271,13 @@ export class SettingsPage implements OnInit {
                             ? data.newUsername.trim()
                             : ''
 
-                        // Controllo lunghezza tra 3 e 24 caratteri
+                        
                         if (name.length >= 3 && name.length <= 24) {
                             this.saveNewName(name)
-                            return true // Chiude il modal con successo
+                            return true 
                         }
 
-                        // Impedisce la chiusura del modal se i requisiti falliscono
+                        
                         return false
                     },
                 },

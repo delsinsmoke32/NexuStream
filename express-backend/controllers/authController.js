@@ -13,7 +13,7 @@ const rounds = 10; //round di hashing
  */
 
 const login = async (req, res) => {
-    // 1. Controllo esito dei validatori del Router
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()){
         return res.status(400).json({ errors: errors.array() });
@@ -22,27 +22,26 @@ const login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // 2. Chiamata al Model per cercare l'utente
         const user = await userModel.getUserByEmail(email);
 
         if (!user) {
             return res.status(401).json({ message: "Email o password errati." });
         }
 
-        // 3. Verifica della password
+        
         const isMatch = await bcrypt.compare(password, user.Password);
         if (!isMatch){
             return res.status(401).json({ message: "Email o password errati." });
         }
 
-        // 4. Generazione del Token JWT
+       
         const token = jwt.sign(
             { id: user.UserID, username: user.Username, isAdmin: user.isAdmin, isMod: user.isMod, isCat: user.isCataloguer, audioLang: user.REF_Audio_Language, textLang: user.REF_Text_Language, appLang: user.REF_App_Language},
             process.env.JWT_SECRET,
             { expiresIn: '24h' }
         );
 
-        // 5. Risposta di successo (nascondendo la password)
+        
         delete user.Password;
         return res.json({
             message: "Welcome back, " + user.Username,
@@ -68,7 +67,7 @@ const login = async (req, res) => {
  */
 
 const register = async (req, res) => {
-    // 1. Controllo errori di validazione formale
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()){
         return res.status(400).json({ errors: errors.array() });
@@ -77,10 +76,10 @@ const register = async (req, res) => {
     const { username, email, password, audioLanguageId, textLanguageId, appLanguageId, propicURI } = req.body;
 
     try {
-        // 3. Hashing della password
+        
         const hashedPassword = await bcrypt.hash(password, rounds);
 
-        // 4. Chiamata al Model per l'inserimento
+        
         const result = await userModel.createUser(username, email, hashedPassword, audioLanguageId, textLanguageId, appLanguageId, propicURI);
 
         console.log("Utente creato con ID: ", result.id);

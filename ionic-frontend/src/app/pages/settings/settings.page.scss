@@ -1,15 +1,15 @@
 ion-header {
   ion-toolbar {
-    --background: var(--ion-color-secondary); // Il tuo #181818
-    --color: var(--ion-text-color);           // Il% tuo #f5f5f5
+    --background: var(--ion-color-secondary); 
+    --color: var(--ion-text-color);           
     font-weight: 700;
   }
 }
 
-// Stile dei divisori di sezione (Account, Preferenze, Assistenza)
+
 ion-item-divider {
-  --background: rgba(24, 24, 24, 0.5); // Sfondo trasparente basato su #181818
-  --color: rgba(245, 245, 245, 0.5);   // Testo grigio chiaro sfumato
+  --background: rgba(24, 24, 24, 0.5); 
+  --color: rgba(245, 245, 245, 0.5);   
   font-size: 0.8rem;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -18,10 +18,10 @@ ion-item-divider {
   --inner-padding-end: 0;
 }
 
-// Uniformiamo le voci della lista al tema dell'app
+
 ion-item {
-  --background: var(--ion-background-color); // Sfondo #121212
-  --color: var(--ion-text-color);           // Testo #f5f5f5
+  --background: var(--ion-background-color); 
+  --color: var(--ion-text-color);          
   --padding-start: 16px;
   --transition: background 0.2s ease;
 
@@ -40,11 +40,11 @@ ion-item {
     font-size: 1.3rem;
   }
 
-  // Colore freccia laterale (detail="true")
+  
   --detail-color: rgba(245, 245, 245, 0.3);
 }
 
-// Spazio dedicato al profilo utente in cima
+
 .profile-item {
   padding-top: 5px;
   padding-bottom: 5px;
@@ -52,14 +52,14 @@ ion-item {
   ion-avatar {
     width: 48px;
     height: 48px;
-    border: 2px solid var(--ion-color-primary); // Cerchio rosso attorno all'avatar
+    border: 2px solid var(--ion-color-primary);
   }
 }
 
-// Stile speciale per la riga del Logout
+
 .logout-item {
   margin-top: 10px;
-  --background: rgba(178, 34, 34, 0.05); // Sottilissimo sfondo rosso trasparente
+  --background: rgba(178, 34, 34, 0.05); 
   border-top: 1px solid rgba(178, 34, 34, 0.1);
   border-bottom: 1px solid rgba(178, 34, 34, 0.1);
   
@@ -67,7 +67,7 @@ ion-item {
     font-weight: 600;
   }
 }
-// Contenitore dell'avatar e della matita
+
 .avatar-container {
   position: relative;
   width: 56px;
@@ -77,25 +77,25 @@ ion-item {
   ion-avatar {
     width: 100%;
     height: 100%;
-    border: 2px solid var(--ion-color-primary); // Cerchio rosso attorno all'avatar
+    border: 2px solid var(--ion-color-primary); 
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     transition: transform 0.2s ease;
   }
 
-  // Il badge tondo con la matita sovrapposto in basso a destra
+  
   .edit-badge {
     position: absolute;
     bottom: -2px;
     right: -2px;
-    background: var(--ion-color-primary); // Il tuo rosso brand #b22222
-    color: var(--ion-color-primary-contrast); // Il tuo testo #f5f5f5
+    background: var(--ion-color-primary); 
+    color: var(--ion-color-primary-contrast); 
     width: 20px;
     height: 20px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1.5px solid var(--ion-color-secondary); // Evita che si fonda con lo sfondo
+    border: 1.5px solid var(--ion-color-secondary);
     box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 
     ion-icon {
@@ -103,50 +103,26 @@ ion-item {
     }
   }
 
-  // Feedback visivo alla pressione
+  
   &:active ion-avatar {
     transform: scale(0.95);
   }
 }
 
-// Stile personalizzato per la finestra di scelta degli avatar (Modal)
-/*.avatar-modal {
-  --background: var(--ion-color-secondary); // Sfondo #181818
-  --height: auto;
-  --breakpoints: [0, 0.6]; // Si ferma a circa metà schermo (stile foglio dal basso)
-  --initial-breakpoint: 0.6;
-  
-  ion-toolbar {
-    --background: var(--ion-color-secondary);
-    --color: var(--ion-text-color);
-    font-weight: 600;
-  }
-    ion-content {
-    --background: var(--ion-color-secondary); // #181818
-    --color: var(--ion-text-color);
-  }
-
-  .subtitle {
-    color: rgba(245, 245, 245, 0.5);
-    font-size: 0.9rem;
-    margin-bottom: 20px;
-    text-center: center;
-  }
-}*/
 #avatar-modal {
-  // Forza la modale a prendere una dimensione visibile standard al centro dello schermo
+  
   --height: 400px;
   --width: 90%;
   --border-radius: 16px;
   --box-shadow: 0 10px 25px rgba(0,0,0,0.5);
 
   ion-toolbar {
-    --background: var(--ion-color-secondary); // #181818
-    --color: var(--ion-text-color);           // #f5f5f5
+    --background: var(--ion-color-secondary); 
+    --color: var(--ion-text-color);           
   }
 
   ion-content {
-    --background: var(--ion-color-secondary); // #181818
+    --background: var(--ion-color-secondary); 
     --color: var(--ion-text-color);
   }
 
@@ -158,11 +134,11 @@ ion-item {
   }
 }
 
-// Le opzioni della griglia
+
 .avatar-option {
   position: relative;
   width: 100%;
-  aspect-ratio: 1; // Rende il contenitore perfettamente quadrato
+  aspect-ratio: 1; 
   border-radius: 12px;
   overflow: hidden;
   border: 3px solid transparent;
@@ -176,13 +152,13 @@ ion-item {
     object-fit: cover;
   }
 
-  // Se l'avatar è quello attualmente in uso, si illumina di rosso
+  
   &.selected {
     border-color: var(--ion-color-primary);
     box-shadow: 0 0 10px rgba(178, 34, 34, 0.4);
   }
 
-  // Badge di spunta sull'avatar selezionato
+  
   .checkmark-badge {
     position: absolute;
     top: 5px;
@@ -202,7 +178,7 @@ ion-item {
   }
 }
 
-// Testo della versione in fondo alla pagina
+
 .app-version {
   p {
     color: rgba(245, 245, 245, 0.3);

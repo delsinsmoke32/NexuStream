@@ -3,10 +3,9 @@ const path = require('path');
 const fs = require('fs'); //  IMPORTANTE: Aggiungi fs!
 const { body } = require('express-validator');
 
-// 1. FACTORY: Crea la configurazione di Storage in base alla cartella
+// FACTORY: Crea la configurazione di Storage in base alla cartella
 const createStorage = (folderPath) => multer.diskStorage({
     destination: function (req, file, cb) {
-        //  FIX: Creiamo il percorso assoluto e la cartella se non esiste
         const dir = path.join(__dirname, '../public', folderPath);
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });
@@ -20,7 +19,7 @@ const createStorage = (folderPath) => multer.diskStorage({
     }
 });
 
-// 2. FACTORY: Crea l'istanza di Multer con i controlli di sicurezza
+// FACTORY: Crea l'istanza di Multer con i controlli di sicurezza
 const createUploader = (folderPath) => multer({
     storage: createStorage(folderPath),
     limits: { fileSize: 5 * 1024 * 1024 }, // Limite 5MB
@@ -39,7 +38,7 @@ const createUploader = (folderPath) => multer({
     }
 });
 
-// 3. FACTORY: Crea il validatore personalizzato (Il "Wrapper" di Express-Validator)
+// FACTORY: Crea il validatore personalizzato 
 const createValidator = (folderPath, fieldName) => {
     const uploader = createUploader(folderPath);
     
@@ -74,7 +73,7 @@ const rawVideoStorage = multer.diskStorage({
         cb(null, tempVideoDir);
     },
     filename: function (req, file, cb) {
-        // Generiamo un nome univoco per evitare sovrascritture se due admin caricano insieme
+        
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
         const ext = path.extname(file.originalname);
         cb(null, `raw_video_${uniqueSuffix}${ext}`);
@@ -84,7 +83,7 @@ const rawVideoStorage = multer.diskStorage({
 const uploadRawVideo = multer({ 
     storage: rawVideoStorage,
     limits: {
-        fileSize: 2 * 1024 * 1024 * 1024 // Limite di 2 GB! (Aggiusta in base alle tue esigenze)
+        fileSize: 2 * 1024 * 1024 * 1024 
     },
     fileFilter: (req, file, cb) => {
         // Accettiamo solo file video (MP4, MKV, ecc.)
@@ -114,9 +113,9 @@ const uploadMediaTrack = multer({
     storage: mediaTrackStorage,
     limits: { fileSize: 50 * 1024 * 1024 }, // 50 MB
     fileFilter: (req, file, cb) => {
-        const isAudio = file.mimetype.startsWith('audio/'); // Questo include già 'audio/mpeg' (MP3), quindi va bene!
+        const isAudio = file.mimetype.startsWith('audio/'); 
         
-        // I file dovrebbero essere aac, ma è decisamente più facile caricare mp3 nativo:
+        
         const isMp3 = file.originalname.endsWith('.mp3') || file.mimetype === 'audio/mpeg';
         const isSub = file.mimetype === 'text/vtt' || file.originalname.endsWith('.vtt') || file.originalname.endsWith('.srt');
         
@@ -128,9 +127,7 @@ const uploadMediaTrack = multer({
     }
 });
 
-// ==========================================
-// ESPORTIAMO I MIDDLEWARE PRONTI ALL'USO!
-// ==========================================
+
 module.exports = {
     // Single-Step per la rotta propic, visto che è molto più leggera
     validateAvatar: createValidator('avatars', 'img'),

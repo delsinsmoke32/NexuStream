@@ -32,7 +32,7 @@ export class MetaballsPage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    // Sicurezza: Cancelliamo il loop quando l'utente esce dalla pagina
+    
     if (this.animationId) {
       cancelAnimationFrame(this.animationId);
     }
@@ -40,8 +40,7 @@ export class MetaballsPage implements OnInit, AfterViewInit, OnDestroy {
 
   private getScaleFactor(): number {
     const canvas = this.canvasRef.nativeElement;
-    // Calcoliamo la diagonale basandoci sulle dimensioni reali dello schermo (innerWidth/innerHeight)
-    // per mantenere la proporzione costante tra desktop e mobile
+    
     const referenceDiagonal = Math.sqrt(1920 * 1920 + 1080 * 1080);
     const currentDiagonal = Math.sqrt(window.innerWidth * window.innerWidth + window.innerHeight * window.innerHeight);
     
@@ -52,8 +51,7 @@ export class MetaballsPage implements OnInit, AfterViewInit, OnDestroy {
     const canvas = this.canvasRef.nativeElement;
     this.ctx = canvas.getContext('2d')!;
     
-    // LA SOLUZIONE MOBILE: Se lo schermo è piccolo (sotto i 768px come i telefoni),
-    // usiamo la risoluzione 1:1 per non distruggere i pixel. Su desktop teniamo il /2 per le performance.
+    
     const isMobile = window.innerWidth < 768;
     const divisor = isMobile ? 1 : 2;
 
@@ -86,14 +84,14 @@ export class MetaballsPage implements OnInit, AfterViewInit, OnDestroy {
   private generateBalls() {
     const canvas = this.canvasRef.nativeElement;
     
-    // ADATTAMENTO DENSITÀ: Meno sfere sugli schermi piccoli per non intasare lo spazio
+    
     const isMobile = window.innerWidth < 768;
     const numberOfBalls = 15; 
 
-    this.balls = []; // Svuotiamo l'array per sicurezza
+    this.balls = []; 
 
     for (let i = 0; i < numberOfBalls; i++) {
-      // Raggio base equilibrato (circa 70-110px su desktop, proporzionato su mobile)
+      
       const radius = isMobile ? (Math.random() * 40 + 100) * this.getScaleFactor() : (Math.random() * 40 + 70) * this.getScaleFactor();
       
       this.balls.push({
@@ -109,16 +107,16 @@ export class MetaballsPage implements OnInit, AfterViewInit, OnDestroy {
   private animate = () => {
     const canvas = this.canvasRef.nativeElement;
     
-    // Puliamo il canvas ad ogni frame (ma almeno chiamalo clearBackground smh)
+   
     this.ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Disegniamo ogni metaball
+    
     this.balls.forEach(ball => {
-      // Aggiorniamo la posizione in base alla velocità
+      
       ball.x += ball.vx;
       ball.y += ball.vy;
 
-      // Rimbalzo orizzontale
+      
       if (ball.x - ball.radius < 0) {
         ball.vx *= -1;
         ball.x = ball.radius;
@@ -126,7 +124,7 @@ export class MetaballsPage implements OnInit, AfterViewInit, OnDestroy {
         ball.vx *= -1;
         ball.x = canvas.width - ball.radius;
       }
-      // Rimbalzo verticale
+      
       if (ball.y - ball.radius < 0) {
         ball.vy *= -1;
         ball.y = ball.radius;
@@ -135,11 +133,10 @@ export class MetaballsPage implements OnInit, AfterViewInit, OnDestroy {
         ball.y = canvas.height - ball.radius;
       }
 
-      // Disegniamo la sfera come un gradiente radiale (sfumato)
-      // Nota: Il filtro CSS farà fondere queste sfumature creando l'effetto che vogliamo
+      
       const gradient = this.ctx.createRadialGradient(ball.x, ball.y, 0, ball.x, ball.y, ball.radius);
-      gradient.addColorStop(0, 'rgba(229, 9, 20, 1)'); // Rosso NexuStream puro al centro
-      gradient.addColorStop(1, 'rgba(229, 9, 20, 0)'); // Sfuma a trasparente sui bordi
+      gradient.addColorStop(0, 'rgba(229, 9, 20, 1)'); 
+      gradient.addColorStop(1, 'rgba(229, 9, 20, 0)');
 
       this.ctx.fillStyle = gradient;
       this.ctx.beginPath();
@@ -147,7 +144,7 @@ export class MetaballsPage implements OnInit, AfterViewInit, OnDestroy {
       this.ctx.fill();
     });
 
-    // 3. Richiediamo il prossimo frame di animazione nativo
+    
     this.animationId = requestAnimationFrame(this.animate);
   }
 

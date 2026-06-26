@@ -99,7 +99,7 @@
                 >
                     <div class="user-avatar-wrapper">
                         <img
-                            [src]="user.REF_PropicURI ? (user.REF_PropicURI | backendUrl: 'static') : 'assets/default-avatar.png'"
+                            [src]="user.REF_PropicURI ? (user.REF_PropicURI | backendUrl: 'static') : ('avatars/avatar-000.png' | backendUrl: 'static')"
                             alt="propic"
                         />
                     </div>

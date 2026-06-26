@@ -52,21 +52,21 @@ export interface StreamingDiscussion {
 }
 
 export interface StreamingComment {
-    CommentID: number
-    CommentText: string
-    cleanText?: string
-    Username: string
-    REF_UserID: number
-    DateCommented: string
-    REF_CommentID?: number | null
-    Likes?: number
-    isLiked?: number
-    isReported?: number
-    isApproved?: number
-    isHidden?: number
-    ReportCount?: number
-    replyTag?: string | null
-    replies?: StreamingComment[] // Per i commenti annidati
-    parsedChunks?: any[] // Per i timestamp
-    [key: string]: any
+    CommentID: number;
+    CommentText: string;
+    cleanText?: string;
+    Username: string;
+    REF_UserID: number;
+    DateCommented: string;
+    REF_CommentID?: number | null;
+    Likes?: number;
+    isLiked?: number;
+    isReported?: number;
+    isApproved?: number;
+    isHidden?: number;
+    ReportCount?: number;
+    replyTag?: string | null;
+    replies?: StreamingComment[]; 
+    parsedChunks?: any[]; 
+    [key: string]: any;
 }

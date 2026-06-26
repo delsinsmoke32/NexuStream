@@ -25,7 +25,7 @@ export class LanguageSwitcherComponent {
 
     constructor() {
         addIcons({ globeOutline, chevronDownOutline })
-        // Extract language code from the current URL path (e.g., /en/dashboard)
+        
         const langs = ['it', 'en']
         if (langs.includes(window.location.pathname.split('/')[1])) {
             this.currentLang = window.location.pathname.split('/')[1]
@@ -41,13 +41,13 @@ export class LanguageSwitcherComponent {
 
         this.langService.setLanguages(nextLang, nextLang);
 
-        // Replace the language segment in the URL
+        
         if (!this.serveMode) {
             const segments = window.location.pathname.split('/')
             segments[1] = nextLang
 
             console.log(segments)
-            // Reload the page with the new language bundle
+            
             window.location.href = window.location.origin + segments.join('/')
         } else {
             this.presentToast(

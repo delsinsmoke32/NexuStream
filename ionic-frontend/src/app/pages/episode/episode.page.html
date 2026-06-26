@@ -19,28 +19,26 @@
     <div class="video-layout-wrapper">
         <div class="main-video-section">
             @if (isLoggedIn()) {
-            <app-video-player
-                [url]="getStreamWithParams()"
-                [times]="episode()?.EpisodeTimes || []"
-                [startAtTime]="getComputedStartTime()"
-                (onPause)="handlePlayerPause($event)"
-                (onEnded)="handlePlayerEnded($event)"
-                (onDestroySave)="handlePlayerDestroySave($event)"
-                (onNextEpisode)="handleNextEpisode()"
-            >
-            </app-video-player>
-            } @else {
-            <div class="guest-paywall-container">
-                <img
-                    [src]="episode()?.ThumbnailURI ? ((episode()?.ThumbnailURI || '') | backendUrl: 'static') : 'assets/placeholder-episode.jpg'"
-                    alt="Thumbnail"
-                />
-
-                <div class="paywall-overlay">
-                    <h3>Per guardare il video devi effettuare l'accesso</h3>
-                    <ion-button routerLink="/login">Accedi Ora</ion-button>
+                <app-video-player
+                    [url]="backendUrl.transform('api/shows/' + showId() + '/seasons/' + seasonId() + '/episodes/' + episodeId() + '/stream')"
+                    [times]="episode()?.EpisodeTimes || []"
+                    [startAtTime]="getComputedStartTime()"
+                    (onPause)="handlePlayerPause($event)"
+                    (onEnded)="handlePlayerEnded($event)"
+                    (onDestroySave)="handlePlayerDestroySave($event)"
+                    (onNextEpisode)="handleNextEpisode()"
+                >
+                </app-video-player>
+            } 
+            @else {
+                <div class="guest-paywall-container">
+                    <img [src]="episode()?.ThumbnailURI ? ((episode()?.ThumbnailURI || '') | backendUrl: 'static') : ('episode_thumbnails/bleach.png' | backendUrl: 'static')" alt="Thumbnail" />
+                    
+                    <div class="paywall-overlay">
+                        <h3>Per guardare il video devi effettuare l'accesso</h3>
+                        <ion-button routerLink="/login">Accedi Ora</ion-button>
+                    </div>
                 </div>
-            </div>
             }
 
             <div class="episode-details">

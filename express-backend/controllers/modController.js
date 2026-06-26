@@ -33,7 +33,7 @@ const createDiscussion = async (req, res) => {
     }
 
     const { REF_EpisodeID, closeDate, type } = req.body;
-    // Generiamo automaticamente la data di apertura in formato ISO string o simile locale
+    
     const openDate = new Date().toISOString().replace('T', ' ').substring(0, 16); 
 
     try {

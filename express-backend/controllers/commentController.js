@@ -87,10 +87,10 @@ const interactWithComment = async (req, res) => {
         const likeDelta = newLiked - oldLiked;
         const reportDelta = newReported - oldReported;
 
-        // 1. Salviamo l'interazione del singolo utente
+        
         await commentModel.upsertCommentInteraction(commentId, userId, newLiked, newReported);
         
-        // 2. Aggiorniamo il totale nel commento
+        
         if (likeDelta !== 0 || reportDelta !== 0) {
             await commentModel.updateCommentStats(commentId, likeDelta, reportDelta);
         }

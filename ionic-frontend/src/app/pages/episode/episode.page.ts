@@ -52,7 +52,7 @@ import { jwtDecodeHelper } from '@app/utils/jwt-helper'
 // 🚀 NUOVI SERVIZI IMPORTATI
 import { StreamingEpisode } from '@app/models/streaming'
 import { EpisodeService } from '@app/services/episode'
-import { ModService } from '@app/services/mod' // Usiamo quello già creato per le discussioni
+import { ModService } from '@app/services/mod'
 
 @Component({
     selector: 'app-episode',
@@ -79,6 +79,7 @@ import { ModService } from '@app/services/mod' // Usiamo quello già creato per 
     providers: [BackendUrlPipe],
 })
 export class EpisodePage implements OnInit, OnDestroy {
+    //  INIEZIONE DEI SERVIZI
     private route = inject(ActivatedRoute)
     private router = inject(Router)
     public backendUrl = inject(BackendUrlPipe)
@@ -86,11 +87,10 @@ export class EpisodePage implements OnInit, OnDestroy {
     private alertCtrl = inject(AlertController)
     private toastCtrl = inject(ToastController)
     private navCtrl = inject(NavController)
-
-    // 🚀 INIEZIONE DEI SERVIZI
     private episodeService = inject(EpisodeService)
     private modService = inject(ModService)
 
+    isCurrentEpisodeCompleted = signal<boolean>(false);
     isLoading = signal<boolean>(true)
     episode = signal<StreamingEpisode | null>(null)
     seasonEpisodes = signal<any[]>([])
@@ -166,6 +166,7 @@ export class EpisodePage implements OnInit, OnDestroy {
     }
 
     loadEpisodeData(showId: string, seasonId: string, episodeId: string) {
+        this.isCurrentEpisodeCompleted.set(false);
         this.episodeService.getEpisode(showId, seasonId, episodeId).subscribe({
             next: (res) => {
                 this.checkMockEpisode(res)
@@ -220,8 +221,9 @@ export class EpisodePage implements OnInit, OnDestroy {
     }
 
     handlePlayerEnded(currentTime: number) {
-        this.lastKnownProgress = currentTime
-        this.saveProgress(currentTime, 1, true)
+        this.lastKnownProgress = currentTime;
+        this.isCurrentEpisodeCompleted.set(true);
+        this.saveProgress(currentTime, 1, true);
     }
 
     handlePlayerDestroySave(currentTime: number) {
@@ -317,18 +319,17 @@ export class EpisodePage implements OnInit, OnDestroy {
         isCompleted: number,
         immediate: boolean = false
     ) {
-        if (!this.episode() || currentTime <= 5) return
+        if (!this.episode() || currentTime <= 5) return;
+
+        
+        const finalIsCompleted = this.isCurrentEpisodeCompleted() ? 1 : isCompleted;
 
         const body = {
             progress: currentTime,
-            isCompleted: isCompleted,
+            isCompleted: finalIsCompleted, 
             isDropped: 0,
-            isLiked:
-                this.episode()?.isLiked ??
-                this.episode()?.userInteraction?.isLiked ??
-                0,
-        }
-
+            isLiked: this.episode()?.isLiked ?? this.episode()?.userInteraction?.isLiked ?? 0,
+        };
         if (this.saveTimeout) clearTimeout(this.saveTimeout)
 
         if (immediate) {
@@ -361,59 +362,55 @@ export class EpisodePage implements OnInit, OnDestroy {
     }
 
     toggleLike() {
-        const currentEp = this.episode()
-        if (!currentEp) return
+        const currentEp = this.episode();
+        if (!currentEp) return;
 
-        const userToken = localStorage.getItem('token')
+        const userToken = localStorage.getItem('token');
         if (!userToken) {
-            this.showToast(
-                $localize`:@@logInToLike:Devi accedere per mettere Mi Piace!`,
-                'danger'
-            )
-            return
+            this.showToast($localize`:@@logInToLike:Devi accedere per mettere Mi Piace!`, 'danger');
+            return;
         }
 
-        const wasLiked =
-            currentEp.isLiked || currentEp.userInteraction?.isLiked ? 1 : 0
-        const newStatus = wasLiked ? 0 : 1
+        const wasLiked = currentEp.userInteraction?.isLiked ? 1 : 0;
+        const newStatus = wasLiked ? 0 : 1;
+        
+        
+        const currentLikes = currentEp.Likes || 0;
+        const newLikes = newStatus === 1 ? currentLikes + 1 : currentLikes - 1;
 
+        // aggiornamento signal
         this.episode.set({
             ...currentEp,
             isLiked: newStatus,
+            Likes: newLikes,
             userInteraction: currentEp.userInteraction
                 ? { ...currentEp.userInteraction, isLiked: newStatus }
-                : undefined,
-        })
+                : { isLiked: newStatus, isCompleted: currentEp.isCompleted ?? 0 },
+        });
 
-        const isCompleted =
-            currentEp.isCompleted ?? currentEp.userInteraction?.isCompleted ?? 0
         const body = {
             progress: this.lastKnownProgress,
-            isCompleted: isCompleted,
+            isCompleted: currentEp.isCompleted ?? 0,
             isDropped: 0,
             isLiked: newStatus,
-        }
+        };
 
         this.episodeService
             .interact(this.showId(), this.seasonId(), this.episodeId(), body)
             .subscribe({
                 error: () => {
+                    
                     this.episode.set({
                         ...currentEp,
                         isLiked: wasLiked,
+                        Likes: currentLikes,
                         userInteraction: currentEp.userInteraction
-                            ? {
-                                  ...currentEp.userInteraction,
-                                  isLiked: wasLiked,
-                              }
+                            ? { ...currentEp.userInteraction, isLiked: wasLiked }
                             : undefined,
-                    })
-                    this.showToast(
-                        $localize`:@@connessionErr:Errore di connessione.`,
-                        'danger'
-                    )
+                    });
+                    this.showToast($localize`:@@connessionErr:Errore di connessione.`, 'danger');
                 },
-            })
+            });
     }
 
     async openDiscussionModal(discussion?: any, event?: Event) {
@@ -433,7 +430,7 @@ export class EpisodePage implements OnInit, OnDestroy {
 
         const { data } = await modal.onDidDismiss()
         if (data?.payload) {
-            // 🚀 Usiamo il ModService!
+            
             if (data.isEdit) {
                 this.modService
                     .updateDiscussion(data.discussionId, data.payload)
@@ -523,8 +520,8 @@ export class EpisodePage implements OnInit, OnDestroy {
         if (isForced) return true
 
         if (disc.CloseDate) {
-            const closeDate = new Date(disc.CloseDate)
-            return new Date() > closeDate // Restituisce true se la data è passata
+            const closeDate = new Date(disc.CloseDate);
+            return new Date() > closeDate; 
         }
 
         return false

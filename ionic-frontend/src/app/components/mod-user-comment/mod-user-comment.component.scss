@@ -1,7 +1,7 @@
 :host {
-  display: block; /* Fondamentale affinché il componente prenda tutta la larghezza disponibile */
+  display: block; 
 
-  /* 1. CONTENITORE PRINCIPALE E TESTO */
+  
   .mod-comment-row {
     background: #181818;
     border: 1px solid #222222;
@@ -40,12 +40,12 @@
     }
   }
 
-  /* 2. FOOTER (STATISTICHE, TAG E BOTTONI DI MODERAZIONE) */
+  
   .comment-row-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap; /* Permette al footer di non "sbordare" su schermi stretti */
+    flex-wrap: wrap; 
     margin-top: 10px;
     padding-top: 10px;
     border-top: 1px solid #2a2a2a;
@@ -77,7 +77,7 @@
       display: flex;
       gap: 2px;
       
-      /* Resettiamo i margini di default degli ion-button per farli stare compatti */
+      
       ion-button {
         margin: 0;
         --padding-start: 8px;
@@ -86,15 +86,15 @@
       }
     }
 
-    /* 3. MEDIA QUERY MOBILE (Si attiva in automatico sugli schermi piccoli) */
+    
     @media (max-width: 576px) {
-      flex-direction: column; /* Mettiamo tag e bottoni in colonna */
-      align-items: flex-start; /* Allineiamo i tag a sinistra */
+      flex-direction: column; 
+      align-items: flex-start; 
 
       .comment-mod-actions {
         width: 100%;
-        justify-content: flex-end; /* Spingiamo i bottoni rotondi tutto a destra */
-        border-top: 1px dashed #333; /* Creiamo un divisore visivo leggerissimo */
+        justify-content: flex-end; 
+        border-top: 1px dashed #333; 
         padding-top: 8px;
         margin-top: 4px;
       }

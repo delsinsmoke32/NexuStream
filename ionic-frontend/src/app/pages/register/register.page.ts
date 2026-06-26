@@ -65,7 +65,7 @@ export class RegisterPage implements OnInit {
     private modalCtrl = inject(ModalController)
     private langService = inject(LanguageService)
 
-    // Configurazione del Form Reattivo
+    
     registerForm = new FormGroup(
         {
             username: new FormControl('', {
@@ -96,10 +96,7 @@ export class RegisterPage implements OnInit {
                     Validators.maxLength(24),
                 ],
             }),
-            // propic: new FormControl('', {
-            //     nonNullable: true,
-            //     validators: [Validators.required],
-            // }),
+            
         },
         { validators: this.passwordMatchValidator }
     )
@@ -107,7 +104,7 @@ export class RegisterPage implements OnInit {
     selected = signal('avatars/avatar-003.png')
     constructor() {
         addIcons({ swapHorizontalOutline })
-        // this.registerForm.patchValue({ propic: this.selected() })
+        
     }
 
     passwordMatchValidator(g: AbstractControl): ValidationErrors | null {
@@ -116,16 +113,16 @@ export class RegisterPage implements OnInit {
 
         if (!confirmPasswordControl) return null
 
-        // Se i campi non coincidono
+        
         if (newPassword !== confirmPasswordControl.value) {
-            // Impostiamo l'errore direttamente sul controllo di conferma
+            
             confirmPasswordControl.setErrors({
                 ...confirmPasswordControl.errors,
                 mismatch: true,
             })
             return { mismatch: true }
         } else {
-            // Se coincidono, rimuoviamo l'errore 'mismatch' mantenendo eventuali altri errori (es. required)
+            
             if (confirmPasswordControl.errors) {
                 const { mismatch, ...remainingErrors } =
                     confirmPasswordControl.errors
@@ -141,7 +138,7 @@ export class RegisterPage implements OnInit {
     ngOnInit() {}
 
     register() {
-        // 1. Verifica validità form (campi vuoti, email malformate, password corte)
+        
         if (this.registerForm.invalid) {
             this.presentToast(
                 $localize`:@@registerFormInvalid: 
@@ -153,7 +150,7 @@ export class RegisterPage implements OnInit {
 
         const formData = this.registerForm.getRawValue()
 
-        // 2. Controllo coincidenza password (unico controllo logico manuale necessario)
+        
         if (formData.password !== formData.conf_password) {
             this.presentToast(
                 $localize`:@@passNotCoincide:Le password inserite non coincidono.`,
@@ -172,7 +169,7 @@ export class RegisterPage implements OnInit {
             propicURI: this.selected(),
         }
 
-        // 3. Invio della richiesta tramite AuthService
+        
         this.authService.register(payload).subscribe({
             next: () => {
                 this.presentToast(
@@ -215,10 +212,10 @@ export class RegisterPage implements OnInit {
 
         console.log(data)
         console.log(this.selected())
-        // Se l'utente ha selezionato un avatar, aggiorna il signal della pagina principale
+        
         if (data && data.selectedAvatar) {
             this.selected.set(data.selectedAvatar)
-            // this.registerForm.patchValue({ propic: this.selected() })
+            
         }
     }
 }

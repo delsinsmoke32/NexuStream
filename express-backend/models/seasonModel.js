@@ -11,7 +11,7 @@ const getSeasonsByShow = async (showId, applang = "it") => {
         WHERE REF_ShowID = ?
         ORDER BY SeasonNumber ASC`;
     
-    // NOTA: Passiamo applang 2 volte per i due punti interrogativi, e infine lo showId
+    
     return await db.allAsync(sql, [applang, applang, showId]);
 }
 

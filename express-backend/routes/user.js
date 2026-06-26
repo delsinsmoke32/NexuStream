@@ -53,24 +53,90 @@ const { body } = require('express-validator');
 
 router.get('/me', auth, userController.getMyProfile);
 
+/**
+ * @swagger
+ * /api/users/change-password:
+ *   post:
+ *     summary: Modifica la password dell'utente
+ *     tags: [User]
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               currentPassword: { type: string, minLength: 8, maxLength: 24 }
+ *               newPassword: { type: string, minLength: 8, maxLength: 24 }
+ *     responses:
+ *       200: { description: "Password modificata con successo" }
+ *
+ * /api/users/change-propic:
+ *   post:
+ *     summary: Aggiorna l'immagine profilo dell'utente
+ *     tags: [User]
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               propicURI: { type: string }
+ *     responses:
+ *       200: { description: "Propic aggiornata con successo" }
+ *
+ * /api/users/preferences:
+ *   patch:
+ *     summary: Aggiorna le preferenze di lingua dell'utente
+ *     tags: [User]
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               appLanguageId: { type: string }
+ *               textLanguageId: { type: string }
+ *               audioLanguageId: { type: string }
+ *     responses:
+ *       200: { description: "Preferenze aggiornate con successo" }
+ *
+ * /api/users/change-username:
+ *   post:
+ *     summary: Modifica lo username dell'utente
+ *     tags: [User]
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username: { type: string, minLength: 8, maxLength: 24 }
+ *     responses:
+ *       200: { description: "Username aggiornato con successo" }
+ */
+
 router.post('/change-password', auth, [
     body('currentPassword').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("La password deve essere composta da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri."),
     body('newPassword').isString().isLength({ min: 8, max: 24 }).notEmpty().withMessage("La password deve essere composta da lettere, numeri o caratteri speciali, con una lunghezza compresa fra 8 e 24 caratteri.")
-], userController.modifyPassword)
+], userController.modifyPassword);
 
 router.post('/change-propic', auth, [
     body('propicURI').isString().notEmpty().trim().withMessage("La nuova propic non deve essere vuota.")
-], userController.modifyPropic)
+], userController.modifyPropic);
 
 router.patch('/preferences', auth, [
     body('appLanguageId').isString().notEmpty().withMessage("ID lingua app non valido"),
     body('textLanguageId').isString().notEmpty().withMessage("ID lingua testo non valido"),
     body('audioLanguageId').optional().isString().withMessage("ID lingua audio non valido"),
-], userController.changeLanguages)
+], userController.changeLanguages);
 
 router.post('/change-username', auth, [
     body('username').isString().notEmpty().trim().isLength({ min: 8, max: 24 }).withMessage("Il nuovo username deve avere tra i 3 e i 24 caratteri")
-], userController.changeUsername)
+], userController.changeUsername);
+
+
+
+
 
 
 module.exports = router;

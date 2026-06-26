@@ -124,6 +124,27 @@ router.post('/:showId/interact', auth, [
     body('isLiked').isInt({ min: 0, max: 1 }).notEmpty().withMessage("Il like deve essere 0 o 1")
 ], showController.toggleShowLike);
 
+/**
+ * @swagger
+ * /api/shows/{showId}/removeContinueWatching:
+ *   post:
+ *     summary: Rimuove l'intera serie dal "Continua a guardare" dell'utente
+ *     tags: [Shows]
+ *     parameters:
+ *       - in: path
+ *         name: showId
+ *         required: true
+ *         schema: { type: integer }
+ *     responses:
+ *       200: { description: "Serie rimossa con successo dal continua a guardare" }
+ *       400: { description: "ID serie non valido" }
+ *       401: { description: "Non autorizzato" }
+ */
+
+router.post('/:showId/removeContinueWatching', auth, [
+    param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido"),
+], showController.dropShow);
+
 
 
 // Sotto-rotta per agganciare le stagioni correlati

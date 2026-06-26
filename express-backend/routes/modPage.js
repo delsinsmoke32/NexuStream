@@ -26,6 +26,12 @@ router.use(isMod);
  *          type: integer
  *          enum: [0, 1]
  *        description: Se impostato a 1 mostra anche le discussioni chiuse o scadute
+ *      - in: query
+ *        name: search
+ *        required: false
+ *        schema:
+ *          type: string
+ *        description: Nome dell'episodio o stringa che lo matcha
  *    responses:
  *      200:
  *        description: Lista delle discussioni recuperata con successo
@@ -324,11 +330,65 @@ router.get('/users/:userId/comments', [
     param('userId').isInt({ min: 1 }).notEmpty().withMessage("ID utente non valido")
 ], modController.getUserComments);
 
+/**
+ * @swagger
+ * /api/users/{userId}/comments/{commentId}/hide:
+ *   patch:
+ *     summary: Nasconde o mostra un commento (Moderazione)
+ *     tags: [Moderation]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema: { type: integer }
+ *       - in: path
+ *         name: commentId
+ *         required: true
+ *         schema: { type: integer }
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               isHidden: { type: integer, example: 1 }
+ *     responses:
+ *       200: { description: "Stato commento aggiornato" }
+ *       400: { description: "Dati non validi" }
+*/
+
 router.patch('/users/:userId/comments/:commentId/hide', [
     param('userId').isInt({ min: 1 }).notEmpty().withMessage("ID utente non valido"),
     param('commentId').isInt({ min: 1 }).notEmpty().withMessage("ID commento non valido"),
     body('isHidden').isInt({min: 0, max: 1}).notEmpty().withMessage("Valore isHidden non valido")
 ], modController.hideComment);
+
+/**
+ * @swagger
+ * /api/users/{userId}/comments/{commentId}/approve:
+ *   patch:
+ *     summary: Approva o rifiuta un commento (Moderazione)
+ *     tags: [Moderation]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema: { type: integer }
+ *       - in: path
+ *         name: commentId
+ *         required: true
+ *         schema: { type: integer }
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               isApproved: { type: integer, example: 1 }
+ *     responses:
+ *       200: { description: "Stato approvazione aggiornato" }
+ *       400: { description: "Dati non validi" }
+ */
 
 router.patch('/users/:userId/comments/:commentId/approve', [
     param('userId').isInt({ min: 1 }).notEmpty().withMessage("ID utente non valido"),

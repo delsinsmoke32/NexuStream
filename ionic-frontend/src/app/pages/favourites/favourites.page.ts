@@ -20,7 +20,7 @@ import {
     settingsOutline,
 } from 'ionicons/icons'
 
-//  Importiamo la card, il service e il model
+
 import { ShowCardComponent } from '../../components/show-card/show-card.component'
 import { FavoriteShow } from '../../models/favorites'
 import { FavoritesService } from '../../services/favorites'
@@ -67,7 +67,7 @@ export class FavouritesPage {
         this.loadFavorites()
     }
 
-    // 1. Recupero dei preferiti tramite il Service
+    
     loadFavorites() {
         this.isLoading.set(true)
         this.favoritesService.getFavorites().subscribe({
@@ -83,44 +83,44 @@ export class FavouritesPage {
         })
     }
 
-    // 2. Rimozione dai preferiti tramite il Service
+    
     removeFromFavorites(showId: number) {
-        // Salviamo la lista vecchia in caso di errore di rete
+        
         const oldFavs = this.favorites()
 
-        // Aggiornamento ottimistico: filtriamo via la card istantaneamente!
+        
         this.favorites.update((favs) =>
             favs.filter((anime) => anime.ShowID !== showId)
         )
 
-        // Invio la chiamata al Service
+        
         this.favoritesService.removeFavorite(showId).subscribe({
             next: () => {
                 this.showToast('Rimosso dai Preferiti', 'success')
             },
             error: (err) => {
                 console.error('Errore rimozione preferito:', err)
-                // ROLLBACK: Se la chiamata fallisce, rimettiamo la card al suo posto
+                
                 this.favorites.set(oldFavs)
                 this.showToast('Errore di connessione. Riprova.', 'danger')
             },
         })
     }
 
-    // --- AZIONI NAVIGAZIONE CARD ---
+    
     openSeriesInfo(showId: number) {
         this.router.navigate(['/shows', showId])
     }
 
     playAnime(show: FavoriteShow) {
-        // Ricordati che l'evento (play) emette tutto l'oggetto, quindi estraiamo l'ID
+        
         const id = show.ShowID || show.id
         if (id) {
             this.router.navigate(['/shows', id])
         }
     }
 
-    // --- MENU PROFILO ---
+    
     async openProfileMenu(ev: any) {
         this.popover.event = ev
         await this.popover.present()
@@ -138,7 +138,7 @@ export class FavouritesPage {
 
     logout() {
         this.popover.dismiss()
-        // Aggiungi qui la logica di pulizia localStorage se serve
+        
     }
 
     private async showToast(message: string, color: 'success' | 'danger') {

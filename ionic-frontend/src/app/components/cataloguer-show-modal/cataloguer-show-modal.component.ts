@@ -16,7 +16,7 @@ import {
 } from '@angular/forms';
 import { firstValueFrom } from 'rxjs';
 
-// IONIC STANDALONE
+
 import {
     IonHeader,
     IonToolbar,
@@ -65,10 +65,10 @@ import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
         IonCol,
         IonIcon,
     ],
-    providers: [BackendUrlPipe] //  Aggiungiamo il Pipe nei providers per iniettarlo!
+    providers: [BackendUrlPipe] 
 })
 export class CataloguerShowModalComponent implements OnInit {
-    @Input() data!: ShowModalData; //  Tipizzato
+    @Input() data!: ShowModalData; 
 
     thumbInput = viewChild.required<ElementRef<HTMLInputElement>>('thumbInput');
     bannerInput = viewChild.required<ElementRef<HTMLInputElement>>('bannerInput');
@@ -84,7 +84,7 @@ export class CataloguerShowModalComponent implements OnInit {
     private fb = inject(FormBuilder);
     private modalCtrl = inject(ModalController);
     private cataloguerService = inject(CataloguerService);
-    private backendUrl = inject(BackendUrlPipe); //  Iniezione del Pipe
+    private backendUrl = inject(BackendUrlPipe);
 
     showForm!: FormGroup;
     isEditMode = false;
@@ -97,7 +97,7 @@ export class CataloguerShowModalComponent implements OnInit {
         this.isEditMode = !!this.data;
 
         if (this.isEditMode) {
-            //  Usiamo il Pipe per trasformare l'URI nel link completo, NIENTE RAW URL!
+            
             if (this.data.ThumbnailURI) {
                 this.thumbnailPreview.set(this.backendUrl.transform(this.data.ThumbnailURI));
             }
@@ -181,7 +181,7 @@ export class CataloguerShowModalComponent implements OnInit {
             let finalThumbURI = this.data?.ThumbnailURI || null;
             let finalBannerURI = this.data?.BannerURI || null;
 
-            //  Deleghiamo l'upload al service
+            
             if (this.thumbnailFile()) {
                 const res = await firstValueFrom(this.cataloguerService.uploadShowImage(this.thumbnailFile()!, 'thumbnail'));
                 finalThumbURI = res.uri;

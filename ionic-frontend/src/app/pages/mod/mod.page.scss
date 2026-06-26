@@ -35,13 +35,13 @@
     }
 
     @media (max-width: 576px) {
-      padding: 8px; /* Riduce i margini per farlo diventare quadrato */
-      font-size: 0; /* Nasconde il testo senza toccare l'HTML */
+      padding: 8px; 
+      font-size: 0; 
       gap: 0;
       margin-right: 4px;
 
       .svg-icon {
-        width: 22px; /* Ingrandiamo un po' l'icona per compensare l'assenza del testo */
+        width: 22px; 
         height: 22px;
       }
     }
@@ -54,7 +54,7 @@
 
     ion-searchbar {
       font-size: 0.85rem;
-      flex: 1; /* Fa prendere alla barra di ricerca tutto lo spazio rimanente */
+      flex: 1; 
       padding-right: 0;
     }
 
@@ -70,7 +70,7 @@
 
       @media (max-width: 576px) {
         .hide-on-mobile {
-          display: none; /* Nasconde il testo "Archivio..." sui telefoni per non stringere troppo la ricerca */
+          display: none; 
         }
       }
     }
@@ -164,7 +164,7 @@
       padding: 6px 0;
     }
 
-    // Forza lo sfondo trasparente sull'ion-item in caso di conflitti Shadow DOM
+    
     ion-item {
       --background: transparent;
       --border-color: transparent;
@@ -234,7 +234,7 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    flex-wrap: wrap; /*  FONDAMENTALE: permette agli elementi di andare a capo su mobile */
+    flex-wrap: wrap; 
     margin-bottom: 20px;
     background: #1a1a1a;
     padding: 12px;
@@ -250,7 +250,7 @@
       border-radius: 4px;
       cursor: pointer;
       transition: opacity 0.2s ease, transform 0.1s ease;
-      white-space: nowrap; /* Evita che il testo vada a capo dentro il bottone */
+      white-space: nowrap; 
 
       &:active { transform: scale(0.98); }
 
@@ -258,18 +258,18 @@
       &.btn-unban { background-color: var(--ion-color-success, #2dd36f); color: #ffffff; }
     }
 
-    /* 📱 MEDIA QUERY MOBILE PER IL PANNELLO BAN */
+    
     @media (max-width: 576px) {
-      flex-direction: column; /* Impila tutto in verticale! */
-      align-items: stretch; /* Allarga i figli al 100% */
+      flex-direction: column; 
+      align-items: stretch; 
       gap: 12px;
       padding: 14px;
       
       .action-trigger {
         width: 100%; 
-        white-space: normal; /* Permette al testo di andare a capo se proprio serve */
-        height: auto;        /* Rimuove l'altezza fissa per assecondare il testo */
-        padding: 10px;       /* Un po' più di respiro per il touch */
+        white-space: normal; 
+        height: auto;        
+        padding: 10px;       
         line-height: 1.3;
       }
       

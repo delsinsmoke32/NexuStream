@@ -1,11 +1,9 @@
-//se le modifiche rispetto al login ti piacciono apportale pure lì,
-//sennò sentiti libero di modificare
 
 :host {
   --input-placeholder: #b3b3b3;
 }
 
-// Inserisci questo in cima o dove preferisci nel file SCSS
+
 ion-toolbar {
   --padding-start: 16px;
   --padding-end: 16px;
@@ -64,7 +62,7 @@ ion-toolbar {
 
   @media (min-width: 992px) {
     flex-direction: row;
-    align-items: center; //per allineare i titoli sopra i form
+    align-items: center; 
     justify-content: center;
     gap: 60px;
   }
@@ -85,7 +83,7 @@ ion-toolbar {
     font-weight: 700;
     text-align: center;
     margin-bottom: 24px;
-    margin-top: 0; //per fare apparire tutto più centrato
+    margin-top: 0; 
 
     @media (min-width: 992px) {
        margin-top: 10px;
@@ -97,7 +95,7 @@ ion-toolbar {
   background: var(--ion-color-primary);
   border-radius: 16px;
   margin: 0;
-  // Box shadow interna come nel tuo design originale Figma
+  
   box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 10px 20px rgba(0,0,0,0.3);
   
   ion-card-content {
@@ -117,7 +115,7 @@ ion-toolbar {
   overflow: hidden;
   justify-content: center;
   align-items: center;
-  align-self: center; //centrata rispetto alla colonna a destra
+  align-self: center;
 }
 
 .smaller-sphere {
@@ -139,13 +137,13 @@ ion-toolbar {
   margin-top: 40px;
   width: 180px;
   height: 180px;
-  align-self: center; //centrata rispetto alla colonna a destra
+  align-self: center; 
   overflow: visible;
   position: relative;
 
   .edit-btn {
     position: absolute;
-    --background: var(--ion-color-primary); /* Colore principale del tema Ionic */
+    --background: var(--ion-color-primary); 
     --color: var(--ion-color-primary-contrast);
     --border-radius: 10%;
     bottom: 0;

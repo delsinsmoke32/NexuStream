@@ -99,16 +99,16 @@ export class TabsPage {
         }
     }
 
-    //  Funzione magica per aprire il popover sia da PC che da Mobile
+    
     async openProfileMenu(event: any) {
         this.isPopoverOpen = true
-        // 1. Apriamo il popover
+        
         await this.popover!.present(event)
 
-        // 2. Attendiamo la chiusura (onDidDismiss)
+       
         await this.popover!.onDidDismiss()
 
-        // 3. Qui il popover è ufficialmente chiuso!
+        
         this.isPopoverOpen = false
     }
 

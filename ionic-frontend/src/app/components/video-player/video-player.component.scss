@@ -23,15 +23,15 @@
   align-items: flex-end; 
 }
 
-/*  WRAPPER PER I TITOLI DI CODA (Mobile first, poi Desktop) */
+
 .credits-buttons-wrapper {
   display: flex;
-  flex-direction: column-reverse; /* Su mobile il Prossimo Episodio sta sopra */
+  flex-direction: column-reverse; 
   gap: 12px;
   align-items: flex-end;
 
   @media (min-width: 768px) {
-    flex-direction: row; /* Da tablet/desktop in poi si affiancano */
+    flex-direction: row; 
     align-items: center;
   }
 }
@@ -78,13 +78,13 @@
   width: 0%;
   background: var(--ion-color-primary, #b22222);
   z-index: 0;
-  animation: fillRed 5s linear forwards; /*  RIDOTTO A 5 SECONDI */
+  animation: fillRed 5s linear forwards; 
 }
 
 .next-ep-btn span {
   position: relative;
   z-index: 1;
-  animation: textColor 5s linear forwards; /*  RIDOTTO A 5 SECONDI */
+  animation: textColor 5s linear forwards; 
 }
 
 @keyframes fillRed {

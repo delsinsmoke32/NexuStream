@@ -37,10 +37,10 @@ const getGuestLanguage = (req) => {
     const acceptLang = req.headers['accept-language'];
     if (!acceptLang) return 'en'; // Fallback assoluto se manca l'header
 
-    // Prende le prime due lettere (es. "it" o "en")
+    
     const primaryLang = acceptLang.split(',')[0].split('-')[0];
     
-    // Controlli se la lingua è tra quelle supportate dal tuo DB ('it', 'en', 'jp')
+    
     const supported = ['it', 'en', 'jp'];
     return supported.includes(primaryLang) ? primaryLang : 'en'; 
 };
@@ -78,20 +78,20 @@ const modifyPassword = async (req, res) => {
     
     try {
         const { currentPassword, newPassword } = req.body;
-        const userId = req.user.id; // Recuperato dal middleware di autenticazione
+        const userId = req.user.id;
 
-        // 2. Cerca l'utente nel database
+        
         const user = await userModel.getUserPassword(userId);
         if (!user) {
             return res.status(404).json({ message: 'Utente non trovato.' });
         }
-        // 3. Verifica la password attuale
+        
         const isMatch = await bcrypt.compare(currentPassword, user["Password"]);
         if (!isMatch) {
             return res.status(400).json({ message: 'La password attuale non è corretta.' });
         }
 
-        // 4. Cripta la nuova password e salva
+        
         const salt = await bcrypt.genSalt(10);
         const newPassHash = await bcrypt.hash(newPassword, salt);
         await userModel.updatePassword(userId, newPassHash)
@@ -114,17 +114,16 @@ const modifyPropic = async (req, res) => {
     }
     
     try {
-        // const { newPropic } = req.body;
+        
         const { propicURI } = req.body;
-        const userId = req.user.id; // Recuperato dal middleware di autenticazione
+        const userId = req.user.id; 
 
-        // 2. Cerca l'utente nel database
+        
         const user = await userModel.getUserPassword(userId);
         if (!user) {
             return res.status(404).json({ message: 'Utente non trovato.' });
         }
-        // check esistenza propic
-        // .....
+        
         await userModel.changePropic(userId, propicURI)
 
         return res.status(200).json({ message: 'Propic aggiornata con successo.' });
@@ -161,17 +160,16 @@ const changeUsername = async (req, res) => {
     }
     
     try {
-        // const { newPropic } = req.body;
+        
         const { username } = req.body;
-        const userId = req.user.id; // Recuperato dal middleware di autenticazione
+        const userId = req.user.id;
 
-        // 2. Cerca l'utente nel database
+        
         const user = await userModel.getUserProfileById(userId);
         if (!user) {
             return res.status(404).json({ message: 'Utente non trovato.' });
         }
-        // check esistenza propic
-        // .....
+        
         await userModel.changeUsername(userId, username)
 
         return res.status(200).json({ message: 'Nome utente aggiornato con successo.' });

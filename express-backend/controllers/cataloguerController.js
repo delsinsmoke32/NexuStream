@@ -22,7 +22,7 @@ const getShows = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
     
-    // Calcolo della paginazione per fermare l'infinite scroll del frontend
+    // Calcolo della paginazione
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 20;
     const offset = (page - 1) * limit;

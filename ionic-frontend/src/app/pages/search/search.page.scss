@@ -5,7 +5,7 @@
 /* ===================================
    HEADER & TOOLBARS
    =================================== */
-/* 1. La prima toolbar (Solo il titolo) */
+
 .transparent-toolbar {
   --background: var(--ion-color-dark, #121212);
   --border-width: 0;
@@ -17,16 +17,16 @@
     }
 }
 
-/* 2. La seconda toolbar (Cerca + Filtri) */
+
 .search-toolbar {
   --background: var(--ion-color-dark, #121212);
   --border-width: 0;
-  padding-top: 12px;  /* Spazio tra il titolo "Ricerca" e la barra */
+  padding-top: 12px;  
   padding-bottom: 8px;
 
   .show-searchbar {
-    --box-shadow: none; /* Rimuove l'ombra piatta di base */
-    --background: rgba(255, 255, 255, 0.05); /* Leggerissimo grigio semitrasparente */
+    --box-shadow: none; 
+    --background: rgba(255, 255, 255, 0.05); 
     --color: #ffffff;
     --placeholder-color: #888888;
     --icon-color: #888888;
@@ -49,7 +49,7 @@
   &::-webkit-scrollbar { display: none; }
 
   ion-chip {
-    flex: 0 0 auto; /* impedisce che si schiaccino su mobile! */
+    flex: 0 0 auto; 
     --background: #2a2a2a;
     --color: #aaaaaa;
     font-weight: 600;
@@ -66,7 +66,7 @@
 
     &:active { transform: scale(0.95); }
 
-    /* Ottimizzazioni per schermi piccoli */
+    
     @media (max-width: 480px) {
       font-size: 0.8rem;     
       height: 30px;          

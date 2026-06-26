@@ -116,7 +116,7 @@ export class AdminPage implements OnInit {
 
         this.adminService.updateUserRoles(user.UserID, bodyPayload).subscribe({
             next: () => {
-                this.presentToast('Privilegi utente aggiornati!', 'success')
+                this.presentToast($localize`:@@adminPage_rolesUpdated:Privilegi utente aggiornati!`, 'success')
 
                 this.users.update((currentUsers) =>
                     currentUsers.map((u) =>
@@ -133,7 +133,7 @@ export class AdminPage implements OnInit {
             error: (err) => {
                 console.error('Errore salvataggio ruolo:', err)
                 this.presentToast(
-                    'Impossibile aggiornare i privilegi.',
+                    $localize`:@@adminPage_errUpdateRoles:Impossibile aggiornare i privilegi.`,
                     'danger'
                 )
             },

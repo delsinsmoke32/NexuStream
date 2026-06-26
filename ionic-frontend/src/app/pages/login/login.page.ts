@@ -85,7 +85,6 @@ export class LoginPage implements OnInit {
 
         this.authService.login(credentials).subscribe({
             next: (res: any) => {
-                console.log('Risposta esatta del server:', res)
 
                 const userData = res.user ? res.user : res
 

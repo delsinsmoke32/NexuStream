@@ -23,7 +23,6 @@ export class ForbiddenPage implements OnInit {
     ngOnInit() {}
 
     goToHome() {
-        console.log('Ritorno alla home avviato...')
         this.router.navigate(['/tabs/home'])
     }
 }

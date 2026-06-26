@@ -65,7 +65,7 @@ export class ForgotPasswordPage {
     onSubmit() {
         if (this.forgotForm.invalid) {
             this.presentToast(
-                $localize`:@@invalidForm: Inserisci un indirizzo email valido.`,
+                $localize`:@@forgotPage_invalidForm:Inserisci un indirizzo email valido.`,
                 'danger'
             )
             return
@@ -74,7 +74,7 @@ export class ForgotPasswordPage {
         const rawEmail = this.forgotForm.value.email?.trim()
         if (!rawEmail) {
             this.presentToast(
-                $localize`:@@rawEmail: Il campo email non può contenere solo spazi vuoti.`,
+                $localize`:@@forgotPage_rawEmail:Il campo email non può contenere solo spazi vuoti.`,
                 'danger'
             )
             return
@@ -87,18 +87,16 @@ export class ForgotPasswordPage {
             next: (res: any) => {
                 this.presentToast(
                     res.message ||
-                        $localize`:@@forgotSuccessToast: Controlla la tua casella di posta!`,
+                        $localize`:@@forgotPage_successToast:Controlla la tua casella di posta!`,
                     'success'
                 )
                 this.isLoading = false
                 this.router.navigate(['/login'])
             },
             error: (err) => {
-                console.error('Errore HTTP Forgot Password:', err)
                 this.isLoading = false
                 this.presentToast(
-                    err.error?.error ||
-                        $localize`:@@forgotErrorToast: Errore durante l'invio della richiesta.`,
+                    $localize`:@@forgotPage_errorToast:Errore durante l'invio della richiesta.`,
                     'danger'
                 )
             },

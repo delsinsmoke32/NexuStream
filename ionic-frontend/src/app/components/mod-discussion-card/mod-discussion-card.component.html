@@ -4,7 +4,7 @@
         <span class="status-badge" 
             [class.active]="!isDiscussionClosed(disc)" 
             [class.closed]="isDiscussionClosed(disc)">
-            {{ (isDiscussionClosed(disc) ? 'Chiusa / Scaduta' : 'Attiva') | i18n: (isDiscussionClosed(disc) ? '@@modDiscCard_closed' : '@@modDiscCard_active') }}
+            {{ (isDiscussionClosed(disc) ? 'Chiusa / Scaduta' : 'Attiva') }}
         </span>
     </div>
 

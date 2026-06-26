@@ -76,14 +76,14 @@
           <div class="meta-block">
             <span i18n="@@audio" class="meta-label">Audio:</span>
             <span class="meta-text uppercase-lang">
-              {{ show()?.audio?.join(', ') || ('N/D' | i18n: '@@notAvailable') }}
+              {{ show()?.audio?.join(', ') || 'N/D' }}
             </span>
           </div>
           
           <div class="meta-block">
             <span i18n="@@subtitles" class="meta-label">Sottotitoli:</span>
             <span class="meta-text uppercase-lang">
-              {{ show()?.subs?.join(', ') || ('N/D' | i18n: '@@notAvailable') }}
+              {{ show()?.subs?.join(', ') || 'N/D'  }}
             </span>
           </div>
 

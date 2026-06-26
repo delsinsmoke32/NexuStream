@@ -156,13 +156,13 @@ export class SearchPage {
             header: $localize`:@@searchPage_logoutHeader:Disconnetti`,
             message: $localize`:@@searchPage_logoutConfirm:Sei sicuro di voler uscire da NexuStream?`,
             buttons: [
-                { text: 'Annulla', role: 'cancel' },
+                { text: $localize`:@@searchPage_cancel:Annulla`, role: 'cancel' },
                 {
-                    text: 'Esci',
+                    text: $localize`:@@searchPage_logout:Esci`,
                     role: 'destructive',
                     handler: async () => {
                         const toast = await this.toastCtrl.create({
-                            message: 'Sessione chiusa',
+                            message: $localize`:@@searchPage_sessionClosed:Sessione chiusa`,
                             duration: 2000,
                             color: 'dark',
                         })

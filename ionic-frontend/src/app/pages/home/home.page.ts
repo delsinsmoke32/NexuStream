@@ -109,10 +109,9 @@ export class HomePage implements OnDestroy {
                 this.isLoading.set(false)
             },
             error: (err) => {
-                console.error('Errore caricamento Home:', err)
                 this.isLoading.set(false)
                 this.showToast(
-                    $localize`:@@impossibleLoading:Impossibile caricare i contenuti.`,
+                    $localize`:@@homePage_impossibleLoading:Impossibile caricare i contenuti.`,
                     'danger'
                 )
             },
@@ -191,13 +190,12 @@ export class HomePage implements OnDestroy {
             .subscribe({
                 next: () =>
                     this.showToast(
-                        'Rimosso dal "Continua a guardare"',
+                        $localize`:@@homePage_removedFromContinue:Rimosso dal "Continua a guardare"`,
                         'success'
                     ),
                 error: (err) => {
-                    console.error('Errore:', err)
                     this.continueWatching.set(oldList)
-                    this.showToast('Errore di connessione', 'danger')
+                    this.showToast($localize`:@@homePage_connectionError:Errore di connessione`, 'danger')
                 },
             })
     }

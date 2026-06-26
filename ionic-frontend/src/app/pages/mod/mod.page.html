@@ -44,7 +44,7 @@
         @if (currentTab() === 'discussions') {
             <div class="discussions-filters">
                 <ion-searchbar class="hide-on-mobile"
-                    [placeholder]="(isMobile() ? 'Cerca per episodio...' : 'Cerca discussione per nome episodio...') | i18n: '@@searchDiscPlaceholder'"
+                    [placeholder]="(isMobile() ? 'Cerca per episodio...' : 'Cerca discussione per nome episodio...')"
                     animated="true" 
                     debounce="400"
                     (ionInput)="handleDiscussionSearch($event)">
@@ -114,7 +114,7 @@
                         class="user-status-tag"
                         [class.banned]="user.canComment === 0"
                     >
-                        {{ (user.canComment === 1 ? 'Attivo' : 'Bannato') | i18n: (user.canComment === 1 ? '@@statusActive' : '@@statusBanned') }}
+                        {{ (user.canComment === 1 ? 'Attivo' : 'Bannato') }}
                     </span>
                 </ion-item>
 

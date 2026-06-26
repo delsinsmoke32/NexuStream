@@ -153,7 +153,7 @@ export class RegisterPage implements OnInit {
         
         if (formData.password !== formData.conf_password) {
             this.presentToast(
-                $localize`:@@passNotCoincide:Le password inserite non coincidono.`,
+                $localize`:@@RegPassNotCoincide:Le password inserite non coincidono.`,
                 'danger'
             )
             return

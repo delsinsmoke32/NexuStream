@@ -70,9 +70,8 @@ export class FavouritesPage {
                 this.isLoading.set(false)
             },
             error: (err) => {
-                console.error('Errore nel recupero preferiti:', err)
                 this.isLoading.set(false)
-                this.showToast('Impossibile caricare i preferiti.', 'danger')
+                this.showToast($localize`:@@favouritesPage_errLoad:Impossibile caricare i preferiti.`, 'danger')
             },
         })
     }
@@ -90,13 +89,12 @@ export class FavouritesPage {
         
         this.favoritesService.removeFavorite(showId).subscribe({
             next: () => {
-                this.showToast('Rimosso dai Preferiti', 'success')
+                this.showToast($localize`:@@favouritesPage_removed:Rimosso dai Preferiti`, 'success')
             },
             error: (err) => {
-                console.error('Errore rimozione preferito:', err)
                 
                 this.favorites.set(oldFavs)
-                this.showToast('Errore di connessione. Riprova.', 'danger')
+                this.showToast($localize`:@@favouritesPage_connError:Errore di connessione. Riprova.`, 'danger')
             },
         })
     }

@@ -36,13 +36,13 @@
         </div>
 
         @if (showDelete()) {
-            <button class="action-top-btn" (click)="onRemove($event)" [title]="'Elimina' | i18n: '@@showCard_delete'">
+            <button class="action-top-btn" (click)="onRemove($event)" [title]="'Elimina'">
                 <ion-icon name="trash"></ion-icon>
             </button>
         }
 
         @if (showDismiss()) {
-            <button class="action-top-btn" (click)="onDismiss($event)" [title]="'Rimuovi' | i18n: '@@showCard_dismiss'">
+            <button class="action-top-btn" (click)="onDismiss($event)" [title]="'Rimuovi'">
                 <ion-icon name="close"></ion-icon>
             </button>
         }
@@ -59,7 +59,7 @@
         </div>
     }
     @if (layout() !== 'landscape') {
-        <div class="card-info-bottom" (click)="onInfo($event)" [title]="'Altre info' | i18n: '@@showCard_moreInfo'">
+        <div class="card-info-bottom" (click)="onInfo($event)" [title]="'Altre info'">
             <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
         </div>
     }

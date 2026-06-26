@@ -38,7 +38,7 @@
                         />
                     </ion-avatar>
                     <ion-textarea
-                        [placeholder]="(replyingToUsername ? 'Scrivi la tua risposta...' : 'Scrivi un commento...') | i18n: (replyingToUsername ? '@@commentsComp_placeholderReply' : '@@commentsComp_placeholderComment')"
+                        [placeholder]="(replyingToUsername ? 'Scrivi la tua risposta...' : 'Scrivi un commento...')"
                         [autoGrow]="true"
                         [(ngModel)]="nuovoCommentoTesto"
                         (keydown.enter)="$event.preventDefault(); aggiungiCommento()"

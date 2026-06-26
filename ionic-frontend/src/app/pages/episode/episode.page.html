@@ -123,11 +123,11 @@
                             >
                                 <div class="disc-info">
                                     <h3 class="type-badge" [ngClass]="disc.Type">
-                                        {{ disc.Type === 'post-season' ? ('Discussione Fine Stagione' | i18n: '@@discPostSeason') : ('Discussione Ufficiale' | i18n: '@@discOfficial') }}
+                                        {{ disc.Type === 'post-season' ? 'Discussione Fine Stagione': 'Discussione Ufficiale' }}
                                     </h3>
                                     <p i18n="@@expiration">
-                                        Scadenza: {{ disc.CloseDate ? (disc.CloseDate | date:'dd/MM/yyyy HH:mm') : ('Nessuna' | i18n: '@@none') }} 
-                                        • {{ isDiscussionClosed(disc) ? ('(Chiusa)' | i18n: '@@closed') : ('(Aperta)' | i18n: '@@open') }}
+                                        Scadenza: {{ disc.CloseDate ? (disc.CloseDate | date:'dd/MM/yyyy HH:mm') : 'Nessuna'}} 
+                                        • {{ isDiscussionClosed(disc) ? '(Chiusa)' : '(Aperta)' }}
                                     </p>
                                 </div>
 

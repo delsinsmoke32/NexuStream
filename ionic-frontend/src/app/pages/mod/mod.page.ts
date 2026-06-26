@@ -130,7 +130,7 @@ export class ModPage implements OnInit {
             next: (data) => this.discussions.set(data),
             error: () =>
                 this.showToast(
-                    'Errore nel recupero delle discussioni',
+                    $localize`:@@modPage_errLoadDiscussions:Errore nel recupero delle discussioni`,
                     'danger'
                 ),
         });
@@ -157,14 +157,14 @@ export class ModPage implements OnInit {
             this.modService.createDiscussion(data.payload).subscribe({
                 next: () => {
                     this.showToast(
-                        'Nuova discussione creata con successo',
+                        $localize`:@@modPage_discussionCreated:Nuova discussione creata con successo`,
                         'success'
                     )
                     this.loadDiscussions()
                 },
                 error: (err) =>
                     this.showToast(
-                        err.error?.message || 'Errore in creazione',
+                        $localize`:@@modPage_errCreate:Errore in creazione`,
                         'danger'
                     ),
             })
@@ -185,14 +185,14 @@ export class ModPage implements OnInit {
                 .subscribe({
                     next: () => {
                         this.showToast(
-                            'Discussione aggiornata con successo',
+                            $localize`:@@modPage_discussionUpdated:Discussione aggiornata con successo`,
                             'success'
                         )
                         this.loadDiscussions()
                     },
                     error: () =>
                         this.showToast(
-                            "Errore durante l'aggiornamento",
+                            $localize`:@@modPage_errUpdate:Errore durante l'aggiornamento`,
                             'danger'
                         ),
                 })
@@ -201,29 +201,29 @@ export class ModPage implements OnInit {
 
     async deleteDiscussion(id: number) {
         const alert = await this.alertController.create({
-            header: 'Conferma Eliminazione',
+            header: $localize`:@@modPage_deleteConfirmHeader:Conferma Eliminazione`,
             message:
-                "Sei sicuro di voler eliminare questa discussione? L'azione cancellerà tutti i commenti collegati.",
+                $localize`:@@modPage_deleteConfirmMsg:Sei sicuro di voler eliminare questa discussione? L'azione cancellerà tutti i commenti collegati.`,
             buttons: [
                 {
-                    text: 'Annulla',
+                    text: $localize`:@@modPage_cancel:Annulla`,
                     role: 'cancel',
                 },
                 {
-                    text: 'Elimina',
+                    text: $localize`:@@modPage_delete:Elimina`,
                     role: 'destructive',
                     handler: () => {
                         this.modService.deleteDiscussion(id).subscribe({
                             next: () => {
                                 this.showToast(
-                                    'Discussione eliminata permanentemente',
+                                    $localize`:@@modPage_discussionDeleted:Discussione eliminata permanentemente`,
                                     'success'
                                 )
                                 this.loadDiscussions()
                             },
                             error: () =>
                                 this.showToast(
-                                    "Errore durante l'eliminazione",
+                                    $localize`:@@modPage_errDelete:Errore durante l'eliminazione`,
                                     'danger'
                                 ),
                         })
@@ -247,7 +247,7 @@ export class ModPage implements OnInit {
                 },
                 error: () =>
                     this.showToast(
-                        'Errore nel caricamento della lista utenti',
+                        $localize`:@@modPage_errLoadUsers:Errore nel caricamento della lista utenti`,
                         'danger'
                     ),
             })
@@ -276,7 +276,7 @@ export class ModPage implements OnInit {
                 },
                 error: () => {
                     this.showToast(
-                        'Impossibile scaricare la cronologia commenti',
+                        $localize`:@@modPage_errLoadComments:Impossibile scaricare la cronologia commenti`,
                         'danger'
                     )
                     user.comments = []
@@ -299,14 +299,14 @@ export class ModPage implements OnInit {
                     comment.isApproved = newStatus
                     this.showToast(
                         newStatus
-                            ? 'Commento approvato'
-                            : 'Approvazione rimossa',
+                            ? $localize`:@@modPage_commentApproved:Commento approvato`
+                            : $localize`:@@modPage_approvalRemoved:Approvazione rimossa`,
                         'success'
                     )
                 },
                 error: () =>
                     this.showToast(
-                        'Errore durante la modifica dello stato',
+                        $localize`:@@modPage_errUpdateStatus:Errore durante la modifica dello stato`,
                         'danger'
                     ),
             })
@@ -325,14 +325,14 @@ export class ModPage implements OnInit {
                     comment.isHidden = newStatus
                     this.showToast(
                         newStatus
-                            ? 'Commento nascosto'
-                            : 'Commento reso visibile',
+                            ? $localize`:@@modPage_commentHidden:Commento nascosto`
+                            : $localize`:@@modPage_commentVisible:Commento reso visibile`,
                         'success'
                     )
                 },
                 error: () =>
                     this.showToast(
-                        'Errore durante la modifica dello stato',
+                        $localize`:@@modPage_errUpdateStatus:Errore durante la modifica dello stato`,
                         'danger'
                     ),
             })
@@ -340,25 +340,25 @@ export class ModPage implements OnInit {
 
     async openBanActionSheet(user: ModUser) {
         const actionSheet = await this.actionSheetCtrl.create({
-            header: `Restringi permessi di commento per: ${user.Username}`,
+            header: $localize`:@@modPage_banHeader:Restringi permessi di commento per: ${user.Username}`,
             mode: 'md',
             buttons: [
                 {
-                    text: 'Sanzione Temporanea - 3 Giorni',
+                    text: $localize`:@@modPage_ban3Days:Sanzione Temporanea - 3 Giorni`,
                     role: 'destructive',
                     handler: () => this.executeBan(user.UserID, 3),
                 },
                 {
-                    text: 'Sanzione Temporanea - 7 Giorni',
+                    text: $localize`:@@modPage_ban7Days:Sanzione Temporanea - 7 Giorni`,
                     role: 'destructive',
                     handler: () => this.executeBan(user.UserID, 7),
                 },
                 {
-                    text: 'Sanzione Permanente - Indefinita',
+                    text: $localize`:@@modPage_banPermanent:Sanzione Permanente - Indefinita`,
                     role: 'destructive',
                     handler: () => this.executeBan(user.UserID, 0),
                 },
-                { text: 'Annulla', role: 'cancel' },
+                { text: $localize`:@@modPage_cancel:Annulla`, role: 'cancel' },
             ],
         })
         await actionSheet.present()

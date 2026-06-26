@@ -173,7 +173,7 @@ export class EpisodePage implements OnInit, OnDestroy {
         console.log(ep.StreamURI)
         if (ep.StreamURI == 'test') {
             this.showToast(
-                'Per motivi di spazio, la stream di questo episodio è un mock e non corrisponde al reale episodio.',
+                $localize`:@@episodePage_mockWarning:Per motivi di spazio, la stream di questo episodio è un mock e non corrisponde al reale episodio.`,
                 'warning'
             )
         }
@@ -280,7 +280,7 @@ export class EpisodePage implements OnInit, OnDestroy {
                                 )
                                 if (firstEp) {
                                     this.showToast(
-                                        `Inizio Stagione ${nextSeason.SeasonNumber}...`,
+                                        $localize`:@@episodePage_nextSeasonStart:Inizio Stagione ${nextSeason.SeasonNumber}...`,
                                         'success'
                                     )
                                     this.router.navigate(
@@ -296,7 +296,7 @@ export class EpisodePage implements OnInit, OnDestroy {
                             },
                         })
                 } else {
-                    this.showToast('Hai concluso la serie!', 'success')
+                    this.showToast($localize`:@@episodePage_seriesFinished:Hai concluso la serie!`, 'success')
                 }
             },
             error: (err) => console.error('Errore salto di stagione:', err),
@@ -356,7 +356,7 @@ export class EpisodePage implements OnInit, OnDestroy {
 
         const userToken = localStorage.getItem('token');
         if (!userToken) {
-            this.showToast($localize`:@@logInToLike:Devi accedere per mettere Mi Piace!`, 'danger');
+            this.showToast($localize`:@@episodePage_logInToLike:Devi accedere per mettere Mi Piace!`, 'danger');
             return;
         }
 
@@ -397,7 +397,7 @@ export class EpisodePage implements OnInit, OnDestroy {
                             ? { ...currentEp.userInteraction, isLiked: wasLiked }
                             : undefined,
                     });
-                    this.showToast($localize`:@@connessionErr:Errore di connessione.`, 'danger');
+                    this.showToast($localize`:@@episodePage_connErr:Errore di connessione.`, 'danger');
                 },
             });
     }
@@ -452,12 +452,12 @@ export class EpisodePage implements OnInit, OnDestroy {
         event.preventDefault()
 
         const alert = await this.alertCtrl.create({
-            header: $localize`:@@deleteDiscussionHeader:Conferma Eliminazione`,
-            message: $localize`:@@deleteDiscussionMessage:Sei sicuro di voler eliminare questa discussione? L'azione è irreversibile.`,
+            header: $localize`:@@episodePage_deleteDiscussionHeader:Conferma Eliminazione`,
+            message: $localize`:@@episodePage_deleteDiscussionMessage:Sei sicuro di voler eliminare questa discussione? L'azione è irreversibile.`,
             buttons: [
-                { text: $localize`:@@cancelBtn:Annulla`, role: 'cancel' },
+                { text: $localize`:@@episodePage_cancelBtn:Annulla`, role: 'cancel' },
                 {
-                    text: $localize`:@@deleteBtn:Elimina`,
+                    text: $localize`:@@episodePage_deleteBtn:Elimina`,
                     role: 'destructive',
                     handler: () => {
                         this.modService

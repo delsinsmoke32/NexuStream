@@ -1,7 +1,7 @@
 <ion-header>
     <ion-toolbar color="dark">
         <ion-title>
-            {{ isEditMode ? ('Modifica' | i18n: '@@discussionModal_edit') : ('Nuova' | i18n: '@@discussionModal_new') }} 
+            {{ isEditMode ? 'Modifica' : 'Nuova' }} 
             <ng-container i18n="@@discussionModal_title">Discussione</ng-container>
         </ion-title>
         <ion-buttons slot="end">
@@ -87,7 +87,7 @@
             class="ion-margin-top"
         >
             <ion-icon name="save-outline" slot="start"></ion-icon>
-            {{ isEditMode ? ('Aggiorna Discussione' | i18n: '@@discussionModal_updateBtn') : ('Crea Discussione' | i18n: '@@discussionModal_createBtn') }}
+            {{ isEditMode ? 'Aggiorna Discussione': 'Crea Discussione' }}
         </ion-button>
     </form>
 </ion-content>

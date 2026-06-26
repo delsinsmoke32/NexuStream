@@ -3,7 +3,7 @@
         <span class="comment-timestamp">{{ comment.DateCommented | date:'dd/MM/yyyy HH:mm' }}</span>
         @if ((comment.ReportCount || 0) > 0) {
             <span class="comment-report-badge">
-                {{ comment.ReportCount }} {{ (comment.ReportCount === 1 ? 'Segnalazione' : 'Segnalazioni') | i18n: (comment.ReportCount === 1 ? '@@modUserComment_reportSingle' : '@@modUserComment_reportPlural') }}
+                {{ comment.ReportCount }} {{ (comment.ReportCount === 1 ? 'Segnalazione' : 'Segnalazioni') }}
             </span>
         }
     </div>

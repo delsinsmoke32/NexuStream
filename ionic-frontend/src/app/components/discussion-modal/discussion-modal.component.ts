@@ -55,9 +55,10 @@ export class DiscussionModalComponent implements OnInit {
         this.isEditMode ? [] : [Validators.required]
       ],
       closeDate: [
-        this.discussion?.CloseDate || this.discussion?.['closeDate'] || this.getDefaultCloseDate(), 
-        [Validators.required, Validators.pattern(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/)]
+          this.discussion?.CloseDate || this.discussion?.['closeDate'] || this.getDefaultCloseDate(), 
+          [Validators.required, Validators.pattern(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2})?$/)]
       ],
+      
       forceClosed: [this.discussion?.ForceClosed === 1 || this.discussion?.['forceClosed'] === 1]
     });
   }

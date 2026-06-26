@@ -26,13 +26,13 @@ const login = async (req, res) => {
         const user = await userModel.getUserByEmail(email);
 
         if (!user) {
-            return res.status(400).json({ message: "L'utente non esiste." });
+            return res.status(401).json({ message: "Email o password errati." });
         }
 
         // 3. Verifica della password
         const isMatch = await bcrypt.compare(password, user.Password);
         if (!isMatch){
-            return res.status(400).json({ message: "Email o password errati." });
+            return res.status(401).json({ message: "Email o password errati." });
         }
 
         // 4. Generazione del Token JWT

@@ -94,6 +94,8 @@
   &.edge-primary { border-top: 4px solid var(--ion-color-primary, #b22222); }
   &.edge-secondary { border-top: 4px solid #32cd32; } 
   &.edge-episode { border-top: 4px solid #1e90ff; }   
+  
+  max-width: 90vw;
 }
 
 .card-body {
@@ -273,6 +275,14 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
   gap: 16px;
+}
+
+/* For small screens (phones) */
+@media (max-width: 480px) {
+  .propics-grid {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); /* Reduces minimum width */
+    gap: 8px; /* Optional: reduces spacing to save more screen space */
+  }
 }
 
 .propic-card {

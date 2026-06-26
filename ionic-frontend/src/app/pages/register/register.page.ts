@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common'
 import { Component, OnInit, inject, signal } from '@angular/core'
 import {
+    AbstractControl,
     FormControl,
     FormGroup,
     FormsModule,
     ReactiveFormsModule,
+    ValidationErrors,
     Validators,
 } from '@angular/forms'
 import { Router, RouterModule } from '@angular/router'
@@ -64,45 +66,76 @@ export class RegisterPage implements OnInit {
     private langService = inject(LanguageService)
 
     // Configurazione del Form Reattivo
-    registerForm = new FormGroup({
-        username: new FormControl('', {
-            nonNullable: true,
-            validators: [
-                Validators.required,
-                Validators.minLength(3),
-                Validators.maxLength(24),
-            ],
-        }),
-        email: new FormControl('', {
-            nonNullable: true,
-            validators: [Validators.required, Validators.email],
-        }),
-        password: new FormControl('', {
-            nonNullable: true,
-            validators: [
-                Validators.required,
-                Validators.minLength(8),
-                Validators.maxLength(24),
-            ],
-        }),
-        conf_password: new FormControl('', {
-            nonNullable: true,
-            validators: [
-                Validators.required,
-                Validators.minLength(8),
-                Validators.maxLength(24),
-            ],
-        }),
-        // propic: new FormControl('', {
-        //     nonNullable: true,
-        //     validators: [Validators.required],
-        // }),
-    })
+    registerForm = new FormGroup(
+        {
+            username: new FormControl('', {
+                nonNullable: true,
+                validators: [
+                    Validators.required,
+                    Validators.minLength(3),
+                    Validators.maxLength(24),
+                ],
+            }),
+            email: new FormControl('', {
+                nonNullable: true,
+                validators: [Validators.required, Validators.email],
+            }),
+            password: new FormControl('', {
+                nonNullable: true,
+                validators: [
+                    Validators.required,
+                    Validators.minLength(8),
+                    Validators.maxLength(24),
+                ],
+            }),
+            conf_password: new FormControl('', {
+                nonNullable: true,
+                validators: [
+                    Validators.required,
+                    Validators.minLength(8),
+                    Validators.maxLength(24),
+                ],
+            }),
+            // propic: new FormControl('', {
+            //     nonNullable: true,
+            //     validators: [Validators.required],
+            // }),
+        },
+        { validators: this.passwordMatchValidator }
+    )
 
     selected = signal('avatars/avatar-003.png')
     constructor() {
         addIcons({ swapHorizontalOutline })
         // this.registerForm.patchValue({ propic: this.selected() })
+    }
+
+    passwordMatchValidator(g: AbstractControl): ValidationErrors | null {
+        const newPassword = g.get('newPassword')?.value
+        const confirmPasswordControl = g.get('confirmPassword')
+
+        if (!confirmPasswordControl) return null
+
+        // Se i campi non coincidono
+        if (newPassword !== confirmPasswordControl.value) {
+            // Impostiamo l'errore direttamente sul controllo di conferma
+            confirmPasswordControl.setErrors({
+                ...confirmPasswordControl.errors,
+                mismatch: true,
+            })
+            return { mismatch: true }
+        } else {
+            // Se coincidono, rimuoviamo l'errore 'mismatch' mantenendo eventuali altri errori (es. required)
+            if (confirmPasswordControl.errors) {
+                const { mismatch, ...remainingErrors } =
+                    confirmPasswordControl.errors
+                const hasErrors = Object.keys(remainingErrors).length > 0
+                confirmPasswordControl.setErrors(
+                    hasErrors ? remainingErrors : null
+                )
+            }
+            return null
+        }
     }
 
     ngOnInit() {}

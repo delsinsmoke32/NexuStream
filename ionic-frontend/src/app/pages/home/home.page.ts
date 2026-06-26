@@ -79,14 +79,14 @@ export class HomePage implements OnDestroy {
 
     constructor() {
         addIcons({
-            logInOutline,
-            personAddOutline,
-            searchOutline,
-            personCircleOutline,
             play,
             informationCircleOutline,
             chevronBackOutline,
             chevronForwardOutline,
+            logInOutline,
+            personAddOutline,
+            searchOutline,
+            personCircleOutline,
             settingsOutline,
             heartOutline,
             shieldCheckmarkOutline,

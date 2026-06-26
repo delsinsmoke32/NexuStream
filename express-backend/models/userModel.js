@@ -146,6 +146,11 @@ const changePropic = async (userId, propicURI) => {
     return await db.runAsync(sql, [propicURI, userId]);
 }
 
+const changeUsername = async (userId, username) => {
+    const sql = `UPDATE Users SET Username = ? WHERE UserID = ?`;
+
+    return await db.runAsync(sql, [username, userId]);
+}
 
 const changeLanguages = async (userId, appLanguageId, textLanguageId, audioLanguageId = "") => {
     // Se audioLanguageId è vuoto, aggiorniamo solo app e text
@@ -170,5 +175,6 @@ module.exports = {
     getUserFavorites,
     getUserPassword,
     changePropic,
-    changeLanguages
+    changeLanguages,
+    changeUsername
 };

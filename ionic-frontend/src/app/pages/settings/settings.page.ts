@@ -144,21 +144,29 @@ export class SettingsPage implements OnInit {
 
         // 2. Logica di refresh per la lingua dell'App (come avevi già fatto benissimo)
         const currentLang = window.location.pathname.split('/')[1]
-        const targetLang = this.userPreferences.appLanguage
-
-        if (currentLang !== targetLang) {
-            const newPath = window.location.pathname.replace(
-                `/${currentLang}/`,
-                `/${targetLang}/`
-            )
-            window.location.href =
-                window.location.origin + newPath + window.location.search
-        } else {
-            this.presentToast(
-                'Impostazioni aggiornate con successo!',
-                'success'
-            )
+        if (['it', 'en'].includes(currentLang)) {
+            const targetLang = this.userPreferences.appLanguage
+            if (currentLang !== targetLang) {
+                console.log(currentLang, targetLang)
+                const newPath = window.location.pathname.replace(
+                    `/${currentLang}/`,
+                    `/${targetLang}/`
+                )
+                window.location.href =
+                    window.location.origin + newPath + window.location.search
+            }
         }
+
+        this.presentToast('Impostazioni aggiornate con successo!', 'success')
+    }
+
+    warnAppLanguage() {
+        const currentLang = window.location.pathname.split('/')[1]
+        if (!['it', 'en'].includes(currentLang))
+            this.presentToast(
+                "Il cambio della lingua dell'applicazione non avrà effetto in questa modalità.",
+                'warning'
+            )
     }
 
     // Apre la schermata di selezione
@@ -231,5 +239,66 @@ export class SettingsPage implements OnInit {
         await modal.present()
 
         const { data } = await modal.onDidDismiss()
+    }
+
+    async changeName() {
+        const alert = await this.alertController.create({
+            header: 'Modifica nome',
+            subHeader: 'Il nuovo nome deve contenere tra 3 e 24 caratteri.',
+            inputs: [
+                {
+                    name: 'newUsername',
+                    type: 'text',
+                    placeholder: 'Nuovo nome utente',
+                    value: this.username(),
+                    attributes: {
+                        minlength: 3,
+                        maxlength: 24,
+                    },
+                },
+            ],
+            buttons: [
+                {
+                    text: 'Annulla',
+                    role: 'cancel',
+                    cssClass: 'secondary',
+                },
+                {
+                    text: 'Salva',
+                    handler: (data) => {
+                        const name = data.newUsername
+                            ? data.newUsername.trim()
+                            : ''
+
+                        // Controllo lunghezza tra 3 e 24 caratteri
+                        if (name.length >= 3 && name.length <= 24) {
+                            this.saveNewName(name)
+                            return true // Chiude il modal con successo
+                        }
+
+                        // Impedisce la chiusura del modal se i requisiti falliscono
+                        return false
+                    },
+                },
+            ],
+        })
+
+        await alert.present()
+    }
+
+    saveNewName(newName: string) {
+        this.settingsService.changeUsername({ username: newName }).subscribe({
+            next: async () => {
+                this.username.set(newName)
+                this.presentToast(
+                    'Username aggiornato con successo!',
+                    'success'
+                )
+            },
+            error: async (err) => {
+                const errorMsg = "Errore durante l'aggiornamento."
+                this.presentToast(errorMsg, 'danger')
+            },
+        })
     }
 }

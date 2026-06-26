@@ -40,4 +40,16 @@ export class Settings {
             }
         )
     }
+
+    changeUsername(payload: {
+        username: string
+    }): Observable<{ message: string }> {
+        return this.http.post<{ message: string }>(
+            `${this.baseUrl}/change-username`,
+            payload,
+            {
+                headers: this.getAuthHeaders(),
+            }
+        )
+    }
 }

@@ -210,3 +210,23 @@ ion-item {
     letter-spacing: 0.5px;
   }
 }
+
+.name-change { 
+  display: flex;
+  flex-direction: row;
+  cursor: pointer;
+
+  .edit-badge {
+    margin-left: 5px;
+    height: 1em;
+
+    ion-icon {
+      font-size: 0.8em;
+      padding: 0;
+    }
+  }
+}
+
+.name-change:active {
+  opacity: 0.6;
+}

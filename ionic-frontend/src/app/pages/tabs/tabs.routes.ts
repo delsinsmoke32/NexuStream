@@ -28,6 +28,7 @@ export const routes: Routes = [
             },
             {
                 path: 'settings',
+                canActivate: [AuthGuard],
                 loadComponent: () =>
                     import('../settings/settings.page').then(
                         (m) => m.SettingsPage
@@ -36,9 +37,7 @@ export const routes: Routes = [
             {
                 path: 'profile',
                 loadComponent: () =>
-                    import('../home/home.page').then(
-                        (m) => m.HomePage
-                    )
+                    import('../home/home.page').then((m) => m.HomePage),
             },
             {
                 path: '',

@@ -63,7 +63,11 @@ export class LoginPage implements OnInit {
         }),
         password: new FormControl('', {
             nonNullable: true,
-            validators: [Validators.required, Validators.minLength(8)],
+            validators: [
+                Validators.required,
+                Validators.minLength(8),
+                Validators.maxLength(24),
+            ],
         }),
     })
 
@@ -73,10 +77,10 @@ export class LoginPage implements OnInit {
 
     login() {
         if (this.loginForm.invalid) {
-            this.presentToast(
-                $localize`:@@insertLogin: Inserisci un'email valida e una password di almeno 8 caratteri.`,
-                'danger'
-            )
+            // this.presentToast(
+            //     $localize`:@@insertLogin: Inserisci un'email valida e una password di almeno 8 caratteri.`,
+            //     'danger'
+            // )
             return
         }
 
@@ -135,11 +139,17 @@ export class LoginPage implements OnInit {
             },
             error: (err) => {
                 console.error('Errore HTTP Login:', err)
-                this.presentToast(
-                    err.error?.message ||
+                if (err.status == 401) {
+                    this.presentToast(
+                        $localize`:@@errorLoginCredentials: Credenziali errate.`,
+                        'danger'
+                    )
+                } else {
+                    this.presentToast(
                         $localize`:@@errorLogin: Errore durante l'accesso.`,
-                    'danger'
-                )
+                        'danger'
+                    )
+                }
             },
         })
     }

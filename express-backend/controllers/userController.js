@@ -154,6 +154,34 @@ const changeLanguages = async (req, res) => {
     }
 }
 
+const changeUsername = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        return res.status(400).json({ errors: errors.array() });
+    }
+    
+    try {
+        // const { newPropic } = req.body;
+        const { username } = req.body;
+        const userId = req.user.id; // Recuperato dal middleware di autenticazione
+
+        // 2. Cerca l'utente nel database
+        const user = await userModel.getUserProfileById(userId);
+        if (!user) {
+            return res.status(404).json({ message: 'Utente non trovato.' });
+        }
+        // check esistenza propic
+        // .....
+        await userModel.changeUsername(userId, username)
+
+        return res.status(200).json({ message: 'Nome utente aggiornato con successo.' });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Errore interno del server.' });
+    }
+}
+
 
 module.exports = {
     getMyProfile,
@@ -161,5 +189,6 @@ module.exports = {
     getFavorites,
     modifyPassword,
     modifyPropic,
-    changeLanguages
+    changeLanguages,
+    changeUsername
 };

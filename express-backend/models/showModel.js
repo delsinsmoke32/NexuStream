@@ -166,7 +166,7 @@ const getShowsWithRecentOpenDiscussions = async (applang = 'it') => {
         LIMIT 20`;
         
     const res = await db.allAsync(sql, [applang, applang]);
-    console.log("DEBUG - Risultati query discussioni:", res);
+    
     return res;
 };
 

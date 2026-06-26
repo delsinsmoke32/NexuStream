@@ -82,9 +82,7 @@ export class ShowsPage {
                 } as unknown as Episode;
                 
                 this.resumeEpisode.set(globalResume);
-                console.log("DEBUG - Progresso globale salvato nel Signal:", globalResume);
-            } else {
-                console.log("DEBUG - Nessun progresso globale trovato nel backend.");
+                
             }
 
             // Carichiamo la stagione
@@ -112,9 +110,7 @@ loadEpisodes(showId: string, seasonId: number) {
             
             if (!currentResume && eps && eps.length > 0) {
                 this.resumeEpisode.set(eps[0]);
-                console.log("DEBUG - Bottone vuoto, fallback al primo episodio:", eps[0]);
-            } else if (currentResume) {
-                console.log("DEBUG - Progresso globale mantenuto intatto:", currentResume);
+                
             }
             
             this.isLoading.set(false); 
@@ -167,7 +163,6 @@ loadEpisodes(showId: string, seasonId: number) {
     }
 
     if (!epIdNum) {
-        console.error("DEBUG - Errore: Impossibile trovare un ID episodio valido!", this.resumeEpisode());
         return;
     }
 
@@ -183,12 +178,7 @@ loadEpisodes(showId: string, seasonId: number) {
     const savedProgress = targetEpisode?.progress || 0;
     const targetSeasonId = targetEpisode?.SeasonID || this.selectedSeasonId();
 
-    console.log("DEBUG - Avvio Navigazione:", { 
-        episodeId: epIdNum, 
-        seasonId: targetSeasonId, 
-        startAt: savedProgress 
-    });
-
+    
    
     this.router.navigate(['/episode', epIdNum], {
         queryParams: { 

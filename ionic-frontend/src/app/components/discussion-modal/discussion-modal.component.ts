@@ -10,7 +10,7 @@ import {
 import { addIcons } from 'ionicons';
 import { saveOutline } from 'ionicons/icons';
 
-//  IMPORT DEL MODELLO
+
 import { DiscussionPayload, ModDiscussion } from '../../models/mod';
 
 @Component({
@@ -55,16 +55,17 @@ export class DiscussionModalComponent implements OnInit {
         this.isEditMode ? [] : [Validators.required]
       ],
       closeDate: [
-        this.discussion?.CloseDate || this.discussion?.['closeDate'] || this.getDefaultCloseDate(), 
-        [Validators.required, Validators.pattern(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/)]
+          this.discussion?.CloseDate || this.discussion?.['closeDate'] || this.getDefaultCloseDate(), 
+          [Validators.required, Validators.pattern(/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}(:\d{2})?$/)]
       ],
+      
       forceClosed: [this.discussion?.ForceClosed === 1 || this.discussion?.['forceClosed'] === 1]
     });
   }
 
   private getDefaultCloseDate(): string {
     const futureDate = new Date();
-    futureDate.setDate(futureDate.getDate() + 14); // Aggiunge 2 settimane esatte
+    futureDate.setDate(futureDate.getDate() + 14); 
 
     const year = futureDate.getFullYear();
     const month = String(futureDate.getMonth() + 1).padStart(2, '0');
@@ -83,7 +84,7 @@ export class DiscussionModalComponent implements OnInit {
     if (this.discussionForm.invalid) return;
 
     const formRaw = this.discussionForm.getRawValue(); 
-    let payload: DiscussionPayload; //  Tipizziamo il payload
+    let payload: DiscussionPayload;
 
     if (this.isEditMode) {
       payload = {

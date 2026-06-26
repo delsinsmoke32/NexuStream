@@ -175,9 +175,9 @@ router.post('/:episodeId/interact', auth, [
     body('isLiked').isInt({ min: 0, max: 1 }).withMessage("isLiked deve essere 0 o 1")
 ], episodeController.interactWithEpisode);
 
-//===============================
-//CAMBIA AUTH, METTILO PRIVATO
-//===============================
+
+// No swagger per la stream, troppo complesso e non ci sarebbe poi modo di vederla.
+
 router.get('/:episodeId/stream', authOptional, [
     param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido"),
     param('seasonId').isInt({ min: 1 }).notEmpty().withMessage("ID stagione non valido"),

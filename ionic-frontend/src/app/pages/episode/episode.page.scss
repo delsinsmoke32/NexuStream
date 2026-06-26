@@ -1,5 +1,5 @@
 :host {
-  --ion-background-color: #121212; // Coerente con la ShowsPage
+  --ion-background-color: #121212; 
 }
 
 .transparent-toolbar {
@@ -43,11 +43,11 @@
 
 // --- MAIN CONTENT SECTION ---
 .main-video-section {
-  flex: 3 1 0%; /* Impedisce la crescita incontrollata (shorthand per flex-grow/shrink/basis) */
+  flex: 3 1 0%; 
   display: flex;
   flex-direction: column;
   gap: 20px;
-  min-width: 0;   /* Ricalcola correttamente lo spazio */
+  min-width: 0;   
   width: 100%;
 }
 
@@ -280,8 +280,8 @@
       border: 1px solid transparent;
 
       .disc-info {
-        flex: 1; // Permette al testo di occupare lo spazio disponibile
-        min-width: 0; // Fondamentale per il troncamento del testo
+        flex: 1; 
+        min-width: 0;
         
         h3 {
           color: white;
@@ -294,9 +294,9 @@
             color: #888;
             font-size: 0.85rem;
             margin: 0;
-            white-space: nowrap; // Impedisce il ritorno a capo
-            overflow: hidden;    // Nasconde il testo che esce
-            text-overflow: ellipsis; // Aggiunge i puntini di sospensione
+            white-space: nowrap; 
+            overflow: hidden;   
+            text-overflow: ellipsis;
         }
       }
 
@@ -356,28 +356,28 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
-// percorso: src/app/pages/episode/episode.page.scss
+
 
 .guest-paywall-container {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9; /* Mantiene la proporzione di un player video standard */
-  background-color: #000; /* Colore di fallback mentre carica l'immagine */
+  aspect-ratio: 16 / 9; 
+  background-color: #000; 
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 
-  /* L'immagine di sfondo (Thumbnail) */
+  
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
-    // Leggero zoom per rendere l'immagine più cinematografica
+    
     transform: scale(1.05); 
   }
 
-  /* L'overlay scuro e sfocato che si sovrappone all'immagine */
+  
   .paywall-overlay {
     position: absolute;
     top: 0;
@@ -385,9 +385,9 @@
     right: 0;
     bottom: 0;
     
-    /* Sfondo nero semitrasparente */
+    
     background: rgba(0, 0, 0, 0.65); 
-    /* L'effetto blur premium (supportato da tutti i browser moderni) */
+    
     backdrop-filter: blur(6px); 
     -webkit-backdrop-filter: blur(6px);
 

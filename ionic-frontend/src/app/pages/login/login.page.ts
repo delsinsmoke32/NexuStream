@@ -55,7 +55,7 @@ export class LoginPage implements OnInit {
     private toastController = inject(ToastController)
     private langService = inject(LanguageService)
 
-    // Form reattivo configurato correttamente
+   
     loginForm = new FormGroup({
         email: new FormControl('', {
             nonNullable: true,
@@ -77,10 +77,7 @@ export class LoginPage implements OnInit {
 
     login() {
         if (this.loginForm.invalid) {
-            // this.presentToast(
-            //     $localize`:@@insertLogin: Inserisci un'email valida e una password di almeno 8 caratteri.`,
-            //     'danger'
-            // )
+            
             return
         }
 
@@ -88,20 +85,18 @@ export class LoginPage implements OnInit {
 
         this.authService.login(credentials).subscribe({
             next: (res: any) => {
-                console.log('Risposta esatta del server:', res)
 
                 const userData = res.user ? res.user : res
 
-                //  1. Aggiorniamo le lingue IN LOCALE prima del token!
-                // (Assicurati che i nomi corrispondano a come il tuo DB ti restituisce i campi)
+                
                 const appLang = userData.REF_App_Language || 'it'
                 const textLang = userData.REF_Text_Language || 'it'
                 const audioLang = userData.REF_Audio_Language || 'jp'
 
-                // Salviamo le preferenze (non farà chiamate API perché il token non c'è ancora)
+                
                 this.langService.setLanguages(appLang, textLang, audioLang)
 
-                //  2. ORA salviamo il token e il resto
+                
                 localStorage.setItem('token', res.token)
                 localStorage.setItem('user', JSON.stringify(userData))
 
@@ -114,17 +109,16 @@ export class LoginPage implements OnInit {
                     localStorage.removeItem('propic')
                 }
 
-                //  3. Controllo URL: Se la lingua dell'utente è diversa da quella dell'URL,
-                // ricarichiamo la pagina con la lingua corretta (come nei Settings)
+                
                 const currentUrlLang = window.location.pathname.split('/')[1]
                 const targetRoute = rolesArray.includes('admin')
                     ? '/admin'
                     : '/tabs/home'
 
-                // Controlliamo se stiamo girando in "serve mode" (senza cartelle lingua)
+               
                 const isServeMode = !['it', 'en'].includes(currentUrlLang)
 
-                // Se NON siamo in serve mode, E la lingua è diversa, facciamo il redirect rigido
+               
                 if (
                     !isServeMode &&
                     currentUrlLang !== appLang &&
@@ -133,7 +127,7 @@ export class LoginPage implements OnInit {
                     window.location.href =
                         window.location.origin + `/${appLang}` + targetRoute
                 } else {
-                    // Se siamo in locale (ionic serve) o la lingua coincide, usiamo il router standard!
+                    
                     this.router.navigate([targetRoute])
                 }
             },
@@ -165,7 +159,7 @@ export class LoginPage implements OnInit {
         if (user.isMod || user.is_mod) roles.push('mod')
         if (user.isCataloguer || user.is_cataloguer) roles.push('cataloguer')
 
-        // Se non ha nessun ruolo specifico, è un utente base
+        
         if (roles.length === 0) roles.push('user')
         return roles
     }

@@ -6,7 +6,6 @@ export interface AdminUser {
     Username?: string
     Email?: string
     REF_PropicURI?: string
-    // Aggiungi un index signature per permettere eventuali campi extra restituiti dal backend
     [key: string]: any
 }
 

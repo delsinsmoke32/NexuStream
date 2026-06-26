@@ -21,12 +21,6 @@ export interface ContinueWatchingItem {
 export interface HomeResponse {
     mostViewed: HomeShow[];
     mostLiked: HomeShow[];
+    recentDisc: HomeShow[];
     continueWatching: ContinueWatchingItem[];
-}
-
-export interface ContinueWatchingInteractPayload {
-    progress: number;
-    isCompleted: number;
-    isDropped: number;
-    isLiked: number;
 }

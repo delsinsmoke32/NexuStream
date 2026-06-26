@@ -17,13 +17,12 @@ export class NotfoundPage implements OnInit {
     private router = inject(Router)
 
     constructor() {
-        addIcons({ compassOutline, homeOutline })
+        addIcons({compassOutline,homeOutline});
     }
 
     ngOnInit() {}
 
     goToHome() {
-        console.log('Ritorno alla home avviato...')
         this.router.navigate(['/tabs/home'])
     }
 }

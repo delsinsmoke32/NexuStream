@@ -8,7 +8,7 @@ import {
 import { addIcons } from 'ionicons';
 import { play, heartOutline, heart, shareSocialOutline } from 'ionicons/icons';
 
-// Iniezione di forkJoin da RxJS
+
 import { forkJoin } from 'rxjs';
 
 import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
@@ -60,30 +60,69 @@ export class ShowsPage {
 
   loadShowsData(id: string) {
     this.isLoading.set(true);
-    
-    // Sfruttiamo il service all'interno della forkJoin originaria
+
     forkJoin({
-      showDetails: this.showsService.getShowDetails(id),
-      showSeasons: this.showsService.getShowSeasons(id)
+        showDetails: this.showsService.getShowDetails(id),
+        showSeasons: this.showsService.getShowSeasons(id)
     }).subscribe({
-      next: (res) => {
-        this.show.set(res.showDetails);
-        this.seasons.set(res.showSeasons || []);
-        
-        if (this.seasons().length > 0) {
-          const firstSeasonId = this.seasons()[0].SeasonID;
-          this.selectedSeasonId.set(firstSeasonId);
-          this.loadEpisodes(id, firstSeasonId);
-        } else {
-          this.isLoading.set(false);
+        next: (res) => {
+            this.show.set(res.showDetails);
+            this.seasons.set(res.showSeasons || []);
+
+            
+
+            // Impostiamo il progresso globale per il continua a guardare
+            if (res.showDetails && res.showDetails.ResumeEpisodeID) {
+                const globalResume = {
+                    EpisodeID: res.showDetails.ResumeEpisodeID,
+                    EpisodeNumber: res.showDetails.ResumeEpisodeNumber,
+                    progress: res.showDetails.ResumeProgress,
+                    SeasonID: res.showDetails.ResumeSeasonID,
+                    SeasonNumber: res.showDetails.ResumeSeasonNumber
+                } as unknown as Episode;
+                
+                this.resumeEpisode.set(globalResume);
+                
+            }
+
+            // Carichiamo la stagione
+            if (this.seasons().length > 0) {
+                const firstSeasonId = this.seasons()[0].SeasonID;
+                this.selectedSeasonId.set(firstSeasonId);
+                this.loadEpisodes(id, firstSeasonId);
+            } else {
+                this.isLoading.set(false);
+            }
+        },
+        error: (err) => {
+            console.error("Errore durante il caricamento della serie:", err);
+            this.isLoading.set(false);
         }
-      },
-      error: (err) => {
-        console.error('Errore nel recupero della serie o delle stagioni:', err);
-        this.isLoading.set(false);
-      }
     });
-  }
+}
+
+loadEpisodes(showId: string, seasonId: number) {
+    this.showsService.getEpisodes(showId, seasonId).subscribe({
+        next: (eps) => {
+            this.episodes.set(eps || []);
+            
+            const currentResume = this.resumeEpisode();
+            
+            if (!currentResume && eps && eps.length > 0) {
+                this.resumeEpisode.set(eps[0]);
+                
+            }
+            
+            this.isLoading.set(false); 
+            this.isEpisodesLoading.set(false); 
+        },
+        error: (err) => {
+            console.error('Errore nel recupero degli episodi:', err);
+            this.isLoading.set(false);
+            this.isEpisodesLoading.set(false);
+        }
+    });
+}
 
   onSeasonChange(event: any) {
     const seasonId = event.detail.value;
@@ -93,28 +132,7 @@ export class ShowsPage {
     this.loadEpisodes(this.showId(), seasonId);
   }
 
-  loadEpisodes(showId: string, seasonId: number) {
-    this.showsService.getEpisodes(showId, seasonId).subscribe({
-      next: (eps) => {
-        this.episodes.set(eps || []);
-        if (eps && eps.length > 0) {
-          const inProgressEp = eps.find(ep => ep.progress > 5 && ep.isCompleted === 0);
-          this.resumeEpisode.set(inProgressEp || eps[0]);
-        } else {
-          this.resumeEpisode.set(null);
-        }
-        
-        this.isLoading.set(false); 
-        this.isEpisodesLoading.set(false); 
-      },
-      error: (err) => {
-        console.error('Errore nel recupero degli episodi:', err);
-        this.isLoading.set(false);
-        this.isEpisodesLoading.set(false);
-      }
-    });
-  }
-
+  
   openEpisodeInfo(episodeId: number) {
     if (!episodeId) return;
 
@@ -126,23 +144,50 @@ export class ShowsPage {
     });
   }
 
-  playEpisode(episodeId: number | undefined, event?: Event) {
-    if (event && event.target) {
-      (event.target as HTMLElement).blur(); 
-    }
-    if (!episodeId) return;
+  playEpisode(passedEpisodeId?: number | string | Event, event?: Event) {
     
-    const targetEpisode = this.episodes().find(ep => ep.EpisodeID === episodeId);
-    const savedProgress = targetEpisode?.progress || 0;
+    const actualEvent = event || (passedEpisodeId instanceof Event ? passedEpisodeId : null);
+    if (actualEvent && actualEvent.target) {
+        (actualEvent.target as HTMLElement).blur(); 
+    }
+    
+   
+    let epIdNum: number | undefined;
 
-    this.router.navigate(['/episode', episodeId], {
-      queryParams: { 
-        showId: this.showId(), 
-        seasonId: this.selectedSeasonId(),
-        startAt: savedProgress
-      }
+    if (typeof passedEpisodeId === 'number' || typeof passedEpisodeId === 'string') {
+        epIdNum = Number(passedEpisodeId);
+    } else {
+        
+        const fallbackId = this.resumeEpisode()?.EpisodeID || (this.resumeEpisode() as any)?.id;
+        epIdNum = fallbackId ? Number(fallbackId) : undefined;
+    }
+
+    if (!epIdNum) {
+        return;
+    }
+
+    
+    let targetEpisode = this.episodes().find(ep => Number(ep.EpisodeID) === epIdNum);
+    
+    
+    if (!targetEpisode && Number(this.resumeEpisode()?.EpisodeID) === epIdNum) {
+        targetEpisode = this.resumeEpisode() as any; 
+    }
+
+   
+    const savedProgress = targetEpisode?.progress || 0;
+    const targetSeasonId = targetEpisode?.SeasonID || this.selectedSeasonId();
+
+    
+   
+    this.router.navigate(['/episode', epIdNum], {
+        queryParams: { 
+            showId: this.showId(), 
+            seasonId: targetSeasonId,
+            startAt: savedProgress
+        }
     });
-  }
+}
 
   getSelectedSeason() {
     return this.seasons().find(s => s.SeasonID === this.selectedSeasonId());

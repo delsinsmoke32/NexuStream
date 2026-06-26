@@ -19,7 +19,7 @@ import {
     Validators,
 } from '@angular/forms'
 
-//  IMPORTAZIONI STANDALONE CHIRURGICHE DI IONIC
+
 import {
     IonHeader,
     IonToolbar,
@@ -54,7 +54,7 @@ import { PropicGroup } from '@app/models/cataloguer'
     ],
 })
 export class AvatarPickerModalComponent implements OnInit {
-    // selectedImg = signal<string>('')
+   
     avatarService = inject(AvatarPicker)
     avatars = signal<PropicGroup[]>([])
     baseUrl = 'api'
@@ -64,7 +64,7 @@ export class AvatarPickerModalComponent implements OnInit {
             next: (res) => {
                 console.log(res)
                 this.avatars.set(res)
-                // ;(this.avatars.set(res), console.log(res))
+                
             },
             error: (err) => console.error(err),
         })
@@ -82,24 +82,24 @@ export class AvatarPickerModalComponent implements OnInit {
     // SERVE IL DECORATORE per qualche motivo
     @Input() propic = ''
 
-    // Signal interno per gestire la selezione visiva temporanea nel modal
+    
     selectedAvatar = signal<string>('')
 
     private modalCtrl = inject(ModalController)
 
     ngOnInit() {
         this.loadPropics()
-        // Inizializza la selezione interna con il valore ricevuto in input
+       
         this.selectedAvatar.set(this.propic)
         console.log(this.selectedAvatar())
     }
 
-    // Cambia l'avatar selezionato temporaneamente quando l'utente clicca
+    
     select(avatarUri: string) {
         this.selectedAvatar.set(avatarUri)
     }
 
-    // Chiude il modal passando l'avatar selezionato
+    
     confirmSelection() {
         this.modalCtrl.dismiss({
             selectedAvatar: this.selectedAvatar(),
@@ -107,6 +107,6 @@ export class AvatarPickerModalComponent implements OnInit {
     }
 
     dismiss() {
-        this.modalCtrl.dismiss() // Chiude senza salvare se l'utente annulla
+        this.modalCtrl.dismiss() 
     }
 }

@@ -10,7 +10,7 @@ export const ModGuard: CanActivateFn = async (route, state) => {
 
   if (token) {
     const decodedToken = jwtDecodeHelper(token); 
-    // Assicurati che 'isMod' sia il nome corretto
+    
     if (decodedToken && decodedToken.isMod === 1) {
       return true; 
     }

@@ -1,10 +1,11 @@
 <ion-header>
     <ion-toolbar color="dark">
-        <ion-title
-            >{{ isEditMode ? 'Modifica' : 'Nuova' }} Discussione</ion-title
-        >
+        <ion-title>
+            {{ isEditMode ? 'Modifica' : 'Nuova' }} 
+            <ng-container i18n="@@discussionModal_title">Discussione</ng-container>
+        </ion-title>
         <ion-buttons slot="end">
-            <ion-button (click)="dismiss()">Annulla</ion-button>
+            <ion-button (click)="dismiss()" i18n="@@discussionModal_cancel">Annulla</ion-button>
         </ion-buttons>
     </ion-toolbar>
 </ion-header>
@@ -14,13 +15,14 @@
         @if (!isEditMode) {
             @if (!hasProvidedEpisodeId) {
                 <ion-item fill="outline" mode="md" class="ion-margin-bottom">
-                    <ion-label position="stacked"
+                    <ion-label position="stacked" i18n="@@discussionModal_episodeIdLabel"
                         >ID Episodio (Obbligatorio)</ion-label
                     >
                     <ion-input
                         type="number"
                         formControlName="REF_EpisodeID"
                         placeholder="Es. 14"
+                        i18n-placeholder="@@discussionModal_episodeIdPlaceholder"
                     >
                     </ion-input>
                 </ion-item>
@@ -29,7 +31,7 @@
             @if (hasProvidedEpisodeId) {
                 <ion-item lines="none">
                     <ion-label color="medium">
-                        Creazione discussione per l'Episodio ID:
+                        <ng-container i18n="@@discussionModal_episodeIdInfo">Creazione discussione per l'Episodio ID:</ng-container>
                         <strong>{{ episodeId }}</strong>
                     </ion-label>
                 </ion-item>
@@ -38,14 +40,16 @@
             <ion-item fill="outline" mode="md" class="ion-margin-bottom">
                 <ion-select
                     label="Tipo Discussione"
+                    i18n-label="@@discussionModal_typeLabel"
                     labelPlacement="stacked"
                     formControlName="type"
                     placeholder="Seleziona tipo"
+                    i18n-placeholder="@@discussionModal_typePlaceholder"
                 >
-                    <ion-select-option value="standard"
+                    <ion-select-option value="standard" i18n="@@discussionModal_typeStandard"
                         >Standard</ion-select-option
                     >
-                    <ion-select-option value="spoiler"
+                    <ion-select-option value="spoiler" i18n="@@discussionModal_typeSpoiler"
                         >Spoiler</ion-select-option
                     >
                 </ion-select>
@@ -55,16 +59,18 @@
         <ion-item fill="outline" mode="md" class="ion-margin-bottom">
             <ion-input
                 label="Data di Chiusura (YYYY-MM-DD HH:MM)"
+                i18n-label="@@discussionModal_closeDateLabel"
                 labelPlacement="stacked"
                 type="text"
                 formControlName="closeDate"
                 placeholder="2027-01-01 00:00"
+                i18n-placeholder="@@discussionModal_closeDatePlaceholder"
             ></ion-input>
         </ion-item>
 
         @if (isEditMode) {
             <ion-item lines="none" class="toggle-item">
-                <ion-label>Forza Chiusura Canale</ion-label>
+                <ion-label i18n="@@discussionModal_forceClose">Forza Chiusura Canale</ion-label>
                 <ion-toggle
                     slot="end"
                     formControlName="forceClosed"
@@ -81,7 +87,7 @@
             class="ion-margin-top"
         >
             <ion-icon name="save-outline" slot="start"></ion-icon>
-            {{ isEditMode ? 'Aggiorna Discussione' : 'Crea Discussione' }}
+            {{ isEditMode ? 'Aggiorna Discussione': 'Crea Discussione' }}
         </ion-button>
     </form>
 </ion-content>

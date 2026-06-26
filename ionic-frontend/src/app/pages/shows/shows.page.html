@@ -19,7 +19,7 @@
     <div class="hero-banner">
         <img
             class="banner-img"
-            [src]="show()?.BannerURI ? (show()!.BannerURI! | backendUrl: 'static') : 'assets/placeholder-banner.png'"
+            [src]="show()?.BannerURI ? (show()!.BannerURI! | backendUrl: 'static') : ('banners/bleach.png' | backendUrl: 'static')"
             alt="Banner"
         />
         <div class="hero-gradient-overlay"></div>
@@ -33,20 +33,20 @@
           <h1 class="shows-title">{{ show()?.Title }}</h1>
           
           <div class="action-buttons">
-            <button class="btn-play-primary" (click)="playEpisode(resumeEpisode()?.EpisodeID, $event)">
+            <button class="btn-play-primary" (click)="playEpisode()">
               <ion-icon name="play"></ion-icon>
               <div class="btn-text">
                 
                 <span class="action">
                  @if ((resumeEpisode()?.progress || 0) > 5) {
-                  <ng-container i18n="@@continueWatching">Continua a guardare</ng-container>
+                  <ng-container i18n="@@continueWatchingShow">Continua a guardare</ng-container>
                 } @else {
                   <ng-container i18n="@@startWatching">Inizia a guardare</ng-container>
                 }
                 </span>
                 
-                <span i18n="@@episode" class="ep-ref">
-                  Episodio {{ resumeEpisode()?.EpisodeNumber || 1 }}
+                <span class="ep-ref">
+                    <ng-container i18n="@@episodeLabel">S</ng-container>{{ $any(resumeEpisode())?.SeasonNumber || 1 }}<ng-container i18n="@@episodeSeparator">E</ng-container>{{ resumeEpisode()?.EpisodeNumber || 1 }}
                 </span>
                 
               </div>
@@ -68,13 +68,13 @@
               @for (genre of show()?.genres; track $index) {
                 <span class="meta-chip">{{ genre }}</span>
               } @empty {
-                <span class="meta-text">N/D</span>
+                <span class="meta-text" i18n="@@notAvailable">N/D</span>
               }
             </div>
           </div>
           
           <div class="meta-block">
-            <span class="meta-label">Audio:</span>
+            <span i18n="@@audio" class="meta-label">Audio:</span>
             <span class="meta-text uppercase-lang">
               {{ show()?.audio?.join(', ') || 'N/D' }}
             </span>
@@ -83,7 +83,7 @@
           <div class="meta-block">
             <span i18n="@@subtitles" class="meta-label">Sottotitoli:</span>
             <span class="meta-text uppercase-lang">
-              {{ show()?.subs?.join(', ') || 'N/D' }}
+              {{ show()?.subs?.join(', ') || 'N/D'  }}
             </span>
           </div>
 

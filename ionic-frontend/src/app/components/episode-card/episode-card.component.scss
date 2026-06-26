@@ -86,7 +86,7 @@
     background-color: var(--ion-color-primary, #b22222);
 
     &.completed {
-      background-color: #aaaaaa; /* Grigio se già finito */
+      background-color: #aaaaaa; 
     }
   }
 }
@@ -94,8 +94,8 @@
 .ep-info {
   display: flex;
   flex-direction: column;
-  // 1. RIMUOVI justify-content: center; (così il testo parte dall'alto)
-  flex: 1; // 2. ASSICURATI che prenda tutto lo spazio orizzontale e verticale
+  
+  flex: 1; 
   overflow: hidden;
 
   .ep-number {
@@ -131,10 +131,9 @@
     display: flex;
     justify-content: flex-end; 
     
-    // 3. LA MAGIA: margin-top: auto spinge questo div verso il basso
+    
     margin-top: auto; 
-    padding-top: 8px; // Messo come padding anziché margin per mantenere la spinta fluida
-
+    padding-top: 8px; 
     .info-btn {
       font-size: 1.6rem;
       color: #888888;

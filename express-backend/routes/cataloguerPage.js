@@ -7,6 +7,8 @@ const multerMiddleware = require("../middleware/multerConfig");
 const isCataloguer = require("../middleware/isCataloguer");
 const { query, body, param } = require('express-validator');
 
+// SWAGGER MANCANTE PER LE ROTTE CHE RICHIEDONO FILE UPLOAD
+
 router.use(isCataloguer);
 
 // ==========================================
@@ -39,45 +41,6 @@ router.get('/shows', [
 ], cataloguerController.getShows);
 
 
-/**
- * @swagger
- * /api/cataloguer/shows/add:
- *   post:
- *     summary: Aggiunge una nuova serie (Solo Catalogatori)
- *     tags:
- *       - Cataloguer Shows
- *     security:
- *       - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - title
- *               - description
- *               - dateStarted
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *               dateStarted:
- *                 type: string
- *                 format: date
- *               dateEnded:
- *                 type: string
- *                 format: date
- *               hasEnded:
- *                 type: integer
- *                 enum: [0, 1]
- *     responses:
- *       201:
- *         description: Serie creata con successo
- */
-
-
 router.post('/shows/add', [
     body('title_it').isString().trim().notEmpty().withMessage("Il titolo italiano è obbligatorio"),
     body('description_it').isString().trim().notEmpty().withMessage("La descrizione italiana è obbligatoria"),
@@ -92,44 +55,6 @@ router.post('/shows/add', [
 ], cataloguerController.addShow);
 
 
-/**
- * @swagger
- * /api/cataloguer/shows/{id}:
- *   patch:
- *     summary: Modifica una serie esistente (Solo Catalogatori)
- *     tags:
- *       - Cataloguer Shows
- *     security:
- *       - BearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *               dateEnded:
- *                 type: string
- *                 format: date
- *               hasEnded:
- *                 type: integer
- *                 enum: [0, 1]
- *     responses:
- *       200:
- *         description: Serie aggiornata con successo
- */
-
-
 router.patch('/shows/:id', [
     param('id').isInt({ min: 1 }).withMessage("ID serie non valido"),
     body('title_it').isString().trim().notEmpty().withMessage("Il titolo italiano è obbligatorio"),
@@ -141,27 +66,6 @@ router.patch('/shows/:id', [
     body('thumbnailURI').optional().isString().trim().notEmpty().withMessage("L'URI deve essere una stringa"),
     body('bannerURI').optional().isString().trim().notEmpty().withMessage("L'URI deve essere una stringa")
 ], cataloguerController.modifyShow);
-
-
-/**
- * @swagger
- * /api/cataloguer/shows/{id}:
- *   delete:
- *     summary: Elimina una serie (Solo Catalogatori)
- *     tags:
- *       - Cataloguer Shows
- *     security:
- *       - BearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     responses:
- *       200:
- *         description: Serie eliminata con successo
- */
 
 
 router.delete('/shows/:id', [
@@ -220,9 +124,13 @@ router.get('/seasons', [
  *               - dateStarted
  *               - refShow
  *             properties:
- *               title:
+ *               title_it:
  *                 type: string
- *               description:
+ *               title_en:
+ *                 type: string
+ *               description_it:
+ *                 type: string
+ *               description_en:
  *                 type: string
  *               dateStarted:
  *                 type: string
@@ -276,9 +184,13 @@ router.post('/seasons/add', [
  *           schema:
  *             type: object
  *             properties:
- *               title:
+ *               title_it:
  *                 type: string
- *               description:
+ *               title_en:
+ *                 type: string
+ *               description_it:
+ *                 type: string
+ *               description_en:
  *                 type: string
  *               dateEnded:
  *                 type: string
@@ -363,52 +275,6 @@ router.get('/episodes', [
 ], cataloguerController.getEpisodes);
 
 
-/**
- * @swagger
- * /api/cataloguer/episodes/add:
- *   post:
- *     summary: Aggiunge un episodio con lingue e sub (Solo Catalogatori)
- *     tags:
- *       - Cataloguer Episodes
- *     security:
- *       - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - title
- *               - description
- *               - releaseDate
- *               - duration
- *               - refSeason
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *               releaseDate:
- *                 type: string
- *                 format: date
- *               duration:
- *                 type: integer
- *               refSeason:
- *                 type: integer
- *               DubLanguages:
- *                 type: array
- *                 items:
- *                   type: string
- *               SubLanguages:
- *                 type: array
- *                 items:
- *                   type: string
- *     responses:
- *       201:
- *         description: Episodio creato
- */
-
 
 router.post('/episodes/add', [
     body('title_it').isString().trim().notEmpty().withMessage("Il titolo italiano è obbligatorio"),
@@ -444,54 +310,12 @@ router.post('/episodes/add', [
 ], cataloguerController.addEpisode);
 
 
-/**
- * @swagger
- * /api/cataloguer/episodes/{id}:
- *   patch:
- *     summary: Modifica un episodio e aggiorna lingue/sub (Solo Catalogatori)
- *     tags:
- *       - Cataloguer Episodes
- *     security:
- *       - BearerAuth: []
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               title:
- *                 type: string
- *               description:
- *                 type: string
- *               refSeason:
- *                 type: integer
- *               DubLanguages:
- *                 type: array
- *                 items:
- *                   type: string
- *               SubLanguages:
- *                 type: array
- *                 items:
- *                   type: string
- *     responses:
- *       200:
- *         description: Episodio aggiornato
- */
-
 
 router.patch('/episodes/:id', [
     param('id').isInt({ min: 1 }).withMessage("ID episodio non valido"),
     
     body('title_it').isString().trim().notEmpty().withMessage("Il titolo italiano è obbligatorio"),
     body('description_it').isString().trim().notEmpty().withMessage("La descrizione italiana è obbligatoria"),
-    // Le altre lingue sono opzionali
     body('title_en').optional({ checkFalsy: true }).isString().trim(),
     body('description_en').optional({ checkFalsy: true }).isString().trim(),
     body('refSeason').optional().isInt({ min: 1 }).withMessage("ID stagione non valido"),
@@ -499,11 +323,11 @@ router.patch('/episodes/:id', [
     body('SubLanguages').optional().isArray().withMessage("SubLanguages deve essere un array"),
     body('thumbnailURI').optional().isString().trim().notEmpty().withMessage("L'URI deve essere una stringa"),
 
-    //  CAMPI EXTRA CHE IL FRONTEND INVIA IN EDIT
+    // campi extra
     body('duration').optional().isInt({ min: 1 }).withMessage("La durata deve essere un intero positivo"),
     body('episodeNumber').optional().isInt({ min: 1 }).withMessage("Numero di episodio non valido"),
 
-    //  CONTROLLI TRACCE (SE AGGIUNTE IN MODIFICA)
+    //  tracce
     body('audioTracks').optional().isArray().withMessage("audioTracks deve essere un array"),
     body('audioTracks.*.lang').optional().isString().trim(),
     body('audioTracks.*.uri').optional().isString().trim(),
@@ -512,7 +336,7 @@ router.patch('/episodes/:id', [
     body('subTracks.*.lang').optional().isString().trim(),
     body('subTracks.*.uri').optional().isString().trim(),
 
-    //  BLINDATURA MARKER TEMPORALI (EDIT)
+    // marker temporali
     body('times').optional().isArray().withMessage("Times deve essere un array"),
     body('times.*.StartTime').optional().isInt({ min: 0 }).withMessage("StartTime deve essere un numero positivo o zero"),
     body('times.*.EndTime').optional().isInt({ min: 1 }).withMessage("EndTime deve essere maggiore di 0"),
@@ -573,37 +397,6 @@ router.post('/propics/add', [
     multerMiddleware.validateAvatar,
     body('bundle').isString().trim().notEmpty().withMessage("Il bundle della propic non è valido"),
 ], cataloguerController.addPropic);
-
-/**
- * @swagger
- * /api/cataloguer/propic:
- *   post:
- *     summary: Aggiunge un path immagine profilo (Solo Catalogatori)
- *     tags:
- *       - Cataloguer Profile Pictures
- *     security:
- *       - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - propicURI
- *             properties:
- *               propicURI:
- *                 type: string
- *     responses:
- *       200:
- *         description: Aggiunta con successo
- */
-
-/*
-router.post('/propic', [
-    body('propicURI').isString().trim().notEmpty().withMessage("L'URI della propic non è valido")
-], cataloguerController.addPropic);
-*/
 
 /**
  * @swagger

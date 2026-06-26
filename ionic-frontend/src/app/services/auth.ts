@@ -72,10 +72,10 @@ export class AuthService {
                     text: $localize `:@@logOut:Esci`,
                     role: 'destructive',
                     handler: async () => {
-                        // 1. Raso al suolo la memoria
+                        
                         localStorage.clear();
 
-                        // 2. Mostro il feedback
+                        
                         const toast = await this.toastCtrl.create({
                             message: $localize `:@@closeSession:Sessione chiusa`,
                             duration: 2000,

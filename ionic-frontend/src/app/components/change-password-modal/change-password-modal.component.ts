@@ -76,16 +76,16 @@ export class ChangePasswordModalComponent implements OnInit {
 
         if (!confirmPasswordControl) return null
 
-        // Se i campi non coincidono
+        
         if (newPassword !== confirmPasswordControl.value) {
-            // Impostiamo l'errore direttamente sul controllo di conferma
+            
             confirmPasswordControl.setErrors({
                 ...confirmPasswordControl.errors,
                 mismatch: true,
             })
             return { mismatch: true }
         } else {
-            // Se coincidono, rimuoviamo l'errore 'mismatch' mantenendo eventuali altri errori (es. required)
+            
             if (confirmPasswordControl.errors) {
                 const { mismatch, ...remainingErrors } =
                     confirmPasswordControl.errors

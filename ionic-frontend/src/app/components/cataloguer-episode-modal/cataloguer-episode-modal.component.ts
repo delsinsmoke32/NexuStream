@@ -92,7 +92,7 @@ import { BackendUrlPipe } from '../../pipes/backend-url-pipe'
         IonSpinner,
         IonList,
     ],
-    providers: [BackendUrlPipe], //  Iniezione del Pipe
+    providers: [BackendUrlPipe],
 })
 export class CataloguerEpisodeModalComponent implements OnInit {
     @Input() data: any
@@ -122,7 +122,7 @@ export class CataloguerEpisodeModalComponent implements OnInit {
     private cataloguerService = inject(CataloguerService)
     private toastCtrl = inject(ToastController)
     private alertCtrl = inject(AlertController)
-    private backendUrl = inject(BackendUrlPipe) //  Iniezione per rimuovere localhost
+    private backendUrl = inject(BackendUrlPipe)
 
     isMockEpisode = signal<boolean>(true)
     episodeForm!: FormGroup

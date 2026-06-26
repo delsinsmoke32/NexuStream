@@ -4,10 +4,11 @@
             <ion-back-button
                 defaultHref="/tabs/home"
                 text="Home"
+                i18n-text="@@home"
             ></ion-back-button>
         </ion-buttons>
 
-        <ion-title>Dashboard Moderazione</ion-title>
+        <ion-title i18n="@@modDashboard">Dashboard Moderazione</ion-title>
 
         @if (currentTab() === 'discussions') {
         <ion-buttons slot="end">
@@ -17,7 +18,7 @@
                 (click)="openCreateModal()"
             >
                 <ion-icon name="add-circle-outline" class="svg-icon"></ion-icon>
-                Nuova Discussione
+                <ng-container i18n="@@newDiscussion">Nuova Discussione</ng-container>
             </button>
         </ion-buttons>
         }
@@ -31,10 +32,10 @@
             color="primary"
         >
             <ion-segment-button value="discussions">
-                <ion-label>Discussioni</ion-label>
+                <ion-label i18n="@@discussions">Discussioni</ion-label>
             </ion-segment-button>
             <ion-segment-button value="users">
-                <ion-label>Utenti</ion-label>
+                <ion-label i18n="@@users">Utenti</ion-label>
             </ion-segment-button>
         </ion-segment>
     </ion-toolbar>
@@ -43,20 +44,22 @@
         @if (currentTab() === 'discussions') {
             <div class="discussions-filters">
                 <ion-searchbar class="hide-on-mobile"
-                    [placeholder]="isMobile() ? 'Cerca per episodio...' : 'Cerca discussione per nome episodio...'"
+                    [placeholder]="(isMobile() ? 'Cerca per episodio...' : 'Cerca discussione per nome episodio...')"
                     animated="true" 
                     debounce="400"
                     (ionInput)="handleDiscussionSearch($event)">
                 </ion-searchbar>
                 
                 <ion-item lines="none" color="none" class="toggle-item">
-                    <ion-label class="hide-on-mobile">Archivio</ion-label>
+                    <ion-label class="hide-on-mobile" i18n="@@archive">Archivio</ion-label>
                     <ion-toggle [checked]="showClosed() === 1" (ionChange)="toggleFilter($event)" color="primary"></ion-toggle>
                 </ion-item>
             </div>
         } @else {
             <ion-searchbar
-                placeholder="Cerca utente per username o email..." animated="true" debounce="400"
+                placeholder="Cerca utente per username o email..."
+                i18n-placeholder="@@searchUsersPlaceholder"
+                animated="true" debounce="400"
                 (ionInput)="handleSearch($event)">
             </ion-searchbar>
         }
@@ -76,8 +79,8 @@
         } @empty {
         <div class="empty-dashboard">
             <ion-icon name="shield-checkmark-outline"></ion-icon>
-            <h3>Ops!</h3>
-            <p>
+            <h3 i18n="@@oops">Ops!</h3>
+            <p i18n="@@noActiveDiscussions">
                 Non ci sono discussioni attive da moderare corrispondenti ai
                 filtri impostati.
             </p>
@@ -99,7 +102,7 @@
                 >
                     <div class="user-avatar-wrapper">
                         <img
-                            [src]="user.REF_PropicURI ? (user.REF_PropicURI | backendUrl: 'static') : 'assets/default-avatar.png'"
+                            [src]="user.REF_PropicURI ? (user.REF_PropicURI | backendUrl: 'static') : ('avatars/avatar-000.png' | backendUrl: 'static')"
                             alt="propic"
                         />
                     </div>
@@ -111,7 +114,7 @@
                         class="user-status-tag"
                         [class.banned]="user.canComment === 0"
                     >
-                        {{ user.canComment === 1 ? 'Attivo' : 'Bannato' }}
+                        {{ (user.canComment === 1 ? 'Attivo' : 'Bannato') }}
                     </span>
                 </ion-item>
 
@@ -122,6 +125,7 @@
                             type="button"
                             class="action-trigger btn-ban"
                             (click)="openBanActionSheet(user)"
+                            i18n="@@restrictPermissions"
                         >
                             Restringi Permessi (Ban)
                         </button>
@@ -130,6 +134,7 @@
                             type="button"
                             class="action-trigger btn-unban"
                             (click)="executeUnban(user)"
+                            i18n="@@revokeRestriction"
                         >
                             Revoca Restrizione (Sban)
                         </button>
@@ -139,17 +144,16 @@
                                 name="time-outline"
                                 class="mini-svg"
                             ></ion-icon>
-                            Scadenza: {{ user.BannedUntil | date:'dd/MM/yyyy
-                            HH:mm' }}
+                            <ng-container i18n="@@expirationBan">Scadenza:</ng-container> {{ user.BannedUntil | date:'dd/MM/yyyy HH:mm' }}
                         </div>
                         } @else if (user.canComment === 0) {
-                        <div class="ban-expiration-info status-permanent">
+                        <div class="ban-expiration-info status-permanent" i18n="@@permanentSanction">
                             Sanzione Permanente
                         </div>
                         }
                     </div>
 
-                    <h4 class="section-divider-title">
+                    <h4 class="section-divider-title" i18n="@@commentHistory">
                         Cronologia Commenti (Ordinati per Report)
                     </h4>
 
@@ -159,7 +163,7 @@
                             name="crescent"
                             color="primary"
                         ></ion-spinner>
-                        <p>Recupero cronologia commenti...</p>
+                        <p i18n="@@fetchingHistory">Recupero cronologia commenti...</p>
                     </div>
                     } @else {
                     <div class="comments-scroller-list">
@@ -173,7 +177,7 @@
                         </app-mod-user-comment>
                         } @empty {
                         <div class="empty-comments-state">
-                            <p>
+                            <p i18n="@@noCommentsYet">
                                 Questo utente non ha ancora pubblicato alcun
                                 commento.
                             </p>
@@ -186,8 +190,8 @@
             } @empty {
             <div class="empty-dashboard">
                 <ion-icon name="people-outline"></ion-icon>
-                <h3>Nessun Utente trovato</h3>
-                <p>
+                <h3 i18n="@@noUsersFound">Nessun Utente trovato</h3>
+                <p i18n="@@noUsersSearchDesc">
                     La ricerca non ha prodotto risultati utili tra gli utenti
                     standard della piattaforma.
                 </p>

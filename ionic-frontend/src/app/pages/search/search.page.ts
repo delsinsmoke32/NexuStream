@@ -26,7 +26,7 @@ import {
     settingsOutline,
 } from 'ionicons/icons'
 
-// Componenti esterni, Service e Modelli
+
 import { ShowCardComponent } from '@app/components/show-card/show-card.component'
 import { Genre, SearchResult } from '../../models/search'
 import { SearchService } from '../../services/search'
@@ -60,27 +60,18 @@ export class SearchPage {
     private alertCtrl = inject(AlertController)
     private toastCtrl = inject(ToastController)
 
-    // Stati reattivi
+    
     searchQuery = signal<string>('')
     selectedGenre = signal<number | null>(null)
     filteredResults = signal<SearchResult[]>([])
     isLoading = signal<boolean>(false)
     isLoggedIn = signal<boolean>(false)
 
-    // Lista dei generi dal database
+    
     genres = signal<Genre[]>([])
 
     constructor() {
-        addIcons({
-            alertCircleOutline,
-            searchOutline,
-            personCircleOutline,
-            settingsOutline,
-            heartOutline,
-            logOutOutline,
-            playCircle,
-            informationCircleOutline,
-        })
+        addIcons({alertCircleOutline,searchOutline,personCircleOutline,settingsOutline,heartOutline,logOutOutline,playCircle,informationCircleOutline,});
     }
 
     ionViewWillEnter() {
@@ -89,7 +80,7 @@ export class SearchPage {
         this.loadGenres()
     }
 
-    // 1. Carica i generi disponibili dal backend tramite il Service
+    
     loadGenres() {
         this.searchService.getGenres().subscribe({
             next: (res) => this.genres.set(res),
@@ -98,13 +89,13 @@ export class SearchPage {
         })
     }
 
-    // 2. L'utente digita nella barra di ricerca
+    
     onSearchChange(event: any) {
         this.searchQuery.set(event.detail.value || '')
         this.triggerSearch()
     }
 
-    // 3. L'utente clicca su un genere ("Chip")
+    
     selectGenre(genreId: number | null) {
         if (this.selectedGenre() === genreId) {
             this.selectedGenre.set(null)
@@ -114,7 +105,7 @@ export class SearchPage {
         this.triggerSearch()
     }
 
-    // 4. Esegue la ricerca vera e propria combinando Testo + Genere tramite il Service
+    
     triggerSearch() {
         const q = this.searchQuery().trim()
         const g = this.selectedGenre()
@@ -138,13 +129,13 @@ export class SearchPage {
         })
     }
 
-    // Navigazione
+    
     openSeriesInfo(showId: string | number, event?: Event) {
         if (event) event.stopPropagation()
         this.router.navigate(['/shows', showId])
     }
 
-    // Menu Profilo
+   
     async openProfileMenu(ev: any) {
         this.popover.event = ev
         await this.popover.present()
@@ -162,16 +153,16 @@ export class SearchPage {
 
     async logout() {
         const alert = await this.alertCtrl.create({
-            header: 'Disconnetti',
-            message: 'Sei sicuro di voler uscire da NexuStream?',
+            header: $localize`:@@searchPage_logoutHeader:Disconnetti`,
+            message: $localize`:@@searchPage_logoutConfirm:Sei sicuro di voler uscire da NexuStream?`,
             buttons: [
-                { text: 'Annulla', role: 'cancel' },
+                { text: $localize`:@@searchPage_cancel:Annulla`, role: 'cancel' },
                 {
-                    text: 'Esci',
+                    text: $localize`:@@searchPage_logout:Esci`,
                     role: 'destructive',
                     handler: async () => {
                         const toast = await this.toastCtrl.create({
-                            message: 'Sessione chiusa',
+                            message: $localize`:@@searchPage_sessionClosed:Sessione chiusa`,
                             duration: 2000,
                             color: 'dark',
                         })

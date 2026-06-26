@@ -11,8 +11,8 @@
     </div>
     } @else { @if (favorites().length > 0) {
     <div class="favorites-container">
-        <p i18n="@@myFavouritesCount" class="results-count">
-            Hai salvato {{ favorites().length }} anime
+        <p class="results-count">
+            <ng-container i18n="@@myFavouritesCount">Hai salvato {{ favorites().length }} anime</ng-container>
         </p>
 
         <div class="favorites-grid">

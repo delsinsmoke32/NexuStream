@@ -7,8 +7,8 @@ export interface User {
     isMod: boolean;
     isCataloguer: boolean;
     isAdmin: boolean;
-    REF_LanguageID: string; // Basato su LanguageID CHAR(3)
-    REF_PropicID: string;   // Basato su PropicPath CHAR(255)
+    REF_LanguageID: string; 
+    REF_PropicID: string;   
 }
 
 export interface Episode {
@@ -27,7 +27,7 @@ export interface Comment {
     REF_UserID: bigint;
     REF_EpisodeID: bigint;
     DateCommented: Date | string;
-    REF_CommentID: bigint; // Per le risposte ai commenti
+    REF_CommentID: bigint; 
     isHidden: boolean;
     Likes: bigint;
     isApproved: boolean;
@@ -45,7 +45,7 @@ export interface Season {
 
 export interface Show {
     ShowID: bigint;
-    DateStarted: bigint; // BIGINT nel SQL fornito
+    DateStarted: bigint; 
     hasEnded: boolean;
     DateEnded: Date | string | null;
     Favourited: bigint;
@@ -56,11 +56,11 @@ export interface Show {
 // --- Tabelle di Supporto / Dettaglio ---
 
 export interface SupportedLanguage {
-    LanguageID: string; // CHAR(3)
+    LanguageID: string; 
 }
 
 export interface Propic {
-    PropicPath: string; // CHAR(255)
+    PropicPath: string; 
 }
 
 export interface EpisodeLanguage {

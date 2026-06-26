@@ -4,22 +4,26 @@
         <span class="status-badge" 
             [class.active]="!isDiscussionClosed(disc)" 
             [class.closed]="isDiscussionClosed(disc)">
-            {{ isDiscussionClosed(disc) ? 'Chiusa / Scaduta' : 'Attiva' }}
+            {{ (isDiscussionClosed(disc) ? 'Chiusa / Scaduta' : 'Attiva') }}
         </span>
     </div>
 
     <div class="card-middle">
-        <span class="episode-details">Stagione {{ disc.SeasonNumber }} • Episodio {{ disc.EpisodeNumber }} • ID EP {{ disc.REF_EpisodeID }}</span>
+        <span class="episode-details">
+            <ng-container i18n="@@modDiscCard_season">Stagione</ng-container> {{ disc.SeasonNumber }} 
+            • <ng-container i18n="@@modDiscCard_episode">Episodio</ng-container> {{ disc.EpisodeNumber }} 
+            • ID EP {{ disc.REF_EpisodeID }}
+        </span>
         <h3 class="episode-title">"{{ parseLang(disc.EpisodeTitle) }}"</h3>
     </div>
 
     <div class="card-info-rows">
         <div class="info-row">
-            <span class="label">Tipologia Stanza:</span>
+            <span class="label" i18n="@@modDiscCard_roomType">Tipologia Stanza:</span>
             <span class="value type-highlight">{{ disc.Type }}</span>
         </div>
         <div class="info-row">
-            <span class="label">Data Scadenza:</span>
+            <span class="label" i18n="@@modDiscCard_expiryDate">Data Scadenza:</span>
             <span class="value">{{ disc.CloseDate }}</span>
         </div>
     </div>
@@ -27,11 +31,11 @@
     <div class="card-buttons">
         <button type="button" class="mod-btn btn-manage" (click)="onEdit()">
             <ion-icon name="options-outline" class="svg-icon"></ion-icon>
-            Gestisci
+            <ng-container i18n="@@modDiscCard_manage">Gestisci</ng-container>
         </button>
         <button type="button" class="mod-btn btn-delete" (click)="onDelete()">
             <ion-icon name="trash-outline" class="svg-icon"></ion-icon>
-            Elimina
+            <ng-container i18n="@@modDiscCard_delete">Elimina</ng-container>
         </button>
     </div>
 </div>

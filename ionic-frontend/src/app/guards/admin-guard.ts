@@ -1,8 +1,7 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { ToastController } from '@ionic/angular/standalone';
-import { jwtDecodeHelper } from '../utils/jwt-helper'; // Assicurati che il path sia corretto
-
+import { jwtDecodeHelper } from '../utils/jwt-helper'; 
 export const AdminGuard: CanActivateFn = async (route, state) => {
   const router = inject(Router);
   const toastCtrl = inject(ToastController);
@@ -11,11 +10,11 @@ export const AdminGuard: CanActivateFn = async (route, state) => {
   if (token) {
     const decodedToken = jwtDecodeHelper(token); 
     if (decodedToken && decodedToken.isAdmin === 1) {
-      return true; // È un Admin, prego si accomodi
+      return true;
     }
   }
 
-  // Non ha i permessi (o non ha il token)
+  
   const toast = await toastCtrl.create({
     message: 'Accesso negato. Privilegi di Amministratore richiesti.',
     duration: 3000,

@@ -6,25 +6,25 @@
   <div class="floating-actions-container">
     
     @if (showSkipIntro()) {
-      <button class="action-btn" (click)="skipTo(activeIntroEnd)">
+      <button class="action-btn" (click)="skipTo(activeIntroEnd)" i18n="@@videoPlayer_skipIntro">
         SALTA INTRO
       </button>
     }
 
     @if (showSkipRecap()) {
-      <button class="action-btn" (click)="skipTo(activeRecapEnd)">
+      <button class="action-btn" (click)="skipTo(activeRecapEnd)" i18n="@@videoPlayer_skipRecap">
         SALTA RIASSUNTO
       </button>
     }
 
     @if (showCreditsOverlay()) {
       <div class="credits-buttons-wrapper">
-        <button class="action-btn credits-btn" (click)="hideOverlay()">
+        <button class="action-btn credits-btn" (click)="hideOverlay()" i18n="@@videoPlayer_watchCredits">
           GUARDA I TITOLI
         </button>
 
         <button class="action-btn next-ep-btn" (click)="triggerNextEpisode()">
-          <span>PROSSIMO EPISODIO</span>
+          <span i18n="@@videoPlayer_nextEpisode">PROSSIMO EPISODIO</span>
         </button>
       </div>
     }

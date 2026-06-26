@@ -15,21 +15,21 @@ const getDiscussions = async (showClosed, search) => {
     
     const params = [];
 
-    // Filtro Archivio vs Attive
+    
     if (!showClosed || showClosed === 0 || showClosed === '0') {
         sql += ` AND (d.CloseDate IS NULL OR datetime('now', 'localtime') < d.CloseDate) AND d.ForceClosed = 0`;
     } else {
-        // Se showClosed == 1, vogliamo solo quelle dell'archivio (chiuse da Mod o scadute)
+        
         sql += ` AND (d.CloseDate <= datetime('now', 'localtime') OR d.ForceClosed = 1)`;
     }
 
-    // Filtro Ricerca
+    
     if (search) {
         sql += ` AND (e.Title LIKE ? OR sh.Title LIKE ?)`;
         params.push(`%${search}%`, `%${search}%`);
     }
 
-    // Ordiniamole in base alle più recenti
+   
     sql += ` ORDER BY d.OpenDate DESC`;
 
     return await db.allAsync(sql, params);
@@ -76,7 +76,7 @@ const updateDiscussion = async (discussionId, fields) => {
 const deleteDiscussion = async (discussionId) => {
     const sql = `DELETE FROM Discussions WHERE DiscussionID = ?`;
     const result = await db.runAsync(sql, [discussionId]);
-    return result.changes; // Grazie a ON DELETE CASCADE, SQLite pulirà da solo la tabella Comments!
+    return result.changes; 
 };
 
 //-----------------------

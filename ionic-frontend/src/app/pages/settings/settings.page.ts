@@ -70,34 +70,25 @@ export class SettingsPage implements OnInit {
 
     selected = signal('avatars/avatar-003.png')
 
-    // Controllo visibilità della finestra di scelta
+    
     isAvatarModalOpen = false
 
-    // Avatar attualmente selezionato (di base mostriamo un placeholder)
+    
     currentAvatar = signal<string>('')
 
     userPreferences = {
         appLanguage: 'it',
-        defaultAudio: 'jp', // Usa 'jp' invece di 'ja' per coerenza col DB
+        defaultAudio: 'jp', 
         defaultSubtitles: 'it',
     }
 
-    // Elenco degli avatar che l'utente può scegliere
+    
     constructor(
         private router: Router,
         private alertController: AlertController,
         private toastCtrl: ToastController
     ) {
-        addIcons({
-            pencil,
-            lockClosedOutline,
-            logOutOutline,
-            checkmark,
-            notificationsOutline,
-            videocamOutline,
-            wifiOutline,
-            helpCircleOutline,
-        })
+        addIcons({pencil,lockClosedOutline,logOutOutline,checkmark,notificationsOutline,videocamOutline,wifiOutline,helpCircleOutline,});
     }
 
     ngOnInit() {
@@ -105,7 +96,7 @@ export class SettingsPage implements OnInit {
         this.loadPreferences()
     }
 
-    // Carica le preferenze salvate o imposta i valori di default
+    
     loadPreferences() {
         this.isLoading.set(true)
         this.userPreferences = {
@@ -117,14 +108,14 @@ export class SettingsPage implements OnInit {
     }
 
     loadSettingsData() {
-        // 1. Recupera la stringa dal localStorage
+       
         const userString = localStorage.getItem('user')
 
         if (userString) {
-            // 2. Trasforma la stringa di testo nuovamente in un oggetto JavaScript reale
+            
             const user = JSON.parse(userString)
 
-            // 3. Assegna l'username (fai attenzione a come si chiama il campo esatto nell'oggetto, es. user.username o user.name)
+            
             this.username.set(user.Username)
             console.log('Username recuperato dal localStorage:', this.username)
             this.currentAvatar.set(user.REF_PropicURI)
@@ -133,16 +124,16 @@ export class SettingsPage implements OnInit {
         }
     }
 
-    // Salva le preferenze ogni volta che l'utente cambia un valore
+    
     savePreferences() {
-        // 1. Chiamiamo il service, che aggiornerà il localStorage E farà la chiamata PATCH al backend!
+        
         this.langService.setLanguages(
             this.userPreferences.appLanguage,
             this.userPreferences.defaultSubtitles,
             this.userPreferences.defaultAudio
         )
 
-        // 2. Logica di refresh per la lingua dell'App (come avevi già fatto benissimo)
+        
         const currentLang = window.location.pathname.split('/')[1]
         if (['it', 'en'].includes(currentLang)) {
             const targetLang = this.userPreferences.appLanguage
@@ -157,14 +148,14 @@ export class SettingsPage implements OnInit {
             }
         }
 
-        this.presentToast('Impostazioni aggiornate con successo!', 'success')
+        this.presentToast($localize`:@@settingsPage_prefsUpdated:Impostazioni aggiornate con successo!`, 'success')
     }
 
     warnAppLanguage() {
         const currentLang = window.location.pathname.split('/')[1]
         if (!['it', 'en'].includes(currentLang))
             this.presentToast(
-                "Il cambio della lingua dell'applicazione non avrà effetto in questa modalità.",
+                $localize`:@@settingsPage_langWarning:Il cambio della lingua dell'applicazione non avrà effetto in questa modalità.`,
                 'warning'
             )
     }
@@ -181,38 +172,35 @@ export class SettingsPage implements OnInit {
 
         console.log(data)
         console.log(this.currentAvatar())
-        // Se l'utente ha selezionato un avatar, aggiorna il signal della pagina principale
+        
         if (data && data.selectedAvatar) {
             this.currentAvatar.set(data.selectedAvatar)
-            // this.registerForm.patchValue({ propic: this.selected() })
+            
             this.settingsService
                 .changePropic({ propicURI: data.selectedAvatar })
                 .subscribe({
                     next: async () => {
-                        // Recupera l'oggetto 'user' intero dal localStorage
+                        
                         const userString = localStorage.getItem('user');
                         
                         if (userString) {
                             const user = JSON.parse(userString);
                             
-                            // 2Aggiorna SOLO il campo dell'avatar nell'oggetto
+                            
                             user.REF_PropicURI = data.selectedAvatar;
                             
-                            // Risalva l'oggetto nel localStorage
+                            
                             localStorage.setItem('user', JSON.stringify(user));
                         }
 
-                        // Aggiorna il signal per la UI (con timestamp per evitare cache)
+                       
                         const timestamp = new Date().getTime();
                         this.currentAvatar.set(`${data.selectedAvatar}?t=${timestamp}`);
                         
-                        this.presentToast('Propic aggiornata con successo!', 'success');
+                        this.presentToast($localize`:@@settingsPage_propicUpdated:Propic aggiornata con successo!`, 'success');
                     },
                     error: async (err) => {
-                        const errorMsg =
-                            err.error?.message ||
-                            "Errore durante l'aggiornamento."
-                        this.presentToast(errorMsg, 'danger')
+                        this.presentToast($localize`:@@settingsPage_errorUpdate:Errore durante l'aggiornamento.`, 'danger')
                     },
                 })
         }
@@ -244,13 +232,13 @@ export class SettingsPage implements OnInit {
 
     async changeName() {
         const alert = await this.alertController.create({
-            header: 'Modifica nome',
-            subHeader: 'Il nuovo nome deve contenere tra 3 e 24 caratteri.',
+            header: $localize`:@@settingsPage_changeNameHeader:Modifica nome`,
+            subHeader: $localize`:@@settingsPage_changeNameSub:Il nuovo nome deve contenere tra 3 e 24 caratteri.`,
             inputs: [
                 {
                     name: 'newUsername',
                     type: 'text',
-                    placeholder: 'Nuovo nome utente',
+                    placeholder: $localize`:@@settingsPage_newUsernamePlaceholder:Nuovo nome utente`,
                     value: this.username(),
                     attributes: {
                         minlength: 3,
@@ -260,24 +248,24 @@ export class SettingsPage implements OnInit {
             ],
             buttons: [
                 {
-                    text: 'Annulla',
+                    text: $localize`:@@settingsPage_cancel:Annulla`,
                     role: 'cancel',
                     cssClass: 'secondary',
                 },
                 {
-                    text: 'Salva',
+                    text: $localize`:@@settingsPage_save:Salva`,
                     handler: (data) => {
                         const name = data.newUsername
                             ? data.newUsername.trim()
                             : ''
 
-                        // Controllo lunghezza tra 3 e 24 caratteri
+                        
                         if (name.length >= 3 && name.length <= 24) {
                             this.saveNewName(name)
-                            return true // Chiude il modal con successo
+                            return true 
                         }
 
-                        // Impedisce la chiusura del modal se i requisiti falliscono
+                        
                         return false
                     },
                 },
@@ -292,13 +280,12 @@ export class SettingsPage implements OnInit {
             next: async () => {
                 this.username.set(newName)
                 this.presentToast(
-                    'Username aggiornato con successo!',
+                    $localize`:@@settingsPage_usernameUpdated:Username aggiornato con successo!`,
                     'success'
                 )
             },
             error: async (err) => {
-                const errorMsg = "Errore durante l'aggiornamento."
-                this.presentToast(errorMsg, 'danger')
+                this.presentToast($localize`:@@settingsPage_errorUpdate:Errore durante l'aggiornamento.`, 'danger')
             },
         })
     }

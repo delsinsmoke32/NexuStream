@@ -10,23 +10,21 @@ export const httpInterceptor: HttpInterceptorFn = (req, next) => {
     const token = localStorage.getItem('token');
     const lang = localStorage.getItem('appLang') || 'it';
 
-    // 1. Cloniamo la richiesta aggiungendo sempre la lingua
+    // aggiungo lingua
     let apiReq = req.clone({
         setHeaders: {
             'Accept-Language': lang
         }
     });
 
-    // 2. Se è un URL relativo, aggiungiamo la baseUrl
+    //url relativo
     if (!req.url.startsWith('http://') && !req.url.startsWith('https://')) {
         apiReq = apiReq.clone({
             url: `${baseUrl}/${req.url}`,
         });
     }
 
-    // 3. Se l'utente è loggato, aggiungiamo il token.
-    // Usando .clone() su apiReq (che ha già la lingua), Angular unisce 
-    // automaticamente i nuovi header a quelli già esistenti.
+    //token se utente loggato
     if (token && apiReq.url.startsWith(baseUrl)) {
         apiReq = apiReq.clone({
             setHeaders: {

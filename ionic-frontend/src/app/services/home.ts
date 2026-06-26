@@ -3,7 +3,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { HomeResponse, ContinueWatchingInteractPayload } from '../models/home';
+import { HomeResponse } from '../models/home';
 
 /**
  * Servizio globale per la gestione dei contenuti della dashboard principale (Home).
@@ -24,22 +24,14 @@ export class HomeService {
     }
 
     /**
-     * Aggiorna lo stato di interazione di un episodio nel continua a guardare (es. rimozione).
-     * @param showId ID della serie.
-     * @param seasonId ID della stagione.
-     * @param episodeId ID dell'episodio.
-     * @param payload Oggetto contenente progressi, stati di completamento e abbandono.
+     * Rimuove l'intera serie dal "Continua a guardare" dell'utente.
+     * @param showId ID della serie da rimuovere.
      * @returns Un Observable con la risposta del server.
      */
-    updateEpisodeInteraction(
-        showId: number, 
-        seasonId: number, 
-        episodeId: number, 
-        payload: ContinueWatchingInteractPayload
-    ): Observable<any> {
+    removeShowFromContinueWatching(showId: number): Observable<any> {
         return this.http.post<any>(
-            `api/shows/${showId}/seasons/${seasonId}/episodes/${episodeId}/interact`, 
-            payload
+            `api/shows/${showId}/removeContinueWatching`, 
+            {}
         );
     }
 }

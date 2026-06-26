@@ -4,7 +4,7 @@
             [src]="
                 episode.ThumbnailURI
                     ? (episode.ThumbnailURI | backendUrl: 'static')
-                    : 'assets/placeholder-episode.png'
+                    : ('episode_thumbnails/bleach.png' | backendUrl: 'static')
             "
             [alt]="episode.Title"
         />
@@ -26,12 +26,14 @@
             <ion-icon name="play-circle"></ion-icon>
         </div>
 
-        <span class="duration-badge">{{ episode.Duration / 60 | number:'1.0-0' }} min</span>
+        <span class="duration-badge">{{ episode.Duration / 60 | number:'1.0-0' }} <ng-container i18n="@@episodeCard_min">min</ng-container></span>
     </div>
 
   <div class="ep-info">
     <div>
-      <h4 i18n="@@episode" class="ep-number">Episodio {{ episode.EpisodeNumber }}</h4>
+      <h4 class="ep-number">
+          <ng-container i18n="@@episodeCard_epNumber">Episodio</ng-container> {{ episode.EpisodeNumber }}
+      </h4>
       <h3 class="ep-title">{{ episode.Title }}</h3>
       <p class="ep-desc">{{ episode.Description }}</p>
     </div>

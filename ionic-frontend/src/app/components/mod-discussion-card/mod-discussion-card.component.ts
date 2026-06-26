@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { optionsOutline, trashOutline } from 'ionicons/icons';
-import { ModDiscussion } from '../../models/mod'; // Aggiusta il percorso!
+import { ModDiscussion } from '../../models/mod';
 
 @Component({
   selector: 'app-mod-discussion-card',
@@ -31,10 +31,10 @@ export class ModDiscussionCardComponent {
   }
 
   isDiscussionClosed(disc: ModDiscussion): boolean {
-    // Se è stata chiusa forzatamente da un mod
+    
     if (disc.ForceClosed === 1) return true;
 
-    // Se c'è una data di scadenza, controlliamo se è nel passato
+    
     if (disc.CloseDate) {
         const expirationDate = new Date(disc.CloseDate).getTime();
         const now = new Date().getTime();

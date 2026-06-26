@@ -87,20 +87,20 @@ const interactWithEpisode = async (req, res) => {
     const userId = req.user.id;
 
     try {
-        // 1. Recuperiamo lo stato del like precedente
+        // stato del like precedente
         const oldInteraction = await episodeModel.getPreviousLikeStatus(episodeId, userId);
         const oldLiked = oldInteraction ? oldInteraction.isLiked : 0;
 
-        // Se isLiked non viene mandato dal frontend, per sicurezza si usa quello vecchio
+        
         const safeIsLiked = (isLiked !== undefined && isLiked !== null) ? isLiked : oldLiked;
         
-        // 2. Calcoliamo il delta (1, -1, o 0)
+        
         const likeDelta = isLiked - oldLiked;
 
-        // 3. Eseguiamo l'upsert dell'interazione
+        
         await episodeModel.upsertEpisodeInteraction(userId, episodeId, progress, isCompleted, isDropped, isLiked);
 
-        // 4. Se l'utente ha modificato il suo mi piace, aggiorniamo il totale dell'episodio
+        
         if (likeDelta !== 0) {
             await episodeModel.updateEpisodeLikesCounter(likeDelta, episodeId);
         }
@@ -150,7 +150,7 @@ const setTimes = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { times } = req.body; // Ci aspettiamo un array di oggetti [{ StartTime: 5, EndTime: 20, Type: 'intro' }]
+    const { times } = req.body; 
 
     try {
         await episodeModel.updateEpisodeTimes(id, times);
@@ -160,16 +160,6 @@ const setTimes = async (req, res) => {
         return res.status(500).json({ error: "Errore interno del server durante il salvataggio dei tempi." });
     }
 };
-
-
-// ================================================================================================
-// ATTENZIONE!!! QUESTA E' LA VERSIONE MOCK DELLA STREAM, USATA PER NON DOVER CARICARE OGNI VOLTA
-// TUTTI LE CARTELLE (E FARE LE TRANSCODIFICHE NECESSARIE)
-// IN QUESTO MODO, TUTTI GLI EPISODI SONO LEGATI ALLA CARTELLA TEST IN public/videos/test
-// PER PROVARE LA STREAM EFFETTIVA, COMMENTARE QUESTA E DECOMMENTARE QUELLA SUCCESSIVA
-// TUTTAVIA, NON FUNZIONERA' PER GLI EPISODI PRESENTI NEL DATABASE 
-// (NON SI PUO' MODIFICARE IL FILE VIDEO DI UN EPISODIO), MA SOLO PER QUELLI NUOVI
-// ================================================================================================
 
 
 const fallbackStream = async (req, res) => {
@@ -248,13 +238,13 @@ const stream = async (req, res, next) => {
         if (StreamURI === "test") return fallbackStream(req, res, next)
 
         const baseUri = `http://${host}:${port}/static/videos/${StreamURI}/`;
-        // AGGIUNTO #EXT-X-INDEPENDENT-SEGMENTS per forzare l'avvio immediato senza blocchi sul timestamp 0
+        
         let m3u8 = '#EXTM3U\n#EXT-X-VERSION:6\n#EXT-X-INDEPENDENT-SEGMENTS\n#EXT-X-START:TIME-OFFSET=0\n\n';
 
         const audios = await episodeModel.getEpisodeDubs(episodeId) || []; 
         const subtitles = await episodeModel.getEpisodeSubs(episodeId) || []; 
 
-        // 2. Generazione Tracce Audio (DUB)
+        
         if (audios.length > 0) {
             audios.forEach((audioObj, index) => {
                 const langStr = typeof audioObj === 'string' ? audioObj : (audioObj.REF_LanguageID || audioObj.LanguageID || audioObj.lang || Object.values(audioObj)[0]);
@@ -262,7 +252,7 @@ const stream = async (req, res, next) => {
                 const isDefault = langStr === audioLang ? 'YES' : 'NO'; 
                 const langName = langNames[langStr] || langStr.toUpperCase();
                 
-                // AGGIUNTO CHARACTERISTICS="public.accessibility.describes-video" per legare stabilmente l'audio al video principale
+                
                 m3u8 += `#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="audio",NAME="${langName}",DEFAULT=${isDefault},AUTOSELECT=YES,LANGUAGE="${langStr}",CHARACTERISTICS="public.accessibility.describes-video",URI="${baseUri}audio_${langStr}/audio.m3u8"\n`;
             });
             m3u8 += '\n';
@@ -273,13 +263,13 @@ const stream = async (req, res, next) => {
                 const isDefault = langStr === textLang ? 'YES' : 'NO'; 
                 const langName = langNames[langStr] || langStr.toUpperCase();
                 
-                // ORA PUNTA ALLA PLAYLIST SEGMENTATA (subs.m3u8) E NON AL FILE SINGOLO
-                m3u8 += `#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID="subs",NAME="${langName}",DEFAULT=${isDefault},AUTOSELECT=YES,FORCED=NO,LANGUAGE="${langStr}",URI="${baseUri}subs_${langStr}/subs.m3u8"\n`;
+                
+                m3u8 += `#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID="subs",NAME="${langName}",DEFAULT=NO,AUTOSELECT=YES,FORCED=NO,LANGUAGE="${langStr}",URI="${baseUri}subs_${langStr}/subs.m3u8"\n`;
             });
             m3u8 += '\n';
         }
 
-        // 4. Flusso Video Principale
+        
         let streamInf = '#EXT-X-STREAM-INF:BANDWIDTH=6000000';
         if (audios.length > 0) streamInf += ',AUDIO="audio"';
         if (subtitles.length > 0) streamInf += ',SUBTITLES="subs"';

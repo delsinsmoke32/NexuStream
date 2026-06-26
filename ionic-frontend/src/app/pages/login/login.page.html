@@ -20,18 +20,19 @@
 <ion-content fullscreen class="login-content">
     <div class="login-container flex-centered">
         <div class="text-heading">
-            <h1 i18n="@@Welcome_to_NexuStream">Benvenuto su NexuStream</h1>
+            <h1 i18n="@@loginPage_welcome">Benvenuto su NexuStream</h1>
         </div>
 
         <ion-card class="form-log-in-card">
             <form [formGroup]="loginForm" (ngSubmit)="login()">
                 <ion-card-content>
                     <div class="input-group">
-                        <ion-label position="stacked">Email</ion-label>
+                        <ion-label position="stacked" i18n="@@emailLabel">Email</ion-label>
                         <ion-item lines="none" class="custom-input">
                             <ion-input
                                 type="email"
                                 formControlName="email"
+                                i18n-errorText="@@loginPage_invalidEmail"
                                 errorText="Inserisci un indirizzo email valido"
                                 placeholder="example@mail.com"
                             ></ion-input>
@@ -39,11 +40,12 @@
                     </div>
 
                     <div class="input-group" style="margin-top: 15px">
-                        <ion-label position="stacked">Password</ion-label>
+                        <ion-label position="stacked" i18n="@@passwordLabel">Password</ion-label>
                         <ion-item lines="none" class="custom-input">
                             <ion-input
                                 formControlName="password"
                                 type="password"
+                                i18n-errorText="@@invalidPasswordError"
                                 errorText="La password deve essere di almeno 8 caratteri"
                                 placeholder="password"
                             >
@@ -57,7 +59,7 @@
 
                     <div class="button-container" style="margin-top: 25px">
                         <ion-button
-                            i18n="@@login"
+                            i18n="@@LogLogin"
                             type="submit"
                             expand="block"
                             class="login-button"

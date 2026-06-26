@@ -18,7 +18,6 @@ export class AdminService {
 
     /**
      * Recupera il token dal localStorage e genera gli header di autenticazione.
-     * (Nota: Se in futuro implementi un HttpInterceptor, questa funzione potrà essere rimossa)
      */
     private getAuthHeaders(): HttpHeaders {
         const token = localStorage.getItem('token');

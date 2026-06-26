@@ -29,6 +29,10 @@ const authOptional = require("../middleware/authOptional");
  *                   type: array
  *                   items:
  *                     type: object
+ *                 recentDisc:
+ *                   type: array
+ *                   items:
+ *                     type: object
  *                 continueWatching:
  *                   type: array
  *                   items:

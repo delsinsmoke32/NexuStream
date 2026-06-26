@@ -37,7 +37,7 @@ ion-item {
   stroke: currentColor;
 }
 
-/* --- STILI BOX UPLOAD IMMAGINI --- */
+
 .upload-box {
   background: var(--ion-color-secondary, #181818);
   border: 2px dashed #3a3a3a;
@@ -80,7 +80,7 @@ ion-item {
     object-fit: cover;
   }
 
-  /* Formati ideali per le preview */
+  
   .thumb-aspect { aspect-ratio: 2 / 3; }
   .banner-aspect { aspect-ratio: 16 / 9; }
 }

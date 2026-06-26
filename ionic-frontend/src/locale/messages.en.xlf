@@ -3,20 +3,56 @@
   <file source-language="it" datatype="plaintext" original="ng2.template">
     <body>
       <trans-unit id="search" datatype="html">
-        <source>RICERCA</source>
-        <target>SEARCH</target>
+        <source>Ricerca</source>
+        <target state="new">SEARCH</target>
+      </trans-unit>
+      <trans-unit id="searchn" datatype="html">
+        <source>Cerca</source>
+        <target state="new">Cerca</target>
+      </trans-unit>
+      <trans-unit id="searchPage_cancel" datatype="html">
+        <source>Annulla</source>
+        <target state="new">Annulla</target>
+      </trans-unit>
+      <trans-unit id="searchPage_logout" datatype="html">
+        <source>Esci</source>
+        <target state="new">Esci</target>
+      </trans-unit>
+      <trans-unit id="searchPage_logoutConfirm" datatype="html">
+        <source>Sei sicuro di voler uscire da NexuStream?</source>
+        <target state="new">Sei sicuro di voler uscire da NexuStream?</target>
+      </trans-unit>
+      <trans-unit id="searchPage_logoutHeader" datatype="html">
+        <source>Disconnetti</source>
+        <target state="new">Disconnetti</target>
+      </trans-unit>
+      <trans-unit id="searchPage_sessionClosed" datatype="html">
+        <source>Sessione chiusa</source>
+        <target state="new">Sessione chiusa</target>
       </trans-unit>
       <trans-unit id="searchPlaceHolder" datatype="html">
         <source>Cerca serie, anime, descrizioni...</source>
         <target>Search serie, anime, descriptions...</target>
+      </trans-unit>
+      <trans-unit id="searchUsersPlaceholder" datatype="html">
+        <source>Cerca utente per username o email...</source>
+        <target state="new">Cerca utente per username o email...</target>
       </trans-unit>
       <trans-unit id="securityAccount" datatype="html">
         <source>Sicurezza Account</source>
         <target>Security Account</target>
       </trans-unit>
       <trans-unit id="langEnglish" datatype="html">
+        <source>Inglese</source>
+        <target state="new">Inglese</target>
+      </trans-unit>
+      <trans-unit id="langEnglishEn" datatype="html">
         <source>English</source>
         <target state="new">English</target>
+      </trans-unit>
+      <trans-unit id="langEnglishIt" datatype="html">
+        <source>Inglese</source>
+        <target state="new">Inglese</target>
       </trans-unit>
       <trans-unit id="langItalian" datatype="html">
         <source>Italiano</source>
@@ -26,13 +62,17 @@
         <source>Giapponese</source>
         <target state="new">Giapponese</target>
       </trans-unit>
-      <trans-unit id="logIn" datatype="html">
-        <source>Accedi</source>
-        <target>Log in</target>
+      <trans-unit id="loadingProfile" datatype="html">
+        <source>Caricamento profilo in corso...</source>
+        <target state="new">Caricamento profilo in corso...</target>
       </trans-unit>
-      <trans-unit id="login" datatype="html">
+      <trans-unit id="LogLogin" datatype="html">
         <source> Accesso </source>
         <target> Login </target>
+      </trans-unit>
+      <trans-unit id="account" datatype="html">
+        <source>Account</source>
+        <target state="new">Account</target>
       </trans-unit>
       <trans-unit id="accountRecovery" datatype="html">
         <source>Recupero Account</source>
@@ -42,6 +82,18 @@
         <source>Aggiunto ai Preferiti</source>
         <target>Added to Favourites</target>
       </trans-unit>
+      <trans-unit id="admin" datatype="html">
+        <source>Admin</source>
+        <target state="new">Admin</target>
+      </trans-unit>
+      <trans-unit id="adminPage_errUpdateRoles" datatype="html">
+        <source>Impossibile aggiornare i privilegi.</source>
+        <target state="new">Impossibile aggiornare i privilegi.</target>
+      </trans-unit>
+      <trans-unit id="adminPage_rolesUpdated" datatype="html">
+        <source>Privilegi utente aggiornati!</source>
+        <target state="new">Privilegi utente aggiornati!</target>
+      </trans-unit>
       <trans-unit id="all" datatype="html">
         <source>Tutti</source>
         <target>All</target>
@@ -50,12 +102,24 @@
         <source>Lingua dell&apos;applicazione</source>
         <target>App language</target>
       </trans-unit>
+      <trans-unit id="archive" datatype="html">
+        <source>Archivio</source>
+        <target state="new">Archivio</target>
+      </trans-unit>
+      <trans-unit id="assignPrivileges" datatype="html">
+        <source>Assegna Privilegi:</source>
+        <target state="new">Assegna Privilegi:</target>
+      </trans-unit>
+      <trans-unit id="audio" datatype="html">
+        <source>Audio:</source>
+        <target state="new">Audio:</target>
+      </trans-unit>
       <trans-unit id="audioLanguageLabel" datatype="html">
         <source>Audio predefinito</source>
         <target>Default audio</target>
       </trans-unit>
       <trans-unit id="backHome" datatype="html">
-        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;home-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Torna alla Home </source>
+        <source>Torna alla Home</source>
         <target state="new"><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;arrow-back-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Back to Home </target>
       </trans-unit>
       <trans-unit id="backLogin" datatype="html">
@@ -66,9 +130,33 @@
         <source>Annulla</source>
         <target>Annulla</target>
       </trans-unit>
-      <trans-unit id="chooseAvatar" datatype="html">
-        <source>Scegli il tuo Avatar</source>
-        <target>Choose your Avatar</target>
+      <trans-unit id="cataloguer" datatype="html">
+        <source>Catalogatore</source>
+        <target state="new">Catalogatore</target>
+      </trans-unit>
+      <trans-unit id="changePasswordModal_close" datatype="html">
+        <source>Chiudi</source>
+        <target state="new">Chiudi</target>
+      </trans-unit>
+      <trans-unit id="changePasswordModal_confirmPassLabel" datatype="html">
+        <source>Conferma Nuova Password</source>
+        <target state="new">Conferma Nuova Password</target>
+      </trans-unit>
+      <trans-unit id="changePasswordModal_currentPassLabel" datatype="html">
+        <source>Password Attuale</source>
+        <target state="new">Password Attuale</target>
+      </trans-unit>
+      <trans-unit id="changePasswordModal_newPassLabel" datatype="html">
+        <source>Nuova Password</source>
+        <target state="new">Nuova Password</target>
+      </trans-unit>
+      <trans-unit id="changePasswordModal_submitBtn" datatype="html">
+        <source> Aggiorna Password </source>
+        <target state="new"> Aggiorna Password </target>
+      </trans-unit>
+      <trans-unit id="changePasswordModal_title" datatype="html">
+        <source>Modifica Password</source>
+        <target state="new">Modifica Password</target>
       </trans-unit>
       <trans-unit id="choosePass" datatype="html">
         <source> Scegli una nuova password sicura per il tuo account. </source>
@@ -87,70 +175,278 @@
         <target>Confirm Password</target>
       </trans-unit>
       <trans-unit id="connessionErr" datatype="html">
-        <source>Errore di connessione.</source>
-        <target>Connession error.</target>
+        <source>Errore di connessione. Riprova.</source>
+        <target state="new">Connession error.</target>
       </trans-unit>
       <trans-unit id="continueWatching" datatype="html">
         <source>Continua a guardare</source>
         <target>Continue watching</target>
+      </trans-unit>
+      <trans-unit id="continueWatchingShow" datatype="html">
+        <source>Continua a guardare</source>
+        <target state="new">Continua a guardare</target>
+      </trans-unit>
+      <trans-unit id="editName" datatype="html">
+        <source>Modifica nome</source>
+        <target state="new">Modifica nome</target>
+      </trans-unit>
+      <trans-unit id="emailAddress" datatype="html">
+        <source>Indirizzo Email</source>
+        <target state="new">Indirizzo Email</target>
+      </trans-unit>
+      <trans-unit id="emailLabel" datatype="html">
+        <source>Email</source>
+        <target state="new">Email</target>
       </trans-unit>
       <trans-unit id="emptyList" datatype="html">
         <source>La tua lista è vuota</source>
         <target>Your list is empty</target>
       </trans-unit>
       <trans-unit id="episode" datatype="html">
-        <source>Episodio <x id="INTERPOLATION" equiv-text="{{ episode.EpisodeNumber }}"/></source>
-        <target>Episode <x id="INTERPOLATION" equiv-text="{{ episode().EpisodeNumber }}"/></target>
+        <source>Episodio</source>
+        <target state="new">Episode <x id="INTERPOLATION" equiv-text="{{ episode().EpisodeNumber }}"/></target>
       </trans-unit>
       <trans-unit id="errorLogin" datatype="html">
         <source> Errore durante l&apos;accesso.</source>
         <target> Error while logging.</target>
+      </trans-unit>
+      <trans-unit id="errorLoginCredentials" datatype="html">
+        <source> Credenziali errate.</source>
+        <target state="new"> Credenziali errate.</target>
       </trans-unit>
       <trans-unit id="exampleEmail" datatype="html">
         <source>esempio@mail.com</source>
         <target>example@mail.com</target>
       </trans-unit>
       <trans-unit id="expiration" datatype="html">
-        <source>Scadenza: <x id="INTERPOLATION" equiv-text="{{ disc.CloseDate }}"/> • <x id="INTERPOLATION_1" equiv-text="{{ disc.forceClosed ? &apos;(Chiusa)&apos; : &apos;(Aperta)&apos; }}"/></source>
-        <target>Expiration: <x id="INTERPOLATION" equiv-text="{{ disc.CloseDate }}"/> • <x id="INTERPOLATION_1" equiv-text="{{ disc.forceClosed ? &apos;(Chiusa)&apos; : &apos;(Aperta)&apos; }}"/></target>
+        <source> Scadenza: <x id="INTERPOLATION" equiv-text="{{ disc.CloseDate ? (disc.CloseDate | date:&apos;dd/MM/yyyy HH:mm&apos;) : &apos;Nessuna&apos;}}"/> • <x id="INTERPOLATION_1" equiv-text="{{ isDiscussionClosed(disc) ? &apos;(Chiusa)&apos; : &apos;(Aperta)&apos; }}"/> </source>
+        <target state="new">Expiration: <x id="INTERPOLATION" equiv-text="{{ disc.CloseDate }}"/> • <x id="INTERPOLATION_1" equiv-text="{{ disc.forceClosed ? &apos;(Chiusa)&apos; : &apos;(Aperta)&apos; }}"/></target>
       </trans-unit>
-      <trans-unit id="expiredLink" datatype="html">
-        <source> Link scaduto o non valido.</source>
-        <target> Expired or invalid link.</target>
+      <trans-unit id="expirationBan" datatype="html">
+        <source>Scadenza:</source>
+        <target state="new">Scadenza:</target>
+      </trans-unit>
+      <trans-unit id="research" datatype="html">
+        <source>Cerca</source>
+        <target state="new">Cerca</target>
+      </trans-unit>
+      <trans-unit id="resetPage_expiredLink" datatype="html">
+        <source>Link scaduto o non valido.</source>
+        <target>Expired or invalid link.</target>
       </trans-unit>
       <trans-unit id="explore" datatype="html">
         <source> Esplora Anime </source>
         <target> Explore Anime </target>
       </trans-unit>
       <trans-unit id="favourites" datatype="html">
-        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;heart-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> I miei preferiti </source>
-        <target><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;heart-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> My favourites </target>
+        <source>Preferiti</source>
+        <target state="new"><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;heart-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> My favourites </target>
       </trans-unit>
-      <trans-unit id="forgotErrorToast" datatype="html">
-        <source> Errore durante l&apos;invio della richiesta.</source>
-        <target> Error while sending request.</target>
+      <trans-unit id="favouritesPage_connError" datatype="html">
+        <source>Errore di connessione. Riprova.</source>
+        <target state="new">Errore di connessione. Riprova.</target>
+      </trans-unit>
+      <trans-unit id="favouritesPage_errLoad" datatype="html">
+        <source>Impossibile caricare i preferiti.</source>
+        <target state="new">Impossibile caricare i preferiti.</target>
+      </trans-unit>
+      <trans-unit id="favouritesPage_removed" datatype="html">
+        <source>Rimosso dai Preferiti</source>
+        <target state="new">Rimosso dai Preferiti</target>
+      </trans-unit>
+      <trans-unit id="fetchingHistory" datatype="html">
+        <source>Recupero cronologia commenti...</source>
+        <target state="new">Recupero cronologia commenti...</target>
+      </trans-unit>
+      <trans-unit id="forgotPage_errorToast" datatype="html">
+        <source>Errore durante l&apos;invio della richiesta.</source>
+        <target>Error while sending request.</target>
       </trans-unit>
       <trans-unit id="forgotPass" datatype="html">
         <source>Hai dimenticato la password?</source>
         <target state="new">Forgot password?</target>
       </trans-unit>
-      <trans-unit id="forgotSuccessToast" datatype="html">
-        <source> Controlla la tua casella di posta!</source>
-        <target> Check your mailbox!</target>
+      <trans-unit id="forgotPage_successToast" datatype="html">
+        <source>Controlla la tua casella di posta!</source>
+        <target>Check your mailbox!</target>
       </trans-unit>
       <trans-unit id="genres" datatype="html">
         <source>Generi:</source>
         <target>Genres:</target>
       </trans-unit>
-      <trans-unit id="deleteBtn" datatype="html">
+      <trans-unit id="goToLogin" datatype="html">
+        <source>Hai già un account? Vai al login!</source>
+        <target state="new">Hai già un account? Vai al login!</target>
+      </trans-unit>
+      <trans-unit id="goToRegister" datatype="html">
+        <source>Non hai un account? Registrati ora!</source>
+        <target state="new">Non hai un account? Registrati ora!</target>
+      </trans-unit>
+      <trans-unit id="modDashboard" datatype="html">
+        <source>Dashboard Moderazione</source>
+        <target state="new">Dashboard Moderazione</target>
+      </trans-unit>
+      <trans-unit id="modDiscCard_delete" datatype="html">
         <source>Elimina</source>
         <target>Delete</target>
       </trans-unit>
-      <trans-unit id="deleteDiscussionHeader" datatype="html">
+      <trans-unit id="modDiscCard_episode" datatype="html">
+        <source>Episodio</source>
+        <target state="new">Episodio</target>
+      </trans-unit>
+      <trans-unit id="modDiscCard_expiryDate" datatype="html">
+        <source>Data Scadenza:</source>
+        <target state="new">Data Scadenza:</target>
+      </trans-unit>
+      <trans-unit id="modDiscCard_manage" datatype="html">
+        <source>Gestisci</source>
+        <target state="new">Gestisci</target>
+      </trans-unit>
+      <trans-unit id="modDiscCard_roomType" datatype="html">
+        <source>Tipologia Stanza:</source>
+        <target state="new">Tipologia Stanza:</target>
+      </trans-unit>
+      <trans-unit id="modDiscCard_season" datatype="html">
+        <source>Stagione</source>
+        <target state="new">Stagione</target>
+      </trans-unit>
+      <trans-unit id="moderation" datatype="html">
+        <source>Moderazione</source>
+        <target state="new">Moderazione</target>
+      </trans-unit>
+      <trans-unit id="modPage_approvalRemoved" datatype="html">
+        <source>Approvazione rimossa</source>
+        <target state="new">Approvazione rimossa</target>
+      </trans-unit>
+      <trans-unit id="modPage_ban3Days" datatype="html">
+        <source>Sanzione Temporanea - 3 Giorni</source>
+        <target state="new">Sanzione Temporanea - 3 Giorni</target>
+      </trans-unit>
+      <trans-unit id="modPage_ban7Days" datatype="html">
+        <source>Sanzione Temporanea - 7 Giorni</source>
+        <target state="new">Sanzione Temporanea - 7 Giorni</target>
+      </trans-unit>
+      <trans-unit id="modPage_banHeader" datatype="html">
+        <source>Restringi permessi di commento per: <x id="PH" equiv-text="user.Username"/></source>
+        <target state="new">Restringi permessi di commento per: <x id="PH" equiv-text="user.Username"/></target>
+      </trans-unit>
+      <trans-unit id="modPage_banPermanent" datatype="html">
+        <source>Sanzione Permanente - Indefinita</source>
+        <target state="new">Sanzione Permanente - Indefinita</target>
+      </trans-unit>
+      <trans-unit id="modPage_cancel" datatype="html">
+        <source>Annulla</source>
+        <target state="new">Annulla</target>
+      </trans-unit>
+      <trans-unit id="modPage_commentApproved" datatype="html">
+        <source>Commento approvato</source>
+        <target state="new">Commento approvato</target>
+      </trans-unit>
+      <trans-unit id="modPage_commentHidden" datatype="html">
+        <source>Commento nascosto</source>
+        <target state="new">Commento nascosto</target>
+      </trans-unit>
+      <trans-unit id="modPage_commentVisible" datatype="html">
+        <source>Commento reso visibile</source>
+        <target state="new">Commento reso visibile</target>
+      </trans-unit>
+      <trans-unit id="modPage_delete" datatype="html">
+        <source>Elimina</source>
+        <target state="new">Elimina</target>
+      </trans-unit>
+      <trans-unit id="modPage_deleteConfirmHeader" datatype="html">
+        <source>Conferma Eliminazione</source>
+        <target state="new">Conferma Eliminazione</target>
+      </trans-unit>
+      <trans-unit id="modPage_deleteConfirmMsg" datatype="html">
+        <source>Sei sicuro di voler eliminare questa discussione? L&apos;azione cancellerà tutti i commenti collegati.</source>
+        <target state="new">Sei sicuro di voler eliminare questa discussione? L&apos;azione cancellerà tutti i commenti collegati.</target>
+      </trans-unit>
+      <trans-unit id="modPage_discussionCreated" datatype="html">
+        <source>Nuova discussione creata con successo</source>
+        <target state="new">Nuova discussione creata con successo</target>
+      </trans-unit>
+      <trans-unit id="modPage_discussionDeleted" datatype="html">
+        <source>Discussione eliminata permanentemente</source>
+        <target state="new">Discussione eliminata permanentemente</target>
+      </trans-unit>
+      <trans-unit id="modPage_discussionUpdated" datatype="html">
+        <source>Discussione aggiornata con successo</source>
+        <target state="new">Discussione aggiornata con successo</target>
+      </trans-unit>
+      <trans-unit id="modPage_errCreate" datatype="html">
+        <source>Errore in creazione</source>
+        <target state="new">Errore in creazione</target>
+      </trans-unit>
+      <trans-unit id="modPage_errDelete" datatype="html">
+        <source>Errore durante l&apos;eliminazione</source>
+        <target state="new">Errore durante l&apos;eliminazione</target>
+      </trans-unit>
+      <trans-unit id="modPage_errLoadComments" datatype="html">
+        <source>Impossibile scaricare la cronologia commenti</source>
+        <target state="new">Impossibile scaricare la cronologia commenti</target>
+      </trans-unit>
+      <trans-unit id="modPage_errLoadDiscussions" datatype="html">
+        <source>Errore nel recupero delle discussioni</source>
+        <target state="new">Errore nel recupero delle discussioni</target>
+      </trans-unit>
+      <trans-unit id="modPage_errLoadUsers" datatype="html">
+        <source>Errore nel caricamento della lista utenti</source>
+        <target state="new">Errore nel caricamento della lista utenti</target>
+      </trans-unit>
+      <trans-unit id="modPage_errUpdate" datatype="html">
+        <source>Errore durante l&apos;aggiornamento</source>
+        <target state="new">Errore durante l&apos;aggiornamento</target>
+      </trans-unit>
+      <trans-unit id="modPage_errUpdateStatus" datatype="html">
+        <source>Errore durante la modifica dello stato</source>
+        <target state="new">Errore durante la modifica dello stato</target>
+      </trans-unit>
+      <trans-unit id="modUserComment_approved" datatype="html">
+        <source>Approvato</source>
+        <target state="new">Approvato</target>
+      </trans-unit>
+      <trans-unit id="modUserComment_hidden" datatype="html">
+        <source>Nascosto</source>
+        <target state="new">Nascosto</target>
+      </trans-unit>
+      <trans-unit id="modUserComment_status" datatype="html">
+        <source>Stato: </source>
+        <target state="new">Stato: </target>
+      </trans-unit>
+      <trans-unit id="modUserComment_waiting" datatype="html">
+        <source>In attesa</source>
+        <target state="new">In attesa</target>
+      </trans-unit>
+      <trans-unit id="episodeCard_epNumber" datatype="html">
+        <source>Episodio</source>
+        <target state="new">Episodio</target>
+      </trans-unit>
+      <trans-unit id="episodeCard_min" datatype="html">
+        <source>min</source>
+        <target state="new">min</target>
+      </trans-unit>
+      <trans-unit id="episodeLabel" datatype="html">
+        <source>S</source>
+        <target state="new">S</target>
+      </trans-unit>
+      <trans-unit id="episodePage_cancelBtn" datatype="html">
+        <source>Annulla</source>
+        <target state="new">Annulla</target>
+      </trans-unit>
+      <trans-unit id="episodePage_connErr" datatype="html">
+        <source>Errore di connessione.</source>
+        <target state="new">Errore di connessione.</target>
+      </trans-unit>
+      <trans-unit id="episodePage_deleteBtn" datatype="html">
+        <source>Elimina</source>
+        <target state="new">Elimina</target>
+      </trans-unit>
+      <trans-unit id="episodePage_deleteDiscussionHeader" datatype="html">
         <source>Conferma Eliminazione</source>
         <target>Confirm deletion</target>
       </trans-unit>
-      <trans-unit id="deleteDiscussionMessage" datatype="html">
+      <trans-unit id="episodePage_deleteDiscussionMessage" datatype="html">
         <source>Sei sicuro di voler eliminare questa discussione? L&apos;azione è irreversibile.</source>
         <target>Are you sure you want to delete this discussion? The action is is irreversible.</target>
       </trans-unit>
@@ -158,9 +454,13 @@
         <source>ACCESSO NEGATO</source>
         <target>ACCESS DENIED</target>
       </trans-unit>
+      <trans-unit id="differentConfPassError" datatype="html">
+        <source>Conferma la password</source>
+        <target state="new">Conferma la password</target>
+      </trans-unit>
       <trans-unit id="disconnectAccount" datatype="html">
-        <source>Sconnetti Account</source>
-        <target>Disconnect Account</target>
+        <source>Disconnetti Account</source>
+        <target state="new">Disconnect Account</target>
       </trans-unit>
       <trans-unit id="disconnectHeader" datatype="html">
         <source>Disconnetti</source>
@@ -174,75 +474,203 @@
         <source>Discussioni dell&apos;episodio</source>
         <target>Discussion of the episode</target>
       </trans-unit>
-      <trans-unit id="sameSeason" datatype="html">
-        <source>Nella stessa stagione</source>
-        <target>In the same season</target>
+      <trans-unit id="discussionModal_cancel" datatype="html">
+        <source>Annulla</source>
+        <target state="new">Annulla</target>
       </trans-unit>
-      <trans-unit id="impossibleLoading" datatype="html">
+      <trans-unit id="discussionModal_closeDateLabel" datatype="html">
+        <source>Data di Chiusura (YYYY-MM-DD HH:MM)</source>
+        <target state="new">Data di Chiusura (YYYY-MM-DD HH:MM)</target>
+      </trans-unit>
+      <trans-unit id="discussionModal_closeDatePlaceholder" datatype="html">
+        <source>2027-01-01 00:00</source>
+        <target state="new">2027-01-01 00:00</target>
+      </trans-unit>
+      <trans-unit id="discussionModal_episodeIdInfo" datatype="html">
+        <source>Creazione discussione per l&apos;Episodio ID:</source>
+        <target state="new">Creazione discussione per l&apos;Episodio ID:</target>
+      </trans-unit>
+      <trans-unit id="discussionModal_episodeIdLabel" datatype="html">
+        <source>ID Episodio (Obbligatorio)</source>
+        <target state="new">ID Episodio (Obbligatorio)</target>
+      </trans-unit>
+      <trans-unit id="discussionModal_episodeIdPlaceholder" datatype="html">
+        <source>Es. 14</source>
+        <target state="new">Es. 14</target>
+      </trans-unit>
+      <trans-unit id="discussionModal_forceClose" datatype="html">
+        <source>Forza Chiusura Canale</source>
+        <target state="new">Forza Chiusura Canale</target>
+      </trans-unit>
+      <trans-unit id="discussionModal_title" datatype="html">
+        <source>Discussione</source>
+        <target state="new">Discussione</target>
+      </trans-unit>
+      <trans-unit id="discussionModal_typeLabel" datatype="html">
+        <source>Tipo Discussione</source>
+        <target state="new">Tipo Discussione</target>
+      </trans-unit>
+      <trans-unit id="discussionModal_typePlaceholder" datatype="html">
+        <source>Seleziona tipo</source>
+        <target state="new">Seleziona tipo</target>
+      </trans-unit>
+      <trans-unit id="discussionModal_typeSpoiler" datatype="html">
+        <source>Spoiler</source>
+        <target state="new">Spoiler</target>
+      </trans-unit>
+      <trans-unit id="discussionModal_typeStandard" datatype="html">
+        <source>Standard</source>
+        <target state="new">Standard</target>
+      </trans-unit>
+      <trans-unit id="discussions" datatype="html">
+        <source>Discussioni</source>
+        <target state="new">Discussioni</target>
+      </trans-unit>
+      <trans-unit id="sameSeason" datatype="html">
+        <source> Nella stessa stagione </source>
+        <target> In the same season </target>
+      </trans-unit>
+      <trans-unit id="save" datatype="html">
+        <source>Salva</source>
+        <target state="new">Salva</target>
+      </trans-unit>
+      <trans-unit id="home" datatype="html">
+        <source>Home</source>
+        <target state="new">Home</target>
+      </trans-unit>
+      <trans-unit id="homeButton" datatype="html">
+        <source>Home</source>
+        <target state="new">Home</target>
+      </trans-unit>
+      <trans-unit id="homePage_connectionError" datatype="html">
+        <source>Errore di connessione</source>
+        <target state="new">Errore di connessione</target>
+      </trans-unit>
+      <trans-unit id="homePage_impossibleLoading" datatype="html">
         <source>Impossibile caricare i contenuti.</source>
         <target>Unable to load content.</target>
+      </trans-unit>
+      <trans-unit id="homePage_removedFromContinue" datatype="html">
+        <source>Rimosso dal &quot;Continua a guardare&quot;</source>
+        <target state="new">Rimosso dal &quot;Continua a guardare&quot;</target>
       </trans-unit>
       <trans-unit id="insertEmailRecovery" datatype="html">
         <source> Inserisci la tua email per ricevere il link di ripristino temporaneo. </source>
         <target> Enter your email to receive the temporary restore link. </target>
       </trans-unit>
-      <trans-unit id="insertLogin" datatype="html">
-        <source> Inserisci un&apos;email valida e una password di almeno 8 caratteri.</source>
-        <target> Enter a valid email and a password of at least 8 characters.</target>
-      </trans-unit>
       <trans-unit id="invalidEmailError" datatype="html">
         <source>Indirizzo email non valido</source>
-        <target>Invalid email address</target>
+        <target state="new">Invalid email address</target>
       </trans-unit>
-      <trans-unit id="invalidForm" datatype="html">
-        <source> Inserisci un indirizzo email valido.</source>
-        <target> Enter a valid email address.</target>
+      <trans-unit id="invalidPasswordError" datatype="html">
+        <source>La password deve essere di almeno 8 caratteri</source>
+        <target state="new">La password deve essere di almeno 8 caratteri</target>
       </trans-unit>
-      <trans-unit id="invalidToken" datatype="html">
+      <trans-unit id="forgotPage_invalidForm" datatype="html">
+        <source>Inserisci un indirizzo email valido.</source>
+        <target>Enter a valid email address.</target>
+      </trans-unit>
+      <trans-unit id="resetPage_invalidToken" datatype="html">
         <source>Token sessione non valido.</source>
         <target>Invalid session token.</target>
       </trans-unit>
       <trans-unit id="dontWantLogin" datatype="html">
         <source>Non vuoi fare login? </source>
-        <target>Don't want to log in? </target>
+        <target>Don&apos;t want to log in? </target>
       </trans-unit>
       <trans-unit id="backToHome" datatype="html">
         <source>Torna alla home</source>
         <target>Back to home</target>
       </trans-unit>
+      <trans-unit id="backToHome" datatype="html">
+        <source>Torna alla home</source>
+        <target>Back to home</target>
+      </trans-unit>
+      <trans-unit id="badgeAdmin" datatype="html">
+        <source>Admin</source>
+        <target state="new">Admin</target>
+      </trans-unit>
+      <trans-unit id="badgeBase" datatype="html">
+        <source>Utente Base</source>
+        <target state="new">Utente Base</target>
+      </trans-unit>
+      <trans-unit id="badgeCataloguer" datatype="html">
+        <source>Catalogatore</source>
+        <target state="new">Catalogatore</target>
+      </trans-unit>
+      <trans-unit id="badgeMod" datatype="html">
+        <source>Mod</source>
+        <target state="new">Mod</target>
+      </trans-unit>
+      <trans-unit id="loginNow" datatype="html">
+        <source>Accedi Ora</source>
+        <target state="new">Accedi Ora</target>
+      </trans-unit>
+      <trans-unit id="loginPage_invalidEmail" datatype="html">
+        <source>Inserisci un indirizzo email valido</source>
+        <target state="new">Inserisci un indirizzo email valido</target>
+      </trans-unit>
+      <trans-unit id="loginPage_welcome" datatype="html">
+        <source>Benvenuto su NexuStream</source>
+        <target state="new">Benvenuto su NexuStream</target>
+      </trans-unit>
       <trans-unit id="loginRequiredFavouritesToast" datatype="html">
         <source>Devi accedere per aggiungere ai preferiti!</source>
         <target>You have to log in to add to your favourites!</target>
       </trans-unit>
-      <trans-unit id="logInToLike" datatype="html">
+      <trans-unit id="episodePage_logInToLike" datatype="html">
         <source>Devi accedere per mettere Mi Piace!</source>
         <target>You have to login to put like!</target>
       </trans-unit>
+      <trans-unit id="episodePage_mockWarning" datatype="html">
+        <source>Per motivi di spazio, la stream di questo episodio è un mock e non corrisponde al reale episodio.</source>
+        <target state="new">Per motivi di spazio, la stream di questo episodio è un mock e non corrisponde al reale episodio.</target>
+      </trans-unit>
+      <trans-unit id="episodePage_nextSeasonStart" datatype="html">
+        <source>Inizio Stagione <x id="PH" equiv-text="nextSeason.SeasonNumber"/>...</source>
+        <target state="new">Inizio Stagione <x id="PH" equiv-text="nextSeason.SeasonNumber"/>...</target>
+      </trans-unit>
+      <trans-unit id="episodePage_seriesFinished" datatype="html">
+        <source>Hai concluso la serie!</source>
+        <target state="new">Hai concluso la serie!</target>
+      </trans-unit>
+      <trans-unit id="episodeSeparator" datatype="html">
+        <source>E</source>
+        <target state="new">E</target>
+      </trans-unit>
+      <trans-unit id="logout" datatype="html">
+        <source>Esci</source>
+        <target state="new">Esci</target>
+      </trans-unit>
       <trans-unit id="logOut" datatype="html">
-        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;log-out-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Esci </source>
-        <target>Logout</target>
+        <source>Esci</source>
+        <target state="new">Logout</target>
       </trans-unit>
       <trans-unit id="messEmptyList" datatype="html">
-        <source>Esplora la home page per aggiungere i tuoi anime preferiti e non perderti nessun aggiornamento.</source>
-        <target>Explore your home page to add your favourite anime and don&apos;t lose any news.</target>
+        <source> Esplora la home page per aggiungere i tuoi anime preferiti e non perderti nessun aggiornamento. </source>
+        <target> Explore your home page to add your favourite anime and don&apos;t lose any news. </target>
       </trans-unit>
       <trans-unit id="messNotFound" datatype="html">
         <source> La risorsa che stai cercando potrebbe essere stata rimossa, aver cambiato nome o essere temporaneamente non disponibile. </source>
         <target> The resource you are looking for may have been removed, changed its name, or be temporarily unavailable. </target>
       </trans-unit>
       <trans-unit id="minimumCharPassError" datatype="html">
-        <source>Minimo 8 caratteri richiesti, max 24</source>
-        <target>Minimum 8 characters required, max 24</target>
+        <source>Minimo 8 caratteri richiesti, massimo 24</source>
+        <target state="new">Minimum 8 characters required, max 24</target>
       </trans-unit>
-      <trans-unit id="missingToken" datatype="html">
+      <trans-unit id="resetPage_missingToken" datatype="html">
         <source>Token di ripristino mancante o scaduto.</source>
         <target>Missing or expired recovery token.</target>
+      </trans-unit>
+      <trans-unit id="moreInfo" datatype="html">
+        <source>Altre Info</source>
+        <target state="new">Altre Info</target>
       </trans-unit>
       <trans-unit id="mostLiked" datatype="html">
         <source>I più amati dagli utenti</source>
         <target>Most liked by users</target>
       </trans-unit>
-      <trans-unit id="mostViewed" datatype="html">
+      <trans-unit id="mostViewedWeek" datatype="html">
         <source>I più visti questa settimana</source>
         <target>Most viewed this week</target>
       </trans-unit>
@@ -259,20 +687,32 @@
         <target>What is your name?</target>
       </trans-unit>
       <trans-unit id="new" datatype="html">
-        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;chatbubbles-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Nuova </source>
-        <target><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;chatbubbles-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> New </target>
+        <source>Nuova</source>
+        <target state="new"><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;chatbubbles-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> New </target>
+      </trans-unit>
+      <trans-unit id="newDiscussion" datatype="html">
+        <source>Nuova Discussione</source>
+        <target state="new">Nuova Discussione</target>
       </trans-unit>
       <trans-unit id="newPassword" datatype="html">
         <source>Nuova Password</source>
         <target>New Password</target>
       </trans-unit>
+      <trans-unit id="noActiveDiscussions" datatype="html">
+        <source> Non ci sono discussioni attive da moderare corrispondenti ai filtri impostati. </source>
+        <target state="new"> Non ci sono discussioni attive da moderare corrispondenti ai filtri impostati. </target>
+      </trans-unit>
       <trans-unit id="noAnimeFound" datatype="html">
-        <source>Nessun anime trovato corrispondente ai filtri.</source>
-        <target state="new">Nessun anime trovato corrispondente ai filtri.</target>
+        <source> Nessun anime trovato corrispondente ai filtri. </source>
+        <target state="new"> Nessun anime trovato corrispondente ai filtri. </target>
+      </trans-unit>
+      <trans-unit id="noCommentsYet" datatype="html">
+        <source> Questo utente non ha ancora pubblicato alcun commento. </source>
+        <target state="new"> Questo utente non ha ancora pubblicato alcun commento. </target>
       </trans-unit>
       <trans-unit id="noDiscussion" datatype="html">
-        <source>Nessuna discussione aperta per questo episodio.</source>
-        <target>No discussion open for this episode.</target>
+        <source> Nessuna discussione aperta per questo episodio. </source>
+        <target> No discussion open for this episode. </target>
       </trans-unit>
       <trans-unit id="noEpisode" datatype="html">
         <source>Nessun episodio trovato per questa stagione.</source>
@@ -282,37 +722,177 @@
         <source> Non hai i permessi necessari per visualizzare questa risorsa. </source>
         <target> You do not have the required permissions to view this resource. </target>
       </trans-unit>
+      <trans-unit id="notAvailable" datatype="html">
+        <source>N/D</source>
+        <target state="new">N/D</target>
+      </trans-unit>
+      <trans-unit id="noUsersFound" datatype="html">
+        <source>Nessun Utente trovato</source>
+        <target state="new">Nessun Utente trovato</target>
+      </trans-unit>
+      <trans-unit id="noUsersFoundDesc" datatype="html">
+        <source>Nessun record corrisponde ai criteri di ricerca impostati.</source>
+        <target state="new">Nessun record corrisponde ai criteri di ricerca impostati.</target>
+      </trans-unit>
+      <trans-unit id="noUsersFoundTitle" datatype="html">
+        <source>Nessun utente trovato</source>
+        <target state="new">Nessun utente trovato</target>
+      </trans-unit>
+      <trans-unit id="noUsersSearchDesc" datatype="html">
+        <source> La ricerca non ha prodotto risultati utili tra gli utenti standard della piattaforma. </source>
+        <target state="new"> La ricerca non ha prodotto risultati utili tra gli utenti standard della piattaforma. </target>
+      </trans-unit>
       <trans-unit id="obligatoryUser" datatype="html">
         <source>Lo username è obbligatorio (min 3 caratteri, max 24)</source>
         <target>Username is obligatory (min 3 characters, max 24)</target>
       </trans-unit>
-      <trans-unit id="otherInfos" datatype="html">
-        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon name=&quot;information-circle-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Altre Info </source>
-        <target><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon name=&quot;information-circle-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> More Infos </target>
+      <trans-unit id="oops" datatype="html">
+        <source>Ops!</source>
+        <target state="new">Ops!</target>
+      </trans-unit>
+      <trans-unit id="commentHistory" datatype="html">
+        <source> Cronologia Commenti (Ordinati per Report) </source>
+        <target state="new"> Cronologia Commenti (Ordinati per Report) </target>
+      </trans-unit>
+      <trans-unit id="commentsComp_badgeApproved" datatype="html">
+        <source>Approvato</source>
+        <target state="new">Approvato</target>
+      </trans-unit>
+      <trans-unit id="commentsComp_badgeHidden" datatype="html">
+        <source>Nascosto</source>
+        <target state="new">Nascosto</target>
+      </trans-unit>
+      <trans-unit id="commentsComp_discussionClosed" datatype="html">
+        <source>Questa discussione è chiusa o scaduta. Non è più possibile inserire nuovi commenti.</source>
+        <target state="new">Questa discussione è chiusa o scaduta. Non è più possibile inserire nuovi commenti.</target>
+      </trans-unit>
+      <trans-unit id="commentsComp_goToLogin" datatype="html">
+        <source>Vai al Login</source>
+        <target state="new">Vai al Login</target>
+      </trans-unit>
+      <trans-unit id="commentsComp_loginRequiredDesc" datatype="html">
+        <source>Devi effettuare l&apos;accesso per visualizzare e pubblicare commenti in questa discussione.</source>
+        <target state="new">Devi effettuare l&apos;accesso per visualizzare e pubblicare commenti in questa discussione.</target>
+      </trans-unit>
+      <trans-unit id="commentsComp_loginRequiredTitle" datatype="html">
+        <source>Accesso Richiesto</source>
+        <target state="new">Accesso Richiesto</target>
+      </trans-unit>
+      <trans-unit id="commentsComp_noComments" datatype="html">
+        <source>Nessun commento. Sii il primo a dire la tua!</source>
+        <target state="new">Nessun commento. Sii il primo a dire la tua!</target>
+      </trans-unit>
+      <trans-unit id="commentsComp_preview" datatype="html">
+        <source>Anteprima:</source>
+        <target state="new">Anteprima:</target>
+      </trans-unit>
+      <trans-unit id="commentsComp_replyBtn" datatype="html">
+        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon name=&quot;arrow-undo-outline&quot; slot=&quot;start&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Rispondi </source>
+        <target state="new"><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon name=&quot;information-circle-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> More Infos </target>
+      </trans-unit>
+      <trans-unit id="commentsComp_replyingTo" datatype="html">
+        <source>In risposta a</source>
+        <target state="new">In risposta a</target>
+      </trans-unit>
+      <trans-unit id="commentsComp_reportBtn" datatype="html">
+        <source>Segnala</source>
+        <target state="new">Segnala</target>
+      </trans-unit>
+      <trans-unit id="commentsComp_sendBtn" datatype="html">
+        <source>Invia</source>
+        <target state="new">Invia</target>
       </trans-unit>
       <trans-unit id="pageNotFound" datatype="html">
         <source> PAGINA NON TROVATA </source>
         <target> PAGE NOT FOUND </target>
       </trans-unit>
       <trans-unit id="passNotCoincide" datatype="html">
-        <source>Le password inserite non coincidono.</source>
-        <target>The passwords entered do not match.</target>
+        <source> Le password inserite non coincidono. </source>
+        <target> The passwords entered do not match. </target>
+      </trans-unit>
+      <trans-unit id="passwordLabel" datatype="html">
+        <source>Password</source>
+        <target state="new">Password</target>
+      </trans-unit>
+      <trans-unit id="paywall" datatype="html">
+        <source>Per guardare il video devi effettuare l&apos;accesso</source>
+        <target state="new">Per guardare il video devi effettuare l&apos;accesso</target>
+      </trans-unit>
+      <trans-unit id="permanentSanction" datatype="html">
+        <source> Sanzione Permanente </source>
+        <target state="new"> Sanzione Permanente </target>
       </trans-unit>
       <trans-unit id="play" datatype="html">
-        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon name=&quot;play&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Riproduci </source>
-        <target><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon name=&quot;play&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Play </target>
+        <source>Riproduci</source>
+        <target state="new"><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon name=&quot;play&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Play </target>
       </trans-unit>
       <trans-unit id="preferences" datatype="html">
         <source>Preferenze</source>
         <target>Preferences</target>
       </trans-unit>
-      <trans-unit id="rawEmail" datatype="html">
-        <source> Il campo email non può contenere solo spazi vuoti.</source>
-        <target> Email field cannot contain only blank spaces.</target>
+      <trans-unit id="profile" datatype="html">
+        <source>Profilo</source>
+        <target state="new">Profilo</target>
+      </trans-unit>
+      <trans-unit id="propicModal_advice" datatype="html">
+        <source>Si consiglia un formato circolare se possibile</source>
+        <target state="new">Si consiglia un formato circolare se possibile</target>
+      </trans-unit>
+      <trans-unit id="propicModal_bundleNameLabel" datatype="html">
+        <source>Nome Bundle</source>
+        <target state="new">Nome Bundle</target>
+      </trans-unit>
+      <trans-unit id="propicModal_bundlePlaceholder" datatype="html">
+        <source>Es. Halloween, Default, VIP...</source>
+        <target state="new">Es. Halloween, Default, VIP...</target>
+      </trans-unit>
+      <trans-unit id="propicModal_bundleSection" datatype="html">
+        <source>Dettagli Pacchetto</source>
+        <target state="new">Dettagli Pacchetto</target>
+      </trans-unit>
+      <trans-unit id="propicModal_cancel" datatype="html">
+        <source>Annulla</source>
+        <target state="new">Annulla</target>
+      </trans-unit>
+      <trans-unit id="propicModal_changeImage" datatype="html">
+        <source>Cambia Immagine</source>
+        <target state="new">Cambia Immagine</target>
+      </trans-unit>
+      <trans-unit id="propicModal_imageSection" datatype="html">
+        <source>Immagine Avatar</source>
+        <target state="new">Immagine Avatar</target>
+      </trans-unit>
+      <trans-unit id="propicModal_saveToCatalog" datatype="html">
+        <source>Salva nel Catalogo</source>
+        <target state="new">Salva nel Catalogo</target>
+      </trans-unit>
+      <trans-unit id="propicModal_selectedFile" datatype="html">
+        <source>File selezionato:</source>
+        <target state="new">File selezionato:</target>
+      </trans-unit>
+      <trans-unit id="propicModal_tapToSelect" datatype="html">
+        <source>Tocca per selezionare un&apos;immagine</source>
+        <target state="new">Tocca per selezionare un&apos;immagine</target>
+      </trans-unit>
+      <trans-unit id="propicModal_title" datatype="html">
+        <source>Aggiungi Avatar</source>
+        <target state="new">Aggiungi Avatar</target>
+      </trans-unit>
+      <trans-unit id="propicModal_uploading" datatype="html">
+        <source>Caricamento...</source>
+        <target state="new">Caricamento...</target>
+      </trans-unit>
+      <trans-unit id="forgotPage_rawEmail" datatype="html">
+        <source>Il campo email non può contenere solo spazi vuoti.</source>
+        <target>Email field cannot contain only blank spaces.</target>
       </trans-unit>
       <trans-unit id="rawPassword" datatype="html">
         <source>La password non può contenere solo spazi vuoti.</source>
         <target>Password cannot contain only blank spaces.</target>
+      </trans-unit>
+      <trans-unit id="recentDiscussions" datatype="html">
+        <source>Discussioni Recenti</source>
+        <target state="new">Discussioni Recenti</target>
       </trans-unit>
       <trans-unit id="register" datatype="html">
         <source>Registrati</source>
@@ -323,21 +903,28 @@
         <target>Error while registering.</target>
       </trans-unit>
       <trans-unit id="registerFormInvalid" datatype="html">
-        <source> Compila tutti i campi correttamente. La password richiede almeno 8 caratteri.</source>
-        <target> Please fill out all fields correctly. The password requires at least 8 characters.</target>
+        <source> Compila tutti i campi correttamente. La password richiede almeno 8 caratteri e massimo 24.</source>
+        <target state="new"> Please fill out all fields correctly. The password requires at least 8 characters.</target>
       </trans-unit>
       <trans-unit id="dontWantRegister" datatype="html">
         <source>Non vuoi registrarti? </source>
-        <target>Don't want to register? </target>
+        <target>Don&apos;t want to register? </target>
       </trans-unit>
-
-      <trans-unit id="backToHome" datatype="html">
-        <source>Torna alla home</source>
-        <target>Back to home</target>
+      <trans-unit id="dubLabel" datatype="html">
+        <source>DUB: </source>
+        <target state="new">DUB: </target>
       </trans-unit>
       <trans-unit id="registerSuccess" datatype="html">
         <source> Registrazione completata con successo! Ora puoi accedere.</source>
         <target> Registration completed successfully! You can now log in.</target>
+      </trans-unit>
+      <trans-unit id="RegPassNotCoincide" datatype="html">
+        <source>Le password inserite non coincidono.</source>
+        <target state="new">Le password inserite non coincidono.</target>
+      </trans-unit>
+      <trans-unit id="RegRegister" datatype="html">
+        <source> Registrati </source>
+        <target state="new"> Registrati </target>
       </trans-unit>
       <trans-unit id="removedFromFavouritesToast" datatype="html">
         <source>Rimosso dai Preferiti</source>
@@ -347,29 +934,101 @@
         <source>Ripeti la password</source>
         <target>Repeat password</target>
       </trans-unit>
-      <trans-unit id="resetFormInvalid" datatype="html">
+      <trans-unit id="resetPage_formInvalid" datatype="html">
         <source>Assicurati che i campi siano validi e coincidano.</source>
         <target>Make sure the fields are valid and match.</target>
       </trans-unit>
-      <trans-unit id="resetPassSuccess" datatype="html">
-        <source> Password modificata con successo!</source>
-        <target> Password modified successfully!</target>
+      <trans-unit id="resetPage_success" datatype="html">
+        <source>Password modificata con successo!</source>
+        <target>Password modified successfully!</target>
       </trans-unit>
       <trans-unit id="resetPassword" datatype="html">
         <source>Modifica Password</source>
         <target>Modify Password</target>
       </trans-unit>
-      <trans-unit id="selectCharacter" datatype="html">
-        <source>Seleziona uno dei personaggi di NexuStream</source>
-        <target>Select one of the characters of NexuStream</target>
+      <trans-unit id="restrictPermissions" datatype="html">
+        <source> Restringi Permessi (Ban) </source>
+        <target state="new"> Restringi Permessi (Ban) </target>
       </trans-unit>
-      <trans-unit id="sendOTP" datatype="html">
-        <source><x id="START_BLOCK_IF" equiv-text="@if (isLoading) {"/> Invio in corso... <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Invia Link di Reset <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></source>
-        <target><x id="START_BLOCK_IF" equiv-text="@if (isLoading) {"/> Sending... <x id="CLOSE_BLOCK_IF" equiv-text="}"/><x id="START_BLOCK_ELSE" equiv-text="@else {"/> Send Reset Link <x id="CLOSE_BLOCK_ELSE" equiv-text="}"/></target>
+      <trans-unit id="revokeRestriction" datatype="html">
+        <source> Revoca Restrizione (Sban) </source>
+        <target state="new"> Revoca Restrizione (Sban) </target>
+      </trans-unit>
+      <trans-unit id="roleCataloguer" datatype="html">
+        <source> Catalogatore </source>
+        <target state="new"> Catalogatore </target>
+      </trans-unit>
+      <trans-unit id="roleMod" datatype="html">
+        <source> Moderatore </source>
+        <target state="new"> Moderatore </target>
+      </trans-unit>
+      <trans-unit id="selectAvatar" datatype="html">
+        <source>Seleziona Avatar</source>
+        <target state="new">Seleziona Avatar</target>
+      </trans-unit>
+      <trans-unit id="sendingInProgress" datatype="html">
+        <source>Invio in corso...</source>
+        <target state="new">Invio in corso...</target>
+      </trans-unit>
+      <trans-unit id="sendResetLink" datatype="html">
+        <source>Invia Link di Reset</source>
+        <target state="new">Invia Link di Reset</target>
+      </trans-unit>
+      <trans-unit id="series" datatype="html">
+        <source>Serie</source>
+        <target state="new">Serie</target>
       </trans-unit>
       <trans-unit id="settings" datatype="html">
-        <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;settings-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Impostazioni </source>
+        <source>Impostazioni</source>
         <target state="new">Settings</target>
+      </trans-unit>
+      <trans-unit id="settingsPage_cancel" datatype="html">
+        <source>Annulla</source>
+        <target state="new">Annulla</target>
+      </trans-unit>
+      <trans-unit id="settingsPage_changeNameHeader" datatype="html">
+        <source>Modifica nome</source>
+        <target state="new">Modifica nome</target>
+      </trans-unit>
+      <trans-unit id="settingsPage_changeNameSub" datatype="html">
+        <source>Il nuovo nome deve contenere tra 3 e 24 caratteri.</source>
+        <target state="new">Il nuovo nome deve contenere tra 3 e 24 caratteri.</target>
+      </trans-unit>
+      <trans-unit id="settingsPage_errorUpdate" datatype="html">
+        <source>Errore durante l&apos;aggiornamento.</source>
+        <target state="new">Errore durante l&apos;aggiornamento.</target>
+      </trans-unit>
+      <trans-unit id="settingsPage_langWarning" datatype="html">
+        <source>Il cambio della lingua dell&apos;applicazione non avrà effetto in questa modalità.</source>
+        <target state="new">Il cambio della lingua dell&apos;applicazione non avrà effetto in questa modalità.</target>
+      </trans-unit>
+      <trans-unit id="settingsPage_newUsernamePlaceholder" datatype="html">
+        <source>Nuovo nome utente</source>
+        <target state="new">Nuovo nome utente</target>
+      </trans-unit>
+      <trans-unit id="settingsPage_prefsUpdated" datatype="html">
+        <source>Impostazioni aggiornate con successo!</source>
+        <target state="new">Impostazioni aggiornate con successo!</target>
+      </trans-unit>
+      <trans-unit id="settingsPage_propicUpdated" datatype="html">
+        <source>Propic aggiornata con successo!</source>
+        <target state="new">Propic aggiornata con successo!</target>
+      </trans-unit>
+      <trans-unit id="settingsPage_save" datatype="html">
+        <source>Salva</source>
+        <target state="new">Salva</target>
+      </trans-unit>
+      <trans-unit id="settingsPage_usernameUpdated" datatype="html">
+        <source>Username aggiornato con successo!</source>
+        <target state="new">Username aggiornato con successo!</target>
+      </trans-unit>
+      <trans-unit id="showCard_episodeAbbr" datatype="html">
+        <source>E</source>
+        <target state="new">E</target>
+      </trans-unit>
+      <trans-unit id="showCard_seasonAbbr" datatype="html">
+        <source>S</source>
+        <target state="new">S</target>
       </trans-unit>
       <trans-unit id="startWatching" datatype="html">
         <source>Inizia a guardare</source>
@@ -383,13 +1042,21 @@
         <source>Sottotitoli:</source>
         <target>Subtitles:</target>
       </trans-unit>
+      <trans-unit id="subtitlesLabel" datatype="html">
+        <source>SUB: </source>
+        <target state="new">SUB: </target>
+      </trans-unit>
       <trans-unit id="subtitlesOff" datatype="html">
         <source>Disattivati</source>
         <target>Off</target>
       </trans-unit>
+      <trans-unit id="tabsPage_login" datatype="html">
+        <source>Accedi</source>
+        <target state="new">Accedi</target>
+      </trans-unit>
       <trans-unit id="updatePassword" datatype="html">
-        <source> Aggiorna Password </source>
-        <target> Update Password </target>
+        <source>Aggiorna Password</source>
+        <target>Update Password</target>
       </trans-unit>
       <trans-unit id="username" datatype="html">
         <source>Nome utente</source>
@@ -399,13 +1066,37 @@
         <source>nome utente</source>
         <target>username</target>
       </trans-unit>
+      <trans-unit id="userRolesManagement" datatype="html">
+        <source>Gestione Utenti &amp; Ruoli</source>
+        <target state="new">Gestione Utenti &amp; Ruoli</target>
+      </trans-unit>
+      <trans-unit id="users" datatype="html">
+        <source>Utenti</source>
+        <target state="new">Utenti</target>
+      </trans-unit>
+      <trans-unit id="videoPlayer_nextEpisode" datatype="html">
+        <source>PROSSIMO EPISODIO</source>
+        <target state="new">PROSSIMO EPISODIO</target>
+      </trans-unit>
+      <trans-unit id="videoPlayer_skipIntro" datatype="html">
+        <source> SALTA INTRO </source>
+        <target state="new"> SALTA INTRO </target>
+      </trans-unit>
+      <trans-unit id="videoPlayer_skipRecap" datatype="html">
+        <source> SALTA RIASSUNTO </source>
+        <target state="new"> SALTA RIASSUNTO </target>
+      </trans-unit>
+      <trans-unit id="videoPlayer_watchCredits" datatype="html">
+        <source> GUARDA I TITOLI </source>
+        <target state="new"> GUARDA I TITOLI </target>
+      </trans-unit>
       <trans-unit id="views" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ episode().Streams | number }}"/> visualizzazioni</source>
-        <target><x id="INTERPOLATION" equiv-text="{{ episode().Streams | number }}"/> views</target>
+        <source><x id="INTERPOLATION" equiv-text="{{ episode()?.Streams | number }}"/> visualizzazioni</source>
+        <target state="new"><x id="INTERPOLATION" equiv-text="{{ episode().Streams | number }}"/> views</target>
       </trans-unit>
       <trans-unit id="Welcome_to_NexuStream" datatype="html">
-        <source>Benvenuto su NexuStream</source>
-        <target>Welcome to NexuStream</target>
+        <source> Benvenuto su NexuStream </source>
+        <target> Welcome to NexuStream </target>
       </trans-unit>
     </body>
   </file>

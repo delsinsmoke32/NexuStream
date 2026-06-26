@@ -1,12 +1,12 @@
 <ion-header class="ion-no-border">
-    <ion-toolbar class="transparent-toolbar">
-        <ion-buttons slot="start">
-            <ion-button (click)="goBackToSeries()" color="primary" fill="clear">
-                <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
-                Serie
-            </ion-button>
-        </ion-buttons>
-    </ion-toolbar>
+  <ion-toolbar class="transparent-toolbar">
+    <ion-buttons slot="start">
+      <ion-button (click)="goBackToSeries()" color="primary" fill="clear">
+        <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
+        <ng-container i18n="@@series">Serie</ng-container>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" class="streaming-content">
@@ -19,35 +19,33 @@
     <div class="video-layout-wrapper">
         <div class="main-video-section">
             @if (isLoggedIn()) {
-            <app-video-player
-                [url]="getStreamWithParams()"
-                [times]="episode()?.EpisodeTimes || []"
-                [startAtTime]="getComputedStartTime()"
-                (onPause)="handlePlayerPause($event)"
-                (onEnded)="handlePlayerEnded($event)"
-                (onDestroySave)="handlePlayerDestroySave($event)"
-                (onNextEpisode)="handleNextEpisode()"
-            >
-            </app-video-player>
-            } @else {
-            <div class="guest-paywall-container">
-                <img
-                    [src]="episode()?.ThumbnailURI ? ((episode()?.ThumbnailURI || '') | backendUrl: 'static') : 'assets/placeholder-episode.jpg'"
-                    alt="Thumbnail"
-                />
-
-                <div class="paywall-overlay">
-                    <h3>Per guardare il video devi effettuare l'accesso</h3>
-                    <ion-button routerLink="/login">Accedi Ora</ion-button>
+                <app-video-player
+                    [url]="backendUrl.transform('api/shows/' + showId() + '/seasons/' + seasonId() + '/episodes/' + episodeId() + '/stream')"
+                    [times]="episode()?.EpisodeTimes || []"
+                    [startAtTime]="getComputedStartTime()"
+                    (onPause)="handlePlayerPause($event)"
+                    (onEnded)="handlePlayerEnded($event)"
+                    (onDestroySave)="handlePlayerDestroySave($event)"
+                    (onNextEpisode)="handleNextEpisode()"
+                >
+                </app-video-player>
+            } 
+            @else {
+                <div class="guest-paywall-container">
+                    <img [src]="episode()?.ThumbnailURI ? ((episode()?.ThumbnailURI || '') | backendUrl: 'static') : ('episode_thumbnails/bleach.png' | backendUrl: 'static')" alt="Thumbnail" />
+                    
+                    <div class="paywall-overlay">
+                        <h3 i18n="@@paywall">Per guardare il video devi effettuare l'accesso</h3>
+                        <ion-button routerLink="/login" i18n="@@loginNow">Accedi Ora</ion-button>
+                    </div>
                 </div>
-            </div>
             }
 
             <div class="episode-details">
                 <div class="title-row">
                     <div>
-                        <h2 i18n="@@episode" class="ep-number">
-                            Episodio {{ episode()?.EpisodeNumber }}
+                        <h2 class="ep-number">
+                            <ng-container i18n="@@episode">Episodio</ng-container> {{ episode()?.EpisodeNumber }}
                         </h2>
                         <h1 class="ep-title">{{ episode()?.Title }}</h1>
                     </div>
@@ -70,16 +68,16 @@
                         >{{ (episode()?.Duration || 0) / 60 }} min</span
                     >
                     @if (episode()?.Streams) {
-                    <span i18n="@@views" class="meta-chip views"
+                    <span class="meta-chip views" i18n="@@views"
                         >{{ episode()?.Streams | number }} visualizzazioni</span
                     >
                     }
                     <div class="lang-info uppercase-lang">
-                        <strong>SUB:&nbsp;</strong> {{
+                        <strong i18n="@@subtitlesLabel">SUB:&nbsp;</strong> {{
                         (episode()?.SubLanguages?.length || 0) > 0 ?
                         episode()?.SubLanguages?.join(', ') : 'N/D' }}
                         <span class="separator">|</span>
-                        <strong>DUB:&nbsp;</strong> {{
+                        <strong i18n="@@dubLabel">DUB:&nbsp;</strong> {{
                         (episode()?.DubLanguages?.length || 0) > 0 ?
                         episode()?.DubLanguages?.join(', ') : 'N/D' }}
                     </div>
@@ -96,7 +94,6 @@
 
                     @if (isMod()) {
                     <ion-button
-                        i18n="@@new"
                         fill="outline"
                         class="btn-new-discussion"
                         (click)="openDiscussionModal()"
@@ -105,7 +102,7 @@
                             slot="start"
                             name="chatbubbles-outline"
                         ></ion-icon>
-                        Nuova
+                        <ng-container i18n="@@new">Nuova</ng-container>
                     </ion-button>
                     }
                 </div>
@@ -120,22 +117,19 @@
                 <div class="discussions-list">
                     @for (disc of discussions(); track disc.DiscussionID) {
 
-                    <div
-                        class="discussion-card"
-                        (click)="toggleDiscussion(disc.DiscussionID)"
-                    >
-                        <div class="disc-info">
-                            <h3 class="type-badge" [ngClass]="disc.Type">
-                                {{ disc.Type === 'post-season' ? 'Discussione
-                                Fine Stagione' : 'Discussione Ufficiale' }}
-                            </h3>
-                            <p i18n="@@expiration">
-                                Scadenza: {{ disc.CloseDate ? (disc.CloseDate |
-                                date:'dd/MM/yyyy HH:mm') : 'Nessuna' }} • {{
-                                isDiscussionClosed(disc) ? '(Chiusa)' :
-                                '(Aperta)' }}
-                            </p>
-                        </div>
+                            <div
+                                class="discussion-card"
+                                (click)="toggleDiscussion(disc.DiscussionID)"
+                            >
+                                <div class="disc-info">
+                                    <h3 class="type-badge" [ngClass]="disc.Type">
+                                        {{ disc.Type === 'post-season' ? 'Discussione Fine Stagione': 'Discussione Ufficiale' }}
+                                    </h3>
+                                    <p i18n="@@expiration">
+                                        Scadenza: {{ disc.CloseDate ? (disc.CloseDate | date:'dd/MM/yyyy HH:mm') : 'Nessuna'}} 
+                                        • {{ isDiscussionClosed(disc) ? '(Chiusa)' : '(Aperta)' }}
+                                    </p>
+                                </div>
 
                         <div class="disc-actions">
                             @if (isMod()) {
@@ -167,22 +161,23 @@
                         </div>
                     </div>
 
-                    @if (expandedDiscussionId() === disc.DiscussionID) {
-                    <div class="discussion-dropdown-content">
-                        <app-comments
-                            [showId]="showId()"
-                            [seasonId]="seasonId()"
-                            [episodeId]="episodeId()"
-                            [discussionId]="disc.DiscussionID"
-                            [isMod]="isMod()"
-                            [discussion]="disc"
-                            [isLoggedIn]="isLoggedIn()"
-                            (timestampClick)="handleCommentTimestamp($event)"
-                        >
-                        </app-comments>
+                            @if (expandedDiscussionId() === disc.DiscussionID) {
+                            <div class="discussion-dropdown-content">
+                                <app-comments
+                                    [showId]="showId()"
+                                    [seasonId]="seasonId()"
+                                    [episodeId]="episodeId()"
+                                    [discussionId]="disc.DiscussionID"
+                                    [isMod]="isMod()"
+                                    [discussion]="disc"
+                                    [isLoggedIn]="isLoggedIn()"
+                                    (timestampClick)="handleCommentTimestamp($event)"
+                                >
+                                </app-comments>
+                            </div>
+                            }
+                        }
                     </div>
-                    } }
-                </div>
                 }
             </div>
         </div>

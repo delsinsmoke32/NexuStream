@@ -11,8 +11,7 @@ const getPropics = async (req, res) => {
     try {
         const propics = await propicModel.getAllPropics();
         
-        // 1. Raggruppiamo le propic usando reduce
-        // Output atteso: { "Bundle1": ["uri1.png", "uri2.png"], "Bundle2": ["uri3.png"] }
+        
         const groupedMap = propics.reduce((acc, current) => {
             // Se il bundle non esiste ancora nell'oggetto, lo creiamo come array vuoto
             if (!acc[current.Bundle]) {
@@ -23,8 +22,7 @@ const getPropics = async (req, res) => {
             return acc;
         }, {});
 
-        // 2. Trasformiamo l'oggetto in un Array di oggetti per far felice Angular
-        // Output finale: [ { bundle: 'Bundle1', images: ['uri1', 'uri2'] }, ... ]
+        
         const result = Object.keys(groupedMap).map(bundleName => ({
             bundle: bundleName,
             images: groupedMap[bundleName]

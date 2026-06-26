@@ -5,9 +5,9 @@
                 [src]="
                     show().EpisodeThumbnailURI
                         ? (show().EpisodeThumbnailURI | backendUrl: 'static')
-                        : (show().BannerURI 
+                        : (show().BannerURI) 
                             ? (show().BannerURI | backendUrl: 'static') 
-                            : 'assets/placeholder-banner.png')
+                            : ('banners/bleach.png' | backendUrl: 'static')
                 "
                 [alt]="parseLang(show().Title || show().ShowTitle)"
             />
@@ -16,7 +16,7 @@
                 [src]="
                     show().ThumbnailURI
                         ? (show().ThumbnailURI | backendUrl: 'static')
-                        : 'assets/placeholder-poster.png'
+                        : ('show_thumbnails/bleach.png' | backendUrl: 'static')
                 "
                 [alt]="parseLang(show().Title || show().ShowTitle)"
             />
@@ -36,13 +36,13 @@
         </div>
 
         @if (showDelete()) {
-            <button class="action-top-btn" (click)="onRemove($event)">
+            <button class="action-top-btn" (click)="onRemove($event)" [title]="'Elimina'">
                 <ion-icon name="trash"></ion-icon>
             </button>
         }
 
         @if (showDismiss()) {
-            <button class="action-top-btn" (click)="onDismiss($event)">
+            <button class="action-top-btn" (click)="onDismiss($event)" [title]="'Rimuovi'">
                 <ion-icon name="close"></ion-icon>
             </button>
         }
@@ -52,12 +52,14 @@
         <div class="landscape-meta" (click)="onPlay($event)">
             <span class="meta-show-title">{{ parseLang(show().Title || show().ShowTitle) }}</span>
             <span class="meta-episode-info">
-                S{{ show().SeasonNumber || 1 }} E{{ show().EpisodeNumber || 1 }} - {{ parseLang(show().EpisodeTitle) }}
+                <ng-container i18n="@@showCard_seasonAbbr">S</ng-container>{{ show().SeasonNumber || 1 }} 
+                <ng-container i18n="@@showCard_episodeAbbr">E</ng-container>{{ show().EpisodeNumber || 1 }} 
+                - {{ parseLang(show().EpisodeTitle) }}
             </span>
         </div>
     }
     @if (layout() !== 'landscape') {
-        <div class="card-info-bottom" (click)="onInfo($event)">
+        <div class="card-info-bottom" (click)="onInfo($event)" [title]="'Altre info'">
             <ion-icon name="information-circle-outline" class="info-btn"></ion-icon>
         </div>
     }

@@ -1,4 +1,4 @@
-// percorso: src/app/models/cataloguer.ts
+
 
 // --- LISTE E TABELLE ---
 export interface CataloguerShow {

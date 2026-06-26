@@ -8,7 +8,7 @@
         @for (hero of heroList(); track hero.ShowID; let i = $index) {
         <div class="hero-slide" [class.active]="i === activeHeroIndex()">
             <img
-                [src]="hero.BannerURI ? (hero.BannerURI | backendUrl: 'static') : 'assets/placeholder-banner.png'"
+                [src]="hero.BannerURI ? (hero.BannerURI | backendUrl: 'static') : ('banners/bleach.png' | backendUrl: 'static')"
                 [alt]="hero.Title"
             />
             <div class="hero-gradient"></div>
@@ -22,14 +22,14 @@
                         class="btn-hero-play"
                         (click)="playAnime(hero.ShowID)"
                     >
-                        <ion-icon name="play"></ion-icon> Riproduci
+                        <ion-icon name="play"></ion-icon> <ng-container i18n="@@play">Riproduci</ng-container>
                     </button>
                     <button
                         class="btn-hero-info"
                         (click)="openSeriesInfo(hero.ShowID)"
                     >
                         <ion-icon name="information-circle-outline"></ion-icon>
-                        Altre Info
+                        <ng-container i18n="@@moreInfo">Altre Info</ng-container>
                     </button>
                 </div>
             </div>
@@ -41,7 +41,7 @@
     <div class="main-container" [class.has-hero]="heroList().length > 0">
         @if (continueWatching().length > 0) {
         <div class="category-row">
-            <h2 class="row-title">Continua a guardare</h2>
+            <h2 class="row-title" i18n="@@continueWatching">Continua a guardare</h2>
 
             <div class="carousel-wrapper">
                 <button
@@ -75,7 +75,7 @@
         </div>
         } @if (mostViewed().length > 0) {
         <div class="category-row">
-            <h2 class="row-title">I più visti questa settimana</h2>
+            <h2 class="row-title" i18n="@@mostViewedWeek">I più visti questa settimana</h2>
 
             <div class="carousel-wrapper">
                 <button
@@ -107,7 +107,7 @@
         </div>
         } @if (mostLiked().length > 0) {
         <div class="category-row">
-            <h2 class="row-title">I più amati dagli utenti</h2>
+            <h2 class="row-title" i18n="@@mostLiked">I più amati dagli utenti</h2>
 
             <div class="carousel-wrapper">
                 <button
@@ -132,6 +132,38 @@
                 <button
                     class="scroll-arrow right"
                     (click)="scrollRow('mostLiked', 'right')"
+                >
+                    <ion-icon name="chevron-forward-outline"></ion-icon>
+                </button>
+            </div>
+        </div>
+        } @if (recentDisc().length > 0) {
+        <div class="category-row">
+            <h2 class="row-title" i18n="@@recentDiscussions">Discussioni Recenti</h2>
+
+            <div class="carousel-wrapper">
+                <button
+                    class="scroll-arrow left"
+                    (click)="scrollRow('recentDisc', 'left')"
+                >
+                    <ion-icon name="chevron-back-outline"></ion-icon>
+                </button>
+
+                <div class="horizontal-scroll" #recentDiscScroll>
+                    @for (show of recentDisc(); track show.ShowID) {
+                    <app-show-card
+                        [show]="show"
+                        layout="portrait"
+                        (play)="playAnime($event.ShowID)"
+                        (info)="openSeriesInfo($event)"
+                    >
+                    </app-show-card>
+                    }
+                </div>
+
+                <button
+                    class="scroll-arrow right"
+                    (click)="scrollRow('recentDisc', 'right')"
                 >
                     <ion-icon name="chevron-forward-outline"></ion-icon>
                 </button>

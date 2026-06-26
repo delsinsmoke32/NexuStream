@@ -58,8 +58,8 @@ export class AdminPage implements OnInit {
     currentSearchTerm = ''
 
     constructor() {
-        //  4. Registra l'icona della freccia se non l'avevi già fatto
-        addIcons({ arrowBackOutline })
+        
+        addIcons({arrowBackOutline});
     }
 
     ngOnInit() {
@@ -67,7 +67,7 @@ export class AdminPage implements OnInit {
     }
 
     loadUsers(isAppend: boolean = false, event?: InfiniteScrollCustomEvent) {
-        //  Chiamata pulita al Service
+        
         this.adminService
             .getUsers(this.currentPage, this.pageSize, this.currentSearchTerm)
             .subscribe({
@@ -116,7 +116,7 @@ export class AdminPage implements OnInit {
 
         this.adminService.updateUserRoles(user.UserID, bodyPayload).subscribe({
             next: () => {
-                this.presentToast('Privilegi utente aggiornati!', 'success')
+                this.presentToast($localize`:@@adminPage_rolesUpdated:Privilegi utente aggiornati!`, 'success')
 
                 this.users.update((currentUsers) =>
                     currentUsers.map((u) =>
@@ -133,7 +133,7 @@ export class AdminPage implements OnInit {
             error: (err) => {
                 console.error('Errore salvataggio ruolo:', err)
                 this.presentToast(
-                    'Impossibile aggiornare i privilegi.',
+                    $localize`:@@adminPage_errUpdateRoles:Impossibile aggiornare i privilegi.`,
                     'danger'
                 )
             },
@@ -167,7 +167,5 @@ export class AdminPage implements OnInit {
         await toast.present()
     }
 
-    // async logout() {
-    //     await this.authService.confirmLogout();
-    // }
+   
 }

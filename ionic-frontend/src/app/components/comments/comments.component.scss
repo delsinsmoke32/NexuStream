@@ -6,12 +6,7 @@
   padding-top: 10px;
 }
 
-// :host {
-//   display: block;
-//   max-width: 100%;
-//   min-width: 0; /* Rimuove il limite intrinseco di Flexbox */
-//   width: 100%;
-// }
+
 
 .replying-banner {
   display: flex;
@@ -33,7 +28,7 @@
   padding: 10px;
   margin-bottom: 30px;
   max-width: 100%;
-  // box-shadow: inset 0px 2px 5px rgba(0,0,0,0.5);
+  
 
   .post-btn {
     --color: var(--ion-color-primary, #b22222);
@@ -168,24 +163,24 @@
    THREAD DI RISPOSTE INDENTATE
    =================================== */
 .replies-thread {
-  margin-left: 55px; /* Salta la larghezza dell'avatar del padre */
-  border-left: 2px solid rgba(255, 255, 255, 0.1); /* Linea guida per far capire che sono collegate */
+  margin-left: 55px; 
+  border-left: 2px solid rgba(255, 255, 255, 0.1); 
   padding-left: 15px;
-  margin-top: -10px; /* Le avvicina un po' al commento padre */
+  margin-top: -10px; 
   margin-bottom: 25px;
 }
 
-/* Modifiche per stringere un po' i commenti che sono risposte */
+
 .reply-item {
   margin-bottom: 15px !important; 
   
   ion-avatar {
-      width: 32px !important; /* Avatar più piccolo per distinguere i figli */
+      width: 32px !important; 
       height: 32px !important;
   }
   
   .username {
-      font-size: 0.9rem !important; /* Nome più compatto */
+      font-size: 0.9rem !important; 
   }
 }
 
@@ -204,7 +199,7 @@
   }
 }
 
-/* Animazione di lampeggio quando clicchi una menzione */
+
 .highlight-pulse {
   animation: pulseBg 2s ease-out;
   border-radius: 8px;
@@ -223,13 +218,11 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  /* Rimosso il border-top per non "tagliare" il commento a metà, 
-     e aggiunto un piccolo margine inferiore per distanziare i bottoni dei like */
   margin-bottom: 8px; 
 }
 
 .badge {
-  display: inline-flex;  /*  Fondamentale per allineare l'icona al testo */
+  display: inline-flex;  
   align-items: center;
   gap: 4px;
   
@@ -254,7 +247,7 @@
   background: rgba(0, 0, 0, 0.3);
   border-left: 3px solid var(--ion-color-medium);
   padding: 8px 12px;
-  margin: 10px 10px 0 60px; /* Allineato sotto la textarea */
+  margin: 10px 10px 0 60px; 
   border-radius: 4px;
 
   .preview-label {
@@ -274,12 +267,12 @@
   }
 }
 
-/* Stili per il testo renderizzato (sia preview che commenti veri) */
+
 ::ng-deep .text span, 
 ::ng-deep .preview-text span {
   strong {
     font-weight: 800;
-    color: #ffffff; /* Il grassetto spicca di più */
+    color: #ffffff; 
   }
   
   em {

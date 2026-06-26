@@ -38,7 +38,7 @@ const getAllSeasons = async (refShow) => {
 };
 
 const getAllEpisodes = async (refSeason) => {
-    let sql = `SELECT EpisodeID, Title, Description, ReleaseDate, Duration, REF_SeasonID, Streams, Likes, EpisodeNumber FROM Episodes WHERE 1=1`;
+    let sql = `SELECT EpisodeID, Title, Description, ReleaseDate, Duration, REF_SeasonID, Streams, Likes, EpisodeNumber, StreamURI FROM Episodes WHERE 1=1`;
     const params = [];
     
     if (refSeason) {

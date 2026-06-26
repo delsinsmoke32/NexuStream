@@ -627,7 +627,7 @@ const removeTrack = async (req, res) => {
 
         // 2. Eliminiamo fisicamente la cartella HLS di quella specifica lingua
         // Es: public/videos/19/audio_en oppure subs_en
-        const { StreamURI } = await episodeModel.getEpisodeURI(episodeId);
+        const { StreamURI } = await episodeModel.getEpisodeURI(id);
         if (!StreamURI) {
             return res.status(400).json({ error: "Impossibile trovare la stream per l'episodio" });
         }

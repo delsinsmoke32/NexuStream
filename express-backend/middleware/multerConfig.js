@@ -1,12 +1,12 @@
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs'); // 🚀 IMPORTANTE: Aggiungi fs!
+const fs = require('fs'); //  IMPORTANTE: Aggiungi fs!
 const { body } = require('express-validator');
 
 // 1. FACTORY: Crea la configurazione di Storage in base alla cartella
 const createStorage = (folderPath) => multer.diskStorage({
     destination: function (req, file, cb) {
-        // 🚀 FIX: Creiamo il percorso assoluto e la cartella se non esiste
+        //  FIX: Creiamo il percorso assoluto e la cartella se non esiste
         const dir = path.join(__dirname, '../public', folderPath);
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir, { recursive: true });

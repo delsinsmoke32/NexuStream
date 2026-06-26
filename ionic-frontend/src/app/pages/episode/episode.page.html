@@ -127,8 +127,8 @@
                                         {{ disc.Type === 'post-season' ? 'Discussione Fine Stagione' : 'Discussione Ufficiale' }}
                                     </h3>
                                     <p i18n="@@expiration">
-                                        Scadenza: {{ disc.CloseDate ? (disc.CloseDate | date:'dd/MM/yyyy HH:mm') : 'Nessuna' }} • {{
-                                        disc.ForceClosed ? '(Chiusa)' : '(Aperta)' }}
+                                        Scadenza: {{ disc.CloseDate ? (disc.CloseDate | date:'dd/MM/yyyy HH:mm') : 'Nessuna' }} 
+                                        • {{ isDiscussionClosed(disc) ? '(Chiusa)' : '(Aperta)' }}
                                     </p>
                                 </div>
 

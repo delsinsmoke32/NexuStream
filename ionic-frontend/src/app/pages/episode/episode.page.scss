@@ -280,18 +280,26 @@
       border: 1px solid transparent;
 
       .disc-info {
+        flex: 1; // Permette al testo di occupare lo spazio disponibile
+        min-width: 0; // Fondamentale per il troncamento del testo
+        
         h3 {
           color: white;
           font-size: 1.05rem;
           font-weight: 600;
           margin: 0 0 6px 0;
         }
+        
         p {
-          color: #888;
-          font-size: 0.85rem;
-          margin: 0;
+            color: #888;
+            font-size: 0.85rem;
+            margin: 0;
+            white-space: nowrap; // Impedisce il ritorno a capo
+            overflow: hidden;    // Nasconde il testo che esce
+            text-overflow: ellipsis; // Aggiunge i puntini di sospensione
         }
       }
+
 
       .disc-actions {
         display: flex;

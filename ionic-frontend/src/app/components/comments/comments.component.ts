@@ -19,7 +19,7 @@ import { BackendUrlPipe } from '@app/pipes/backend-url-pipe';
 import { jwtDecodeHelper } from '@app/utils/jwt-helper';
 import { DomSanitizer } from '@lib/@angular/platform-browser';
 
-// 🚀 NUOVI SERVIZI IMPORTATI
+//  NUOVI SERVIZI IMPORTATI
 import { CommentsService } from '@app/services/comments';
 import { ModService } from '@app/services/mod'; 
 
@@ -74,7 +74,7 @@ export class CommentsComponent implements OnInit {
         if (token) {
             const decoded = jwtDecodeHelper(token);
             if (decoded) {
-                // 🚀 Creiamo il nostro oggetto utente "al volo"
+                //  Creiamo il nostro oggetto utente "al volo"
                 this.currentUser = {
                     id: decoded.id || decoded.UserID,
                     isAdmin: decoded.isAdmin === 1,
@@ -319,7 +319,7 @@ export class CommentsComponent implements OnInit {
                             return false;
                         }
                         
-                        // 🚀 Utilizzo pulito di ModService!
+                        //  Utilizzo pulito di ModService!
                         this.modService.banUser(parseInt(userId.toString()), durationDays).subscribe({
                             next: (res: any) => this.presentToast(res.message || 'Sanzione applicata con successo.', 'success'),
                             error: (err) => this.presentToast(err.error?.error || 'Errore durante il ban.', 'danger'),

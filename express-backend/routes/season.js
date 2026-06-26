@@ -93,6 +93,14 @@ router.get('/:seasonId', authOptional, [
  *     tags: [Cataloguer]
  *     security:
  *       - BearerAuth: []
+ * 
+ *   responses:
+ *     200:
+ *       description: Stagione chiusa con successo.
+ *     400:
+ *       description: Richiesta malformata.
+ *     500:
+ *       description: Errore interno del server.
  */
 
 

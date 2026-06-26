@@ -19,7 +19,7 @@ import {
     Validators,
 } from '@angular/forms'
 
-// 🚀 IMPORTAZIONI STANDALONE CHIRURGICHE DI IONIC
+//  IMPORTAZIONI STANDALONE CHIRURGICHE DI IONIC
 import {
     IonHeader,
     IonToolbar,

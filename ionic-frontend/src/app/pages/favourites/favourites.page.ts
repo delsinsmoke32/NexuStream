@@ -20,7 +20,7 @@ import {
     settingsOutline,
 } from 'ionicons/icons'
 
-// 🚀 Importiamo la card, il service e il model
+//  Importiamo la card, il service e il model
 import { ShowCardComponent } from '../../components/show-card/show-card.component'
 import { FavoriteShow } from '../../models/favorites'
 import { FavoritesService } from '../../services/favorites'

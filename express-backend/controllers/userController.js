@@ -53,7 +53,7 @@ const getFavorites = async (req, res) => {
     }
 
     const user = req.user;
-    const applang = user ? user.appLang : req.language;
+    const applang = req.language;
 
     try {
         if (!user) {

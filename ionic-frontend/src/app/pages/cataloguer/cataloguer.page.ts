@@ -30,7 +30,7 @@ import {
 import { addIcons } from 'ionicons'
 import { addCircleOutline, trashOutline } from 'ionicons/icons'
 
-// 🚀 SERVICE E MODELLI
+//  SERVICE E MODELLI
 import {
     CataloguerEpisode,
     CataloguerSeason,

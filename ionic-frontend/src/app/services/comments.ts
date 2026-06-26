@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-// 🚀 IMPORT DEI MODELLI
+//  IMPORT DEI MODELLI
 import { StreamingComment } from '../models/streaming';
 
 @Injectable({ providedIn: 'root' })

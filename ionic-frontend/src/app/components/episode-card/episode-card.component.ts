@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { playCircle, informationCircleOutline } from 'ionicons/icons'; // 🚀 Aggiunta l'icona Info
+import { playCircle, informationCircleOutline } from 'ionicons/icons'; //  Aggiunta l'icona Info
 import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
 
 @Component({
@@ -15,7 +15,7 @@ import { BackendUrlPipe } from '../../pipes/backend-url-pipe';
 export class EpisodeCardComponent {
   @Input() episode!: any;
   @Output() play = new EventEmitter<number>();
-  @Output() info = new EventEmitter<number>(); // 🚀 Nuovo evento per il tasto Info
+  @Output() info = new EventEmitter<number>(); //  Nuovo evento per il tasto Info
 
   constructor() {
     addIcons({ playCircle, informationCircleOutline });

@@ -1,6 +1,7 @@
 import {
     Component, OnInit, Input, Output, EventEmitter, inject, SecurityContext
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import {
@@ -11,7 +12,7 @@ import { addIcons } from 'ionicons';
 import {
     chatbubblesOutline, thumbsUp, arrowUndo, thumbsUpOutline, alertCircleOutline,
     checkmarkCircleOutline, eyeOffOutline, banOutline, arrowUndoOutline,
-    closeCircle, shieldHalfOutline, hammerOutline, libraryOutline
+    closeCircle, shieldHalfOutline, hammerOutline, libraryOutline, lockClosedOutline
 } from 'ionicons/icons';
 
 import { BackendUrlPipe } from '@app/pipes/backend-url-pipe';
@@ -38,13 +39,15 @@ export class CommentsComponent implements OnInit {
     @Input() episodeId!: string;
     @Input() discussionId!: string;
     @Input() isMod: boolean = false;
+    @Input() discussion!: any;          
+    @Input() isLoggedIn: boolean = false; 
 
     @Output() timestampClick = new EventEmitter<number>();
 
 
     private commentsService = inject(CommentsService);
     private modService = inject(ModService);
-
+    private router = inject(Router);
     private toastCtrl = inject(ToastController);
     private alertCtrl = inject(AlertController);
     private sanitizer = inject(DomSanitizer);
@@ -59,7 +62,7 @@ export class CommentsComponent implements OnInit {
     currentUserId = "";
 
     constructor() {
-        addIcons({closeCircle,shieldHalfOutline,hammerOutline,libraryOutline,arrowUndoOutline,alertCircleOutline,checkmarkCircleOutline,eyeOffOutline,banOutline,arrowUndo,chatbubblesOutline,thumbsUpOutline,thumbsUp});
+        addIcons({closeCircle,shieldHalfOutline,hammerOutline,libraryOutline,arrowUndoOutline,alertCircleOutline,checkmarkCircleOutline,eyeOffOutline,banOutline,arrowUndo,chatbubblesOutline,thumbsUpOutline,thumbsUp,lockClosedOutline});
     }
 
     currentUser: any = null; // (Se hai un'interfaccia User, usala al posto di any!)
@@ -276,6 +279,18 @@ export class CommentsComponent implements OnInit {
         });
     }
 
+    isDiscussionClosed(): boolean {
+        if (!this.discussion) return false;
+        if (this.discussion.ForceClosed === 1) return true;
+        
+        if (this.discussion.CloseDate) {
+            const closeDate = new Date(this.discussion.CloseDate).getTime();
+            const now = new Date().getTime();
+            return now > closeDate;
+        }
+        return false;
+    }
+
     canBanUser(comment: any): boolean {
         if (comment.REF_UserID === this.currentUserId) return false;
         if (this.isAdmin) return true;
@@ -315,6 +330,10 @@ export class CommentsComponent implements OnInit {
             ],
         });
         await alert.present();
+    }
+
+    goToLogin() {
+        this.router.navigate(['/login']);
     }
 
     async presentToast(message: string, color: 'success' | 'danger') {

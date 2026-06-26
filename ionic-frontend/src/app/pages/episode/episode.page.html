@@ -116,67 +116,50 @@
                 </div>
                 } @else {
                 <div class="discussions-list">
-                    @for (disc of discussions(); track disc.DiscussionID) {
+                        @for (disc of discussions(); track disc.DiscussionID) {
 
-                    <div
-                        class="discussion-card"
-                        (click)="toggleDiscussion(disc.DiscussionID)"
-                    >
-                        <div class="disc-info">
-                            <h3>{{ disc.Type | uppercase }} ZONE</h3>
-                            <p i18n="@@expiration">
-                                Scadenza: {{ disc.CloseDate }} • {{
-                                disc.forceClosed ? '(Chiusa)' : '(Aperta)' }}
-                            </p>
-                        </div>
-
-                        <div class="disc-actions">
-                            @if (isMod()) {
-                            <ion-button
-                                fill="clear"
-                                color="warning"
-                                (click)="openDiscussionModal(disc, $event)"
+                            <div
+                                class="discussion-card"
+                                (click)="toggleDiscussion(disc.DiscussionID)"
                             >
-                                <ion-icon
-                                    slot="icon-only"
-                                    name="create-outline"
-                                ></ion-icon>
-                            </ion-button>
+                                <div class="disc-info">
+                                    <h3 class="type-badge" [ngClass]="disc.Type">
+                                        {{ disc.Type === 'post-season' ? 'Discussione Fine Stagione' : 'Discussione Ufficiale' }}
+                                    </h3>
+                                    <p i18n="@@expiration">
+                                        Scadenza: {{ disc.CloseDate ? (disc.CloseDate | date:'dd/MM/yyyy HH:mm') : 'Nessuna' }} • {{
+                                        disc.ForceClosed ? '(Chiusa)' : '(Aperta)' }}
+                                    </p>
+                                </div>
 
-                            <ion-button
-                                fill="clear"
-                                color="danger"
-                                (click)="deleteDiscussion(disc.DiscussionID, $event)"
-                            >
-                                <ion-icon
-                                    slot="icon-only"
-                                    name="trash-outline"
-                                ></ion-icon>
-                            </ion-button>
+                                <div class="disc-actions">
+                                    @if (isMod()) {
+                                    <ion-button fill="clear" color="warning" (click)="openDiscussionModal(disc, $event)">
+                                        <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+                                    </ion-button>
+                                    <ion-button fill="clear" color="danger" (click)="deleteDiscussion(disc.DiscussionID, $event)">
+                                        <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+                                    </ion-button>
+                                    }
+                                    <ion-icon [name]="expandedDiscussionId() === disc.DiscussionID ? 'chevron-down-outline' : 'chevron-forward-outline'" class="nav-arrow"></ion-icon>
+                                </div>
+                            </div>
+
+                            @if (expandedDiscussionId() === disc.DiscussionID) {
+                            <div class="discussion-dropdown-content">
+                                <app-comments
+                                    [showId]="showId()"
+                                    [seasonId]="seasonId()"
+                                    [episodeId]="episodeId()"
+                                    [discussionId]="disc.DiscussionID"
+                                    [isMod]="isMod()"
+                                    [discussion]="disc"            [isLoggedIn]="isLoggedIn()"    (timestampClick)="handleCommentTimestamp($event)"
+                                >
+                                </app-comments>
+                            </div>
                             }
-
-                            <ion-icon
-                                [name]="expandedDiscussionId() === disc.DiscussionID ? 'chevron-down-outline' : 'chevron-forward-outline'"
-                                class="nav-arrow"
-                            >
-                            </ion-icon>
-                        </div>
+                        }
                     </div>
-
-                    @if (expandedDiscussionId() === disc.DiscussionID) {
-                    <div class="discussion-dropdown-content">
-                        <app-comments
-                            [showId]="showId()"
-                            [seasonId]="seasonId()"
-                            [episodeId]="episodeId()"
-                            [discussionId]="disc.DiscussionID"
-                            [isMod]="isMod()"
-                            (timestampClick)="handleCommentTimestamp($event)"
-                        >
-                        </app-comments>
-                    </div>
-                    } }
-                </div>
                 }
             </div>
         </div>

@@ -1,4 +1,5 @@
 const commentModel = require('../models/commentModel');
+const discussionModel = require('../models/discussionModel');
 const { validationResult } = require('express-validator');
 
 const getDiscussionComments = async (req, res) => {
@@ -36,6 +37,19 @@ const postComment = async (req, res) => {
     const userId = req.user.id;
 
     try {
+        // Controllo stato discussione prima di inserire
+        const status = await discussionModel.getDiscussionStatus(discussionId);
+        
+        if (!status) {
+            return res.status(404).json({ message: "Discussione inesistente." });
+        }
+
+        const isExpired = status.CloseDate && new Date(status.CloseDate) < new Date();
+        
+        if (status.ForceClosed === 1 || isExpired) {
+            return res.status(403).json({ message: "Questa discussione è chiusa. Non è possibile commentare." });
+        }
+        
         const result = await commentModel.createComment(parentCommentId, userId, discussionId, text);
         return res.status(201).json({
             message: "Commento postato con successo!",

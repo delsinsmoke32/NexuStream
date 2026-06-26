@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { Component, inject, OnInit, signal } from '@angular/core'
+import { Component, inject, OnInit, signal, HostListener } from '@angular/core'
 import { FormsModule } from '@angular/forms'
 
 import {
@@ -85,34 +85,34 @@ export class ModPage implements OnInit {
     private toastCtrl = inject(ToastController)
     private actionSheetCtrl = inject(ActionSheetController)
     private alertController = inject(AlertController)
-    currentTab = signal<string>('discussions')
 
-    // 🚀 Segnali tipizzati
+    currentTab = signal<string>('discussions')
+    discussionSearchQuery = signal<string>('');
     discussions = signal<ModDiscussion[]>([])
     showClosed = signal<number>(0)
-
     usersList = signal<ModUser[]>([])
     searchQuery = signal<string>('')
     userPage = signal<number>(1)
     userLimit = signal<number>(50)
+    isMobile = signal<boolean>(false);
 
     constructor() {
-        addIcons({
-            addCircleOutline,
-            optionsOutline,
-            trashOutline,
-            shieldCheckmarkOutline,
-            timeOutline,
-            peopleOutline,
-            closeCircleOutline,
-            eyeOutline,
-            eyeOffOutline,
-            checkmarkCircleOutline,
-        })
+        addIcons({addCircleOutline,shieldCheckmarkOutline,timeOutline,peopleOutline,optionsOutline,trashOutline,closeCircleOutline,eyeOutline,eyeOffOutline,checkmarkCircleOutline,});
     }
 
     ngOnInit() {
-        this.loadDiscussions()
+        this.loadDiscussions();
+        this.checkScreenSize();
+    }
+
+    @HostListener('window:resize', ['$event'])
+    onResize() {
+        this.checkScreenSize();
+    }
+
+    checkScreenSize() {
+        // Se lo schermo è largo meno di 576px, isMobile diventa true
+        this.isMobile.set(window.innerWidth < 576);
     }
 
     segmentChanged(event: any) {
@@ -125,16 +125,20 @@ export class ModPage implements OnInit {
         }
     }
 
-    // 📂 LOGICA DISCUSSIONI
     loadDiscussions() {
-        this.modService.getDiscussions(this.showClosed()).subscribe({
+        this.modService.getDiscussions(this.showClosed(), this.discussionSearchQuery()).subscribe({
             next: (data) => this.discussions.set(data),
             error: () =>
                 this.showToast(
                     'Errore nel recupero delle discussioni',
                     'danger'
                 ),
-        })
+        });
+    }
+
+    handleDiscussionSearch(event: any) {
+        this.discussionSearchQuery.set(event.detail.value || '');
+        this.loadDiscussions();
     }
 
     toggleFilter(event: any) {

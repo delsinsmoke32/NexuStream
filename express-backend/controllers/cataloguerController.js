@@ -1,6 +1,7 @@
 const cataloguerModel = require('../models/cataloguerModel');
 const showModel = require('../models/showModel');
 const episodeModel = require('../models/episodeModel');
+const discussionModel = require('../models/discussionModel');
 const { validationResult, check } = require('express-validator');
 const fs = require('fs').promises;
 const path = require('path');
@@ -258,10 +259,17 @@ const addSeason = async (req, res) => {
     };
 
     //si calcola hasEnded anzichè passarla esplicitamente
+
     const hasEnded = (dateEnded && dateEnded.trim() !== "") ? 1 : 0;
 
     try {
         const result = await cataloguerModel.insertSeason(titleObj, descriptionObj, dateStarted, dateEnded, hasEnded, seasonNumber, refShow);
+        
+        // Se la stagione è già conclusa, genera le discussioni
+        if (hasEnded === 1) {
+            await discussionModel.autoCreateSeasonDiscussions(result.id);
+        }
+
         return res.status(201).json({ message: "Stagione creata con successo!", seasonId: result.id });
     } catch (err) {
         console.error(err);
@@ -309,6 +317,16 @@ const modifySeason = async (req, res) => {
     try {
         const result = await cataloguerModel.updateSeason(seasonId, fields, params);
         if (result.changes === 0) return res.status(404).json({ error: "La stagione specificata non è stata trovata." });
+        
+        // Se l'aggiornamento ha toccato dateEnded e impostato hasEnded = 1, crea le discussioni
+        if (dateEnded !== undefined) {
+            const hasEnded = (dateEnded && dateEnded.trim() !== "") ? 1 : 0;
+            if (hasEnded === 1) {
+                await discussionModel.autoCreateSeasonDiscussions(seasonId);
+                console.log(`[BACKEND] Stagione ${seasonId} chiusa: generate discussioni post-season.`);
+            }
+        }
+
         return res.json({ message: "Stagione aggiornata con successo!" });
     } catch (err) {
         console.error(err);
@@ -396,16 +414,19 @@ const addEpisode = async (req, res) => {
 
         const episodeId = parseInt(result.id, 10);
 
+        // Crea in automatico una discussione standard per l'episodio
+        await discussionModel.autoCreateEpisodeDiscussion(episodeId);
+
         if (times && Array.isArray(times)) {
             try {
-                // Usiamo la funzione del model che fa "Piazza pulita e Riscrivi"
+                // Usiamo la funzione del model che fa rigenera i tempi dell'ep
                 await episodeModel.updateEpisodeTimes(episodeId, times);
             } catch (err) {
                 console.error("Errore salvataggio marker durante la creazione:", err);
             }
         }
 
-        // 3. Spostiamo fisicamente i file temporanei audio e sub nella cartella dell'episodio
+        // Spostiamo fisicamente i file temporanei audio e sub nella cartella dell'episodio
         if (audioTracks && audioTracks.length > 0) {
             for (let track of audioTracks) {
                 const tempPath = path.join(__dirname, '../public', track.uri);
@@ -418,13 +439,13 @@ const addEpisode = async (req, res) => {
         if (subTracks && subTracks.length > 0) {
             for (let track of subTracks) {
                 const tempPath = path.join(__dirname, '../public', track.uri);
-                // Sposta il file vtt in public/videos/34/subs_en.vtt
+                // Sposta il file vtt nella cartella corrispondente
                 await videoProcessor.moveMediaFile(tempPath, streamURI, 'subs', track.lang);
                 console.log(`[BACKEND] Sottotitolo spostato con successo per lingua: ${track.lang}`);
             }
         }
 
-        // 3. FIRE AND FORGET: Avviamo la transcodifica video in background!
+        // Avviamo la transcodifica video in background
         if (rawVideoURI) {
             const absoluteTempVideoPath = path.join(__dirname, '../public', rawVideoURI);
             

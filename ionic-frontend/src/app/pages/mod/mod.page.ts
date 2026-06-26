@@ -41,11 +41,11 @@ import {
 
 import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
 
-// IMPORT SERVIZIO E MODELLI
+
 import { ModComment, ModDiscussion, ModUser } from '@app/models/mod'
 import { ModService } from '@app/services/mod'
 
-// IMPORT COMPONENTI
+
 import { DiscussionModalComponent } from '@app/components/discussion-modal/discussion-modal.component'
 import { ModDiscussionCardComponent } from '@app/components/mod-discussion-card/mod-discussion-card.component'
 import { ModUserCommentComponent } from '@app/components/mod-user-comment/mod-user-comment.component'
@@ -111,7 +111,7 @@ export class ModPage implements OnInit {
     }
 
     checkScreenSize() {
-        // Se lo schermo è largo meno di 576px, isMobile diventa true
+       
         this.isMobile.set(window.innerWidth < 576);
     }
 
@@ -235,7 +235,7 @@ export class ModPage implements OnInit {
         await alert.present()
     }
 
-    // 📂 LOGICA UTENTI
+    
     loadUsersList() {
         this.modService
             .getUsers(this.userPage(), this.userLimit(), this.searchQuery())
@@ -399,7 +399,7 @@ export class ModPage implements OnInit {
     }
 
     private refreshSingleUserStatus(userId: number) {
-        // Mantiene il comportamento precedente mappando i parametri limitati
+        
         this.modService.getUsers(1, 100).subscribe({
             next: (data) => {
                 const freshData = data.find((u) => u.UserID === userId)

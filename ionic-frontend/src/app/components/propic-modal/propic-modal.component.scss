@@ -60,7 +60,7 @@ ion-content {
 
   &.has-image {
     border-style: solid;
-    aspect-ratio: 1; /* Diventa quadrato se c'è un'immagine */
+    aspect-ratio: 1; 
     max-width: 250px;
     margin: 0 auto;
   }

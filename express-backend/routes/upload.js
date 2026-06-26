@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const isCataloguer = require('../middleware/isCataloguer');
 
-// Importiamo le istanze di Multer
+
 const multerConfig = require('../middleware/multerConfig');
 const { handleImageUpload, handleRawVideoUpload, handleTrackUpload } = require('../controllers/uploadController');
 
@@ -22,8 +22,7 @@ const catchMulterError = (uploadMiddleware) => {
 // ROTTE UPLOAD IMMAGINI (TWO-STEP)
 // ==========================================
 
-// Attenzione al nome del campo dentro .single('nome_campo')! 
-// È il nome esatto che si usa su Postman o su Angular nel FormData.
+
 // Niente swagger per il file upload
 
 router.use(isCataloguer);

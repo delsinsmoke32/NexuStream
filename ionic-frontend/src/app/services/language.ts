@@ -26,7 +26,7 @@ export class LanguageService {
     localStorage.setItem('textLang', this.currentTextLang);
     localStorage.setItem('audioLang', this.currentAudioLang);
 
-    const token = localStorage.getItem('token'); // O usa il tuo AuthService per verificare il login
+    const token = localStorage.getItem('token');
     if (token) {
       this.syncWithBackend();
     }

@@ -4,7 +4,7 @@
             [src]="
                 episode.ThumbnailURI
                     ? (episode.ThumbnailURI | backendUrl: 'static')
-                    : 'assets/placeholder-episode.png'
+                    : ('episode_thumbnails/bleach.png' | backendUrl: 'static')
             "
             [alt]="episode.Title"
         />

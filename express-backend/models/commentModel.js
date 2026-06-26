@@ -8,7 +8,7 @@ const db = require("../db/db");
  */
 
 const getCommentsByDiscussion = async (discussionId, userId) => {
-    //  Aggiunta la JOIN con le interazioni dell'utente per sapere se HA GIÀ messo like o segnalato!
+    
     let sql = `SELECT c.*, u.Username, u.REF_PropicURI, u.isAdmin, u.isMod, u.isCataloguer,
                       COALESCE(i.isLiked, 0) AS isLiked,
                       COALESCE(i.isReported, 0) AS isReported

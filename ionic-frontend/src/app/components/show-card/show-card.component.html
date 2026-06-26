@@ -5,9 +5,9 @@
                 [src]="
                     show().EpisodeThumbnailURI
                         ? (show().EpisodeThumbnailURI | backendUrl: 'static')
-                        : (show().BannerURI 
+                        : (show().BannerURI) 
                             ? (show().BannerURI | backendUrl: 'static') 
-                            : 'assets/placeholder-banner.png')
+                            : ('banners/bleach.png' | backendUrl: 'static')
                 "
                 [alt]="parseLang(show().Title || show().ShowTitle)"
             />
@@ -16,7 +16,7 @@
                 [src]="
                     show().ThumbnailURI
                         ? (show().ThumbnailURI | backendUrl: 'static')
-                        : 'assets/placeholder-poster.png'
+                        : ('show_thumbnails/bleach.png' | backendUrl: 'static')
                 "
                 [alt]="parseLang(show().Title || show().ShowTitle)"
             />

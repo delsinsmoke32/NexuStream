@@ -1,6 +1,6 @@
-/* percorso: src/app/pages/tabs/tabs.page.scss */
 
-/* 📱 CONFIGURAZIONE BASE (MOBILE) */
+
+
 .desktop-header {
   display: none; 
 }
@@ -14,7 +14,7 @@ ion-tab-bar {
     color: var(--ion-color-primary) !important;
 }
 
-/* 💻 CONFIGURAZIONE SCHERMI GRANDI (PC) */
+
 @media (min-width: 768px) {
   ion-tab-bar {
     display: none !important;
@@ -65,20 +65,20 @@ ion-tab-bar {
       }
     }
 
-    /* Quando il menu profilo è aperto, spegniamo il link attivo */
+    
     &.profile-menu-open {
       .nav-link.active-tab {
-        color: #e0e0e0 !important; /* Torna al grigio di base */
-        font-weight: 500 !important; /* Toglie il grassetto */
+        color: #e0e0e0 !important; 
+        font-weight: 500 !important; 
       }
     }
   }
 }
 
-/* Quando il menu del profilo è APERTO... */
+
 .profile-menu-open {
   
-  /* 1. Colpiamo ESATTAMENTE la tab che Ionic crede sia attiva (ignorando la nostra) */
+  
   ion-tab-button.tab-selected:not(.profile-btn) {
     --color: #888888 !important;
     --color-selected: #888888 !important;
@@ -89,7 +89,7 @@ ion-tab-bar {
     }
   }
 
-  /* 2. Accendiamo SOLO il bottone del profilo */
+  
   ion-tab-button.profile-btn {
     --color: var(--ion-color-primary) !important;
     --color-selected: var(--ion-color-primary) !important;
@@ -102,17 +102,17 @@ ion-tab-bar {
 }
 
 .profile-icon-btn {
-    --color: #e0e0e0; /* Colore di base, come gli altri link */
+    --color: #e0e0e0; 
     margin: 0;
     transition: all 0.2s ease-in-out;
 
-    /* Effetto Hover (Rosso più chiaro e leggero ingrandimento) */
+    
     &:hover {
       --color: var(--ion-color-primary-tint);
       transform: scale(1.05);
     }
 
-    /* Effetto Attivo quando il menu è aperto (Rosso scuro/primary) */
+    
     &.active-profile {
       --color: var(--ion-color-primary) !important;
     }
@@ -140,16 +140,16 @@ ion-popover {
     font-size: 0.95rem;
     cursor: pointer;
     
-    /*  Transizione fluida per colore, ingrandimento e spostamento */
+    
     transition: transform 0.2s ease-in-out, --color 0.2s ease-in-out, padding 0.2s ease-in-out;
 
-    /*  EFFETTO HOVER SULLE OPZIONI */
+    
     &:hover {
-      --background: rgba(178, 34, 34, 0.08); /* Sfondo con un leggerissimo alone rosso */
-      --color: var(--ion-color-primary-tint) !important; /* Il testo diventa rosso chiaro */
+      --background: rgba(178, 34, 34, 0.08); 
+      --color: var(--ion-color-primary-tint) !important; 
       
-      transform: scale(1.03); /* Si ingrandisce del 3% */
-      padding-left: 4px; /* Fa un leggerissimo micro-scostamento verso destra */
+      transform: scale(1.03); 
+      padding-left: 4px; 
     }
   }
 }

@@ -2,15 +2,6 @@
   --input-placeholder: #b3b3b3;
 }
 
-// .login-content {
-//   --background: var(--ion-color-secondary);
-// }
-
-// #dnexus {
-//   color: var(--ion-color-primary-tint);
-//   display: inline;
-//   font-weight: bolder;
-// }
 
 .flex-centered {
   display: flex;
@@ -29,16 +20,16 @@
   font-size: 26px;
   font-weight: 700;
   margin-bottom: 24px;
-  margin-top: 0px; //così tutto appare più centrato
+  margin-top: 0px;
 }
 
 .form-log-in-card {
   background: var(--ion-color-primary);
   width: 100%;
-  max-width: 450px; //rifare con media query?
+  max-width: 450px; 
   border-radius: 16px;
   margin: 0;
-  // Box shadow interna come nel tuo design originale Figma
+  
   box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25), 0px 10px 20px rgba(0,0,0,0.3);
 }
 
@@ -113,7 +104,7 @@ ion-card-content {
 // HEADER E NAVIGAZIONE
 // ==========================================
 
-/* Fix per il language picker che clippa: forziamo i margini interni della toolbar */
+
 ion-toolbar {
   --padding-start: 16px;
   --padding-end: 16px;
@@ -124,13 +115,13 @@ ion-toolbar {
   }
 }
 
-/* Stile per il nuovo link di ritorno alla home */
+
 .return-home-container {
   display: flex;
   align-items: center;
   font-size: 0.95rem;
   color: var(--ion-color-medium, #888888);
-  white-space: nowrap; /* Evita che il testo si spezzi su più righe rompendosi male */
+  white-space: nowrap; 
 
   .full-text {
     margin-right: 4px;
@@ -148,17 +139,17 @@ ion-toolbar {
     }
   }
 
-  /* 📱 MEDIA QUERY MOBILE: Salviamo lo spazio! */
+  
   @media (max-width: 576px) {
     font-size: 0.85rem;
     
     .full-text {
-      /* Nascondiamo la frase lunga sui telefoni, lasciando solo "Torna alla home" */
+      
       display: none; 
     }
 
     .home-link {
-      /* Possiamo anche aggiungere un'iconina visiva via CSS per renderlo più chiaro su mobile */
+      
       &::before {
         content: '← ';
         font-weight: bold;

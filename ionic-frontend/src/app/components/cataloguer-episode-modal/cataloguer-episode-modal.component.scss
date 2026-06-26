@@ -37,7 +37,7 @@ ion-item {
   stroke: currentColor;
 }
 
-/* --- STILI BOX UPLOAD IMMAGINE --- */
+
 .upload-box {
   background: var(--ion-color-secondary, #181818);
   border: 2px dashed #3a3a3a;
@@ -48,7 +48,7 @@ ion-item {
   cursor: pointer;
   overflow: hidden;
   transition: border-color 0.3s ease;
-  min-height: 180px; /* Più grande perché è da solo */
+  min-height: 180px; 
   margin-bottom: 16px;
 
   &:hover {
@@ -81,11 +81,11 @@ ion-item {
     object-fit: cover;
   }
 
-  /* Per gli episodi, le thumbnail sono tipicamente 16:9 */
+  
   .banner-aspect { aspect-ratio: 16 / 9; }
 }
 
-/* Placeholder grafico per quando faremo il Video Upload */
+
 .upload-video-placeholder {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid #3a3a3a;
@@ -105,9 +105,9 @@ ion-item {
   }
 }
 
-/* --- STILI BOX UPLOAD VIDEO --- */
+
 .video-upload-box {
-  min-height: 120px; /* Più stretto dell'immagine */
+  min-height: 120px; 
   background: rgba(255, 255, 255, 0.02);
   
   &.has-file {

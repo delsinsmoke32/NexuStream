@@ -10,7 +10,7 @@ export const CataloguerGuard: CanActivateFn = async (route, state) => {
 
   if (token) {
     const decodedToken = jwtDecodeHelper(token); 
-    // Assicurati che 'isCat' sia il nome corretto che usi nel tuo JWT del backend!
+    
     if (decodedToken && decodedToken.isCat === 1) {
       return true; 
     }

@@ -33,7 +33,6 @@ import { ShowCardComponent } from '@app/components/show-card/show-card.component
 import { AuthService } from '@app/services/auth'
 import { HomeService } from '@app/services/home'
 import {
-    ContinueWatchingInteractPayload,
     ContinueWatchingItem,
     HomeShow,
 } from '../../models/home'
@@ -58,6 +57,7 @@ export class HomePage implements OnDestroy {
     @ViewChild('continueWatchingScroll') continueWatchingScroll!: ElementRef
     @ViewChild('mostViewedScroll') mostViewedScroll!: ElementRef
     @ViewChild('mostLikedScroll') mostLikedScroll!: ElementRef
+    @ViewChild('recentDiscScroll') recentDiscScroll!: ElementRef;
 
     private homeService = inject(HomeService)
     private authService = inject(AuthService)
@@ -67,34 +67,19 @@ export class HomePage implements OnDestroy {
 
     isLoading = signal<boolean>(true)
 
-    // Dati tipizzati
+    
     mostViewed = signal<HomeShow[]>([])
     mostLiked = signal<HomeShow[]>([])
+    recentDisc = signal<HomeShow[]>([])
     continueWatching = signal<ContinueWatchingItem[]>([])
 
-    // Gestione Hero Banner
+    
     heroList = signal<HomeShow[]>([])
     activeHeroIndex = signal<number>(0)
     private heroInterval: any
 
     constructor() {
-        addIcons({
-            play,
-            informationCircleOutline,
-            chevronBackOutline,
-            chevronForwardOutline,
-            logInOutline,
-            personAddOutline,
-            searchOutline,
-            personCircleOutline,
-            settingsOutline,
-            heartOutline,
-            shieldCheckmarkOutline,
-            libraryOutline,
-            eyeOutline,
-            logOutOutline,
-            playCircle,
-        })
+        addIcons({play,informationCircleOutline,chevronBackOutline,chevronForwardOutline,logInOutline,personAddOutline,searchOutline,personCircleOutline,settingsOutline,heartOutline,shieldCheckmarkOutline,libraryOutline,eyeOutline,logOutOutline,playCircle,});
     }
 
     ionViewWillEnter() {
@@ -110,14 +95,15 @@ export class HomePage implements OnDestroy {
 
         this.homeService.getHomeData().subscribe({
             next: (res) => {
-                const viewed = res.mostViewed || []
-                this.mostViewed.set(viewed)
-                this.mostLiked.set(res.mostLiked || [])
-                this.continueWatching.set(res.continueWatching || [])
+                const viewed = res.mostViewed || [];
+                this.mostViewed.set(viewed);
+                this.mostLiked.set(res.mostLiked || []);
+                this.recentDisc.set(res.recentDisc || []);
+                this.continueWatching.set(res.continueWatching || []);
 
                 if (viewed.length > 0) {
-                    this.heroList.set(viewed.slice(0, 5))
-                    this.startHeroCarousel()
+                    this.heroList.set(viewed.slice(0, 5));
+                    this.startHeroCarousel();
                 }
 
                 this.isLoading.set(false)
@@ -134,22 +120,22 @@ export class HomePage implements OnDestroy {
     }
 
     scrollRow(
-        rowType: 'continueWatching' | 'mostViewed' | 'mostLiked',
+        rowType: 'continueWatching' | 'mostViewed' | 'mostLiked' | 'recentDisc',
         direction: 'left' | 'right'
     ) {
-        let containerRef: ElementRef | undefined
+        let containerRef: ElementRef | undefined;
 
-        if (rowType === 'continueWatching')
-            containerRef = this.continueWatchingScroll
-        else if (rowType === 'mostViewed') containerRef = this.mostViewedScroll
-        else if (rowType === 'mostLiked') containerRef = this.mostLikedScroll
+        if (rowType === 'continueWatching') containerRef = this.continueWatchingScroll;
+        else if (rowType === 'mostViewed') containerRef = this.mostViewedScroll;
+        else if (rowType === 'mostLiked') containerRef = this.mostLikedScroll;
+        else if (rowType === 'recentDisc') containerRef = this.recentDiscScroll;
 
         if (containerRef && containerRef.nativeElement) {
-            const scrollAmount = window.innerWidth > 768 ? 600 : 300
+            const scrollAmount = window.innerWidth > 768 ? 600 : 300;
             containerRef.nativeElement.scrollBy({
                 left: direction === 'left' ? -scrollAmount : scrollAmount,
                 behavior: 'smooth',
-            })
+            });
         }
     }
 
@@ -198,19 +184,9 @@ export class HomePage implements OnDestroy {
         const targetItem = oldList.find((cw) => cw.ShowID === showId)
         if (!targetItem) return
 
-        const body: ContinueWatchingInteractPayload = {
-            progress: 0,
-            isCompleted: 0,
-            isDropped: 1,
-            isLiked: targetItem.isLiked || 0,
-        }
-
         this.homeService
-            .updateEpisodeInteraction(
+            .removeShowFromContinueWatching(
                 showId,
-                targetItem.SeasonID,
-                targetItem.EpisodeID,
-                body
             )
             .subscribe({
                 next: () =>

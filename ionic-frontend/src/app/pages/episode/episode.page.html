@@ -32,7 +32,7 @@
             } 
             @else {
                 <div class="guest-paywall-container">
-                    <img [src]="episode()?.ThumbnailURI ? ((episode()?.ThumbnailURI || '') | backendUrl: 'static') : 'assets/placeholder-episode.jpg'" alt="Thumbnail" />
+                    <img [src]="episode()?.ThumbnailURI ? ((episode()?.ThumbnailURI || '') | backendUrl: 'static') : ('episode_thumbnails/bleach.png' | backendUrl: 'static')" alt="Thumbnail" />
                     
                     <div class="paywall-overlay">
                         <h3>Per guardare il video devi effettuare l'accesso</h3>

@@ -69,7 +69,6 @@ export class CataloguerService {
     }
 
     deletePropic(propicURI: string): Observable<any> {
-        // In Angular, per mandare un body con una richiesta DELETE, devi usare questa struttura:
         return this.http.delete(`${this.baseUrl}/propics`, {
             headers: this.getAuthHeaders(),
             body: { propicURI }
@@ -95,7 +94,7 @@ export class CataloguerService {
     uploadPropic(bundleName: string, file: File): Observable<any> {
         const formData = new FormData();
         
-        // Il campo 'img' deve corrispondere al nome che Multer si aspetta nel tuo backend
+        
         formData.append('img', file, file.name); 
         formData.append('bundle', bundleName);
 

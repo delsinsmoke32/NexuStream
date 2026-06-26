@@ -26,7 +26,7 @@ import {
     settingsOutline,
 } from 'ionicons/icons'
 
-// Componenti esterni, Service e Modelli
+
 import { ShowCardComponent } from '@app/components/show-card/show-card.component'
 import { Genre, SearchResult } from '../../models/search'
 import { SearchService } from '../../services/search'
@@ -60,14 +60,14 @@ export class SearchPage {
     private alertCtrl = inject(AlertController)
     private toastCtrl = inject(ToastController)
 
-    // Stati reattivi
+    
     searchQuery = signal<string>('')
     selectedGenre = signal<number | null>(null)
     filteredResults = signal<SearchResult[]>([])
     isLoading = signal<boolean>(false)
     isLoggedIn = signal<boolean>(false)
 
-    // Lista dei generi dal database
+    
     genres = signal<Genre[]>([])
 
     constructor() {
@@ -89,7 +89,7 @@ export class SearchPage {
         this.loadGenres()
     }
 
-    // 1. Carica i generi disponibili dal backend tramite il Service
+    
     loadGenres() {
         this.searchService.getGenres().subscribe({
             next: (res) => this.genres.set(res),
@@ -98,13 +98,13 @@ export class SearchPage {
         })
     }
 
-    // 2. L'utente digita nella barra di ricerca
+    
     onSearchChange(event: any) {
         this.searchQuery.set(event.detail.value || '')
         this.triggerSearch()
     }
 
-    // 3. L'utente clicca su un genere ("Chip")
+    
     selectGenre(genreId: number | null) {
         if (this.selectedGenre() === genreId) {
             this.selectedGenre.set(null)
@@ -114,7 +114,7 @@ export class SearchPage {
         this.triggerSearch()
     }
 
-    // 4. Esegue la ricerca vera e propria combinando Testo + Genere tramite il Service
+    
     triggerSearch() {
         const q = this.searchQuery().trim()
         const g = this.selectedGenre()
@@ -138,13 +138,13 @@ export class SearchPage {
         })
     }
 
-    // Navigazione
+    
     openSeriesInfo(showId: string | number, event?: Event) {
         if (event) event.stopPropagation()
         this.router.navigate(['/shows', showId])
     }
 
-    // Menu Profilo
+   
     async openProfileMenu(ev: any) {
         this.popover.event = ev
         await this.popover.present()

@@ -11,7 +11,7 @@ if (!fs.existsSync(outputDir)) {
 const relativeOutputDir = 'public/videos/test_jjk/video';
 
 const processVideo = (req, res) => {
-    // Sostituisci con il percorso reale del tuo video di input
+    
     const inputVideo = path.join(__dirname, '../public/videos/test_jjk/jjk.mp4'); 
 
     const outputPlaylist = path.join(outputDir, 'video.m3u8');
@@ -20,7 +20,7 @@ const processVideo = (req, res) => {
         return res.status(400).send('Video di input non trovato.');
     }
 
-    // Configurazione del comando FFmpeg basata sui tuoi parametri
+    // Configurazione del comando FFmpeg
     ffmpeg().input(inputVideo)
         .outputOptions([
             '-map 0:v:0',
@@ -30,7 +30,7 @@ const processVideo = (req, res) => {
             '-hls_segment_type fmp4',
             '-hls_playlist_type event',
             `-hls_fmp4_init_filename ./${relativeOutputDir}/init_v.mp4`, // Relativo alla cartella di output
-            `-hls_segment_filename ./${relativeOutputDir}/v_%03d.m4s`     // Relativo alla cartella di output
+            `-hls_segment_filename ./${relativeOutputDir}/v_%03d.m4s`     
         ])
         .output(outputPlaylist)
         .on('start', (commandLine) => {
@@ -47,12 +47,11 @@ const processVideo = (req, res) => {
                     return res.status(500).send('Errore nella post-elaborazione.');
                 }
 
-                // 2. Sostituisci il percorso assoluto (o qualsiasi cosa prima di init_v) con la stringa pulita
-                // Usiamo una Regex flessibile per catturare tutto ciò che sta tra le virgolette prima di init_v.mp4
+                
                 const regex = /#EXT-X-MAP:URI=".*init_v\.mp4"/g;
                 const result = data.replace(regex, '#EXT-X-MAP:URI="init_v.mp4"');
 
-                // 3. Sovrascrivi il file originale con il contenuto modificato
+                
                 fs.writeFile(outputPlaylist, result, 'utf8', (err) => {
                     if (err) {
                         console.error('Errore nella scrittura del file playlist:', err);
@@ -63,7 +62,7 @@ const processVideo = (req, res) => {
                     res.send('Video convertito e playlist ottimizzata!');
                 });
             });
-            // res.send('Video convertito in formato HLS (fMP4) con successo.');
+            
         })
         .on('error', (err) => {
             console.error('Errore durante l\'elaborazione:', err);

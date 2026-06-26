@@ -65,7 +65,7 @@ export interface StreamingComment {
     isHidden?: number;
     ReportCount?: number;
     replyTag?: string | null;
-    replies?: StreamingComment[]; // Per i commenti annidati
-    parsedChunks?: any[]; // Per i timestamp
+    replies?: StreamingComment[]; 
+    parsedChunks?: any[]; 
     [key: string]: any;
 }

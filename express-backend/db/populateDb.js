@@ -6,7 +6,7 @@ const db = dbf.db;
 
 const populateDb = async () => {
     try {
-        // 1. Eseguiamo il file SQL statico (Lingue, Serie, Episodi, Generi, Risoluzioni...)
+        
         const sqlPath = path.join(__dirname, 'populateDb.sql');
         const sqlContent = fs.readFileSync(sqlPath, 'utf8');
         
@@ -20,14 +20,14 @@ const populateDb = async () => {
             console.error(err);
         }
 
-        // 2. Inseriamo gli utenti (Tabella: Users) con i path in 'avatars/'
+        
         const users = [
             { email: 'admin@stream.it', pass: 'admin123', user: 'SuperAdmin', mod: 1, cat: 1, adm: 1, audio: 'jp', text: 'it', app: 'it', pic: 'avatars/avatar-000.png', canComment: 1 },
             { email: 'marco@email.com', pass: 'marco888', user: 'MarcoRossi', mod: 0, cat: 0, adm: 0, audio: 'it', text: 'it', app: 'it', pic: 'avatars/avatar-001.png', canComment: 1 },
             { email: 'gino@email.com', pass: 'gino9999', user: 'GinoRossi', mod: 1, cat: 0, adm: 0, audio: 'jp', text: 'it', app: 'it', pic: 'avatars/avatar-001.png', canComment: 1 },
             { email: 'guest@test.com', pass: 'guest999', user: 'GuestUser', mod: 0, cat: 1, adm: 0, audio: 'en', text: 'en', app: 'en', pic: 'avatars/avatar-002.png', canComment: 1 },
             
-            // Nuovi Utenti Aggiunti per popolare il Database
+            
             { email: 'luigi@anime.it', pass: 'luigi999', user: 'LuigiOtaku', mod: 0, cat: 0, adm: 0, audio: 'jp', text: 'it', app: 'it', pic: 'avatars/avatar-002.png', canComment: 1 },
             { email: 'giulia@stream.it', pass: 'giulia22', user: 'GiuliaWeeb', mod: 0, cat: 0, adm: 0, audio: 'jp', text: 'it', app: 'it', pic: 'avatars/avatar-003.png', canComment: 1 },
             { email: 'hater@web.com', pass: 'hater123', user: 'AnimeHater', mod: 0, cat: 0, adm: 0, audio: 'it', text: 'it', app: 'it', pic: 'avatars/avatar-000.png', canComment: 0 } // Utente Bannato
@@ -44,7 +44,7 @@ const populateDb = async () => {
             await dbf.runAsync(sql, [u.email, hash, u.user, u.mod, u.cat, u.adm, u.audio, u.text, u.app, u.pic, u.canComment]);
         }
 
-        console.log("Tutti gli 7 utenti sono stati inseriti con successo.");
+        console.log("Tutti gli utenti sono stati inseriti con successo.");
 
     } catch (error) {
         console.error("Errore durante la popolazione iniziale:", error);
@@ -52,7 +52,7 @@ const populateDb = async () => {
     }
 
     // ==========================================
-    // 3. DATI DIPENDENTI (Richiedono che gli utenti e gli episodi esistano)
+    //  DATI DIPENDENTI 
     // ==========================================
 
     const commentsSql = `
@@ -109,7 +109,7 @@ const populateDb = async () => {
         await dbf.runAsync(userLikesShow, []);
         await dbf.runAsync(userInteractsComment, []);
 
-        console.log("Database interamente popolato! Il tuo catalogo Anime Netflix è pronto all'uso.");
+        console.log("Database interamente popolato!");
     } catch (err) {
         console.error("Errore nell'inserimento dei dati relazionali: ", err);
     }

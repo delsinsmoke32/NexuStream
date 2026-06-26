@@ -4,6 +4,11 @@ export interface ShowDetails {
     Description?: string;
     ThumbnailURI?: string;
     isFavorited: number;
+    ResumeEpisodeID: number;
+    ResumeEpisodeNumber: number;
+    ResumeProgress: number;
+    ResumeSeasonID: number;
+    ResumeSeasonNumber: number;
     BannerURI?: string;
     genres?: any[];
     audio?: string[];
@@ -21,6 +26,7 @@ export interface Season {
 
 export interface Episode {
     EpisodeID: number;
+    SeasonID: number;
     EpisodeNumber: number;
     Title: string;
     progress: number;

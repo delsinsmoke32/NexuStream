@@ -2,12 +2,12 @@ const nodemailer = require('nodemailer');
 
 // Configura il trasportatore SMTP usando le variabili d'ambiente
 const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,       // es. smtp.gmail.com, mail.nexustream.it oppure mailtrap
-    port: process.env.EMAIL_PORT,       // es. 587 (per TLS), 465 (per SSL) o 2525 (mailtrap)
-    secure: process.env.EMAIL_PORT == 465, // true per la porta 465, false per le altre
+    host: process.env.EMAIL_HOST,       
+    port: process.env.EMAIL_PORT,       
+    secure: process.env.EMAIL_PORT == 465, 
     auth: {
-        user: process.env.EMAIL_USER,   // L'email di sistema 
-        pass: process.env.EMAIL_PASS    // La password dell'email o una App Password (es. per Gmail)
+        user: process.env.EMAIL_USER,   
+        pass: process.env.EMAIL_PASS    
     }
 });
 
@@ -28,12 +28,12 @@ const EmailService = {
 
         // Configurazione del messaggio
         const mailOptions = {
-            from: `"NexuStream Support" <${process.env.EMAIL_USER}>`, // Mittente stilizzato
-            to: userEmail,                                           // Destinatario
-            subject: 'Ripristino Password - NexuStream',             // Oggetto
-            // Testo in puro testo (fallback per vecchi client mail)
+            from: `"NexuStream Support" <${process.env.EMAIL_USER}>`, 
+            to: userEmail,                                          
+            subject: 'Ripristino Password - NexuStream',             
+            
             text: `Ciao! Hai richiesto il reset della password. Clicca sul seguente link per impostarne una nuova: ${resetLink}. Il link scadrà tra 15 minuti.`,
-            // Corpo in HTML stilizzato Dark/Neon in linea con NexuStream
+            
             html: `
                 <div style="background-color: #121212; padding: 40px 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
                     <div style="background-color: #222222; color: #f5f5f5; padding: 40px 30px; border-radius: 8px; max-width: 500px; margin: 0 auto; border-top: 4px solid #b22222; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);">
@@ -64,7 +64,7 @@ const EmailService = {
             `
         };
 
-        // Invia effettivamente la mail
+        
         return transporter.sendMail(mailOptions);
     }
 };

@@ -19,7 +19,7 @@
     <div class="hero-banner">
         <img
             class="banner-img"
-            [src]="show()?.BannerURI ? (show()!.BannerURI! | backendUrl: 'static') : 'assets/placeholder-banner.png'"
+            [src]="show()?.BannerURI ? (show()!.BannerURI! | backendUrl: 'static') : ('banners/bleach.png' | backendUrl: 'static')"
             alt="Banner"
         />
         <div class="hero-gradient-overlay"></div>
@@ -33,7 +33,7 @@
           <h1 class="shows-title">{{ show()?.Title }}</h1>
           
           <div class="action-buttons">
-            <button class="btn-play-primary" (click)="playEpisode(resumeEpisode()?.EpisodeID, $event)">
+            <button class="btn-play-primary" (click)="playEpisode()">
               <ion-icon name="play"></ion-icon>
               <div class="btn-text">
                 
@@ -46,7 +46,7 @@
                 </span>
                 
                 <span i18n="@@episode" class="ep-ref">
-                  Episodio {{ resumeEpisode()?.EpisodeNumber || 1 }}
+                    S{{ $any(resumeEpisode())?.SeasonNumber || 1 }}E{{ resumeEpisode()?.EpisodeNumber || 1 }}
                 </span>
                 
               </div>

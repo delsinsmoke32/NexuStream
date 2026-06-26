@@ -39,26 +39,27 @@ const getHomeData = async (req, res) => {
     const applang = req.language;
 
     try {
-        // 1. Prepariamo le query base obbligatorie per tutti (anonimi e loggati)
+        // query base obbligatorie per tutti (anonimi e loggati)
         const promises = [
             showModel.getTopFavorited(applang),
-            showModel.getTopStreamed(applang)
+            showModel.getTopStreamed(applang),
+            showModel.getShowsWithRecentOpenDiscussions(applang)
         ];
 
-        // 2. Se l'utente è loggato, aggiungiamo la promessa per il "Continua a guardare"
+        // Se l'utente è loggato, si aggiunge continua a guardare
         if (user) {
             promises.push(showModel.getContinueWatching(user.id, applang));
         }
 
-        // 3. Eseguiamo tutto in parallelo
         const results = await Promise.all(promises);
 
-        // 4. Costruiamo il JSON di risposta in modo sicuro
+        // JSON di risposta 
         const homeData = {
             mostLiked: results[0],
             mostViewed: results[1],
-            // Se l'utente esiste i dati sono in results[2], altrimenti restituiamo un array vuoto
-            continueWatching: user ? results[2] : [] 
+            recentDisc: results[2],
+            // Se l'utente esiste i dati sono in results[3], altrimenti restituiamo un array vuoto
+            continueWatching: user ? results[3] : [] 
         };
 
         return res.json(homeData);
@@ -92,7 +93,6 @@ const getShowDetails = async (req, res) => {
 
         if (!show) return res.status(404).json({ error: "Show non trovato" });
 
-        // 2. Aggiungiamo i Generi (trasformiamo [{Name: 'Action'}, {Name: 'Fantasy'}] in ['Action', 'Fantasy'])
         const genres = await showModel.getShowGenres(showId);
         show.genres = genres.map(g => g.Name); 
 
@@ -109,7 +109,6 @@ const getShowDetails = async (req, res) => {
             show.subs = [];
         }
 
-        // Restituiamo l'oggetto completo!
         return res.json(show);
     } catch (err) {
         console.error("Errore recupero dettagli show: ", err);
@@ -156,10 +155,30 @@ const toggleShowLike = async (req, res) => {
     }
 };
 
+const dropShow = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { showId } = req.params;
+    const user = req.user;
+
+    try {
+        await showModel.dropShowFromContinueWatching(user.id, showId);
+        return res.status(200).json({message: "Serie rimossa dal continua a guardare."})
+    } catch (err) {
+        console.error("Errore gestione preferiti serie: ", err);
+        return res.status(500).json({ error: "Errore interno del server." });
+    }
+}
+
 
 module.exports = {
     search,
     getHomeData,
     getShowDetails,
-    toggleShowLike
+    toggleShowLike,
+    dropShow
 };

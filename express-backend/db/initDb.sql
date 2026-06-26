@@ -169,9 +169,3 @@ CREATE TABLE IF NOT EXISTS "EpisodeSubtitles" (
     FOREIGN KEY ("REF_LanguageID") REFERENCES "SupportedLanguages" ("LanguageID") ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS "EpisodeResolutions" (
-    "REF_EpisodeID" INTEGER NOT NULL,
-    "Resolution" TEXT NOT NULL,
-    PRIMARY KEY ("REF_EpisodeID", "Resolution"),
-    FOREIGN KEY ("REF_EpisodeID") REFERENCES "Episodes" ("EpisodeID") ON DELETE CASCADE
-);

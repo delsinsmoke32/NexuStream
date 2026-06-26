@@ -8,14 +8,14 @@
   display: flex;
   flex-direction: column;
   
-  /* Sfondo Grigio e Bordi Arrotondati sull'INTERA card */
+  
   background-color: var(--ion-color-secondary-tint, #242424); 
   border-radius: 8px;
   overflow: hidden; 
   box-shadow: 0 4px 10px rgba(0,0,0,0.4);
   transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.3s ease;
 
-  /* Effetto Zoom sull'intera card */
+  
   @media (hover: hover) {
     &:hover {
       transform: scale(1.05);
@@ -71,7 +71,7 @@
       }
     }
 
-    /* BOTTONI IN ALTO A DESTRA (Elimina o Nascondi) */
+    
     .action-top-btn {
       position: absolute;
       top: 8px;
@@ -99,7 +99,7 @@
     }
   }
 
-  /*  STILE PER TESTI DEL CONTINUA A GUARDARE */
+  
   .landscape-meta {
     padding: 10px 12px 0 12px;
     display: flex;
@@ -111,9 +111,9 @@
       font-size: 0.95rem;
       font-weight: 700;
       color: #ffffff;
-      white-space: nowrap;      /* Impedisce al testo di andare a capo */
-      overflow: hidden;         /* Nasconde il testo che sborda */
-      text-overflow: ellipsis;  /* Aggiunge i 3 puntini finali */
+      white-space: nowrap;      
+      overflow: hidden;         
+      text-overflow: ellipsis;  
     }
 
     .meta-episode-info {
@@ -126,7 +126,7 @@
     }
   }
 
-  /* RIGA INFORMAZIONI IN BASSO */
+  
   .card-info-bottom {
     display: flex;
     justify-content: center;
@@ -156,7 +156,7 @@
    VARIANTI DI DIMENSIONE
    =================================== */
 
-/* Formato Locandina Classica */
+
 .portrait {
   width: 130px;
   @media (min-width: 768px) { width: 160px; }
@@ -166,7 +166,7 @@
   }
 }
 
-/* Formato Banner Continua a guardare */
+
 .landscape {
   width: 240px;
   @media (min-width: 768px) { width: 300px; }

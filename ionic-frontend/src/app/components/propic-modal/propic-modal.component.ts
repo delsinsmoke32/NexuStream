@@ -15,7 +15,7 @@ import {
     Validators,
 } from '@angular/forms'
 
-//  IMPORTAZIONI STANDALONE CHIRURGICHE DI IONIC
+
 import {
     IonButton,
     IonButtons,
@@ -35,7 +35,7 @@ import {
 import { addIcons } from 'ionicons'
 import { cloudUploadOutline, imageOutline } from 'ionicons/icons'
 
-//  IMPORTA IL SERVIZIO
+
 import { CataloguerService } from '../../services/cataloguer'
 
 @Component({
@@ -98,7 +98,7 @@ export class PropicModalComponent implements OnInit {
             const file = input.files[0]
             this.selectedFile.set(file)
 
-            // --- LOGICA PER L'ANTEPRIMA ---
+            
             const reader = new FileReader()
             reader.onload = () => {
                 this.imagePreview.set(reader.result as string)
@@ -114,12 +114,12 @@ export class PropicModalComponent implements OnInit {
         this.isUploading.set(true)
         const bundleName = this.propicForm.value.bundle
 
-        // Usa il servizio appena creato
+       
         this.cataloguerService.uploadPropic(bundleName, file).subscribe({
             next: (res) => {
                 this.presentToast('Avatar caricato con successo!', 'success')
                 this.isUploading.set(false)
-                // Chiudiamo e diciamo al padre di ricaricare la lista
+                
                 this.dismiss({ success: true })
             },
             error: (err) => {

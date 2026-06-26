@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms'
 import { Router } from '@angular/router'
 import { firstValueFrom } from 'rxjs'
 
-// IONIC STANDALONE
+
 import { BackendUrlPipe } from '@app/pipes/backend-url-pipe'
 import {
     AlertController,
@@ -30,7 +30,7 @@ import {
 import { addIcons } from 'ionicons'
 import { addCircleOutline, trashOutline } from 'ionicons/icons'
 
-//  SERVICE E MODELLI
+
 import {
     CataloguerEpisode,
     CataloguerSeason,
@@ -156,7 +156,7 @@ export class CataloguerPage implements OnInit {
     async openEditModalData(item: any) {
         const currentLvl = this.currentLevel()
 
-        // 1. Prepariamo la modale
+        
         const { targetComponent, componentProps } = this.getEditModalConfig(
             currentLvl,
             item
@@ -168,7 +168,7 @@ export class CataloguerPage implements OnInit {
         })
         await modal.present()
 
-        // 2. Attendiamo la chiusura
+       
         const { data } = await modal.onWillDismiss()
         if (!data || !data.payload) return
 

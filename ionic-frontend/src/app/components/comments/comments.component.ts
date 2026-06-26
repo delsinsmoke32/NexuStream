@@ -19,7 +19,7 @@ import { BackendUrlPipe } from '@app/pipes/backend-url-pipe';
 import { jwtDecodeHelper } from '@app/utils/jwt-helper';
 import { DomSanitizer } from '@lib/@angular/platform-browser';
 
-//  NUOVI SERVIZI IMPORTATI
+
 import { CommentsService } from '@app/services/comments';
 import { ModService } from '@app/services/mod'; 
 
@@ -65,7 +65,7 @@ export class CommentsComponent implements OnInit {
         addIcons({closeCircle,shieldHalfOutline,hammerOutline,libraryOutline,arrowUndoOutline,alertCircleOutline,checkmarkCircleOutline,eyeOffOutline,banOutline,arrowUndo,chatbubblesOutline,thumbsUpOutline,thumbsUp,lockClosedOutline});
     }
 
-    currentUser: any = null; // (Se hai un'interfaccia User, usala al posto di any!)
+    currentUser: any = null; 
 
     ngOnInit() {
         if (this.discussionId) this.caricaCommenti();
@@ -74,15 +74,15 @@ export class CommentsComponent implements OnInit {
         if (token) {
             const decoded = jwtDecodeHelper(token);
             if (decoded) {
-                //  Creiamo il nostro oggetto utente "al volo"
+                
                 this.currentUser = {
                     id: decoded.id || decoded.UserID,
                     isAdmin: decoded.isAdmin === 1,
-                    // Peschiamo la propic dal localStorage come avevamo detto
+                    
                     propicURI: localStorage.getItem('propic') 
                 };
                 
-                // Per non rompere il resto del tuo codice che usava this.isAdmin e this.currentUserId:
+                
                 this.isAdmin = this.currentUser.isAdmin;
                 this.currentUserId = this.currentUser.id;
             }
@@ -99,8 +99,8 @@ export class CommentsComponent implements OnInit {
                 flatComments.forEach((c) => {
                     c.replies = [];
                     
-                    // LOGICA DI MASCHERAMENTO COMMENTI NASCOSTI
-                    // Se il commento è nascosto e l'utente NON ha i permessi, sovrascriviamo il testo
+                    
+                    // Se il commento è nascosto e l'utente non ha i permessi, sovrascriviamo il testo
                     if (c.isHidden && !this.isMod && !this.isAdmin) {
                         c.CommentText = "[Questo commento è stato rimosso dai moderatori]";
                         c.Username = "[Username Nascosto]";
@@ -108,7 +108,7 @@ export class CommentsComponent implements OnInit {
 
                     // Logica di parsing delle menzioni (@username)
                     const match = c.CommentText.match(/^@([^\s]+)\s([\s\S]*)/);
-                    if (match && !c.isHidden) { // Se è nascosto ignoriamo i tag
+                    if (match && !c.isHidden) { 
                         c.replyTag = match[1];
                         c.cleanText = match[2];
                     } else {
@@ -120,12 +120,12 @@ export class CommentsComponent implements OnInit {
                     commentMap.set(c.CommentID, c);
                 });
 
-                // Costruzione dell'albero (Parenting)
+                // albero
                 flatComments.forEach((c) => {
                     if (c.REF_CommentID) {
                         let rootId = c.REF_CommentID;
                         
-                        // Risaliamo fino al vero Root
+                        
                         while (commentMap.has(rootId) && commentMap.get(rootId).REF_CommentID) {
                             rootId = commentMap.get(rootId).REF_CommentID;
                         }
@@ -134,7 +134,7 @@ export class CommentsComponent implements OnInit {
                         if (rootParent) {
                             rootParent.replies.push(c);
                         } else {
-                            // Se il padre non esiste (es. fisicamente eliminato dal DB), diventa Root
+                            // Se il padre non esiste diventa Root
                             rootComments.push(c);
                         }
                     } else {
@@ -142,7 +142,7 @@ export class CommentsComponent implements OnInit {
                     }
                 });
 
-                // Ordinamento cronologico delle risposte
+                
                 rootComments.forEach((c) => {
                     c.replies.sort((a: any, b: any) => new Date(a.DateCommented).getTime() - new Date(b.DateCommented).getTime());
                 });
@@ -319,7 +319,7 @@ export class CommentsComponent implements OnInit {
                             return false;
                         }
                         
-                        //  Utilizzo pulito di ModService!
+                        
                         this.modService.banUser(parseInt(userId.toString()), durationDays).subscribe({
                             next: (res: any) => this.presentToast(res.message || 'Sanzione applicata con successo.', 'success'),
                             error: (err) => this.presentToast(err.error?.error || 'Errore durante il ban.', 'danger'),

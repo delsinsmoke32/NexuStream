@@ -157,14 +157,14 @@
                 [(ngModel)]="userPreferences.defaultSubtitles"
                 (ionChange)="savePreferences()"
             >
-                <ion-select-option value="off" i18n="@@subtitlesOff"
-                    >Disattivati</ion-select-option
-                >
                 <ion-select-option value="it" i18n="@@langItalian"
                     >Italiano</ion-select-option
                 >
                 <ion-select-option value="en" i18n="@@langEnglish"
                     >Inglese</ion-select-option
+                >
+                <ion-select-option value="jp" i18n="@@langJapanese"
+                    >Giapponese</ion-select-option
                 >
             </ion-select>
         </ion-item>

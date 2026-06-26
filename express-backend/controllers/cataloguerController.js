@@ -105,7 +105,7 @@ const addShow = async (req, res) => {
     } catch (err) {
         console.error("Errore addShow:", err);
         
-        // ROLLBACK: Il DB è fallito, elimino le immagini orfane appena caricate!
+        // ROLLBACK
         if (thumbnailURI) await fs.unlink(path.join(__dirname, '../public', thumbnailURI)).catch(() => {});
         if (bannerURI) await fs.unlink(path.join(__dirname, '../public', bannerURI)).catch(() => {});
 
@@ -121,7 +121,7 @@ const modifyShow = async (req, res) => {
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
     const showId = parseInt(req.params.id);
-    // Aggiunti thumbnailURI e bannerURI per poterli aggiornare!
+    
     const { title, description, dateEnded, lang, thumbnailURI, bannerURI } = req.body;
 
     const user = req.user;
@@ -153,7 +153,7 @@ const modifyShow = async (req, res) => {
         params.push(hasEnded);
     }
 
-    // Aggiungiamo i campi delle immagini alla query se sono stati inviati
+    
     if (thumbnailURI !== undefined) {
         fields.push('ThumbnailURI = ?');
         params.push(thumbnailURI);
@@ -166,15 +166,15 @@ const modifyShow = async (req, res) => {
     if (fields.length === 0) return res.status(400).json({ message: "Inserisci qualche parametro da modificare." });
 
     try {
-        // 1. Leggiamo lo stato ATTUALE della serie prima di sovrascriverla (per sapere i vecchi URI)
+        // lettura stato serie
         oldShow = await showModel.getShowByIdAuth(user.id, showId, applang);
         if (!oldShow) return res.status(404).json({ error: "La serie specificata non è stata trovata." });
 
-        // 2. Aggiorniamo il DB
+        
         const result = await cataloguerModel.updateShow(showId, fields, params);
         if (result.changes === 0) return res.status(400).json({ error: "Nessuna modifica effettuata." });
 
-        // 3. NETTURBINO (Successo): Se hai caricato una NUOVA immagine, cancello quella VECCHIA per liberare spazio
+        // cancellazione vecchie img
         if (thumbnailURI && oldShow.ThumbnailURI && thumbnailURI !== oldShow.ThumbnailURI) {
             await fs.unlink(path.join(__dirname, '../public', oldShow.ThumbnailURI)).catch(() => {});
         }
@@ -187,7 +187,7 @@ const modifyShow = async (req, res) => {
     } catch (err) {
         console.error("Errore modifyShow:", err);
         
-        // ROLLBACK (Fallimento): Se l'update nel DB fallisce, elimino le NUOVE immagini caricate per sbaglio
+        // ROLLBACK 
         if (thumbnailURI && thumbnailURI !== oldShow?.ThumbnailURI) {
             await fs.unlink(path.join(__dirname, '../public', thumbnailURI)).catch(() => {});
         }
@@ -211,15 +211,15 @@ const removeShow = async (req, res) => {
     const applang = req.language;
 
     try {
-        // Recupero la serie PRIMA di cancellarla dal DB per avere in memoria gli URI
+        // get serie attuale
         const show = await showModel.getShowByIdAuth(user.id, showId, applang);
         if (!show) return res.status(404).json({ error: "La serie specificata non è stata trovata." });
 
-        // Cancello la serie dal DB
+       
         const result = await cataloguerModel.deleteShow(showId);
         if (result.changes === 0) return res.status(400).json({ error: "Impossibile cancellare la serie." });
 
-        // Cancello fisicamente dal server tutte le immagini relative a questa serie!
+        // Cancello fisicamente dal server tutte le immagini relative a questa serie
         if (show.ThumbnailURI) {
             await fs.unlink(path.join(__dirname, '../public', show.ThumbnailURI)).catch(() => {});
         }
@@ -242,10 +242,10 @@ const addSeason = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
     
-    // Estraiamo i testi divisi per lingua dal body del form frontend
+    
     const { title_it, title_en, title_jp, description_it, description_en, description_jp, dateStarted, dateEnded, seasonNumber, refShow } = req.body;
     
-    // Generiamo gli oggetti multilingua (con fallback obbligatorio su italiano 'it')
+    
     const titleObj = {
         it: title_it,
         ...(title_en && { en: title_en }),
@@ -288,7 +288,7 @@ const modifySeason = async (req, res) => {
     let fields = [];
     let params = [];
     
-    // Aggiornamento selettivo dei testi all'interno dell'oggetto JSON
+    
     if (title !== undefined) { 
         const targetLang = lang || 'it'; // Default italiano se omesso
         fields.push(`Title = json_set(Title, '$.${targetLang}', ?)`); 
@@ -398,7 +398,7 @@ const addEpisode = async (req, res) => {
         }
 
         const streamURI = 'stream-' + Date.now() + '-' + Math.round(Math.random() * 1E9)
-        // 1. Salviamo l'episodio nel Database passando le lingue appena calcolate
+        // Salviamo l'episodio nel Database con le lingue
         const result = await cataloguerModel.insertEpisodeFull(
             titleObj, 
             descriptionObj, 
@@ -430,7 +430,7 @@ const addEpisode = async (req, res) => {
         if (audioTracks && audioTracks.length > 0) {
             for (let track of audioTracks) {
                 const tempPath = path.join(__dirname, '../public', track.uri);
-                // Sposta il file mp3/aac in public/videos/34/audio_en.mp3
+                // Sposta il file mp3/aac nella cartella corrispondente
                 await videoProcessor.moveMediaFile(tempPath, streamURI, 'audio', track.lang);
                 console.log(`[BACKEND] Traccia audio spostata con successo per lingua: ${track.lang}`);
             }
@@ -535,10 +535,10 @@ const modifyEpisode = async (req, res) => {
             for (let track of audioTracks) {
                 const tempPath = path.join(__dirname, '../public', track.uri);
                 
-                // 1. Sposta e segmenta il file con FFmpeg
+                
                 await videoProcessor.moveMediaFile(tempPath, streamURI, 'audio', track.lang);
                 
-                // 2. Registra la lingua nel Database! (Se esiste già, la ignora senza dare errore)
+                
                 await cataloguerModel.insertDubLang(episodeId, track.lang);
                 
                 console.log(`[BACKEND] Nuova traccia audio ${track.lang} registrata nel DB per l'episodio ${episodeId}`);
@@ -549,10 +549,10 @@ const modifyEpisode = async (req, res) => {
             for (let track of subTracks) {
                 const tempPath = path.join(__dirname, '../public', track.uri);
                 
-                // 1. Sposta e segmenta il VTT
+                
                 await videoProcessor.moveMediaFile(tempPath, streamURI, 'subs', track.lang);
                 
-                // 2. Registra il sottotitolo nel Database!
+                
                 await cataloguerModel.insertSubLang(episodeId, track.lang);
 
                 console.log(`[BACKEND] Nuovi sottotitoli ${track.lang} registrati nel DB per l'episodio ${episodeId}`);
@@ -582,21 +582,21 @@ const removeEpisode = async (req, res) => {
     const applang = req.language;
 
     try {
-        // 1. Estraggo i dati per ottenere la ThumbnailURI prima di cancellare la riga dal DB
+        // ottengo thumbnail
         const episode = await episodeModel.getEpisodeById(episodeId, applang);
         if (!episode) return res.status(404).json({ error: "L'episodio specificato non è stato trovato." });
 
-        // 2. Cancello l'episodio dal Database
+        
         const result = await cataloguerModel.deleteEpisode(episodeId);
         if (result.changes === 0) return res.status(400).json({ error: "Impossibile cancellare l'episodio." });
 
-        // 3. NETTURBINO IMMAGINI: Cancello l'immagine fisica dal disco
+        
         if (episode.ThumbnailURI) {
             await fs.unlink(path.join(__dirname, '../public', episode.ThumbnailURI)).catch(() => {});
         }
 
         const streamURI = episode.streamURI;
-        // 4. NETTURBINO VIDEO: Rado al suolo l'intera cartella HLS (video, audio e sub)
+        
         const hlsFolder = path.join(__dirname, '../public/videos', String(streamURI));
         await fs.rm(hlsFolder, { recursive: true, force: true }).catch((err) => {
             console.log(`[NETTURBINO] Nessuna cartella video trovata per episodio ${episodeId} o già eliminata.`);
@@ -616,7 +616,7 @@ const removeTrack = async (req, res) => {
     const { id, type, lang } = req.params;
 
     try {
-        // 1. Eliminiamo dal Database
+        
         if (type === 'audio') {
             await cataloguerModel.deleteDubLang(id, lang);
         } else if (type === 'subs') {
@@ -625,8 +625,7 @@ const removeTrack = async (req, res) => {
             return res.status(400).json({ error: "Tipo traccia non valido." });
         }
 
-        // 2. Eliminiamo fisicamente la cartella HLS di quella specifica lingua
-        // Es: public/videos/19/audio_en oppure subs_en
+        
         const { StreamURI } = await episodeModel.getEpisodeURI(id);
         if (!StreamURI) {
             return res.status(400).json({ error: "Impossibile trovare la stream per l'episodio" });
@@ -721,11 +720,10 @@ const removePropic = async (req, res) => {
         }
         const tmp = await cataloguerModel.updateMemberPropicBeforeDeletion(propicURI, fallbackURI)
         console.log(`Modificata la propic a ${tmp.changes} utenti prima della cancellazione`)
-        // Cancelliamo la riga dal Database
+        //cancellazione riga dal Database
         const result = await cataloguerModel.deletePropicByURI(propicURI);
         if (result.changes === 0) return res.status(404).json({ error: "L'URI propic specificato non esiste." });
-        // Cancelliamo fisicamente l'immagine dall'hard disk!
-        // Ricostruiamo il percorso assoluto partendo dall'URI salvato nel DB
+        //cancellazione immagine
         const fullFilePath = path.join(__dirname, '../public', propicURI);
         
         await fs.unlink(fullFilePath).catch((err) => {
@@ -741,7 +739,7 @@ const removePropic = async (req, res) => {
 };
 
 const getTrack = async (req, res) => {
-    // 1. Gestione errori di validazione di express-validator
+    
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
@@ -753,7 +751,7 @@ const getTrack = async (req, res) => {
     try {
         let tracks = [];
 
-        // 2. Smistamento in base al tipo richiesto
+        
         if (trackType === 'audio') {
             const data = await cataloguerModel.getDubLangsByEpisode(episodeId);
             tracks = data.map(row => row.REF_LanguageID);
@@ -762,7 +760,7 @@ const getTrack = async (req, res) => {
             tracks = data.map(row => row.REF_LanguageID);
         }
 
-        // 3. Risposta di successo
+       
         return res.status(200).json({
             episodeId,
             type: trackType,

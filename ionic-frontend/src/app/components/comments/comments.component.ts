@@ -102,8 +102,8 @@ export class CommentsComponent implements OnInit {
                     
                     // Se il commento è nascosto e l'utente non ha i permessi, sovrascriviamo il testo
                     if (c.isHidden && !this.isMod && !this.isAdmin) {
-                        c.CommentText = "[Questo commento è stato rimosso dai moderatori]";
-                        c.Username = "[Username Nascosto]";
+                        c.CommentText = $localize`:@@commentsComp_removedMsg:[Questo commento è stato rimosso dai moderatori]`;
+                        c.Username = $localize`:@@commentsComp_hiddenUser:[Username Nascosto]`;
                     }
 
                     // Logica di parsing delle menzioni (@username)
@@ -219,7 +219,7 @@ export class CommentsComponent implements OnInit {
             },
             error: (err) => {
                 console.error('Errore post commento:', err.error);
-                this.presentToast("Errore durante l'invio.", 'danger');
+                this.presentToast($localize`:@@commentsComp_errSend:Errore durante l'invio.`, 'danger');
             },
         });
     }
@@ -254,7 +254,7 @@ export class CommentsComponent implements OnInit {
         this.commentsService.interact(this.showId, this.seasonId, this.episodeId, this.discussionId, comment.CommentID, { isReported: 1 }).subscribe({
             next: () => {
                 comment.isReported = 1;
-                this.presentToast('Segnalazione inviata ai Moderatori.', 'success');
+                this.presentToast($localize`:@@commentsComp_reported:Segnalazione inviata ai Moderatori.`, 'success');
             },
         });
     }
@@ -264,7 +264,7 @@ export class CommentsComponent implements OnInit {
         this.commentsService.moderateApprove(this.showId, this.seasonId, this.episodeId, this.discussionId, comment.CommentID, newStatus).subscribe({
             next: () => {
                 comment.isApproved = newStatus;
-                this.presentToast('Stato aggiornato', 'success');
+                this.presentToast($localize`:@@commentsComp_statusUpdated:Stato aggiornato`, 'success');
             },
         });
     }
@@ -274,7 +274,7 @@ export class CommentsComponent implements OnInit {
         this.commentsService.moderateHide(this.showId, this.seasonId, this.episodeId, this.discussionId, comment.CommentID, newStatus).subscribe({
             next: () => {
                 comment.isHidden = newStatus;
-                this.presentToast('Stato aggiornato', 'success');
+                this.presentToast($localize`:@@commentsComp_statusUpdateds:Stato aggiornato`, 'success');
             },
         });
     }
@@ -301,28 +301,28 @@ export class CommentsComponent implements OnInit {
     async banUser(userId: string | number, username: string) {
         const safeUsername = this.sanitizer.sanitize(SecurityContext.HTML, username) || '';
         const alert = await this.alertCtrl.create({
-            header: 'Banna Utente',
-            message: new IonicSafeString(`Scegli la durata della sanzione per <strong>${safeUsername}</strong>.`),
+            header: $localize`:@@commentsComp_banHeader:Banna Utente`,
+            message: new IonicSafeString($localize`:@@commentsComp_banMsg:Scegli la durata della sanzione per <strong>${safeUsername}</strong>.`),
             htmlAttributes: { sanitize: false },
             inputs: [
-                { label: '3 Giorni', type: 'radio', value: 3 },
-                { label: '7 Giorni', type: 'radio', value: 7 },
-                { label: 'Indefinito', type: 'radio', value: 0 },
+                { label: $localize`:@@commentsComp_ban3Days:3 Giorni`, type: 'radio', value: 3 },
+                { label: $localize`:@@commentsComp_ban7Days:7 Giorni`, type: 'radio', value: 7 },
+                { label: $localize`:@@commentsComp_banPermanent:Indefinito`, type: 'radio', value: 0 },
             ],
             buttons: [
-                { text: 'Annulla', role: 'cancel' },
+                { text: $localize`:@@commentsComp_cancel:Annulla`, role: 'cancel' },
                 {
-                    text: 'Banna', role: 'destructive',
+                    text: $localize`:@@commentsComp_ban:Banna`, role: 'destructive',
                     handler: (durationDays: number) => {
                         if (durationDays === undefined) {
-                            this.presentToast('Seleziona una durata prima di bannare.', 'danger');
+                            this.presentToast($localize`:@@commentsComp_errSelectDuration:Seleziona una durata prima di bannare.`, 'danger');
                             return false;
                         }
                         
                         
                         this.modService.banUser(parseInt(userId.toString()), durationDays).subscribe({
-                            next: (res: any) => this.presentToast(res.message || 'Sanzione applicata con successo.', 'success'),
-                            error: (err) => this.presentToast(err.error?.error || 'Errore durante il ban.', 'danger'),
+                            next: (res: any) => this.presentToast($localize`:@@commentsComp_banSuccess:Sanzione applicata con successo.`, 'success'),
+                            error: (err) => this.presentToast($localize`:@@commentsComp_errBan:Errore durante il ban.`, 'danger'),
                         });
                         return true;
                     },

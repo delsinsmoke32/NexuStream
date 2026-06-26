@@ -22,6 +22,7 @@ import {
     IonRow,
     IonCol,
     ModalController,
+    ToastController
 } from '@ionic/angular/standalone'
 
 import { SeasonModalData, SeasonPayload } from '../../models/cataloguer'
@@ -55,6 +56,7 @@ export class CataloguerSeasonModalComponent implements OnInit {
 
     private fb = inject(FormBuilder)
     private modalCtrl = inject(ModalController)
+    private toastCtrl = inject(ToastController)
 
     seasonForm!: FormGroup
     isEditMode = false
@@ -111,9 +113,26 @@ export class CataloguerSeasonModalComponent implements OnInit {
     }
 
     save() {
-        if (this.seasonForm.invalid) return
+        if (this.seasonForm.invalid) {
+            this.presentToast(
+                $localize`:@@catSeaModal_formInvalid:Compila tutti i campi obbligatori contrassegnati con l'asterisco.`,
+                'danger'
+            )
+            return
+        }
+    
 
         const rawValues = this.seasonForm.getRawValue() as SeasonPayload
         this.dismiss({ payload: rawValues, isEdit: this.isEditMode })
+    }
+
+    private async presentToast(message: string, color: 'success' | 'danger') {
+        const toast = await this.toastCtrl.create({
+            message,
+            duration: 3000,
+            color,
+            position: 'bottom',
+        })
+        await toast.present()
     }
 }

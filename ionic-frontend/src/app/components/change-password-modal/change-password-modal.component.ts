@@ -103,9 +103,9 @@ export class ChangePasswordModalComponent implements OnInit {
     getCurrentPasswordError(): string {
         const control = this.passwordForm.get('currentPassword')
         if (control?.touched && control.hasError('required')) {
-            return 'La password attuale è obbligatoria.'
+            return $localize`:@@changePassModal_errCurrentRequired:La password attuale è obbligatoria.`
         } else if (control?.touched && control.hasError('minlength')) {
-            return 'La password deve essere di almeno 8 caratteri.'
+            return $localize`:@@changePassModal_errMinLen:La password deve essere di almeno 8 caratteri.`
         }
         return ''
     }
@@ -114,9 +114,9 @@ export class ChangePasswordModalComponent implements OnInit {
         const control = this.passwordForm.get('newPassword')
         if (control?.touched) {
             if (control.hasError('required'))
-                return 'La nuova password è obbligatoria.'
+                return $localize`:@@changePassModal_errNewRequired:La nuova password è obbligatoria.`
             if (control.hasError('minlength'))
-                return 'La password deve essere di almeno 8 caratteri.'
+                return $localize`:@@changePassModal_errMinLenN:La password deve essere di almeno 8 caratteri.`
         }
         return ''
     }
@@ -125,11 +125,11 @@ export class ChangePasswordModalComponent implements OnInit {
         const control = this.passwordForm.get('confirmPassword')
         if (control?.touched) {
             if (control.hasError('required'))
-                return 'Conferma la tua nuova password.'
+                return $localize`:@@changePassModal_errConfirmRequired:Conferma la tua nuova password.`
             if (control.hasError('minlength'))
-                return 'La password deve essere di almeno 8 caratteri.'
+                return $localize`:@@changePassModal_errMinLen:La password deve essere di almeno 8 caratteri.`
             if (this.passwordForm.hasError('mismatch'))
-                return 'Le password non corrispondono.'
+                return $localize`:@@changePassModal_errMismatch:Le password non corrispondono.`
         }
         return ''
     }
@@ -144,7 +144,7 @@ export class ChangePasswordModalComponent implements OnInit {
         if (this.passwordForm.invalid) return
 
         const loading = await this.loadingCtrl.create({
-            message: 'Aggiornamento in corso...',
+            message: $localize`:@@changePassModal_loading:Aggiornamento in corso...`,
         })
         await loading.present()
 
@@ -156,16 +156,15 @@ export class ChangePasswordModalComponent implements OnInit {
                 next: async () => {
                     await loading.dismiss()
                     this.presentToast(
-                        'Password aggiornata con successo!',
+                        $localize`:@@changePassModal_success:Password aggiornata con successo!`,
                         'success'
                     )
                     this.dismiss({ success: true })
                 },
                 error: async (err) => {
                     await loading.dismiss()
-                    const errorMsg =
-                        err.error?.message || "Errore durante l'aggiornamento."
-                    this.presentToast(errorMsg, 'danger')
+                        
+                    this.presentToast($localize`:@@changePassModal_errUpdate:Errore durante l'aggiornamento.`, 'danger')
                 },
             })
     }

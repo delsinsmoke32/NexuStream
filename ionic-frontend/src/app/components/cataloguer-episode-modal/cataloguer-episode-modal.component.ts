@@ -52,8 +52,7 @@ import {
     musicalNotesOutline,
     textOutline,
     volumeHighOutline,
-    timeOutline,
-} from 'ionicons/icons'
+    timeOutline, alertCircleOutline } from 'ionicons/icons'
 
 //  Imports Service, Model e Pipe
 import { CataloguerService } from '../../services/cataloguer'
@@ -129,19 +128,7 @@ export class CataloguerEpisodeModalComponent implements OnInit {
     isEditMode = false
 
     constructor() {
-        addIcons({
-            imageOutline,
-            documentTextOutline,
-            videocamOutline,
-            informationCircleOutline,
-            addCircleOutline,
-            trashOutline,
-            checkmarkCircle,
-            musicalNotesOutline,
-            textOutline,
-            volumeHighOutline,
-            timeOutline,
-        })
+        addIcons({imageOutline,documentTextOutline,videocamOutline,volumeHighOutline,trashOutline,textOutline,addCircleOutline,alertCircleOutline,timeOutline,informationCircleOutline,checkmarkCircle,musicalNotesOutline,});
     }
 
     ngOnInit() {
@@ -155,21 +142,6 @@ export class CataloguerEpisodeModalComponent implements OnInit {
                 )
             }
 
-            // CORREZIONE 1: Rimosso il fallback a 'it' e inserito .filter(Boolean) per evitare stringhe vuote [""]
-            // this.existingDubs.set(
-            //     this.data.DubLanguages
-            //         ? this.data.DubLanguages.split(',')
-            //               .map((s: string) => s.trim())
-            //               .filter(Boolean)
-            //         : []
-            // )
-            // this.existingSubs.set(
-            //     this.data.SubLanguages
-            //         ? this.data.SubLanguages.split(',')
-            //               .map((s: string) => s.trim())
-            //               .filter(Boolean)
-            //         : []
-            // )
             this.refreshTracks()
             this.fetchExistingMarkers()
             this.audioTracksList.set([])
@@ -379,17 +351,17 @@ export class CataloguerEpisodeModalComponent implements OnInit {
 
     async deleteServerTrack(type: 'audio' | 'subs', lang: string) {
         const alert = await this.alertCtrl.create({
-            header: 'Conferma Eliminazione',
-            message: `Sei sicuro di voler eliminare la traccia ${type.toUpperCase()} in ${lang.toUpperCase()}?`,
+            header: $localize`:@@catEpModal_deleteTrackHeader:Conferma Eliminazione`,
+            message: `:@@catEpModal_deleteTrackMsg:Sei sicuro di voler eliminare la traccia ${type.toUpperCase()} in ${lang.toUpperCase()}?`,
             buttons: [
-                { text: 'Annulla', role: 'cancel' },
+                { text: $localize`:@@catEpModal_cancel:Annulla`, role: 'cancel' },
                 {
-                    text: 'Elimina',
+                    text: $localize`:@@catEpModal_delete:Elimina`,
                     role: 'destructive',
                     handler: async () => {
                         this.isUploading.set(true)
                         try {
-                            //  Chiamata al Service
+                            
                             await firstValueFrom(
                                 this.cataloguerService.deleteEpisodeTrack(
                                     this.data.EpisodeID,
@@ -411,10 +383,10 @@ export class CataloguerEpisodeModalComponent implements OnInit {
                                 this.data.SubLanguages =
                                     this.existingSubs().join(',')
                             }
-                            this.presentToast(`Traccia eliminata!`, 'success')
+                            this.presentToast($localize`:@@catEpModal_trackDeleted:Traccia eliminata!`, 'success')
                         } catch (err) {
                             this.presentToast(
-                                'Impossibile eliminare la traccia.',
+                                $localize`:@@catEpModal_errDeleteTrack:Impossibile eliminare la traccia.`,
                                 'danger'
                             )
                         } finally {
@@ -435,20 +407,20 @@ export class CataloguerEpisodeModalComponent implements OnInit {
 
         if (hasEmptyAudio || hasEmptySub) {
             this.presentToast(
-                'Hai aggiunto una traccia ma non hai selezionato il file.',
+                $localize`:@@catEpModal_emptyTrackFile:Hai aggiunto una traccia ma non hai selezionato il file.`,
                 'warning'
             )
             return
         }
 
         if (this.episodeForm.invalid) {
-            this.presentToast('Compila tutti i campi obbligatori.', 'danger')
+            this.presentToast($localize`:@@catEpModal_invalidForm:Compila tutti i campi obbligatori.`, 'danger')
             return
         }
 
         if (!this.isEditMode && !this.videoFile()) {
             this.presentToast(
-                'Devi selezionare il file video principale.',
+                $localize`:@@catEpModal_missingVideo:Devi selezionare il file video principale.`,
                 'danger'
             )
             return
@@ -464,7 +436,7 @@ export class CataloguerEpisodeModalComponent implements OnInit {
                 marker.EndTime > this.data!.Duration
             ) {
                 this.presentToast(
-                    "Errore nei Marker: i tempi non possono essere vuoti e la Fine deve essere maggiore dell'Inizio, e un tempo non può andare oltre la durata dell'episodio.",
+                    $localize`:@@catEpModal_markerError:Errore nei Marker: controlla i tempi e la durata.`,
                     'warning'
                 )
                 return

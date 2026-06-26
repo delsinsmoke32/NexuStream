@@ -45,7 +45,9 @@ export class ModDiscussionCardComponent {
   }
 
   parseLang(jsonStr?: string, lang: string = 'it'): string {
-    if (!jsonStr) return 'Titolo non disponibile';
+
+    const fallback = $localize`:@@modDiscCard_titleUnavailable:Titolo non disponibile`
+    if (!jsonStr) return fallback;
     try {
       const obj = JSON.parse(jsonStr);
       return obj[lang] || obj['en'] || 'Titolo non disponibile';

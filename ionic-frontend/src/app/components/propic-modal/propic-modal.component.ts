@@ -109,7 +109,13 @@ export class PropicModalComponent implements OnInit {
 
     uploadPicture() {
         const file = this.selectedFile()
-        if (!file || this.propicForm.invalid) return
+        if (!file || this.propicForm.invalid){
+            this.presentToast(
+                $localize`:@@propicModal_invalidForm:Assicurati di aver selezionato un file e inserito un nome bundle valido.`,
+                'danger'
+            )
+            return
+        }
 
         this.isUploading.set(true)
         const bundleName = this.propicForm.value.bundle
@@ -117,7 +123,7 @@ export class PropicModalComponent implements OnInit {
        
         this.cataloguerService.uploadPropic(bundleName, file).subscribe({
             next: (res) => {
-                this.presentToast('Avatar caricato con successo!', 'success')
+                this.presentToast($localize`:@@propicModal_success:Avatar caricato con successo!`, 'success')
                 this.isUploading.set(false)
                 
                 this.dismiss({ success: true })
@@ -125,7 +131,7 @@ export class PropicModalComponent implements OnInit {
             error: (err) => {
                 console.error('Upload failed', err)
                 this.presentToast(
-                    "Errore nel caricamento dell'immagine.",
+                    $localize`:@@propicModal_error:Errore nel caricamento dell'immagine.`,
                     'danger'
                 )
                 this.isUploading.set(false)

@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { 
   IonHeader, IonToolbar, IonTitle, IonButtons, IonButton, 
   IonContent, IonItem, IonLabel, IonInput, IonSelect, 
-  IonSelectOption, IonToggle, IonIcon, ModalController 
+  IonSelectOption, IonToggle, IonIcon, ModalController, ToastController 
 } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
@@ -32,6 +32,7 @@ export class DiscussionModalComponent implements OnInit {
   
   private fb = inject(FormBuilder);
   private modalCtrl = inject(ModalController);
+  private toastCtrl = inject(ToastController);
 
   discussionForm!: FormGroup;
   isEditMode = false;
@@ -81,7 +82,10 @@ export class DiscussionModalComponent implements OnInit {
   }
 
   save() {
-    if (this.discussionForm.invalid) return;
+    if (this.discussionForm.invalid) {
+      this.presentToast($localize`:@@discModal_invalidForm:Compila correttamente tutti i campi obbligatori.`, 'danger');
+      return;
+    }
 
     const formRaw = this.discussionForm.getRawValue(); 
     let payload: DiscussionPayload;
@@ -95,7 +99,8 @@ export class DiscussionModalComponent implements OnInit {
     } else {
       const epId = parseInt(formRaw.REF_EpisodeID, 10);
       if (isNaN(epId)) {
-         console.error("ERRORE: ID Episodio non ricevuto.");
+    
+         this.presentToast($localize`:@@discModal_errId:ID Episodio non valido.`, 'danger');
          return; 
       }
 
@@ -111,5 +116,15 @@ export class DiscussionModalComponent implements OnInit {
       isEdit: this.isEditMode, 
       discussionId: this.discussion?.DiscussionID 
     });
+  }
+
+  private async presentToast(message: string, color: 'success' | 'danger') {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 3000,
+      color,
+      position: 'bottom'
+    });
+    await toast.present();
   }
 }

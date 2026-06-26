@@ -95,7 +95,7 @@ export class CataloguerPage implements OnInit {
     currentSearchTerm = ''
 
     constructor() {
-        addIcons({ addCircleOutline, trashOutline })
+        addIcons({addCircleOutline,trashOutline});
     }
 
     ngOnInit() {
@@ -117,7 +117,7 @@ export class CataloguerPage implements OnInit {
     async openAddModal() {
         const currentLvl = this.currentLevel()
 
-        // 1. Prepariamo la modale giusta
+        
         const { targetComponent, componentProps } =
             this.getAddModalConfig(currentLvl)
 
@@ -127,24 +127,24 @@ export class CataloguerPage implements OnInit {
         })
         await modal.present()
 
-        // 2. Attendiamo la chiusura
+        
         const { data } = await modal.onWillDismiss()
         if (!data) return
 
-        // 3. Costruiamo il payload
+        
         const payload = this.buildAddPayload(currentLvl, data.payload)
 
-        // 4. Inviamo al Backend
+       
         this.cataloguerService.addItem(currentLvl, payload).subscribe({
             next: (res: any) => {
-                this.presentToast('Elemento aggiunto con successo!', 'success')
-                // 5. Aggiorniamo l'interfaccia visiva
+                this.presentToast($localize`:@@cataloguerPage_addSuccess:Elemento aggiunto con successo!`, 'success')
+                
                 this.updateSignalsAfterAdd(currentLvl, res, data.payload)
             },
             error: (err) => {
                 console.error('Dettaglio Errore Add:', err)
                 this.presentToast(
-                    'Errore durante il salvataggio. Controlla la console.',
+                    $localize`:@@cataloguerPage_addError:Errore durante il salvataggio. Controlla la console.`,
                     'danger'
                 )
             },
@@ -181,7 +181,7 @@ export class CataloguerPage implements OnInit {
                   : item.EpisodeID
 
         try {
-            // 3. Estraiamo campi extra e traduzioni
+            
             const extraFields = this.buildEditExtraFields(
                 currentLvl,
                 item,
@@ -189,7 +189,7 @@ export class CataloguerPage implements OnInit {
             )
             const translations = this.getEditTranslations(item, data.payload)
 
-            // 4. Inviamo le patch al backend (Italiano e Inglese)
+            
             await this.sendEditPatches(
                 currentLvl,
                 id,
@@ -198,8 +198,8 @@ export class CataloguerPage implements OnInit {
                 translations
             )
 
-            // 5. Aggiorniamo l'interfaccia visiva
-            this.presentToast('Elemento aggiornato con successo!', 'success')
+            
+            this.presentToast($localize`:@@cataloguerPage_editSuccess:Elemento aggiornato con successo!`, 'success')
             this.updateSignalsAfterEdit(
                 currentLvl,
                 id,
@@ -211,7 +211,7 @@ export class CataloguerPage implements OnInit {
         } catch (err) {
             console.error('Dettaglio Errore 400 Backend:', err)
             this.presentToast(
-                'Errore 400: Controlla i campi obbligatori del server.',
+                $localize`:@@cataloguerPage_editError400:Errore 400: Controlla i campi obbligatori del server.`,
                 'danger'
             )
         }
@@ -253,7 +253,7 @@ export class CataloguerPage implements OnInit {
             error: (err) => {
                 console.error('Errore caricamento propics:', err)
                 this.presentToast(
-                    'Errore nel caricamento delle immagini.',
+                    $localize`:@@cataloguerPage_loadPropicsError:Errore nel caricamento delle immagini.`,
                     'danger'
                 )
             },
@@ -262,12 +262,12 @@ export class CataloguerPage implements OnInit {
 
     deletePropic(uri: string) {
         this.presentConfirmAlert(
-            'Sei sicuro di voler eliminare questa immagine? Verrà rimossa fisicamente dal server.',
+            $localize`:@@cataloguerPage_deletePropicConfirm:Sei sicuro di voler eliminare questa immagine? Verrà rimossa fisicamente dal server.`,
             () => {
                 this.cataloguerService.deletePropic(uri).subscribe({
                     next: () => {
                         this.presentToast(
-                            'Immagine eliminata con successo.',
+                            $localize`:@@cataloguerPage_deletePropicSuccess:Immagine eliminata con successo.`,
                             'success'
                         )
                         this.loadPropics()
@@ -275,7 +275,7 @@ export class CataloguerPage implements OnInit {
                     error: (err) => {
                         console.error(err)
                         this.presentToast(
-                            "Impossibile eliminare l'immagine.",
+                            $localize`:@@cataloguerPage_deletePropicError:Impossibile eliminare l'immagine.`,
                             'danger'
                         )
                     },
@@ -314,15 +314,15 @@ export class CataloguerPage implements OnInit {
 
     private async presentConfirmAlert(message: string, onConfirm: () => void) {
         const alert = await this.alertController.create({
-            header: 'Conferma Eliminazione',
+            header: $localize`:@@cataloguerPage_confirmDeleteHeader:Conferma Eliminazione`,
             message: message,
             buttons: [
                 {
-                    text: 'Annulla',
+                    text: $localize`:@@cataloguerPage_cancel:Annulla`,
                     role: 'cancel',
                 },
                 {
-                    text: 'Elimina',
+                    text: $localize`:@@cataloguerPage_delete:Elimina`,
                     role: 'destructive',
                     handler: () => {
                         onConfirm()
@@ -336,12 +336,12 @@ export class CataloguerPage implements OnInit {
 
     deleteShow(showId: number) {
         this.presentConfirmAlert(
-            'Eliminare la serie? Operazione irreversibile.',
+            $localize`:@@cataloguerPage_deleteShowConfirm:Eliminare la serie? Operazione irreversibile.`,
             () => {
                 this.cataloguerService.deleteShow(showId).subscribe({
                     next: () => {
                         this.presentToast(
-                            'Serie eliminata con successo.',
+                            $localize`:@@cataloguerPage_deleteShowSuccess:Serie eliminata con successo.`,
                             'success'
                         )
                         this.currentPage = 1
@@ -354,7 +354,7 @@ export class CataloguerPage implements OnInit {
                     error: (err) => {
                         console.error(err)
                         this.presentToast(
-                            "Errore durante l'eliminazione.",
+                            $localize`:@@cataloguerPage_deleteShowError:Errore durante l'eliminazione.`,
                             'danger'
                         )
                     },
@@ -378,10 +378,10 @@ export class CataloguerPage implements OnInit {
     }
 
     deleteSeason(seasonId: number) {
-        this.presentConfirmAlert('Eliminare la stagione a cascata?', () => {
+        this.presentConfirmAlert($localize`:@@cataloguerPage_deleteSeasonConfirm:Eliminare la stagione a cascata?`, () => {
             this.cataloguerService.deleteSeason(seasonId).subscribe({
                 next: () => {
-                    this.presentToast('Stagione rimossa.', 'success')
+                    this.presentToast($localize`:@@cataloguerPage_deleteSeasonSuccess:Stagione rimossa.`, 'success')
                     this.seasons.update((old) =>
                         old.filter((s) => s.SeasonID !== seasonId)
                     )
@@ -389,7 +389,7 @@ export class CataloguerPage implements OnInit {
                 error: (err) => {
                     console.error(err)
                     this.presentToast(
-                        "Errore durante l'eliminazione della stagione.",
+                        $localize`:@@cataloguerPage_deleteSeasonError:Errore durante l'eliminazione della stagione.`,
                         'danger'
                     )
                 },
@@ -414,10 +414,10 @@ export class CataloguerPage implements OnInit {
     }
 
     deleteEpisode(episodeId: number) {
-        this.presentConfirmAlert("Rimuovere l'episodio dal server?", () => {
+        this.presentConfirmAlert($localize`:@@cataloguerPage_deleteEpisodeConfirm:Rimuovere l'episodio dal server?`, () => {
             this.cataloguerService.deleteEpisode(episodeId).subscribe({
                 next: () => {
-                    this.presentToast('Episodio rimosso.', 'success')
+                    this.presentToast($localize`:@@cataloguerPage_deleteEpisodeSuccess:Episodio rimosso.`, 'success')
                     this.episodes.update((old) =>
                         old.filter((e) => e.EpisodeID !== episodeId)
                     )
@@ -425,7 +425,7 @@ export class CataloguerPage implements OnInit {
                 error: (err) => {
                     console.error(err)
                     this.presentToast(
-                        "Errore durante l'eliminazione dell'episodio.",
+                        $localize`:@@cataloguerPage_deleteEpisodeError:Errore durante l'eliminazione dell'episodio.`,
                         'danger'
                     )
                 },

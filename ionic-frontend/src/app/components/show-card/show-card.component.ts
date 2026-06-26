@@ -49,7 +49,8 @@ export class ShowCardComponent {
   }
 
   parseLang(jsonStr?: string, lang: string = 'it'): string {
-    if (!jsonStr) return '';
+    const fallback = $localize`:@@showCard_titleUnavailable:Titolo non disponibile`;
+    if (!jsonStr) return fallback;
     try {
       const obj = JSON.parse(jsonStr);
       return obj[lang] || obj['en'] || 'Titolo non disponibile';

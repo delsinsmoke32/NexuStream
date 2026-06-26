@@ -12,12 +12,11 @@ const { exec } = require('child_process');
  */
 const processVideoHLS = (inputFilePath, episodeURI) => {
     return new Promise((resolve, reject) => {
-        // 1. Definiamo le cartelle di destinazione
-        // Es: public/videos/1/video/
+        
         const baseOutputDir = path.join(__dirname, '../public/videos', String(episodeURI));
         const videoOutputDir = path.join(baseOutputDir, 'video');
 
-        // Creiamo la cartella in modo sincrono se non esiste
+        
         if (!fsSync.existsSync(videoOutputDir)) {
             fsSync.mkdirSync(videoOutputDir, { recursive: true });
         }
@@ -51,16 +50,16 @@ const processVideoHLS = (inputFilePath, episodeURI) => {
             .on('end', async () => {
                 console.log(`Transcodifica completata per Episodio ${episodeURI}!`);
                 
-                // FIX: Puliamo il percorso di init_v.mp4 nel file M3U8
+                
                 try {
-                    // 1. Legge il file m3u8
+                    
                     let playlistData = await fs.readFile(m3u8OutputPath, 'utf8');
                     
-                    // 2. Cerca qualsiasi percorso strano prima di init_v.mp4 e lo rimuove
+                    
                     const regex = /#EXT-X-MAP:URI=".*init_v\.mp4"/g;
                     playlistData = playlistData.replace(regex, '#EXT-X-MAP:URI="init_v.mp4"');
                     
-                    // 3. Sovrascrive il file pulito
+                    
                     await fs.writeFile(m3u8OutputPath, playlistData, 'utf8');
                     
                     console.log(`Playlist ottimizzata per Episodio ${episodeURI}.`);
@@ -95,11 +94,10 @@ const moveMediaFile = async (tempFilePath, episodeURI, type, lang) => {
         }
 
         return new Promise((resolve, reject) => {
-            // FIX DEFINITIVO: Usiamo fmp4 anche per l'audio, con init_a.mp4
-            // Notare come scriviamo solo i nomi dei file, perché Node lavorerà già dentro targetDir!
+            
             const command = `ffmpeg -i "${tempFilePath}" -c:a aac -b:a 192k -avoid_negative_ts make_zero -fflags +genpts -f hls -hls_time 10 -hls_playlist_type vod -hls_segment_type fmp4 -hls_segment_filename "audio_%03d.m4s" -hls_fmp4_init_filename "init_a.mp4" "audio.m3u8"`;
             
-            // ✅ Eseguiamo il comando impostando la cartella di lavoro (cwd) su targetDir
+           
             exec(command, { cwd: targetDir }, async (err) => {
                 if (err) {
                     console.error("[FFMPEG AUDIO] Errore segmentazione:", err);
@@ -107,21 +105,21 @@ const moveMediaFile = async (tempFilePath, episodeURI, type, lang) => {
                 }
                 await fs.unlink(tempFilePath).catch(() => {});
                 console.log(`[FFMPEG AUDIO] Traccia ${lang} segmentata in fMP4 HLS con successo!`);
-                // Risolviamo restituendo il percorso assoluto che si aspetta il resto del codice
+                
                 resolve(path.join(targetDir, 'audio.m3u8'));
             });
         });
     } else if (type === 'subs') {
-        // Creiamo una cartella dedicata per i sottotitoli segmentati
+        
         const targetDir = path.join(baseDir, `subs_${lang}`);
         if (!fsSync.existsSync(targetDir)) {
             fsSync.mkdirSync(targetDir, { recursive: true });
         }
 
         const outputPlaylist = path.join(targetDir, 'subs.m3u8');
-        const outputSegments = path.join(targetDir, 'sub_%03d.vtt'); // FFmpeg chiamerà i file sub_000.vtt, sub_001.vtt ecc.
+        const outputSegments = path.join(targetDir, 'sub_%03d.vtt'); 
 
-        // Segmentiamo il VTT in pezzi da 10 secondi!
+       
         return new Promise((resolve, reject) => {
             const command = `ffmpeg -i "${tempFilePath}" -c:s copy -f segment -segment_time 10 -segment_list "${outputPlaylist}" "${outputSegments}"`;
             
@@ -130,7 +128,7 @@ const moveMediaFile = async (tempFilePath, episodeURI, type, lang) => {
                     console.error("[FFMPEG SUBS] Errore segmentazione sottotitoli:", err);
                     return reject(err);
                 }
-                // Pulizia del file .vtt temporaneo
+                
                 await fs.unlink(tempFilePath).catch(() => {});
                 console.log(`[FFMPEG SUBS] Sottotitolo ${lang} segmentato in HLS con successo!`);
                 resolve(outputPlaylist);

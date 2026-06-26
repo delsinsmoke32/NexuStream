@@ -4,6 +4,7 @@
             <ion-back-button
                 defaultHref="/tabs/home"
                 text="Home"
+                i18n-text="@@cataloguerPage_home"
             ></ion-back-button>
 
             @if (activeTab() === 'catalogo' && currentLevel() !== 'shows') {
@@ -26,10 +27,13 @@
         </ion-buttons>
 
         <ion-title>
-            @if (activeTab() === 'catalogo') { @if (currentLevel() === 'shows')
-            { Catalogo Serie TV } @if (currentLevel() === 'seasons') { Gestione
-            Stagioni } @if (currentLevel() === 'episodes') { Elenco Episodi } }
-            @else { Gestione Avatar }
+            @if (activeTab() === 'catalogo') { 
+                @if (currentLevel() === 'shows') { <ng-container i18n="@@cataloguerPage_titleShows">Catalogo Serie TV</ng-container> } 
+                @if (currentLevel() === 'seasons') { <ng-container i18n="@@cataloguerPage_titleSeasons">Gestione Stagioni</ng-container> } 
+                @if (currentLevel() === 'episodes') { <ng-container i18n="@@cataloguerPage_titleEpisodes">Elenco Episodi</ng-container> } 
+            } @else { 
+                <ng-container i18n="@@cataloguerPage_titleAvatars">Gestione Avatar</ng-container> 
+            }
         </ion-title>
 
         <ion-buttons slot="end">
@@ -47,7 +51,7 @@
                         d="M256 112v288M400 256H112"
                     />
                 </svg>
-                <span class="btn-text">Aggiungi</span>
+                <span class="btn-text" i18n="@@cataloguerPage_add">Aggiungi</span>
             </button>
         </ion-buttons>
     </ion-toolbar>
@@ -59,10 +63,10 @@
             (ionChange)="onTabChange($event)"
         >
             <ion-segment-button value="catalogo">
-                <ion-label>Catalogo Anime</ion-label>
+                <ion-label i18n="@@cataloguerPage_tabCatalog">Catalogo Anime</ion-label>
             </ion-segment-button>
             <ion-segment-button value="propics">
-                <ion-label>Libreria Avatar</ion-label>
+                <ion-label i18n="@@cataloguerPage_tabAvatars">Libreria Avatar</ion-label>
             </ion-segment-button>
         </ion-segment>
     </ion-toolbar>
@@ -71,6 +75,7 @@
     <ion-toolbar color="dark" class="search-bar-container">
         <ion-searchbar
             placeholder="Cerca serie per titolo..."
+            i18n-placeholder="@@cataloguerPage_searchPlaceholder"
             mode="md"
             [debounce]="500"
             (ionInput)="onSearch($event)"
@@ -83,173 +88,178 @@
 <ion-content class="ion-padding">
     @if (activeTab() === 'catalogo') {
     <div class="cataloguer-grid">
-        @if (currentLevel() === 'shows') { @for (show of shows(); track
-        show.ShowID) {
-        <div class="catalog-card edge-primary">
-            <div class="card-body">
-                <h2 class="card-main-title">
-                    {{ getLangText(show.Title, 'it') }}
-                </h2>
-                <p class="card-description">
-                    {{ getLangText(show.Description, 'it') }}
-                </p>
-                <div class="card-metadata">
-                    <div class="dates-column">
-                        <span
-                            >Inizio:
-                            <strong>{{ show.DateStarted }}</strong></span
-                        >
-                        @if (show.hasEnded && show.DateEnded) {
-                        <span>Fine: <strong>{{ show.DateEnded }}</strong></span>
-                        }
+        @if (currentLevel() === 'shows') { 
+            @for (show of shows(); track show.ShowID) {
+            <div class="catalog-card edge-primary">
+                <div class="card-body">
+                    <h2 class="card-main-title">
+                        {{ getLangText(show.Title, 'it') }}
+                    </h2>
+                    <p class="card-description">
+                        {{ getLangText(show.Description, 'it') }}
+                    </p>
+                    <div class="card-metadata">
+                        <div class="dates-column">
+                            <span><ng-container i18n="@@cataloguerPage_start">Inizio:</ng-container> <strong>{{ show.DateStarted }}</strong></span>
+                            @if (show.hasEnded && show.DateEnded) {
+                                <span><ng-container i18n="@@cataloguerPage_end">Fine:</ng-container> <strong>{{ show.DateEnded }}</strong></span>
+                            }
+                        </div>
+                        <span class="badge" [class.badge-ended]="show.hasEnded">
+                            @if (show.hasEnded) {
+                                <ng-container i18n="@@cataloguerPage_ended">Conclusa</ng-container>
+                            } @else {
+                                <ng-container i18n="@@cataloguerPage_ongoing">In Corso</ng-container>
+                            }
+                        </span>
                     </div>
-                    <span class="badge" [class.badge-ended]="show.hasEnded"
-                        >{{ show.hasEnded ? 'Conclusa' : 'In Corso' }}</span
+                </div>
+                <div class="card-actions-row">
+                    <button
+                        class="card-action-btn btn-explore"
+                        (click)="navigateToSeasons(show.ShowID)"
                     >
+                        <svg viewBox="0 0 512 512">
+                            <path
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="32"
+                                d="M48 320h416M48 256h416M48 192h416M48 128h416"
+                            />
+                        </svg>
+                        <ng-container i18n="@@cataloguerPage_browseSeasons">Sfoglia Stagioni</ng-container>
+                    </button>
+                    <button
+                        class="card-action-btn btn-edit"
+                        (click)="openEditModalData(show)"
+                        i18n="@@cataloguerPage_edit"
+                    >
+                        Edit
+                    </button>
+                    <button
+                        class="card-action-btn btn-delete"
+                        (click)="deleteShow(show.ShowID)"
+                        i18n="@@cataloguerPage_delete"
+                    >
+                        Elimina
+                    </button>
                 </div>
             </div>
-            <div class="card-actions-row">
-                <button
-                    class="card-action-btn btn-explore"
-                    (click)="navigateToSeasons(show.ShowID)"
-                >
-                    <svg viewBox="0 0 512 512">
-                        <path
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="32"
-                            d="M48 320h416M48 256h416M48 192h416M48 128h416"
-                        />
-                    </svg>
-                    Sfoglia Stagioni
-                </button>
-                <button
-                    class="card-action-btn btn-edit"
-                    (click)="openEditModalData(show)"
-                >
-                    Edit
-                </button>
-                <button
-                    class="card-action-btn btn-delete"
-                    (click)="deleteShow(show.ShowID)"
-                >
-                    Elimina
-                </button>
-            </div>
-        </div>
-        } @empty {
-        <div class="empty-state"><p>Nessuna serie TV in archivio.</p></div>
-        } } @if (currentLevel() === 'seasons') { @for (season of seasons();
-        track season.SeasonID) {
-        <div class="catalog-card edge-secondary">
-            <div class="card-body">
-                <span class="season-overline"
-                    >STAGIONE {{ season.SeasonNumber }}</span
-                >
-                <h2 class="card-main-title">
-                    {{ getLangText(season.Title, 'it') }}
-                </h2>
-                <p class="card-description">
-                    {{ getLangText(season.Description, 'it') }}
-                </p>
-                <div class="card-metadata">
-                    <div class="dates-column">
-                        <span
-                            >Rilascio:
-                            <strong>{{ season.DateStarted }}</strong></span
-                        >
-                        @if (season.DateEnded) {
-                        <span
-                            >Fine: <strong>{{ season.DateEnded }}</strong></span
-                        >
-                        }
+            } @empty {
+            <div class="empty-state"><p i18n="@@cataloguerPage_noShows">Nessuna serie TV in archivio.</p></div>
+            } 
+        } 
+        
+        @if (currentLevel() === 'seasons') { 
+            @for (season of seasons(); track season.SeasonID) {
+            <div class="catalog-card edge-secondary">
+                <div class="card-body">
+                    <span class="season-overline" i18n="@@cataloguerPage_seasonNumberLabel">STAGIONE {{ season.SeasonNumber }}</span>
+                    <h2 class="card-main-title">
+                        {{ getLangText(season.Title, 'it') }}
+                    </h2>
+                    <p class="card-description">
+                        {{ getLangText(season.Description, 'it') }}
+                    </p>
+                    <div class="card-metadata">
+                        <div class="dates-column">
+                            <span><ng-container i18n="@@cataloguerPage_release">Rilascio:</ng-container> <strong>{{ season.DateStarted }}</strong></span>
+                            @if (season.DateEnded) {
+                                <span><ng-container i18n="@@cataloguerPage_end">Fine:</ng-container> <strong>{{ season.DateEnded }}</strong></span>
+                            }
+                        </div>
+                        <span class="badge" [class.badge-ended]="season.DateEnded">
+                            @if (season.DateEnded) {
+                                <ng-container i18n="@@cataloguerPage_ended">Conclusa</ng-container>
+                            } @else {
+                                <ng-container i18n="@@cataloguerPage_ongoing">In Corso</ng-container>
+                            }
+                        </span>
                     </div>
-                    <span class="badge" [class.badge-ended]="season.DateEnded">
-                        {{ season.DateEnded ? 'Conclusa' : 'In Corso' }}
-                    </span>
                 </div>
-            </div>
-            <div class="card-actions-row">
-                <button
-                    class="card-action-btn btn-explore"
-                    (click)="navigateToEpisodes(season.SeasonID)"
-                >
-                    <svg viewBox="0 0 512 512">
-                        <path
-                            d="M440 424V88a40 40 0 00-40-40H112a40 40 0 00-40 40v336M120 424h272M72 144h368M72 336h368M224 216l80 40-80 40v-80z"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            stroke-width="32"
-                        />
-                    </svg>
-                    Vedi Episodi
-                </button>
-                <button
-                    class="card-action-btn btn-edit"
-                    (click)="openEditModalData(season)"
-                >
-                    Edit
-                </button>
-                <button
-                    class="card-action-btn btn-delete"
-                    (click)="deleteSeason(season.SeasonID)"
-                >
-                    Elimina
-                </button>
-            </div>
-        </div>
-        } @empty {
-        <div class="empty-state"><p>Nessuna stagione inserita.</p></div>
-        } } @if (currentLevel() === 'episodes') { @for (episode of episodes();
-        track episode.EpisodeID) {
-        <div class="catalog-card edge-episode">
-            <div class="card-body">
-                <div class="episode-header-row">
-                    <span class="ep-number"
-                        >EPISODIO {{ episode.EpisodeNumber }}</span
+                <div class="card-actions-row">
+                    <button
+                        class="card-action-btn btn-explore"
+                        (click)="navigateToEpisodes(season.SeasonID)"
                     >
-                    <span class="ep-duration">
-                        {{ Math.floor(episode.Duration / 60) }} min {{
-                        episode.Duration % 60 }} sec
-                    </span>
-                </div>
-                <h2 class="card-main-title">
-                    "{{ getLangText(episode.Title, 'it') }}"
-                </h2>
-                <p class="card-description">
-                    {{ getLangText(episode.Description, 'it') }}
-                </p>
-                <div class="card-metadata">
-                    <span
-                        >Uscita:
-                        <strong>{{ episode.ReleaseDate }}</strong></span
+                        <svg viewBox="0 0 512 512">
+                            <path
+                                d="M440 424V88a40 40 0 00-40-40H112a40 40 0 00-40 40v336M120 424h272M72 144h368M72 336h368M224 216l80 40-80 40v-80z"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="32"
+                            />
+                        </svg>
+                        <ng-container i18n="@@cataloguerPage_viewEpisodes">Vedi Episodi</ng-container>
+                    </button>
+                    <button
+                        class="card-action-btn btn-edit"
+                        (click)="openEditModalData(season)"
+                        i18n="@@cataloguerPage_edit"
                     >
+                        Edit
+                    </button>
+                    <button
+                        class="card-action-btn btn-delete"
+                        (click)="deleteSeason(season.SeasonID)"
+                        i18n="@@cataloguerPage_delete"
+                    >
+                        Elimina
+                    </button>
                 </div>
             </div>
-            <div class="card-actions-row split-two">
-                <button
-                    class="card-action-btn btn-edit"
-                    (click)="openEditModalData(episode)"
-                >
-                    Modifica Dettagli
-                </button>
-                <button
-                    class="card-action-btn btn-delete"
-                    (click)="deleteEpisode(episode.EpisodeID)"
-                >
-                    Elimina
-                </button>
+            } @empty {
+            <div class="empty-state"><p i18n="@@cataloguerPage_noSeasons">Nessuna stagione inserita.</p></div>
+            } 
+        } 
+        
+        @if (currentLevel() === 'episodes') { 
+            @for (episode of episodes(); track episode.EpisodeID) {
+            <div class="catalog-card edge-episode">
+                <div class="card-body">
+                    <div class="episode-header-row">
+                        <span class="ep-number" i18n="@@cataloguerPage_episodeNumberLabel">EPISODIO {{ episode.EpisodeNumber }}</span>
+                        <span class="ep-duration" i18n="@@cataloguerPage_duration">
+                            {{ Math.floor(episode.Duration / 60) }} min {{ episode.Duration % 60 }} sec
+                        </span>
+                    </div>
+                    <h2 class="card-main-title">
+                        "{{ getLangText(episode.Title, 'it') }}"
+                    </h2>
+                    <p class="card-description">
+                        {{ getLangText(episode.Description, 'it') }}
+                    </p>
+                    <div class="card-metadata">
+                        <span><ng-container i18n="@@cataloguerPage_releaseDate">Uscita:</ng-container> <strong>{{ episode.ReleaseDate }}</strong></span>
+                    </div>
+                </div>
+                <div class="card-actions-row split-two">
+                    <button
+                        class="card-action-btn btn-edit"
+                        (click)="openEditModalData(episode)"
+                        i18n="@@cataloguerPage_editDetails"
+                    >
+                        Modifica Dettagli
+                    </button>
+                    <button
+                        class="card-action-btn btn-delete"
+                        (click)="deleteEpisode(episode.EpisodeID)"
+                        i18n="@@cataloguerPage_delete"
+                    >
+                        Elimina
+                    </button>
+                </div>
             </div>
-        </div>
-        } @empty {
-        <div class="empty-state">
-            <p>Nessun episodio in questa stagione.</p>
-        </div>
-        } }
+            } @empty {
+            <div class="empty-state">
+                <p i18n="@@cataloguerPage_noEpisodes">Nessun episodio in questa stagione.</p>
+            </div>
+            } 
+        }
     </div>
 
     @if (currentLevel() === 'shows') {
@@ -258,12 +268,16 @@
             loadingSpinner="bubbles"
         ></ion-infinite-scroll-content>
     </ion-infinite-scroll>
-    } } @if (activeTab() === 'propics') {
+    } 
+    
+    } 
+    
+    @if (activeTab() === 'propics') {
     <div class="propics-workspace">
         @for (group of groupedPropics(); track group.bundle) {
         <div class="bundle-section">
             <h3 class="bundle-title">
-                Pacchetto: {{ group.bundle }}
+                <ng-container i18n="@@cataloguerPage_bundle">Pacchetto:</ng-container> {{ group.bundle }}
                 <ion-button
                     fill="clear"
                     size="small"
@@ -292,7 +306,7 @@
         </div>
         } @empty {
         <div class="empty-state">
-            <p>Nessun avatar presente nel database.</p>
+            <p i18n="@@cataloguerPage_noAvatars">Nessun avatar presente nel database.</p>
         </div>
         }
     </div>

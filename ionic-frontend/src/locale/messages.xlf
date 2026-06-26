@@ -122,6 +122,471 @@
       <trans-unit id="cataloguer" datatype="html">
         <source>Catalogatore</source>
       </trans-unit>
+      <trans-unit id="cataloguerPage_add" datatype="html">
+        <source>Aggiungi</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_addError" datatype="html">
+        <source>Errore durante il salvataggio. Controlla la console.</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_addSuccess" datatype="html">
+        <source>Elemento aggiunto con successo!</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_browseSeasons" datatype="html">
+        <source>Sfoglia Stagioni</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_bundle" datatype="html">
+        <source>Pacchetto:</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_cancel" datatype="html">
+        <source>Annulla</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_confirmDeleteHeader" datatype="html">
+        <source>Conferma Eliminazione</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_delete" datatype="html">
+        <source> Elimina </source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_deleteEpisodeConfirm" datatype="html">
+        <source>Rimuovere l&apos;episodio dal server?</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_deleteEpisodeError" datatype="html">
+        <source>Errore durante l&apos;eliminazione dell&apos;episodio.</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_deleteEpisodeSuccess" datatype="html">
+        <source>Episodio rimosso.</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_deletePropicConfirm" datatype="html">
+        <source>Sei sicuro di voler eliminare questa immagine? Verrà rimossa fisicamente dal server.</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_deletePropicError" datatype="html">
+        <source>Impossibile eliminare l&apos;immagine.</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_deletePropicSuccess" datatype="html">
+        <source>Immagine eliminata con successo.</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_deleteSeasonConfirm" datatype="html">
+        <source>Eliminare la stagione a cascata?</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_deleteSeasonError" datatype="html">
+        <source>Errore durante l&apos;eliminazione della stagione.</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_deleteSeasonSuccess" datatype="html">
+        <source>Stagione rimossa.</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_deleteShowConfirm" datatype="html">
+        <source>Eliminare la serie? Operazione irreversibile.</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_deleteShowError" datatype="html">
+        <source>Errore durante l&apos;eliminazione.</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_deleteShowSuccess" datatype="html">
+        <source>Serie eliminata con successo.</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_duration" datatype="html">
+        <source> <x id="INTERPOLATION" equiv-text="{{ Math.floor(episode.Duration / 60) }}"/> min <x id="INTERPOLATION_1" equiv-text="{{ episode.Duration % 60 }}"/> sec </source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_edit" datatype="html">
+        <source> Edit </source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_editDetails" datatype="html">
+        <source> Modifica Dettagli </source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_editError400" datatype="html">
+        <source>Errore 400: Controlla i campi obbligatori del server.</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_editSuccess" datatype="html">
+        <source>Elemento aggiornato con successo!</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_end" datatype="html">
+        <source>Fine:</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_ended" datatype="html">
+        <source>Conclusa</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_episodeNumberLabel" datatype="html">
+        <source>EPISODIO <x id="INTERPOLATION" equiv-text="{{ episode.EpisodeNumber }}"/></source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_home" datatype="html">
+        <source>Home</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_loadPropicsError" datatype="html">
+        <source>Errore nel caricamento delle immagini.</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_noAvatars" datatype="html">
+        <source>Nessun avatar presente nel database.</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_noEpisodes" datatype="html">
+        <source>Nessun episodio in questa stagione.</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_noSeasons" datatype="html">
+        <source>Nessuna stagione inserita.</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_noShows" datatype="html">
+        <source>Nessuna serie TV in archivio.</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_ongoing" datatype="html">
+        <source>In Corso</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_release" datatype="html">
+        <source>Rilascio:</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_releaseDate" datatype="html">
+        <source>Uscita:</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_searchPlaceholder" datatype="html">
+        <source>Cerca serie per titolo...</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_seasonNumberLabel" datatype="html">
+        <source>STAGIONE <x id="INTERPOLATION" equiv-text="{{ season.SeasonNumber }}"/></source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_start" datatype="html">
+        <source>Inizio:</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_tabAvatars" datatype="html">
+        <source>Libreria Avatar</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_tabCatalog" datatype="html">
+        <source>Catalogo Anime</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_titleAvatars" datatype="html">
+        <source>Gestione Avatar</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_titleEpisodes" datatype="html">
+        <source>Elenco Episodi</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_titleSeasons" datatype="html">
+        <source>Gestione Stagioni</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_titleShows" datatype="html">
+        <source>Catalogo Serie TV</source>
+      </trans-unit>
+      <trans-unit id="cataloguerPage_viewEpisodes" datatype="html">
+        <source>Vedi Episodi</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_actionType" datatype="html">
+        <source>Tipo Action</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_add" datatype="html">
+        <source>Aggiungi</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_audioLabel" datatype="html">
+        <source>Audio:</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_audioTracksTitle" datatype="html">
+        <source>Tracce Audio (.mp3, .aac)</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_cancel" datatype="html">
+        <source> Annulla </source>
+      </trans-unit>
+      <trans-unit id="catEpModal_changeFile" datatype="html">
+        <source>Clicca per cambiare file</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_coverSection" datatype="html">
+        <source>Copertina Episodio</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_delete" datatype="html">
+        <source>Elimina</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_deleteTrackHeader" datatype="html">
+        <source>Conferma Eliminazione</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_descEn" datatype="html">
+        <source>Descrizione (EN)</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_descEnPlaceholder" datatype="html">
+        <source>Episode summary...</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_descIt" datatype="html">
+        <source>Descrizione (IT) *</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_descItPlaceholder" datatype="html">
+        <source>Riassunto dell&apos;episodio...</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_duration" datatype="html">
+        <source>Durata (sec) *</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_emptyTrackFile" datatype="html">
+        <source>Hai aggiunto una traccia ma non hai selezionato il file.</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_endSec" datatype="html">
+        <source>Fine (sec)</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_epNumAuto" datatype="html">
+        <source>N° Episodio (Auto)</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_errDeleteTrack" datatype="html">
+        <source>Impossibile eliminare la traccia.</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_invalidForm" datatype="html">
+        <source>Compila tutti i campi obbligatori.</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_langEn" datatype="html">
+        <source>Inglese</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_langEnOpt" datatype="html">
+        <source>Lingua Inglese (Opzionale)</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_langIt" datatype="html">
+        <source>Italiano</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_langItMain" datatype="html">
+        <source>Lingua Italiana (Principale)</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_langJp" datatype="html">
+        <source>Giapponese</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_langLabel" datatype="html">
+        <source>Lingua</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_markerError" datatype="html">
+        <source>Errore nei Marker: controlla i tempi e la durata.</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_markersTitle" datatype="html">
+        <source>Marker Temporali (Secondi)</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_maxSize" datatype="html">
+        <source>Dimensione massima: 2GB</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_missingVideo" datatype="html">
+        <source>Devi selezionare il file video principale.</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_mockDesc" datatype="html">
+        <source> Per motivi di spazio, questo episodio non ha una stream associata. Pertanto non è possibile modificarne le tracce. </source>
+      </trans-unit>
+      <trans-unit id="catEpModal_mockTitle" datatype="html">
+        <source>Non è possibile modificare le tracce</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_noTracks" datatype="html">
+        <source>Nessuna traccia presente.</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_releaseDate" datatype="html">
+        <source>Data Uscita *</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_saveEp" datatype="html">
+        <source>Salva Episodio</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_selectFile" datatype="html">
+        <source>Seleziona File</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_selectVideo" datatype="html">
+        <source>Seleziona File Video (.mp4)</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_serverTracks" datatype="html">
+        <source> Tracce attualmente sul server </source>
+      </trans-unit>
+      <trans-unit id="catEpModal_skipCredits" datatype="html">
+        <source>Titoli di Coda / Next Ep</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_skipIntro" datatype="html">
+        <source>Skip Intro</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_skipRecap" datatype="html">
+        <source>Skip Riassunto</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_startSec" datatype="html">
+        <source>Inizio (sec)</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_subLabel" datatype="html">
+        <source>Sottotitolo:</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_subTracksTitle" datatype="html">
+        <source>Sottotitoli (.vtt)</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_techData" datatype="html">
+        <source>Dati Tecnici</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_thumbHint" datatype="html">
+        <source>Thumbnail Episodio (16:9)</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_titleEdit" datatype="html">
+        <source>Modifica Episodio</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_titleEn" datatype="html">
+        <source>Titolo Episodio (EN)</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_titleEnPlaceholder" datatype="html">
+        <source>Es. The Beginning</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_titleIt" datatype="html">
+        <source>Titolo Episodio (IT) *</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_titleItPlaceholder" datatype="html">
+        <source>Es. L&apos;inizio di tutto</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_titleNew" datatype="html">
+        <source>Nuovo Episodio</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_trackDeleted" datatype="html">
+        <source>Traccia eliminata!</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_updateEp" datatype="html">
+        <source>Aggiorna Episodio</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_uploading" datatype="html">
+        <source>Caricamento file in corso (attendere)...</source>
+      </trans-unit>
+      <trans-unit id="catEpModal_videoSection" datatype="html">
+        <source> File Video Principale (Obbligatorio) </source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_cancel" datatype="html">
+        <source>Annulla</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_dateEnded" datatype="html">
+        <source>Data Fine</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_dateStarted" datatype="html">
+        <source>Data Inizio *</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_descEn" datatype="html">
+        <source>Descrizione / Trama (EN)</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_descEnPlaceholder" datatype="html">
+        <source>Inserisci trama in inglese</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_descIt" datatype="html">
+        <source>Descrizione / Trama (IT) *</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_descItPlaceholder" datatype="html">
+        <source>Inserisci trama in italiano</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_formInvalid" datatype="html">
+        <source>Compila tutti i campi obbligatori contrassegnati con l&apos;asterisco.</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_langEnOpt" datatype="html">
+        <source>Lingua Inglese (Opzionale)</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_langItMain" datatype="html">
+        <source>Lingua Italiana (Principale)</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_saveBtn" datatype="html">
+        <source>Salva Stagione</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_seasonNum" datatype="html">
+        <source>N° Stagione (Auto)</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_structuralData" datatype="html">
+        <source>Dati Strutturali</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_titleEdit" datatype="html">
+        <source>Modifica Stagione</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_titleEn" datatype="html">
+        <source>Titolo (EN)</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_titleEnPlaceholder" datatype="html">
+        <source>Inserisci titolo in inglese</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_titleIt" datatype="html">
+        <source>Titolo (IT) *</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_titleItPlaceholder" datatype="html">
+        <source>Inserisci titolo della stagione in italiano</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_titleNew" datatype="html">
+        <source>Nuova Stagione</source>
+      </trans-unit>
+      <trans-unit id="catSeaModal_updateBtn" datatype="html">
+        <source>Aggiorna Stagione</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_bannerHint" datatype="html">
+        <source>Banner (Orizzontale)</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_cancel" datatype="html">
+        <source>Annulla</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_dateEnded" datatype="html">
+        <source>Data Fine</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_dateStarted" datatype="html">
+        <source>Data Inizio *</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_descEn" datatype="html">
+        <source>Descrizione / Trama (EN)</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_descEnPlaceholder" datatype="html">
+        <source>Inserisci trama in inglese</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_descIt" datatype="html">
+        <source>Descrizione / Trama (IT) *</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_descItPlaceholder" datatype="html">
+        <source>Inserisci trama in italiano</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_invalidForm" datatype="html">
+        <source>Compila tutti i campi obbligatori contrassegnati con l&apos;asterisco.</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_langEnOpt" datatype="html">
+        <source>Lingua Inglese (Opzionale)</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_langItMain" datatype="html">
+        <source>Lingua Italiana (Principale)</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_mediaSection" datatype="html">
+        <source>Media / Immagini</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_saveBtn" datatype="html">
+        <source>Salva Serie nel Catalogo</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_structuralData" datatype="html">
+        <source>Dati Strutturali</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_thumbHint" datatype="html">
+        <source>Thumbnail (Locandina)</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_titleEdit" datatype="html">
+        <source>Modifica Serie</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_titleEn" datatype="html">
+        <source>Titolo (EN)</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_titleEnPlaceholder" datatype="html">
+        <source>Inserisci titolo in inglese</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_titleIt" datatype="html">
+        <source>Titolo (IT) *</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_titleItPlaceholder" datatype="html">
+        <source>Inserisci titolo in italiano</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_titleNew" datatype="html">
+        <source>Nuova Serie</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_updateBtn" datatype="html">
+        <source>Aggiorna Serie</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_uploadError" datatype="html">
+        <source>Errore durante l&apos;upload delle immagini.</source>
+      </trans-unit>
+      <trans-unit id="catShowModal_uploading" datatype="html">
+        <source>Caricamento file in corso...</source>
+      </trans-unit>
+      <trans-unit id="changePassModal_errConfirmRequired" datatype="html">
+        <source>Conferma la tua nuova password.</source>
+      </trans-unit>
+      <trans-unit id="changePassModal_errCurrentRequired" datatype="html">
+        <source>La password attuale è obbligatoria.</source>
+      </trans-unit>
+      <trans-unit id="changePassModal_errMinLen" datatype="html">
+        <source>La password deve essere di almeno 8 caratteri.</source>
+      </trans-unit>
+      <trans-unit id="changePassModal_errMinLenN" datatype="html">
+        <source>La password deve essere di almeno 8 caratteri.</source>
+      </trans-unit>
+      <trans-unit id="changePassModal_errMismatch" datatype="html">
+        <source>Le password non corrispondono.</source>
+      </trans-unit>
+      <trans-unit id="changePassModal_errNewRequired" datatype="html">
+        <source>La nuova password è obbligatoria.</source>
+      </trans-unit>
+      <trans-unit id="changePassModal_errUpdate" datatype="html">
+        <source>Errore durante l&apos;aggiornamento.</source>
+      </trans-unit>
+      <trans-unit id="changePassModal_loading" datatype="html">
+        <source>Aggiornamento in corso...</source>
+      </trans-unit>
+      <trans-unit id="changePassModal_success" datatype="html">
+        <source>Password aggiornata con successo!</source>
+      </trans-unit>
       <trans-unit id="changePasswordModal_close" datatype="html">
         <source>Chiudi</source>
       </trans-unit>
@@ -181,6 +646,9 @@
       </trans-unit>
       <trans-unit id="modDiscCard_season" datatype="html">
         <source>Stagione</source>
+      </trans-unit>
+      <trans-unit id="modDiscCard_titleUnavailable" datatype="html">
+        <source>Titolo non disponibile</source>
       </trans-unit>
       <trans-unit id="moderation" datatype="html">
         <source>Moderazione</source>
@@ -292,6 +760,12 @@
       </trans-unit>
       <trans-unit id="differentConfPassError" datatype="html">
         <source>Conferma la password</source>
+      </trans-unit>
+      <trans-unit id="discModal_errId" datatype="html">
+        <source>ID Episodio non valido.</source>
+      </trans-unit>
+      <trans-unit id="discModal_invalidForm" datatype="html">
+        <source>Compila correttamente tutti i campi obbligatori.</source>
       </trans-unit>
       <trans-unit id="disconnectAccount" datatype="html">
         <source>Disconnetti Account</source>
@@ -575,11 +1049,47 @@
       <trans-unit id="commentsComp_badgeHidden" datatype="html">
         <source>Nascosto</source>
       </trans-unit>
+      <trans-unit id="commentsComp_ban" datatype="html">
+        <source>Banna</source>
+      </trans-unit>
+      <trans-unit id="commentsComp_ban3Days" datatype="html">
+        <source>3 Giorni</source>
+      </trans-unit>
+      <trans-unit id="commentsComp_ban7Days" datatype="html">
+        <source>7 Giorni</source>
+      </trans-unit>
+      <trans-unit id="commentsComp_banHeader" datatype="html">
+        <source>Banna Utente</source>
+      </trans-unit>
+      <trans-unit id="commentsComp_banMsg" datatype="html">
+        <source>Scegli la durata della sanzione per &lt;strong&gt;<x id="PH" equiv-text="safeUsername"/>&lt;/strong&gt;.</source>
+      </trans-unit>
+      <trans-unit id="commentsComp_banPermanent" datatype="html">
+        <source>Indefinito</source>
+      </trans-unit>
+      <trans-unit id="commentsComp_banSuccess" datatype="html">
+        <source>Sanzione applicata con successo.</source>
+      </trans-unit>
+      <trans-unit id="commentsComp_cancel" datatype="html">
+        <source>Annulla</source>
+      </trans-unit>
       <trans-unit id="commentsComp_discussionClosed" datatype="html">
         <source>Questa discussione è chiusa o scaduta. Non è più possibile inserire nuovi commenti.</source>
       </trans-unit>
+      <trans-unit id="commentsComp_errBan" datatype="html">
+        <source>Errore durante il ban.</source>
+      </trans-unit>
+      <trans-unit id="commentsComp_errSelectDuration" datatype="html">
+        <source>Seleziona una durata prima di bannare.</source>
+      </trans-unit>
+      <trans-unit id="commentsComp_errSend" datatype="html">
+        <source>Errore durante l&apos;invio.</source>
+      </trans-unit>
       <trans-unit id="commentsComp_goToLogin" datatype="html">
         <source>Vai al Login</source>
+      </trans-unit>
+      <trans-unit id="commentsComp_hiddenUser" datatype="html">
+        <source>[Username Nascosto]</source>
       </trans-unit>
       <trans-unit id="commentsComp_loginRequiredDesc" datatype="html">
         <source>Devi effettuare l&apos;accesso per visualizzare e pubblicare commenti in questa discussione.</source>
@@ -593,6 +1103,9 @@
       <trans-unit id="commentsComp_preview" datatype="html">
         <source>Anteprima:</source>
       </trans-unit>
+      <trans-unit id="commentsComp_removedMsg" datatype="html">
+        <source>[Questo commento è stato rimosso dai moderatori]</source>
+      </trans-unit>
       <trans-unit id="commentsComp_replyBtn" datatype="html">
         <source><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon name=&quot;arrow-undo-outline&quot; slot=&quot;start&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Rispondi </source>
       </trans-unit>
@@ -602,8 +1115,17 @@
       <trans-unit id="commentsComp_reportBtn" datatype="html">
         <source>Segnala</source>
       </trans-unit>
+      <trans-unit id="commentsComp_reported" datatype="html">
+        <source>Segnalazione inviata ai Moderatori.</source>
+      </trans-unit>
       <trans-unit id="commentsComp_sendBtn" datatype="html">
         <source>Invia</source>
+      </trans-unit>
+      <trans-unit id="commentsComp_statusUpdated" datatype="html">
+        <source>Stato aggiornato</source>
+      </trans-unit>
+      <trans-unit id="commentsComp_statusUpdateds" datatype="html">
+        <source>Stato aggiornato</source>
       </trans-unit>
       <trans-unit id="pageNotFound" datatype="html">
         <source> PAGINA NON TROVATA </source>
@@ -647,14 +1169,23 @@
       <trans-unit id="propicModal_changeImage" datatype="html">
         <source>Cambia Immagine</source>
       </trans-unit>
+      <trans-unit id="propicModal_error" datatype="html">
+        <source>Errore nel caricamento dell&apos;immagine.</source>
+      </trans-unit>
       <trans-unit id="propicModal_imageSection" datatype="html">
         <source>Immagine Avatar</source>
+      </trans-unit>
+      <trans-unit id="propicModal_invalidForm" datatype="html">
+        <source>Assicurati di aver selezionato un file e inserito un nome bundle valido.</source>
       </trans-unit>
       <trans-unit id="propicModal_saveToCatalog" datatype="html">
         <source>Salva nel Catalogo</source>
       </trans-unit>
       <trans-unit id="propicModal_selectedFile" datatype="html">
         <source>File selezionato:</source>
+      </trans-unit>
+      <trans-unit id="propicModal_success" datatype="html">
+        <source>Avatar caricato con successo!</source>
       </trans-unit>
       <trans-unit id="propicModal_tapToSelect" datatype="html">
         <source>Tocca per selezionare un&apos;immagine</source>
@@ -769,6 +1300,9 @@
       </trans-unit>
       <trans-unit id="showCard_seasonAbbr" datatype="html">
         <source>S</source>
+      </trans-unit>
+      <trans-unit id="showCard_titleUnavailable" datatype="html">
+        <source>Titolo non disponibile</source>
       </trans-unit>
       <trans-unit id="startWatching" datatype="html">
         <source>Inizia a guardare</source>

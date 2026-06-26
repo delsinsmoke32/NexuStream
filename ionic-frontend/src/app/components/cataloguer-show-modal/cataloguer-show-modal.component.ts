@@ -5,7 +5,7 @@ import {
     OnInit,
     inject,
     signal,
-    viewChild,
+    viewChild
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -33,6 +33,7 @@ import {
     IonCol,
     ModalController,
     IonIcon,
+    ToastController
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { imageOutline, imagesOutline } from 'ionicons/icons';
@@ -85,6 +86,7 @@ export class CataloguerShowModalComponent implements OnInit {
     private modalCtrl = inject(ModalController);
     private cataloguerService = inject(CataloguerService);
     private backendUrl = inject(BackendUrlPipe);
+    private toastCtrl = inject(ToastController);
 
     showForm!: FormGroup;
     isEditMode = false;
@@ -174,7 +176,13 @@ export class CataloguerShowModalComponent implements OnInit {
     }
 
     async save() {
-        if (this.showForm.invalid) return;
+        if (this.showForm.invalid) {
+            this.presentToast(
+                $localize`:@@catShowModal_invalidForm:Compila tutti i campi obbligatori contrassegnati con l'asterisco.`,
+                'danger'
+            );
+            return;
+        }
         this.isUploading.set(true);
 
         try {
@@ -201,9 +209,22 @@ export class CataloguerShowModalComponent implements OnInit {
 
             this.dismiss({ payload, isEdit: this.isEditMode });
         } catch (error) {
-            console.error("Errore durante l'upload delle immagini:", error);
+            this.presentToast(
+                $localize`:@@catShowModal_uploadError:Errore durante l'upload delle immagini.`,
+                'danger'
+            );
         } finally {
             this.isUploading.set(false);
         }
+    }
+
+    private async presentToast(message: string, color: 'success' | 'danger') {
+        const toast = await this.toastCtrl.create({
+            message,
+            duration: 3000,
+            color,
+            position: 'bottom',
+        });
+        await toast.present();
     }
 }

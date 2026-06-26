@@ -91,7 +91,7 @@ const insertShow = async (titleObj, descriptionObj, dateStarted, dateEnded, hasE
 
 
 const updateShow = async (showId, fields, params) => {
-    // La struttura dinamica rimane invariata, la magia la fa come componi l'array 'fields' nel controller
+   
     const sql = `UPDATE Shows SET ${fields.join(', ')} WHERE ShowID = ?`;
     return await db.runAsync(sql, [...params, showId]);
 };
@@ -231,24 +231,24 @@ const insertEpisodeFull = async (titleObj, descriptionObj, releaseDate, duration
 const updateEpisodeFull = async (episodeId, fields, fieldsParams, dubs, subs) => {
     let result = { changes: 1 };
     
-    // 1. Aggiornamento della tabella principale Episodes (campi standard o singole chiavi JSON)
+    
     if (fields.length > 0) {
         const sql = `UPDATE Episodes SET ${fields.join(', ')} WHERE EpisodeID = ?`;
         result = await db.runAsync(sql, [...fieldsParams, episodeId]);
     }
 
-    // 2. Se l'episodio esiste/è stato modificato, sincronizziamo le relazioni esterne
+    // Se l'episodio esiste/è stato modificato, sincronizziamo le relazioni esterne
     if (result.changes > 0) {
-        // Tracce Audio: Svuota e ripopola
+       
         if (dubs && Array.isArray(dubs)) {
-            // await db.runAsync(`DELETE FROM "EpisodeLanguage" WHERE "REF_EpisodeID" = ?`, [episodeId]);
+            
             for (const lang of dubs) {
                 await db.runAsync(`INSERT OR IGNORE INTO "EpisodeLanguage" ("REF_EpisodeID", "REF_LanguageID") VALUES (?, ?)`, [episodeId, lang]);
             }
         }
-        // Sottotitoli: Svuota e ripopola
+        
         if (subs && Array.isArray(subs)) {
-            // await db.runAsync(`DELETE FROM "EpisodeSubtitles" WHERE "REF_EpisodeID" = ?`, [episodeId]);
+            
             for (const lang of subs) {
                 await db.runAsync(`INSERT OR IGNORE INTO "EpisodeSubtitles" ("REF_EpisodeID", "REF_LanguageID") VALUES (?, ?)`, [episodeId, lang]);
             }

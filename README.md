@@ -12,16 +12,16 @@ Dentro `ionic-frontend`, per il serve:
 ionic serve --configuration=lang --host=ip
 ```
 
-dove `lang` è il linguaggio desiderato tra `it` ed `en` (se si esclude è `it`) e `ip` è l'indirizzo IP da usare per il server frontend (per testare su telefono sulla stessa rete WiFi).
+dove `lang` è il linguaggio desiderato tra `it` ed `en` (se si esclude è `it`) e `ip` è l'indirizzo IP da usare per il server frontend (per testare su telefono sulla stessa rete WiFi, il valore default è `localhost`). La porta è `8100`.
 
-Per la build:
+Per la build (accessibile alla porta `8101`)
 
 ```sh
-ionic build
+ionic build --watch
 node frontend.cjs
 ```
 
-Per build o serve, impostare in:
+Per build o serve, impostare in (necessario solo se si è modificata la configurazione dal backend):
 
 ```sh
 src/environments/environment.ts # non usato al momento
@@ -39,8 +39,12 @@ Dentro `express-backend`:
 npm run dev
 ```
 
-Eventualmente modificare `.env` per impostare `HOST` e `PORT` del backend, di default `localhost` e `3000`.
+Eventualmente modificare `.env` per impostare `HOST` e `PORT` del backend, di default `localhost` e `3000`. Se non si ha `.env`, creare e copiare i contenuti di `.env.example` al suo interno.
 
-`! Momentaneamente`
+### REQUIREMENTS
 
-Scaricare l'ultima versione di `ffmpeg` per il proprio sistema operativo e spostare i contenuti della cartella principale dentro `ffmpeg_installation`.
+Scaricare l'[ultima versione](https://www.gyan.dev/ffmpeg/builds/) di `ffmpeg` per il proprio sistema operativo e assicurarsi che sia aggiunta al path (deve funzionare il comando `ffmpeg` da terminale), necessario se si vogliono caricare video e tracce.
+
+I node modules sono da installare rispettivamente nelle cartelle `express-backend` e `ionic-frontend`.
+
+Nella directory root della repository si trova la cartella `test_files`, contente files utili al testing delle features.

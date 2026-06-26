@@ -6,7 +6,7 @@ const { validationResult } = require('express-validator');
 // GESTIONE DISCUSSIONI
 //-----------------------
 
-// GET - Già presente nel tuo codice, mantenuto per coerenza
+// GET - Prende discussioni in base all'episodio, o tutte se non ci sono filtri
 const getDiscussions = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -14,9 +14,9 @@ const getDiscussions = async (req, res) => {
         return res.status(400).json({ errors: errors.array() })
     }
 
-    const { showClosed } = req.query;
+    const { showClosed, search } = req.query;
     try {
-        const discussions = await modModel.getDiscussions(showClosed);
+        const discussions = await modModel.getDiscussions(showClosed, search);
         return res.json(discussions);
     } catch (err) {
         console.error("Errore recupero discussioni: ", err);

@@ -4,18 +4,35 @@ const db = require("../db/db");
 // GESTIONE DISCUSSIONI
 //-----------------------
 
-// GET - Preesistente
-const getDiscussions = async (showClosed) => {
+// GET - Prende discussioni in base al nome dell'episodio, se viene passato, altrimenti tutte dalle più recenti
+const getDiscussions = async (showClosed, search) => {
     let sql = `SELECT d.*, e.EpisodeNumber, e.Title AS EpisodeTitle, s.SeasonNumber, sh.Title AS ShowTitle 
                FROM Discussions AS d
                JOIN Episodes AS e ON d.REF_EpisodeID = e.EpisodeID
                JOIN Seasons AS s ON e.REF_SeasonID = s.SeasonID
                JOIN Shows AS sh ON s.REF_ShowID = sh.ShowID
                WHERE 1=1`;
+    
+    const params = [];
+
+    // Filtro Archivio vs Attive
     if (!showClosed || showClosed === 0 || showClosed === '0') {
-        sql += ` AND datetime('now', 'localtime') < CloseDate AND ForceClosed = 0`;
+        sql += ` AND (d.CloseDate IS NULL OR datetime('now', 'localtime') < d.CloseDate) AND d.ForceClosed = 0`;
+    } else {
+        // Se showClosed == 1, vogliamo solo quelle dell'archivio (chiuse da Mod o scadute)
+        sql += ` AND (d.CloseDate <= datetime('now', 'localtime') OR d.ForceClosed = 1)`;
     }
-    return await db.allAsync(sql);
+
+    // Filtro Ricerca
+    if (search) {
+        sql += ` AND (e.Title LIKE ? OR sh.Title LIKE ?)`;
+        params.push(`%${search}%`, `%${search}%`);
+    }
+
+    // Ordiniamole in base alle più recenti
+    sql += ` ORDER BY d.OpenDate DESC`;
+
+    return await db.allAsync(sql, params);
 };
 
 // POST - Inserisce una nuova discussione attiva (ForceClosed = 0 di default)

@@ -41,25 +41,24 @@
 
     <ion-toolbar color="dark" class="filter-bar">
         @if (currentTab() === 'discussions') {
-        <ion-item lines="none" color="none">
-            <ion-label
-                >Mostra anche discussioni chiuse o scadute (Archivio)</ion-label
-            >
-            <ion-toggle
-                slot="end"
-                [checked]="showClosed() === 1"
-                (ionChange)="toggleFilter($event)"
-                color="primary"
-            ></ion-toggle>
-        </ion-item>
+            <div class="discussions-filters">
+                <ion-searchbar class="hide-on-mobile"
+                    [placeholder]="isMobile() ? 'Cerca per episodio...' : 'Cerca discussione per nome episodio...'"
+                    animated="true" 
+                    debounce="400"
+                    (ionInput)="handleDiscussionSearch($event)">
+                </ion-searchbar>
+                
+                <ion-item lines="none" color="none" class="toggle-item">
+                    <ion-label class="hide-on-mobile">Archivio</ion-label>
+                    <ion-toggle [checked]="showClosed() === 1" (ionChange)="toggleFilter($event)" color="primary"></ion-toggle>
+                </ion-item>
+            </div>
         } @else {
-        <ion-searchbar
-            placeholder="Cerca utente per username o email..."
-            animated="true"
-            debounce="400"
-            (ionInput)="handleSearch($event)"
-        >
-        </ion-searchbar>
+            <ion-searchbar
+                placeholder="Cerca utente per username o email..." animated="true" debounce="400"
+                (ionInput)="handleSearch($event)">
+            </ion-searchbar>
         }
     </ion-toolbar>
 </ion-header>
@@ -77,7 +76,7 @@
         } @empty {
         <div class="empty-dashboard">
             <ion-icon name="shield-checkmark-outline"></ion-icon>
-            <h3>Tutto Specchiato!</h3>
+            <h3>Ops!</h3>
             <p>
                 Non ci sono discussioni attive da moderare corrispondenti ai
                 filtri impostati.

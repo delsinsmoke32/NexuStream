@@ -112,18 +112,7 @@ export class EpisodePage implements OnInit, OnDestroy {
     @ViewChild(VideoPlayerComponent) videoPlayerComponent!: VideoPlayerComponent
 
     constructor() {
-        addIcons({
-            arrowBackOutline,
-            chatbubblesOutline,
-            createOutline,
-            trashOutline,
-            shareSocialOutline,
-            addCircleOutline,
-            playCircle,
-            heartOutline,
-            heart,
-            chevronForwardOutline,
-        })
+        addIcons({arrowBackOutline,chatbubblesOutline,createOutline,trashOutline,shareSocialOutline,addCircleOutline,playCircle,heartOutline,heart,chevronForwardOutline,});
     }
 
     ngOnInit() {

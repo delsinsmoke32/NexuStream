@@ -1,308 +1,325 @@
 <div class="comments-wrapper">
-    @if (replyingToUsername) {
-        <div class="replying-banner">
-            <span class="reply-text"
-                >In risposta a <strong>{{ replyingToUsername }}</strong></span
-            >
-            <ion-icon
-                name="close-circle"
-                class="cancel-reply"
-                (click)="annullaRisposta()"
-            ></ion-icon>
+    
+    @if (!isLoggedIn) {
+        <div class="locked-state-card">
+            <ion-icon name="lock-closed-outline"></ion-icon>
+            <h3>Accesso Richiesto</h3>
+            <p>Devi effettuare l'accesso per visualizzare e pubblicare commenti in questa discussione.</p>
+            <ion-button color="primary" (click)="goToLogin()">Vai al Login</ion-button>
         </div>
-    }
-
-    <div class="new-comment-box" id="comment-input-box">
-        <ion-item lines="none" class="custom-input ion-text-wrap">
-            <ion-avatar slot="start">
-                <img
-                    [src]="currentUser?.propicURI 
-                        ? (currentUser.propicURI | backendUrl: 'static') 
-                        : ('avatars/avatar-000.png' | backendUrl: 'static')"
-                    alt="User"
-                />
-            </ion-avatar>
-            <ion-textarea
-                [placeholder]="
-                    replyingToUsername
-                        ? 'Scrivi la tua risposta...'
-                        : 'Scrivi un commento...'
-                "
-                [autoGrow]="true"
-                [(ngModel)]="nuovoCommentoTesto"
-                (keydown.enter)="$event.preventDefault(); aggiungiCommento()"
-                rows="1"
-            >
-            </ion-textarea>
-        </ion-item>
-
-        @if (nuovoCommentoTesto.trim().length > 0) {
-            <div class="live-preview-box">
-                <span class="preview-label">Anteprima:</span>
-                <p class="preview-text">
-                    @if (replyingToUsername) {
-                        <span class="mention"
-                            >@{{ replyingToUsername }}&nbsp;</span
-                        >
-                    }
-                    <span
-                        [innerHTML]="parseMarkdown(nuovoCommentoTesto)"
-                    ></span>
-                </p>
-            </div>
-        }
-
-        <div class="btn-container">
-            <ion-button
-                fill="clear"
-                class="post-btn"
-                (click)="aggiungiCommento()"
-                [disabled]="!nuovoCommentoTesto.trim()"
-                >Invia</ion-button
-            >
-        </div>
-    </div>
-
-    <div class="comments-list">
-        @if (!comments || comments.length === 0) {
-            <div class="no-comments-placeholder">
-                <p>Nessun commento. Sii il primo a dire la tua!</p>
-            </div>
-        }
-
-        <ng-template
-            #singleComment
-            let-comment="comment"
-            let-isReply="isReply"
-            let-rootId="rootId"
-        >
-                <div
-                    class="comment-item"
-                    [id]="'comment-' + comment.CommentID"
-                    [class.is-hidden]="comment.isHidden && (isMod)"
-                    [class.is-approved]="comment.isApproved && (isMod)"
-                    [class.reply-item]="isReply"
+    } @else {
+        @if (replyingToUsername) {
+            <div class="replying-banner">
+                <span class="reply-text"
+                    >In risposta a <strong>{{ replyingToUsername }}</strong></span
                 >
-                    <ion-avatar>
+                <ion-icon
+                    name="close-circle"
+                    class="cancel-reply"
+                    (click)="annullaRisposta()"
+                ></ion-icon>
+            </div>
+        }
+
+        @if (isDiscussionClosed()) {
+            <div class="closed-state-banner">
+                <ion-icon name="ban-outline"></ion-icon>
+                <p>Questa discussione è chiusa o scaduta. Non è più possibile inserire nuovi commenti.</p>
+            </div>
+        } @else {
+            <div class="new-comment-box" id="comment-input-box">
+                <ion-item lines="none" class="custom-input ion-text-wrap">
+                    <ion-avatar slot="start">
                         <img
-                            [src]="
-                                comment.REF_PropicURI
-                                    ? (comment.REF_PropicURI
-                                      | backendUrl: 'static')
-                                    : ('avatars/avatar-000.png'
-                                      | backendUrl: 'static')
-                            "
-                            [alt]="comment.Username"
+                            [src]="currentUser?.propicURI 
+                                ? (currentUser.propicURI | backendUrl: 'static') 
+                                : ('avatars/avatar-000.png' | backendUrl: 'static')"
+                            alt="User"
                         />
                     </ion-avatar>
+                    <ion-textarea
+                        [placeholder]="
+                            replyingToUsername
+                                ? 'Scrivi la tua risposta...'
+                                : 'Scrivi un commento...'
+                        "
+                        [autoGrow]="true"
+                        [(ngModel)]="nuovoCommentoTesto"
+                        (keydown.enter)="$event.preventDefault(); aggiungiCommento()"
+                        rows="1"
+                    >
+                    </ion-textarea>
+                </ion-item>
 
-                    <div class="comment-content">
-                        <div class="comment-header">
-                            <div class="user-info">
-                                <span class="username">{{
-                                    comment.Username
-                                }}</span>
-                                <span class="time">{{
-                                    comment.DateCommented | date: 'short'
-                                }}</span>
-                            </div>
-
-                            <div class="badges">
-                                @if (comment.isApproved && isMod) {
-                                    <span class="badge badge-approved"
-                                        >Approvato</span
-                                    >
-                                }
-                                @if (comment.isHidden && isMod) {
-                                    <span class="badge badge-hidden"
-                                        >Nascosto</span
-                                    >
-                                }
-                            </div>
-                        </div>
-
-                        <p class="text">
-                            @if (comment.replyTag) {
-                                <span
-                                    class="mention"
-                                    (click)="
-                                        scrollToComment(comment.REF_CommentID)
-                                    "
+                @if (nuovoCommentoTesto.trim().length > 0) {
+                    <div class="live-preview-box">
+                        <span class="preview-label">Anteprima:</span>
+                        <p class="preview-text">
+                            @if (replyingToUsername) {
+                                <span class="mention"
+                                    >@{{ replyingToUsername }}&nbsp;</span
                                 >
-                                    {{ '@' + comment.replyTag }}
-                                </span>
                             }
-                            
-                            @for (chunk of comment.parsedChunks; track $index) {
-                                @if (chunk.isTimestamp) {
-                                    <a class="timestamp-link" (click)="onTimestampClicked(chunk.seconds)">{{ chunk.text }}</a>
-                                } @else {
-                                    <span [innerHTML]="chunk.html"></span>
-                                }
-                            }
+                            <span
+                                [innerHTML]="parseMarkdown(nuovoCommentoTesto)"
+                            ></span>
                         </p>
-                        @if (
-                            comment.isAdmin ||
-                            comment.isMod ||
-                            comment.isCataloguer
-                        ) {
-                            <div class="roles-indicator-row">
-                                @if (comment.isAdmin) {
-                                    <span class="badge badge-admin">
-                                        <ion-icon
-                                            name="shield-half-outline"
-                                        ></ion-icon>
-                                        Admin
-                                    </span>
-                                } @else {
-                                    @if (comment.isMod) {
-                                        <span class="badge badge-mod">
-                                            <ion-icon
-                                                name="hammer-outline"
-                                            ></ion-icon>
-                                            Mod
-                                        </span>
+                    </div>
+                }
+
+                <div class="btn-container">
+                    <ion-button
+                        fill="clear"
+                        class="post-btn"
+                        (click)="aggiungiCommento()"
+                        [disabled]="!nuovoCommentoTesto.trim()"
+                        >Invia</ion-button
+                    >
+                </div>
+            </div>
+        }
+
+        <div class="comments-list">
+            @if (!comments || comments.length === 0) {
+                <div class="no-comments-placeholder">
+                    <p>Nessun commento. Sii il primo a dire la tua!</p>
+                </div>
+            }
+
+            <ng-template
+                #singleComment
+                let-comment="comment"
+                let-isReply="isReply"
+                let-rootId="rootId"
+            >
+                    <div
+                        class="comment-item"
+                        [id]="'comment-' + comment.CommentID"
+                        [class.is-hidden]="comment.isHidden && (isMod)"
+                        [class.is-approved]="comment.isApproved && (isMod)"
+                        [class.reply-item]="isReply"
+                    >
+                        <ion-avatar>
+                            <img
+                                [src]="
+                                    comment.REF_PropicURI
+                                        ? (comment.REF_PropicURI
+                                          | backendUrl: 'static')
+                                        : ('avatars/avatar-000.png'
+                                          | backendUrl: 'static')
+                                "
+                                [alt]="comment.Username"
+                            />
+                        </ion-avatar>
+
+                        <div class="comment-content">
+                            <div class="comment-header">
+                                <div class="user-info">
+                                    <span class="username">{{
+                                        comment.Username
+                                    }}</span>
+                                    <span class="time">{{
+                                        comment.DateCommented | date: 'short'
+                                    }}</span>
+                                </div>
+
+                                <div class="badges">
+                                    @if (comment.isApproved && isMod) {
+                                        <span class="badge badge-approved"
+                                            >Approvato</span
+                                        >
                                     }
-                                    @if (comment.isCataloguer) {
-                                        <span class="badge badge-cataloguer">
-                                            <ion-icon
-                                                name="library-outline"
-                                            ></ion-icon>
-                                            Catalogatore
-                                        </span>
+                                    @if (comment.isHidden && isMod) {
+                                        <span class="badge badge-hidden"
+                                            >Nascosto</span
+                                        >
+                                    }
+                                </div>
+                            </div>
+
+                            <p class="text">
+                                @if (comment.replyTag) {
+                                    <span
+                                        class="mention"
+                                        (click)="
+                                            scrollToComment(comment.REF_CommentID)
+                                        "
+                                    >
+                                        {{ '@' + comment.replyTag }}
+                                    </span>
+                                }
+                                
+                                @for (chunk of comment.parsedChunks; track $index) {
+                                    @if (chunk.isTimestamp) {
+                                        <a class="timestamp-link" (click)="onTimestampClicked(chunk.seconds)">{{ chunk.text }}</a>
+                                    } @else {
+                                        <span [innerHTML]="chunk.html"></span>
                                     }
                                 }
-                            </div>
-                        }
+                            </p>
+                            @if (
+                                comment.isAdmin ||
+                                comment.isMod ||
+                                comment.isCataloguer
+                            ) {
+                                <div class="roles-indicator-row">
+                                    @if (comment.isAdmin) {
+                                        <span class="badge badge-admin">
+                                            <ion-icon
+                                                name="shield-half-outline"
+                                            ></ion-icon>
+                                            Admin
+                                        </span>
+                                    } @else {
+                                        @if (comment.isMod) {
+                                            <span class="badge badge-mod">
+                                                <ion-icon
+                                                    name="hammer-outline"
+                                                ></ion-icon>
+                                                Mod
+                                            </span>
+                                        }
+                                        @if (comment.isCataloguer) {
+                                            <span class="badge badge-cataloguer">
+                                                <ion-icon
+                                                    name="library-outline"
+                                                ></ion-icon>
+                                                Catalogatore
+                                            </span>
+                                        }
+                                    }
+                                </div>
+                            }
 
-                        @if (!comment.isHidden || isMod){
-                            <div class="comment-actions">
-                                <ion-button
-                                    fill="clear"
-                                    size="small"
-                                    (click)="toggleLike(comment)"
-                                    [color]="comment.isLiked ? 'danger' : 'medium'"
-                                >
-                                    <ion-icon
-                                        [name]="
-                                            comment.isLiked
-                                                ? 'thumbs-up'
-                                                : 'thumbs-up-outline'
+                            @if (!comment.isHidden || isMod){
+                                <div class="comment-actions">
+                                    <ion-button
+                                        fill="clear"
+                                        size="small"
+                                        (click)="toggleLike(comment)"
+                                        [color]="comment.isLiked ? 'danger' : 'medium'"
+                                    >
+                                        <ion-icon
+                                            [name]="
+                                                comment.isLiked
+                                                    ? 'thumbs-up'
+                                                    : 'thumbs-up-outline'
+                                            "
+                                            slot="start"
+                                        ></ion-icon>
+                                        {{ comment.Likes || 0 }}
+                                    </ion-button>
+
+                                    <ion-button
+                                        fill="clear"
+                                        size="small"
+                                        color="medium"
+                                        (click)="rispondiA(comment, rootId)"
+                                    >
+                                        <ion-icon
+                                            name="arrow-undo-outline"
+                                            slot="start"
+                                        ></ion-icon>
+                                        Rispondi
+                                    </ion-button>
+
+                                    <ion-button
+                                        fill="clear"
+                                        size="small"
+                                        [color]="
+                                            comment.isReported ? 'danger' : 'medium'
                                         "
-                                        slot="start"
-                                    ></ion-icon>
-                                    {{ comment.Likes || 0 }}
-                                </ion-button>
+                                        [disabled]="comment.isReported"
+                                        (click)="reportMessage(comment)"
+                                        title="Segnala"
+                                    >
+                                        <ion-icon
+                                            name="alert-circle-outline"
+                                            slot="icon-only"
+                                        ></ion-icon>
+                                    </ion-button>
 
-                                <ion-button
-                                    fill="clear"
-                                    size="small"
-                                    color="medium"
-                                    (click)="rispondiA(comment, rootId)"
-                                >
-                                    <ion-icon
-                                        name="arrow-undo-outline"
-                                        slot="start"
-                                    ></ion-icon>
-                                    Rispondi
-                                </ion-button>
-
-                                <ion-button
-                                    fill="clear"
-                                    size="small"
-                                    [color]="
-                                        comment.isReported ? 'danger' : 'medium'
-                                    "
-                                    [disabled]="comment.isReported"
-                                    (click)="reportMessage(comment)"
-                                    title="Segnala"
-                                >
-                                    <ion-icon
-                                        name="alert-circle-outline"
-                                        slot="icon-only"
-                                    ></ion-icon>
-                                </ion-button>
-
-                                @if (isMod || isAdmin) {
-                                    <div class="mod-actions-group">
-                                        <ion-button
-                                            fill="clear"
-                                            size="small"
-                                            color="success"
-                                            (click)="toggleApprove(comment)"
-                                        >
-                                            <ion-icon
-                                                name="checkmark-circle-outline"
-                                                slot="icon-only"
-                                            ></ion-icon>
-                                        </ion-button>
-                                        <ion-button
-                                            fill="clear"
-                                            size="small"
-                                            color="warning"
-                                            (click)="toggleHide(comment)"
-                                        >
-                                            <ion-icon
-                                                name="eye-off-outline"
-                                                slot="icon-only"
-                                            ></ion-icon>
-                                        </ion-button>
-
-                                        @if (canBanUser(comment)) {
+                                    @if (isMod || isAdmin) {
+                                        <div class="mod-actions-group">
                                             <ion-button
                                                 fill="clear"
                                                 size="small"
-                                                color="danger"
-                                                (click)="
-                                                    banUser(
-                                                        comment.REF_UserID,
-                                                        comment.Username
-                                                    )
-                                                "
+                                                color="success"
+                                                (click)="toggleApprove(comment)"
                                             >
                                                 <ion-icon
-                                                    name="ban-outline"
+                                                    name="checkmark-circle-outline"
                                                     slot="icon-only"
                                                 ></ion-icon>
                                             </ion-button>
-                                        }
-                                    </div>
-                                }
-                            </div>
+                                            <ion-button
+                                                fill="clear"
+                                                size="small"
+                                                color="warning"
+                                                (click)="toggleHide(comment)"
+                                            >
+                                                <ion-icon
+                                                    name="eye-off-outline"
+                                                    slot="icon-only"
+                                                ></ion-icon>
+                                            </ion-button>
+
+                                            @if (canBanUser(comment)) {
+                                                <ion-button
+                                                    fill="clear"
+                                                    size="small"
+                                                    color="danger"
+                                                    (click)="
+                                                        banUser(
+                                                            comment.REF_UserID,
+                                                            comment.Username
+                                                        )
+                                                    "
+                                                >
+                                                    <ion-icon
+                                                        name="ban-outline"
+                                                        slot="icon-only"
+                                                    ></ion-icon>
+                                                </ion-button>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                
+            </ng-template>
+
+            @for (root of comments; track root.CommentID) {
+                <ng-container
+                    *ngTemplateOutlet="
+                        singleComment;
+                        context: {
+                            comment: root,
+                            isReply: false,
+                            rootId: root.CommentID,
+                        }
+                    "
+                ></ng-container>
+
+                @if (root.replies && root.replies.length > 0) {
+                    <div class="replies-thread">
+                        @for (reply of root.replies; track reply.CommentID) {
+                            <ng-container
+                                *ngTemplateOutlet="
+                                    singleComment;
+                                    context: {
+                                        comment: reply,
+                                        isReply: true,
+                                        rootId: root.CommentID,
+                                    }
+                                "
+                            ></ng-container>
                         }
                     </div>
-                </div>
-            
-        </ng-template>
-
-        @for (root of comments; track root.CommentID) {
-            <ng-container
-                *ngTemplateOutlet="
-                    singleComment;
-                    context: {
-                        comment: root,
-                        isReply: false,
-                        rootId: root.CommentID,
-                    }
-                "
-            ></ng-container>
-
-            @if (root.replies && root.replies.length > 0) {
-                <div class="replies-thread">
-                    @for (reply of root.replies; track reply.CommentID) {
-                        <ng-container
-                            *ngTemplateOutlet="
-                                singleComment;
-                                context: {
-                                    comment: reply,
-                                    isReply: true,
-                                    rootId: root.CommentID,
-                                }
-                            "
-                        ></ng-container>
-                    }
-                </div>
+                }
             }
-        }
-    </div>
+        </div>
+    }
 </div>

@@ -120,7 +120,7 @@
       </trans-unit>
       <trans-unit id="backHome" datatype="html">
         <source>Torna alla Home</source>
-        <target state="new"><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;arrow-back-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Back to Home </target>
+        <target>Back to Home</target>
       </trans-unit>
       <trans-unit id="backLogin" datatype="html">
         <source>Torna alla pagina di Accesso</source>
@@ -204,7 +204,7 @@
       </trans-unit>
       <trans-unit id="episode" datatype="html">
         <source>Episodio</source>
-        <target state="new">Episode <x id="INTERPOLATION" equiv-text="{{ episode().EpisodeNumber }}"/></target>
+        <target state="new">Episode</target>
       </trans-unit>
       <trans-unit id="errorLogin" datatype="html">
         <source> Errore durante l&apos;accesso.</source>
@@ -240,7 +240,7 @@
       </trans-unit>
       <trans-unit id="favourites" datatype="html">
         <source>Preferiti</source>
-        <target state="new"><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;heart-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> My favourites </target>
+        <target>My favourites</target>
       </trans-unit>
       <trans-unit id="favouritesPage_connError" datatype="html">
         <source>Errore di connessione. Riprova.</source>
@@ -688,7 +688,7 @@
       </trans-unit>
       <trans-unit id="new" datatype="html">
         <source>Nuova</source>
-        <target state="new"><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon slot=&quot;start&quot; name=&quot;chatbubbles-outline&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> New </target>
+        <target state="new">New</target>
       </trans-unit>
       <trans-unit id="newDiscussion" datatype="html">
         <source>Nuova Discussione</source>
@@ -824,7 +824,7 @@
       </trans-unit>
       <trans-unit id="play" datatype="html">
         <source>Riproduci</source>
-        <target state="new"><x id="START_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;ion-icon name=&quot;play&quot;&gt;"/><x id="CLOSE_TAG_ION_ICON" ctype="x-ion_icon" equiv-text="&lt;/ion-icon&gt;"/> Play </target>
+        <target>Play</target>
       </trans-unit>
       <trans-unit id="preferences" datatype="html">
         <source>Preferenze</source>
@@ -1045,10 +1045,6 @@
       <trans-unit id="subtitlesLabel" datatype="html">
         <source>SUB: </source>
         <target state="new">SUB: </target>
-      </trans-unit>
-      <trans-unit id="subtitlesOff" datatype="html">
-        <source>Disattivati</source>
-        <target>Off</target>
       </trans-unit>
       <trans-unit id="tabsPage_login" datatype="html">
         <source>Accedi</source>

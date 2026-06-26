@@ -782,9 +782,6 @@
       <trans-unit id="subtitlesLabel" datatype="html">
         <source>SUB: </source>
       </trans-unit>
-      <trans-unit id="subtitlesOff" datatype="html">
-        <source>Disattivati</source>
-      </trans-unit>
       <trans-unit id="tabsPage_login" datatype="html">
         <source>Accedi</source>
       </trans-unit>

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 const commentController = require('../controllers/commentController');
 const auth = require("../middleware/auth");
-const authOptional = require("../middleware/authOptional");
+//const authOptional = require("../middleware/authOptional");
 const isMod = require("../middleware/isMod");
 const { body, param } = require('express-validator');
 
@@ -159,7 +159,7 @@ const commonParams = [
  */
 
 
-router.get('/', authOptional, commonParams, commentController.getDiscussionComments);
+router.get('/', auth, commonParams, commentController.getDiscussionComments);
 
 router.post('/', auth, [
     ...commonParams,

@@ -1,10 +1,14 @@
 <ion-header [translucent]="true" class="ion-no-border">
     <ion-toolbar>
         <div slot="start" class="return-home-container">
-            <span class="full-text" i18n="@@dontWantRegister">Non vuoi registrarti? </span>
-            <a routerLink="/tabs/home" class="home-link" i18n="@@backToHome">Torna alla home</a>
+            <span class="full-text" i18n="@@dontWantRegister"
+                >Non vuoi registrarti?
+            </span>
+            <a routerLink="/tabs/home" class="home-link" i18n="@@backToHome"
+                >Torna alla home</a
+            >
         </div>
-        
+
         <app-language-switcher slot="end"></app-language-switcher>
     </ion-toolbar>
 </ion-header>
@@ -38,7 +42,7 @@
                             <ion-item lines="none" class="custom-input">
                                 <ion-input
                                     formControlName="password"
-                                    errorText="Minimo 8 caratteri richiesti, max 24"
+                                    errorText="Minimo 8 caratteri richiesti, massimo 24"
                                     i18n-errorText="@@minimumCharPassError"
                                     type="password"
                                     placeholder="password"
@@ -60,6 +64,8 @@
                                     formControlName="conf_password"
                                     type="password"
                                     placeholder="Ripeti la password"
+                                    errorText="Conferma la password"
+                                    i18n-errorText="@@differentConfPassError"
                                     i18n-placeholder="@@repeatPass"
                                 >
                                     <ion-input-password-toggle

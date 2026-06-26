@@ -59,7 +59,8 @@ router.use(isMod);
  */
 
 router.get('/discussions', [
-    query('showClosed').optional().isInt({ min: 0, max: 1 }).withMessage("Lo show closed deve essere 0 o 1")
+    query('showClosed').optional().isInt({ min: 0, max: 1 }).withMessage("Lo show closed deve essere 0 o 1"),
+    query('search').optional().isString().trim()
 ], modController.getDiscussions);
 
 /**

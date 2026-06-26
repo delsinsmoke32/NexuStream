@@ -6,7 +6,7 @@
                 Home
             </ion-button>
         </ion-buttons>
-        
+
         <ion-title>Gestione Utenti & Ruoli</ion-title>
 
         <!-- <ion-buttons slot="end">
@@ -48,7 +48,7 @@
                 <div class="user-profile-row">
                     <div class="avatar-container">
                         <img
-                            [src]="user.PropicURI ? (user.PropicURI | backendUrl: 'static') : 'https://ionicframework.com/docs/img/demos/avatar.svg'"
+                            [src]="user.REF_PropicURI ? (user.REF_PropicURI | backendUrl: 'static') : ('avatars/avatar-003.png' | backendUrl: 'static')"
                             alt="Avatar"
                         />
                     </div>

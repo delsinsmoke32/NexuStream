@@ -19,10 +19,17 @@ export class ModService {
     // GESTIONE DISCUSSIONI
     // ==========================================
 
-    getDiscussions(showClosed: number): Observable<ModDiscussion[]> {
-        const params = new HttpParams().set('showClosed', showClosed.toString());
+    getDiscussions(showClosed: number, searchQuery: string = ''): Observable<ModDiscussion[]> {
+        let params = new HttpParams().set('showClosed', showClosed.toString());
+        
+        // Aggiunge il parametro di ricerca solo se l'utente ha scritto qualcosa
+        if (searchQuery.trim() !== '') {
+            params = params.set('search', searchQuery.trim());
+        }
+
         return this.http.get<ModDiscussion[]>(`${this.baseUrl}/discussions`, {
-            headers: this.getAuthHeaders(), params
+            headers: this.getAuthHeaders(), 
+            params
         });
     }
 

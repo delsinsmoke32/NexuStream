@@ -36,7 +36,7 @@ const getHomeData = async (req, res) => {
 
     const user = req.user;
 
-    const applang = user ? user.appLang : req.language;
+    const applang = req.language;
 
     try {
         // 1. Prepariamo le query base obbligatorie per tutti (anonimi e loggati)
@@ -78,7 +78,7 @@ const getShowDetails = async (req, res) => {
 
     const { showId } = req.params;
     const user = req.user;
-    const applang = user ? user.appLang : req.language; // O req.language a seconda di come l'hai impostato
+    const applang = req.language; 
     let show = null;
 
 

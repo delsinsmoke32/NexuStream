@@ -1,3 +1,4 @@
+const { text } = require('express');
 const episodeModel = require('../models/episodeModel');
 const { validationResult } = require('express-validator');
 // TEMP per stream
@@ -13,7 +14,7 @@ const getEpisodes = async (req, res) => {
     }
     const { showId, seasonId } = req.params;
     const user = req.user;
-    const applang = user ? user.appLang : req.language;
+    const applang = req.language;
     let episodes = null;
     try {
         if (user) {
@@ -35,7 +36,7 @@ const getEpisodeDetails = async (req, res) => {
     }
     const { episodeId } = req.params;
     const user = req.user;
-    const applang = user ? user.appLang : req.language; 
+    const applang = req.language; 
 
     try {
         const episode = await episodeModel.getEpisodeById(episodeId, applang);
@@ -172,7 +173,13 @@ const setTimes = async (req, res) => {
 
 
 const fallbackStream = async (req, res) => {
-    console.log("fallbacking")
+    // const audioLang = req.user.audioLang;
+    // const textLang = req.user.textLang;
+    console.log(req.params)
+    const audioLang = req.query.dub;
+    const textLang = req.query.sub;
+
+    console.log("Utilizzo Fallback Stream")
     const errors = validationResult(req);
     if (!errors.isEmpty()){
         console.error(errors.array());
@@ -181,8 +188,8 @@ const fallbackStream = async (req, res) => {
     let id = "test"
     let baseUri = `http://${HOST}:${PORT}/static/videos/${id}/`;
     const audios = [
-        { name: 'Japanese (Original)', lang: 'jp', uri: 'audio_jp/audio.m3u8', default: 'YES' },
-        { name: 'English', lang: 'en', uri: 'audio_en/audio.m3u8', default: 'NO' }
+        { name: 'Japanese (Original)', lang: 'jp', uri: 'audio_jp/audio.m3u8' },
+        { name: 'English', lang: 'en', uri: 'audio_en/audio.m3u8' }
     ];
 
     const subtitles = [
@@ -194,13 +201,13 @@ const fallbackStream = async (req, res) => {
 
     // Genera Audio
     audios.forEach(a => {
-        m3u8 += `#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="audio",NAME="${a.name}",DEFAULT=${a.default},AUTOSELECT=YES,LANGUAGE="${a.lang}",URI="${baseUri+a.uri}"\n`;
+        m3u8 += `#EXT-X-MEDIA:TYPE=AUDIO,GROUP-ID="audio",NAME="${a.name}",DEFAULT=${a.lang == audioLang ? 'YES' : 'NO'},AUTOSELECT=YES,LANGUAGE="${a.lang}",URI="${baseUri+a.uri}"\n`;
     });
     m3u8 += '\n';
 
     // Genera Sottotitoli
     subtitles.forEach(s => {
-        m3u8 += `#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID="subs",NAME="${s.name}",DEFAULT=NO,AUTOSELECT=YES,FORCED=NO,LANGUAGE="${s.lang}",URI="${baseUri+s.uri}"\n`;
+        m3u8 += `#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID="subs",NAME="${s.name}",DEFAULT=${s.lang == textLang ? 'YES' : 'NO'},AUTOSELECT=YES,FORCED=NO,LANGUAGE="${s.lang}",URI="${baseUri+s.uri}"\n`;
     });
     m3u8 += '\n';
 
@@ -215,6 +222,12 @@ const fallbackStream = async (req, res) => {
 
 
 const stream = async (req, res, next) => {
+    // const audioLang = req.user.audioLang; //SERVE AUTH
+    // const textLang = req.user.textLang;
+
+    const audioLang = req.query.dub;
+    const textLang = req.query.sub;
+
     const errors = validationResult(req);
     if (!errors.isEmpty()){
         console.error(errors.array());
@@ -246,7 +259,7 @@ const stream = async (req, res, next) => {
             audios.forEach((audioObj, index) => {
                 const langStr = typeof audioObj === 'string' ? audioObj : (audioObj.REF_LanguageID || audioObj.LanguageID || audioObj.lang || Object.values(audioObj)[0]);
                 
-                const isDefault = index === 0 ? 'YES' : 'NO'; 
+                const isDefault = langStr === audioLang ? 'YES' : 'NO'; 
                 const langName = langNames[langStr] || langStr.toUpperCase();
                 
                 // AGGIUNTO CHARACTERISTICS="public.accessibility.describes-video" per legare stabilmente l'audio al video principale
@@ -257,10 +270,11 @@ const stream = async (req, res, next) => {
         if (subtitles.length > 0) {
             subtitles.forEach(subObj => {
                 const langStr = typeof subObj === 'string' ? subObj : (subObj.REF_LanguageID || subObj.LanguageID || subObj.lang || Object.values(subObj)[0]);
+                const isDefault = langStr === textLang ? 'YES' : 'NO'; 
                 const langName = langNames[langStr] || langStr.toUpperCase();
                 
                 // ORA PUNTA ALLA PLAYLIST SEGMENTATA (subs.m3u8) E NON AL FILE SINGOLO
-                m3u8 += `#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID="subs",NAME="${langName}",DEFAULT=NO,AUTOSELECT=YES,FORCED=NO,LANGUAGE="${langStr}",URI="${baseUri}subs_${langStr}/subs.m3u8"\n`;
+                m3u8 += `#EXT-X-MEDIA:TYPE=SUBTITLES,GROUP-ID="subs",NAME="${langName}",DEFAULT=${isDefault},AUTOSELECT=YES,FORCED=NO,LANGUAGE="${langStr}",URI="${baseUri}subs_${langStr}/subs.m3u8"\n`;
             });
             m3u8 += '\n';
         }

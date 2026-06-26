@@ -47,6 +47,35 @@
     }
   }
 
+  .discussions-filters {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    ion-searchbar {
+      font-size: 0.85rem;
+      flex: 1; /* Fa prendere alla barra di ricerca tutto lo spazio rimanente */
+      padding-right: 0;
+    }
+
+    .toggle-item {
+      flex-shrink: 0;
+      --padding-start: 10px;
+      --padding-end: 10px;
+
+      ion-label {
+        margin-right: 12px; 
+        white-space: nowrap; 
+      }
+
+      @media (max-width: 576px) {
+        .hide-on-mobile {
+          display: none; /* Nasconde il testo "Archivio..." sui telefoni per non stringere troppo la ricerca */
+        }
+      }
+    }
+  }
+
   .tab-segment-bar {
     --background: var(--ion-color-dark, #181818) !important;
     border-bottom: 1px solid #232323;
@@ -205,7 +234,7 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    flex-wrap: wrap; /* 🚀 FONDAMENTALE: permette agli elementi di andare a capo su mobile */
+    flex-wrap: wrap; /*  FONDAMENTALE: permette agli elementi di andare a capo su mobile */
     margin-bottom: 20px;
     background: #1a1a1a;
     padding: 12px;

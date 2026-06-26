@@ -30,6 +30,20 @@ export class ModDiscussionCardComponent {
     this.delete.emit(this.disc.DiscussionID);
   }
 
+  isDiscussionClosed(disc: ModDiscussion): boolean {
+    // Se è stata chiusa forzatamente da un mod
+    if (disc.ForceClosed === 1) return true;
+
+    // Se c'è una data di scadenza, controlliamo se è nel passato
+    if (disc.CloseDate) {
+        const expirationDate = new Date(disc.CloseDate).getTime();
+        const now = new Date().getTime();
+        return now > expirationDate;
+    }
+
+    return false;
+  }
+
   parseLang(jsonStr?: string, lang: string = 'it'): string {
     if (!jsonStr) return 'Titolo non disponibile';
     try {

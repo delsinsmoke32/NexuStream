@@ -60,7 +60,8 @@
 
   // Bordo neon se l'utente è un amministratore di sistema
   border-top: 4px solid #555555;
-  &.edge-admin { border-top: 4px solid var(--ion-color-danger, #d32f2f); }
+  &.edge-admin { border-top: 4px solid var(--ion-color-danger, #d32f2f);}
+  max-width: 90vw;
 }
 
 .card-body {

@@ -33,7 +33,15 @@ const getSeasonById = async (seasonId, applang = 'it') => {
     return await db.getAsync(sql, [applang, applang, seasonId]);
 };
 
+const markSeasonAsEnded = async (seasonId) => {
+    const sql = `UPDATE Seasons 
+                 SET hasEnded = 1, DateEnded = CURRENT_TIMESTAMP 
+                 WHERE SeasonID = ?`;
+    return await db.runAsync(sql, [seasonId]);
+};
+
 module.exports = {
     getSeasonById,
-    getSeasonsByShow
+    getSeasonsByShow,
+    markSeasonAsEnded
 };

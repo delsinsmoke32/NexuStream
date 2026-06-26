@@ -28,8 +28,13 @@
             </div>
             }
             <ion-label>
-                <h2>Nome Utente</h2>
-                <p>{{username()}}</p>
+                <h2>{{username()}}</h2>
+                <div class="name-change" (click)="changeName()">
+                    <p>Modifica nome</p>
+                    <div class="edit-badge">
+                        <ion-icon name="pencil"></ion-icon>
+                    </div>
+                </div>
             </ion-label>
         </ion-item>
 
@@ -113,7 +118,7 @@
             <ion-select
                 [interface]="'action-sheet'"
                 [(ngModel)]="userPreferences.appLanguage"
-                (ionChange)="savePreferences()"
+                (ionChange)="savePreferences(); warnAppLanguage()"
             >
                 <ion-select-option i18n="@@langItalian" value="it"
                     >Italiano</ion-select-option
@@ -137,7 +142,7 @@
                 <ion-select-option value="en" i18n="@@langEnglish"
                     >Inglese</ion-select-option
                 >
-                <ion-select-option value="ja" i18n="@@langJapanese"
+                <ion-select-option value="jp" i18n="@@langJapanese"
                     >Giapponese</ion-select-option
                 >
             </ion-select>

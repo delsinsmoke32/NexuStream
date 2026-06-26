@@ -32,7 +32,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   activeRecapEnd = 0; 
   overlayDismissed = false; 
 
-  private nextEpTimer: any; // 🚀 Timer per l'autoplay
+  private nextEpTimer: any; //  Timer per l'autoplay
 
   ngOnInit() {
     this.initPlayer();
@@ -99,7 +99,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     this.showSkipIntro.set(isIntroActive);
     this.showSkipRecap.set(isRecapActive);
 
-    // 🚀 LOGICA INTELLIGENTE PER I CREDITS E AUTOPLAY
+    //  LOGICA INTELLIGENTE PER I CREDITS E AUTOPLAY
     if (isInCreditsNow) {
       // Se siamo entrati nella zona e non avevamo chiuso il popup
       if (!this.overlayDismissed && !this.showCreditsOverlay()) {
@@ -121,7 +121,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
     this.clearNextEpTimer();
     this.nextEpTimer = setTimeout(() => {
       this.triggerNextEpisode();
-    }, 5000); // 🚀 Lancia l'evento esattamente dopo 5 secondi
+    }, 5000); //  Lancia l'evento esattamente dopo 5 secondi
   }
 
   clearNextEpTimer() {
@@ -141,11 +141,11 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   hideOverlay() {
     this.overlayDismissed = true;
     this.showCreditsOverlay.set(false);
-    this.clearNextEpTimer(); // 🚀 Ferma l'autoplay se decide di guardare i titoli!
+    this.clearNextEpTimer(); //  Ferma l'autoplay se decide di guardare i titoli!
   }
 
 
-  // 🚀 NUOVA FUNZIONE PER I TIMESTAMP DEI COMMENTI (Con controlli di sicurezza!)
+  //  NUOVA FUNZIONE PER I TIMESTAMP DEI COMMENTI (Con controlli di sicurezza!)
   public seekTo(seconds: number) {
     if (this.player) {
       // Otteniamo la durata totale del video (se è già stata caricata)
@@ -176,7 +176,7 @@ export class VideoPlayerComponent implements OnInit, OnDestroy {
   triggerNextEpisode() {
     this.clearNextEpTimer();
     
-    // 🚀 LA MAGIA ANTI-FANTASMA: Rompiamo la sincronia!
+    //  LA MAGIA ANTI-FANTASMA: Rompiamo la sincronia!
     // Spingiamo l'emissione dell'evento nel prossimo ciclo del browser.
     // Questo permette a Video.js di completare il suo click o il suo evento 'ended'
     // in modo pulito, PRIMA che Angular lo strappi via violentemente dal DOM.

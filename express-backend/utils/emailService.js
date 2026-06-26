@@ -1,5 +1,3 @@
-//TESTING CON MAILTRAP, NON FUNZIONA EFFETTIVAMENTE, PER FARLO ANDARE CON GMAIL O SIMILI SI DEVE FARE PIU' ROBA
-
 const nodemailer = require('nodemailer');
 
 // Configura il trasportatore SMTP usando le variabili d'ambiente

@@ -76,7 +76,11 @@
                 NexuStream
             </ion-title>
 
-            <ion-buttons slot="end" class="nav-links-desktop" [class.profile-menu-open]="isPopoverOpen">
+            <ion-buttons
+                slot="end"
+                class="nav-links-desktop"
+                [class.profile-menu-open]="isPopoverOpen"
+            >
                 <a
                     class="nav-link"
                     routerLink="/tabs/home"
@@ -107,6 +111,9 @@
                         name="person-circle-outline"
                     ></ion-icon>
                 </ion-button>
+                @if (!isLoggedIn()){
+                <app-language-switcher></app-language-switcher>
+                }
             </ion-buttons>
         </ion-toolbar>
     </ion-header>

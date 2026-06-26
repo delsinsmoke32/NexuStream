@@ -20,7 +20,6 @@ const resetDb = require('./db/db').resetDb;
 const db = require("./db/db").db;
 const initDb = require("./db/db").initDb;
 const populateDb = require("./db/populateDb").populateDb
-const testRoute = require("./routes/test")
 const propicRoute = require("./routes/propic")
 const fs = require('fs');
 const path = require('path');
@@ -59,7 +58,7 @@ const swaggerOptions = {
 
 // const corsOptions = {
 //     origin: 'http://localhost:8100', // <-- Cambia 8100 con 4200 se usi Angular liscio!
-//     credentials: true, // 🚀 IL PASS VIP CHE RISOLVE L'ERRORE
+//     credentials: true, //  IL PASS VIP CHE RISOLVE L'ERRORE
 // };
 
 const whitelist = ['http://localhost:8100', 'http://localhost:8101'];
@@ -74,14 +73,18 @@ const corsOptions = {
         }
     },
     credentials: true,
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept-Language'],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 
-app.use(detectLanguage);
-app.use(express.json());
+
+
+
 app.use(cors(corsOptions));
+app.use(express.json());
+app.use(detectLanguage);
 app.use('/api/login', loginRoute);
 app.use('/api/register', registerRoute);
 app.use('/api/users', userRoute);
@@ -95,7 +98,6 @@ app.use('/api/mod', modRoute);
 app.use("/api/shows", showRoute);
 app.use('/static', express.static(path.join(__dirname, 'public')));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
-app.use('/api/test', testRoute);
 app.use('/api/propics', propicRoute);
 
 BigInt.prototype.toJSON = function() { return this.toString() }; //fixgpt

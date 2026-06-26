@@ -38,7 +38,7 @@ const getAllSeasons = async (refShow) => {
 };
 
 const getAllEpisodes = async (refSeason) => {
-    let sql = `SELECT EpisodeID, Title, Description, ReleaseDate, Duration, REF_SeasonID, Streams, Likes, EpisodeNumber FROM Episodes WHERE 1=1`;
+    let sql = `SELECT EpisodeID, Title, Description, ReleaseDate, Duration, REF_SeasonID, Streams, Likes, EpisodeNumber, StreamURI FROM Episodes WHERE 1=1`;
     const params = [];
     
     if (refSeason) {
@@ -294,6 +294,17 @@ const deletePropicByURI = async (propicURI) => {
 };
 
 /**
+ * Aggiorna le propic degli utenti prima di cancellarle, prendendo come argomento l'URI.
+ * @param {string} propicURI 
+ * @param {string} fallbackURI 
+ * @returns {Promise<{changes: number, lastInsertRowId: number}>}
+ */
+const updateMemberPropicBeforeDeletion = async (propicURI, fallbackURI) => {
+    const sql = `UPDATE Users SET REF_PropicURI = ? WHERE REF_PropicURI = ?`;
+    return await db.runAsync(sql, [fallbackURI, propicURI]);
+};
+
+/**
  * Inserisce una nuova lingua dub in un episodio.
  * @param {number} episodeId
  * @param {string} lang
@@ -361,5 +372,6 @@ module.exports = {
     insertDubLang,
     insertSubLang,
     deleteDubLang,
-    deleteSubLang
+    deleteSubLang,
+    updateMemberPropicBeforeDeletion
 };

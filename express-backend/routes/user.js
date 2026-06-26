@@ -68,4 +68,9 @@ router.patch('/preferences', auth, [
     body('audioLanguageId').optional().isString().withMessage("ID lingua audio non valido"),
 ], userController.changeLanguages)
 
+router.post('/change-username', auth, [
+    body('username').isString().notEmpty().trim().isLength({ min: 8, max: 24 }).withMessage("Il nuovo username deve avere tra i 3 e i 24 caratteri")
+], userController.changeUsername)
+
+
 module.exports = router;

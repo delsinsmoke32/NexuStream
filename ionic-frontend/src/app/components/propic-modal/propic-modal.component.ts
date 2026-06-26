@@ -1,13 +1,13 @@
+import { CommonModule } from '@angular/common'
 import {
     Component,
     ElementRef,
+    Input,
     OnInit,
     inject,
     signal,
-    Input,
     viewChild,
 } from '@angular/core'
-import { CommonModule } from '@angular/common'
 import {
     FormBuilder,
     FormGroup,
@@ -15,28 +15,27 @@ import {
     Validators,
 } from '@angular/forms'
 
-// 🚀 IMPORTAZIONI STANDALONE CHIRURGICHE DI IONIC
+//  IMPORTAZIONI STANDALONE CHIRURGICHE DI IONIC
 import {
-    IonHeader,
-    IonToolbar,
-    IonTitle,
-    IonButtons,
     IonButton,
+    IonButtons,
     IonContent,
+    IonHeader,
+    IonIcon,
+    IonInput,
     IonItem,
     IonLabel,
-    IonInput,
-    ModalController,
-    IonText,
-    IonIcon,
     IonSpinner,
-    ToastController
+    IonTitle,
+    IonToolbar,
+    ModalController,
+    ToastController,
 } from '@ionic/angular/standalone'
 
 import { addIcons } from 'ionicons'
 import { cloudUploadOutline, imageOutline } from 'ionicons/icons'
 
-// 🚀 IMPORTA IL SERVIZIO
+//  IMPORTA IL SERVIZIO
 import { CataloguerService } from '../../services/cataloguer'
 
 @Component({
@@ -56,87 +55,95 @@ import { CataloguerService } from '../../services/cataloguer'
         IonItem,
         IonLabel,
         IonInput,
-        IonText,
         IonIcon,
-        IonSpinner
+        IonSpinner,
     ],
 })
 export class PropicModalComponent implements OnInit {
-    @Input() bundleName?: string;
-    fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput');
+    @Input() bundleName?: string
+    fileInput = viewChild.required<ElementRef<HTMLInputElement>>('fileInput')
 
-    imagePreview = signal<string | null>(null);
-    selectedFile = signal<File | null>(null);
-    isUploading = signal<boolean>(false);
+    imagePreview = signal<string | null>(null)
+    selectedFile = signal<File | null>(null)
+    isUploading = signal<boolean>(false)
 
-    private cataloguerService = inject(CataloguerService);
-    private fb = inject(FormBuilder);
-    private modalCtrl = inject(ModalController);
-    private toastCtrl = inject(ToastController);
+    private cataloguerService = inject(CataloguerService)
+    private fb = inject(FormBuilder)
+    private modalCtrl = inject(ModalController)
+    private toastCtrl = inject(ToastController)
 
-    propicForm!: FormGroup;
+    propicForm!: FormGroup
 
     constructor() {
-        addIcons({ cloudUploadOutline, imageOutline });
+        addIcons({ cloudUploadOutline, imageOutline })
     }
 
     ngOnInit() {
         this.propicForm = this.fb.group({
             // Se bundleName esiste, lo mettiamo come valore di default
-            bundle: [this.bundleName || '', [Validators.required, Validators.minLength(2)]],
-        });
+            bundle: [
+                this.bundleName || '',
+                [Validators.required, Validators.minLength(2)],
+            ],
+        })
     }
 
     triggerSelect() {
-        this.fileInput().nativeElement.click();
+        this.fileInput().nativeElement.click()
     }
 
     onFileSelect(event: Event) {
-        const input = event.target as HTMLInputElement;
+        const input = event.target as HTMLInputElement
         if (input.files && input.files.length > 0) {
-            const file = input.files[0];
-            this.selectedFile.set(file);
+            const file = input.files[0]
+            this.selectedFile.set(file)
 
             // --- LOGICA PER L'ANTEPRIMA ---
-            const reader = new FileReader();
+            const reader = new FileReader()
             reader.onload = () => {
-                this.imagePreview.set(reader.result as string);
+                this.imagePreview.set(reader.result as string)
             }
-            reader.readAsDataURL(file);
+            reader.readAsDataURL(file)
         }
     }
 
     uploadPicture() {
-        const file = this.selectedFile();
-        if (!file || this.propicForm.invalid) return;
+        const file = this.selectedFile()
+        if (!file || this.propicForm.invalid) return
 
-        this.isUploading.set(true);
-        const bundleName = this.propicForm.value.bundle;
+        this.isUploading.set(true)
+        const bundleName = this.propicForm.value.bundle
 
         // Usa il servizio appena creato
         this.cataloguerService.uploadPropic(bundleName, file).subscribe({
             next: (res) => {
-                this.presentToast("Avatar caricato con successo!", "success");
-                this.isUploading.set(false);
+                this.presentToast('Avatar caricato con successo!', 'success')
+                this.isUploading.set(false)
                 // Chiudiamo e diciamo al padre di ricaricare la lista
-                this.dismiss({ success: true });
+                this.dismiss({ success: true })
             },
             error: (err) => {
-                console.error('Upload failed', err);
-                this.presentToast("Errore nel caricamento dell'immagine.", "danger");
-                this.isUploading.set(false);
-            }
-        });
+                console.error('Upload failed', err)
+                this.presentToast(
+                    "Errore nel caricamento dell'immagine.",
+                    'danger'
+                )
+                this.isUploading.set(false)
+            },
+        })
     }
 
     dismiss(result?: any) {
-        this.modalCtrl.dismiss(result);
+        this.modalCtrl.dismiss(result)
     }
 
     async presentToast(message: string, color: 'success' | 'danger') {
         const toast = await this.toastCtrl.create({
-            message, duration: 2500, position: 'bottom', color,
-        });
-        await toast.present();
+            message,
+            duration: 2500,
+            position: 'bottom',
+            color,
+        })
+        await toast.present()
     }
 }

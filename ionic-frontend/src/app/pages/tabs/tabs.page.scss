@@ -140,10 +140,10 @@ ion-popover {
     font-size: 0.95rem;
     cursor: pointer;
     
-    /* 🚀 Transizione fluida per colore, ingrandimento e spostamento */
+    /*  Transizione fluida per colore, ingrandimento e spostamento */
     transition: transform 0.2s ease-in-out, --color 0.2s ease-in-out, padding 0.2s ease-in-out;
 
-    /* 🚀 EFFETTO HOVER SULLE OPZIONI */
+    /*  EFFETTO HOVER SULLE OPZIONI */
     &:hover {
       --background: rgba(178, 34, 34, 0.08); /* Sfondo con un leggerissimo alone rosso */
       --color: var(--ion-color-primary-tint) !important; /* Il testo diventa rosso chiaro */

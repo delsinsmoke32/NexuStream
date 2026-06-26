@@ -9,7 +9,7 @@ const getSeasons = async (req, res) => {
     }
     const { showId } = req.params;
     const user = req.user;
-    const applang = user ? user.appLang : req.language;
+    const applang = req.language;
     try {
         const seasons = await seasonModel.getSeasonsByShow(showId, applang);
         return res.json(seasons);
@@ -30,7 +30,7 @@ const getSeasonDetails = async (req, res) => {
     const { seasonId } = req.params;
     const user = req.user;
 
-    const applang = user ? user.appLang : req.language;
+    const applang = req.language;
 
     try {
         // Chiamata al Model per estrarre la stagione
@@ -49,7 +49,31 @@ const getSeasonDetails = async (req, res) => {
     }
 };
 
+const closeSeason = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()){
+        console.error(errors.array());
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { seasonId } = req.params;
+
+    try {
+        // Segna la stagione come conclusa (imposta hasEnded = 1)
+        await seasonModel.markSeasonAsEnded(seasonId);
+
+        // Crea in automatico le discussioni "post-season" per tutti gli episodi
+        const result = await discussionModel.autoCreateSeasonDiscussions(seasonId);
+
+        return res.json({ message: "Stagione chiusa con successo! Create le discussioni finali." });
+    } catch (err) {
+        console.error("Errore chiusura stagione: ", err);
+        return res.status(500).json({ error: "Errore interno del server durante la chiusura." });
+    }
+};
+
 module.exports = {
     getSeasons,
-    getSeasonDetails
+    getSeasonDetails,
+    closeSeason
 };

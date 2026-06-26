@@ -1,16 +1,16 @@
 export interface AdminUser {
-    UserID: number | string;
-    isAdmin: number;
-    isMod: number;
-    isCataloguer: number;
-    Username?: string;
-    Email?: string;
-    PropicURI?: string;
+    UserID: number | string
+    isAdmin: number
+    isMod: number
+    isCataloguer: number
+    Username?: string
+    Email?: string
+    REF_PropicURI?: string
     // Aggiungi un index signature per permettere eventuali campi extra restituiti dal backend
-    [key: string]: any; 
+    [key: string]: any
 }
 
 export interface UpdateRolesPayload {
-    isMod: number;
-    isCataloguer: number;
+    isMod: number
+    isCataloguer: number
 }

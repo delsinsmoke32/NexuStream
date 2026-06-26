@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router({ mergeParams: true });
 const seasonController = require('../controllers/seasonController');
 const authOptional = require("../middleware/authOptional");
+const isCataloguer = require("../middleware/isCataloguer");
 const { param } = require('express-validator');
 const episodeRoute = require("./episode");
 
@@ -82,6 +83,30 @@ router.get('/:seasonId', authOptional, [
     param('showId').isInt({ min: 1 }).notEmpty().withMessage("ID serie non valido"),
     param('seasonId').isInt({ min: 1 }).notEmpty().withMessage("ID stagione non valido")
 ], seasonController.getSeasonDetails);
+
+
+/**
+ * @swagger
+ * /api/seasons/{seasonId}/close:
+ *   patch:
+ *     summary: Segna una stagione come conclusa e genera le discussioni post-season
+ *     tags: [Cataloguer]
+ *     security:
+ *       - BearerAuth: []
+ * 
+ *   responses:
+ *     200:
+ *       description: Stagione chiusa con successo.
+ *     400:
+ *       description: Richiesta malformata.
+ *     500:
+ *       description: Errore interno del server.
+ */
+
+
+router.patch('/:seasoId/close', isCataloguer, [
+    param('seasonId').isInt({min: 1}).notEmpty().withMessage("ID stagione non valido")
+], seasonController.closeSeason);
 
 // Sotto-rotta nidificata per gli episodi di questa specifica stagione
 router.use('/:seasonId/episodes', episodeRoute);

@@ -1,30 +1,29 @@
-import { Component, OnInit, signal, inject } from '@angular/core'
-import { Router, RouterLink } from '@angular/router'
 import { CommonModule } from '@angular/common'
+import { Component, inject, OnInit, signal } from '@angular/core'
 import { FormsModule } from '@angular/forms'
+import { Router, RouterLink } from '@angular/router'
 import {
-    ToastController,
     InfiniteScrollCustomEvent,
-    SearchbarCustomEvent,
-    IonInfiniteScrollContent,
-    IonInfiniteScroll,
-    IonSearchbar,
-    IonContent,
     IonButtons,
+    IonContent,
+    IonHeader,
+    IonIcon,
+    IonInfiniteScroll,
+    IonInfiniteScrollContent,
+    IonSearchbar,
     IonTitle,
     IonToolbar,
-    IonHeader,
-    IonBackButton,
-    IonIcon
+    SearchbarCustomEvent,
+    ToastController,
 } from '@ionic/angular/standalone'
 
 import { addIcons } from 'ionicons'
 import { arrowBackOutline } from 'ionicons/icons'
 
-import { BackendUrlPipe } from '../../pipes/backend-url-pipe'
 import { AdminService } from '@app/services/admin'
 import { AuthService } from '@app/services/auth'
 import { AdminUser, UpdateRolesPayload } from '../../models/admin'
+import { BackendUrlPipe } from '../../pipes/backend-url-pipe'
 
 @Component({
     selector: 'app-admin',
@@ -43,9 +42,8 @@ import { AdminUser, UpdateRolesPayload } from '../../models/admin'
         IonTitle,
         IonToolbar,
         IonHeader,
-        IonBackButton,
         RouterLink,
-        IonIcon
+        IonIcon,
     ],
 })
 export class AdminPage implements OnInit {
@@ -60,8 +58,8 @@ export class AdminPage implements OnInit {
     currentSearchTerm = ''
 
     constructor() {
-        // 🚀 4. Registra l'icona della freccia se non l'avevi già fatto
-        addIcons({ arrowBackOutline }); 
+        //  4. Registra l'icona della freccia se non l'avevi già fatto
+        addIcons({ arrowBackOutline })
     }
 
     ngOnInit() {
@@ -69,7 +67,7 @@ export class AdminPage implements OnInit {
     }
 
     loadUsers(isAppend: boolean = false, event?: InfiniteScrollCustomEvent) {
-        // 🚀 Chiamata pulita al Service
+        //  Chiamata pulita al Service
         this.adminService
             .getUsers(this.currentPage, this.pageSize, this.currentSearchTerm)
             .subscribe({

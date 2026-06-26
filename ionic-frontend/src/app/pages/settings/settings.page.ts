@@ -148,14 +148,14 @@ export class SettingsPage implements OnInit {
             }
         }
 
-        this.presentToast('Impostazioni aggiornate con successo!', 'success')
+        this.presentToast($localize`:@@settingsPage_prefsUpdated:Impostazioni aggiornate con successo!`, 'success')
     }
 
     warnAppLanguage() {
         const currentLang = window.location.pathname.split('/')[1]
         if (!['it', 'en'].includes(currentLang))
             this.presentToast(
-                "Il cambio della lingua dell'applicazione non avrà effetto in questa modalità.",
+                $localize`:@@settingsPage_langWarning:Il cambio della lingua dell'applicazione non avrà effetto in questa modalità.`,
                 'warning'
             )
     }
@@ -197,13 +197,10 @@ export class SettingsPage implements OnInit {
                         const timestamp = new Date().getTime();
                         this.currentAvatar.set(`${data.selectedAvatar}?t=${timestamp}`);
                         
-                        this.presentToast('Propic aggiornata con successo!', 'success');
+                        this.presentToast($localize`:@@settingsPage_propicUpdated:Propic aggiornata con successo!`, 'success');
                     },
                     error: async (err) => {
-                        const errorMsg =
-                            err.error?.message ||
-                            "Errore durante l'aggiornamento."
-                        this.presentToast(errorMsg, 'danger')
+                        this.presentToast($localize`:@@settingsPage_errorUpdate:Errore durante l'aggiornamento.`, 'danger')
                     },
                 })
         }
@@ -235,13 +232,13 @@ export class SettingsPage implements OnInit {
 
     async changeName() {
         const alert = await this.alertController.create({
-            header: 'Modifica nome',
-            subHeader: 'Il nuovo nome deve contenere tra 3 e 24 caratteri.',
+            header: $localize`:@@settingsPage_changeNameHeader:Modifica nome`,
+            subHeader: $localize`:@@settingsPage_changeNameSub:Il nuovo nome deve contenere tra 3 e 24 caratteri.`,
             inputs: [
                 {
                     name: 'newUsername',
                     type: 'text',
-                    placeholder: 'Nuovo nome utente',
+                    placeholder: $localize`:@@settingsPage_newUsernamePlaceholder:Nuovo nome utente`,
                     value: this.username(),
                     attributes: {
                         minlength: 3,
@@ -251,12 +248,12 @@ export class SettingsPage implements OnInit {
             ],
             buttons: [
                 {
-                    text: 'Annulla',
+                    text: $localize`:@@settingsPage_cancel:Annulla`,
                     role: 'cancel',
                     cssClass: 'secondary',
                 },
                 {
-                    text: 'Salva',
+                    text: $localize`:@@settingsPage_save:Salva`,
                     handler: (data) => {
                         const name = data.newUsername
                             ? data.newUsername.trim()
@@ -283,13 +280,12 @@ export class SettingsPage implements OnInit {
             next: async () => {
                 this.username.set(newName)
                 this.presentToast(
-                    'Username aggiornato con successo!',
+                    $localize`:@@settingsPage_usernameUpdated:Username aggiornato con successo!`,
                     'success'
                 )
             },
             error: async (err) => {
-                const errorMsg = "Errore durante l'aggiornamento."
-                this.presentToast(errorMsg, 'danger')
+                this.presentToast($localize`:@@settingsPage_errorUpdate:Errore durante l'aggiornamento.`, 'danger')
             },
         })
     }

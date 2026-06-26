@@ -153,8 +153,8 @@ export class SearchPage {
 
     async logout() {
         const alert = await this.alertCtrl.create({
-            header: 'Disconnetti',
-            message: 'Sei sicuro di voler uscire da NexuStream?',
+            header: $localize`:@@searchPage_logoutHeader:Disconnetti`,
+            message: $localize`:@@searchPage_logoutConfirm:Sei sicuro di voler uscire da NexuStream?`,
             buttons: [
                 { text: 'Annulla', role: 'cancel' },
                 {

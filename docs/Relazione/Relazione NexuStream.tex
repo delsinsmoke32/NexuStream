@@ -1,0 +1,27 @@
+%&macro
+% Se usi il file binario offline, la prima riga deve essere:
+% \documentclass[a4paper]{article}
+
+% Se non usi il file .fmt binario, scommenta la riga sotto per caricare le macro:
+% \input{macro}
+
+% Pacchetto necessario per includere la copertina PDF pre-compilata
+\usepackage{pdfpages}
+
+\begin{document}
+
+% Inserisce la copertina pre-compilata senza mostrare il codice sorgente geometrico
+\includepdf{copertina.pdf}
+
+% Ripristina i colori globali per il resto del documento dopo l'inclusione del PDF
+\pagecolor{TestoChiaro}
+\color{SfondoScuro}
+
+% --- INDICE ---
+\tableofcontents
+\newpage
+
+% --- PAGINE DEL DOCUMENTO ---
+\include{Pagine/Introduzione/introduzione}
+
+\end{document}

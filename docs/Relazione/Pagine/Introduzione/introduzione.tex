@@ -1,0 +1,49 @@
+% ==========================================
+\section{Introduzione}
+% ==========================================
+\subsection{Proposta di progetto}
+La nostra proposta è quella di realizzare un sito di \textbf{streaming anime} con un focus particolare sull'aspetto di \textbf{discussione}. Il nome del sito è ispirato proprio da questa filosofia: \textbf{Nexus} (in latino: ``\textit{nesso, legame, connessione}''), un \textbf{luogo centrale} dove riunirsi.
+
+Il sito è pensato per \textbf{stimolare la discussione} sugli episodi degli anime appena rilasciati: i \textbf{commenti} verranno aperti non appena l'episodio sarà disponibile per la visione, mentre dopo \textbf{2 settimane} dall'uscita dell'episodio non sarà più possibile per gli utenti partecipare alla discussione. Questa scelta si adatta allo \textbf{standard dell'industria} che prevede solitamente il rilascio di episodi a \textbf{cadenza settimanale} fino al termine di una stagione. Inoltre è volta a permettere anche un'adeguata \textbf{moderazione} delle discussioni per il periodo in cui sono attive.
+
+Nonostante ciò, prevediamo che una buona parte degli utenti potrebbe voler guardare le stagioni nella loro interezza al termine delle stesse. Per non precludere loro la possibilità di partecipare alla discussione, i commenti saranno \textbf{riaperti} al \textbf{termine di una stagione}, per un determinato periodo di tempo.
+
+Il nostro obiettivo è quindi fare in modo di invogliare gli utenti a manifestare le proprie opinioni reali e \textbf{``a caldo''} su ciascuna serie, lasciando comunque una certa \textbf{libertà sui tempi di visione}.
+
+Per casi particolari, si può prevedere in futuro il \textbf{blocco o sblocco manuale} delle discussioni da parte di utenti autorizzati.
+
+Ogni episodio avrà una \textbf{sezione commenti} ad esso dedicata: i commenti supporteranno i \textbf{timestamp} del video, e \textbf{diversi stili di formattazione}. I commenti verranno gestiti come \textbf{thread}: sarà possibile quindi commentare l'episodio stesso o \textbf{rispondere} ad un commento particolare. L'intera thread farà sempre riferimento all'episodio.
+
+\section{Attori del sistema}
+Nei punti successivi sono elencati gli attori del sistema, ciascuno caratterizzato da specifici \textbf{permessi}, \textbf{obiettivi} e modalità di interazione con l'applicazione.
+
+\subsection{Utente}
+L'utente crea e gestisce il proprio profilo previa \textbf{registrazione}. Può personalizzare l'avatar e impostare le preferenze di lingua per l'applicazione, l'audio e i sottotitoli; queste ultime influenzeranno la lingua predefinita dei contenuti visualizzati. Ha la facoltà di recuperare o modificare la password, cercare show per titolo o genere, aggiungere serie ai \textbf{preferiti} e interagire tramite ``like'' con episodi e commenti. 
+
+Può partecipare attivamente alle discussioni e interrompere la visione in qualsiasi momento, per poi riprenderla tramite la funzionalità \textbf{``Continua a guardare''}. Possiede i \textbf{privilegi minimi} di interazione, superiori solo a quelli del Guest.
+
+\subsection{Guest}
+Il Guest rappresenta l'utente non autenticato. Può navigare esclusivamente nelle sezioni che non richiedono autorizzazione, come la \textbf{home}, la pagina di \textbf{ricerca} e la lista degli episodi di uno show. Non ha l'autorizzazione per fruire dei contenuti in \textbf{streaming}, personalizzare profili o visualizzare e pubblicare commenti.
+
+\subsection{Moderatore}
+Il Moderatore presiede alla gestione delle interazioni nelle sezioni commenti. In caso di violazione dei \textbf{ToS} (Termini di Servizio), ha la facoltà di \textbf{nascondere commenti} offensivi e revocare il diritto di scrittura agli utenti. Svolge le proprie mansioni direttamente all'interno delle discussioni tramite un'\textbf{interfaccia dedicata}, dotata di strumenti per facilitare la moderazione (es. contrassegnare i commenti già approvati). 
+
+Può visualizzare la cronologia completa dei messaggi, inclusi quelli rimossi. Può gestire le discussioni, creandole o disattivandole all'occorrenza. Sebbene le discussioni vengano gestite automaticamente, il suo \textbf{intervento manuale} è fondamentale al fine di accomodare situazioni particolari, quali aprire una discussione in corrispondenza di un evento particolare della community. Ogni sua pubblicazione è contrassegnata da un \textbf{flair speciale} accanto allo username.
+
+\subsection{Gestore catalogo}
+Il Gestore Catalogo è responsabile dell'aggiornamento e del mantenimento dei contenuti multimediali. Opera tramite \textbf{schermate riservate} e form dedicati per inserire, modificare o rimuovere serie, stagioni ed episodi, incluse le relative descrizioni, tracce audio e sottotitoli. Ha inoltre il compito di gestire il catalogo degli \textbf{avatar} disponibili per i profili. Al pari del Moderatore, i suoi interventi pubblici sono identificati da un \textbf{flair speciale}.
+
+\subsection{Admin}
+L'Admin detiene i \textbf{privilegi massimi} del sistema e si occupa della supervisione e della nomina di Moderatori e Gestori Catalogo. Ha il pieno controllo sugli account, potendo visualizzare e \textbf{modificare lo status} di qualsiasi utente. \textbf{Eredita interamente} tutte le funzionalità operative del Moderatore e del Gestore Catalogo. I suoi interventi sulla piattaforma sono distinti dal \textbf{flair più esclusivo}.
+
+\section{Architettura del sistema}
+Il progetto \textbf{NexuStream} adotta un'architettura di tipo \textbf{Client-Server}, configurata per garantire una netta separazione delle responsabilità, un'elevata scalabilità e una gestione centralizzata della sicurezza e persistenza dei dati. L'infrastruttura si articola in due macro-componenti indipendenti e disaccoppiate:
+
+\begin{itemize}
+    \item \textbf{Frontend (Client):} Sviluppato mediante il framework \textbf{Ionic} basato su \textbf{Angular}, deputato alla gestione dell'interfaccia utente, dell'esperienza di streaming e delle sezioni di discussione.
+    \item \textbf{Backend (Server):} Realizzato in ambiente Node.js utilizzando il framework \textbf{Express} in \textbf{JavaScript}, incaricato dell'esposizione delle API, della business logic e del controllo degli accessi.
+\end{itemize}
+
+La persistenza delle informazioni strutturate — quali dati degli utenti, relazioni dei thread e metadati del catalogo — è affidata a un database relazionale \textbf{SQLite}, integrato direttamente nel backend per garantire una gestione dei dati leggera ed efficiente. 
+
+La comunicazione tra client e server avviene esclusivamente tramite protocollo \textbf{HTTP/HTTPS}, dove lo scambio di informazioni standard è veicolato in formato \textbf{JSON}. Per le operazioni di caricamento dei media e degli asset grafici (come video, sottotitoli e avatar), il canale viene gestito tramite richieste \textbf{multipart/form-data}, elaborate lato server mediante il middleware \textbf{Multer}. I file così ricevuti vengono memorizzati in modo permanente all'interno del \textbf{file storage locale} del server, i cui percorsi (path) vengono indicizzati all'interno del database per consentire un recupero rapido dei contenuti durante lo streaming.

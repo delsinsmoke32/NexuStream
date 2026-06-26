@@ -125,7 +125,7 @@ const modifyShow = async (req, res) => {
     const { title, description, dateEnded, lang, thumbnailURI, bannerURI } = req.body;
 
     const user = req.user;
-    const applang = user.appLang;
+    const applang = req.language;
     
 
     let fields = [];
@@ -208,7 +208,7 @@ const removeShow = async (req, res) => {
     
     const showId = parseInt(req.params.id);
     const user = req.user;
-    const applang = user.appLang;
+    const applang = req.language;
 
     try {
         // Recupero la serie PRIMA di cancellarla dal DB per avere in memoria gli URI
@@ -480,7 +480,7 @@ const modifyEpisode = async (req, res) => {
 
     const episodeId = parseInt(req.params.id, 10);
     const user = req.user;
-    const applang = user.appLang;
+    const applang = req.language;
     
     const { 
         title, description, refSeason, lang, thumbnailURI,
@@ -579,7 +579,7 @@ const removeEpisode = async (req, res) => {
     const episodeId = parseInt(req.params.id, 10);
 
     const user = req.user;
-    const applang = user.appLang;
+    const applang = req.language;
 
     try {
         // 1. Estraggo i dati per ottenere la ThumbnailURI prima di cancellare la riga dal DB

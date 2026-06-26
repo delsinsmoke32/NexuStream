@@ -9,7 +9,7 @@ const getSeasons = async (req, res) => {
     }
     const { showId } = req.params;
     const user = req.user;
-    const applang = user ? user.appLang : req.language;
+    const applang = req.language;
     try {
         const seasons = await seasonModel.getSeasonsByShow(showId, applang);
         return res.json(seasons);
@@ -30,7 +30,7 @@ const getSeasonDetails = async (req, res) => {
     const { seasonId } = req.params;
     const user = req.user;
 
-    const applang = user ? user.appLang : req.language;
+    const applang = req.language;
 
     try {
         // Chiamata al Model per estrarre la stagione

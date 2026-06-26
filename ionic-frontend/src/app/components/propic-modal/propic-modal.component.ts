@@ -15,7 +15,7 @@ import {
     Validators,
 } from '@angular/forms'
 
-// 🚀 IMPORTAZIONI STANDALONE CHIRURGICHE DI IONIC
+//  IMPORTAZIONI STANDALONE CHIRURGICHE DI IONIC
 import {
     IonButton,
     IonButtons,
@@ -35,7 +35,7 @@ import {
 import { addIcons } from 'ionicons'
 import { cloudUploadOutline, imageOutline } from 'ionicons/icons'
 
-// 🚀 IMPORTA IL SERVIZIO
+//  IMPORTA IL SERVIZIO
 import { CataloguerService } from '../../services/cataloguer'
 
 @Component({

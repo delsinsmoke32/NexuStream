@@ -62,7 +62,7 @@ export class TabsPage {
     private router = inject(Router)
     private authService = inject(AuthService)
 
-    // 🚀 Catturiamo il popover usando il suo nome ID dell'HTML
+    //  Catturiamo il popover usando il suo nome ID dell'HTML
     @ViewChild('profilePopover') popover?: IonPopover
 
     isAdmin = signal(false)
@@ -99,7 +99,7 @@ export class TabsPage {
         }
     }
 
-    // 🚀 Funzione magica per aprire il popover sia da PC che da Mobile
+    //  Funzione magica per aprire il popover sia da PC che da Mobile
     async openProfileMenu(event: any) {
         this.isPopoverOpen = true
         // 1. Apriamo il popover

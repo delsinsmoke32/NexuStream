@@ -49,7 +49,7 @@ import { DiscussionModalComponent } from '@app/components/discussion-modal/discu
 import { VideoPlayerComponent } from '@app/components/video-player/video-player.component'
 import { jwtDecodeHelper } from '@app/utils/jwt-helper'
 
-// 🚀 NUOVI SERVIZI IMPORTATI
+//  NUOVI SERVIZI IMPORTATI
 import { StreamingEpisode } from '@app/models/streaming'
 import { EpisodeService } from '@app/services/episode'
 import { ModService } from '@app/services/mod' // Usiamo quello già creato per le discussioni
@@ -87,7 +87,7 @@ export class EpisodePage implements OnInit, OnDestroy {
     private toastCtrl = inject(ToastController)
     private navCtrl = inject(NavController)
 
-    // 🚀 INIEZIONE DEI SERVIZI
+    //  INIEZIONE DEI SERVIZI
     private episodeService = inject(EpisodeService)
     private modService = inject(ModService)
 
@@ -411,7 +411,7 @@ export class EpisodePage implements OnInit, OnDestroy {
 
         const { data } = await modal.onDidDismiss()
         if (data?.payload) {
-            // 🚀 Usiamo il ModService!
+            //  Usiamo il ModService!
             if (data.isEdit) {
                 this.modService
                     .updateDiscussion(data.discussionId, data.payload)
@@ -491,6 +491,18 @@ export class EpisodePage implements OnInit, OnDestroy {
         if (this.videoPlayerComponent)
             await this.videoPlayerComponent.killPlayer()
         this.navCtrl.navigateBack(['/shows', this.showId()])
+    }
+
+    isDiscussionClosed(disc: any): boolean {
+        const isForced = disc.ForceClosed === 1 || disc.ForceClosed === true;
+        if (isForced) return true;
+
+        if (disc.CloseDate) {
+            const closeDate = new Date(disc.CloseDate);
+            return new Date() > closeDate; // Restituisce true se la data è passata
+        }
+        
+        return false;
     }
 
     async ionViewWillLeave() {

@@ -58,7 +58,7 @@ export class AdminPage implements OnInit {
     currentSearchTerm = ''
 
     constructor() {
-        // 🚀 4. Registra l'icona della freccia se non l'avevi già fatto
+        //  4. Registra l'icona della freccia se non l'avevi già fatto
         addIcons({ arrowBackOutline })
     }
 
@@ -67,7 +67,7 @@ export class AdminPage implements OnInit {
     }
 
     loadUsers(isAppend: boolean = false, event?: InfiniteScrollCustomEvent) {
-        // 🚀 Chiamata pulita al Service
+        //  Chiamata pulita al Service
         this.adminService
             .getUsers(this.currentPage, this.pageSize, this.currentSearchTerm)
             .subscribe({

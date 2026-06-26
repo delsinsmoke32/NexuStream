@@ -55,7 +55,7 @@ import {
     timeOutline,
 } from 'ionicons/icons'
 
-// 🚀 Imports Service, Model e Pipe
+//  Imports Service, Model e Pipe
 import { CataloguerService } from '../../services/cataloguer'
 import {
     EpisodePayload,
@@ -92,7 +92,7 @@ import { BackendUrlPipe } from '../../pipes/backend-url-pipe'
         IonSpinner,
         IonList,
     ],
-    providers: [BackendUrlPipe], // 🚀 Iniezione del Pipe
+    providers: [BackendUrlPipe], //  Iniezione del Pipe
 })
 export class CataloguerEpisodeModalComponent implements OnInit {
     @Input() data: any
@@ -122,7 +122,7 @@ export class CataloguerEpisodeModalComponent implements OnInit {
     private cataloguerService = inject(CataloguerService)
     private toastCtrl = inject(ToastController)
     private alertCtrl = inject(AlertController)
-    private backendUrl = inject(BackendUrlPipe) // 🚀 Iniezione per rimuovere localhost
+    private backendUrl = inject(BackendUrlPipe) //  Iniezione per rimuovere localhost
 
     episodeForm!: FormGroup
     isEditMode = false
@@ -149,7 +149,7 @@ export class CataloguerEpisodeModalComponent implements OnInit {
         console.log(this.data)
         if (this.isEditMode) {
             if (this.data.ThumbnailURI) {
-                // 🚀 Niente localhost, usiamo il pipe!
+                //  Niente localhost, usiamo il pipe!
                 this.thumbnailPreview.set(
                     this.backendUrl.transform(this.data.ThumbnailURI)
                 )
@@ -351,7 +351,7 @@ export class CataloguerEpisodeModalComponent implements OnInit {
                     handler: async () => {
                         this.isUploading.set(true)
                         try {
-                            // 🚀 Chiamata al Service
+                            //  Chiamata al Service
                             await firstValueFrom(
                                 this.cataloguerService.deleteEpisodeTrack(
                                     this.data.EpisodeID,

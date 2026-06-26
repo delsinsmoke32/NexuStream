@@ -92,7 +92,7 @@ export class LoginPage implements OnInit {
 
                 const userData = res.user ? res.user : res
 
-                // 🚀 1. Aggiorniamo le lingue IN LOCALE prima del token!
+                //  1. Aggiorniamo le lingue IN LOCALE prima del token!
                 // (Assicurati che i nomi corrispondano a come il tuo DB ti restituisce i campi)
                 const appLang = userData.REF_App_Language || 'it'
                 const textLang = userData.REF_Text_Language || 'it'
@@ -101,7 +101,7 @@ export class LoginPage implements OnInit {
                 // Salviamo le preferenze (non farà chiamate API perché il token non c'è ancora)
                 this.langService.setLanguages(appLang, textLang, audioLang)
 
-                // 🚀 2. ORA salviamo il token e il resto
+                //  2. ORA salviamo il token e il resto
                 localStorage.setItem('token', res.token)
                 localStorage.setItem('user', JSON.stringify(userData))
 
@@ -114,7 +114,7 @@ export class LoginPage implements OnInit {
                     localStorage.removeItem('propic')
                 }
 
-                // 🚀 3. Controllo URL: Se la lingua dell'utente è diversa da quella dell'URL,
+                //  3. Controllo URL: Se la lingua dell'utente è diversa da quella dell'URL,
                 // ricarichiamo la pagina con la lingua corretta (come nei Settings)
                 const currentUrlLang = window.location.pathname.split('/')[1]
                 const targetRoute = rolesArray.includes('admin')

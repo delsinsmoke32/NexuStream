@@ -10,7 +10,7 @@ import {
 import { addIcons } from 'ionicons';
 import { saveOutline } from 'ionicons/icons';
 
-// 🚀 IMPORT DEL MODELLO
+//  IMPORT DEL MODELLO
 import { DiscussionPayload, ModDiscussion } from '../../models/mod';
 
 @Component({
@@ -83,7 +83,7 @@ export class DiscussionModalComponent implements OnInit {
     if (this.discussionForm.invalid) return;
 
     const formRaw = this.discussionForm.getRawValue(); 
-    let payload: DiscussionPayload; // 🚀 Tipizziamo il payload
+    let payload: DiscussionPayload; //  Tipizziamo il payload
 
     if (this.isEditMode) {
       payload = {

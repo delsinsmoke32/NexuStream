@@ -5,36 +5,43 @@ import { catchError, throwError } from 'rxjs'
 import { environment } from '../environments/environment'
 
 export const httpInterceptor: HttpInterceptorFn = (req, next) => {
-    const router = inject(Router)
-    const baseUrl = `http://${environment.host}:${environment.port}`
+    const router = inject(Router);
+    const baseUrl = `http://${environment.host}:${environment.port}`;
+    const token = localStorage.getItem('token');
+    const lang = localStorage.getItem('appLang') || 'it';
 
-    const token = localStorage.getItem('token')
+    // 1. Cloniamo la richiesta aggiungendo sempre la lingua
+    let apiReq = req.clone({
+        setHeaders: {
+            'Accept-Language': lang
+        }
+    });
 
-    let apiReq = req
+    // 2. Se è un URL relativo, aggiungiamo la baseUrl
     if (!req.url.startsWith('http://') && !req.url.startsWith('https://')) {
-        apiReq = req.clone({
+        apiReq = apiReq.clone({
             url: `${baseUrl}/${req.url}`,
-        })
+        });
     }
 
-    // non dovrebbe succedere ma così non senda le request a siti esterni
+    // 3. Se l'utente è loggato, aggiungiamo il token.
+    // Usando .clone() su apiReq (che ha già la lingua), Angular unisce 
+    // automaticamente i nuovi header a quelli già esistenti.
     if (token && apiReq.url.startsWith(baseUrl)) {
         apiReq = apiReq.clone({
             setHeaders: {
-                Authorization: `Bearer ${token}`,
-            },
-        })
+                Authorization: `Bearer ${token}`
+            }
+        });
     }
 
     return next(apiReq).pipe(
         catchError((error: HttpErrorResponse) => {
             if (error.status == 401) {
-                console.error('Sessione scaduta o non autorizzata.')
-                localStorage.removeItem('token')
-                router.navigate(['/login'])
+                localStorage.removeItem('token');
+                router.navigate(['/login']);
             }
-
-            return throwError(() => error)
+            return throwError(() => error);
         })
-    )
-}
+    );
+};

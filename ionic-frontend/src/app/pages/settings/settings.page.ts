@@ -169,19 +169,6 @@ export class SettingsPage implements OnInit {
             )
     }
 
-    // Apre la schermata di selezione
-    // openAvatarSelector() {
-    //     this.isAvatarModalOpen = true
-    // }
-
-    // Cambia l'avatar e chiude la finestra
-    // selectAvatar(avatarUrl: string) {
-    //     this.currentAvatar.set(avatarUrl)
-    //     this.isAvatarModalOpen = false // Chiude il pannello dopo la scelta
-    //     localStorage.setItem('REF_PropicURI', 'avatarURL')
-    //     console.log('Nuovo avatar salvato:', avatarUrl)
-    // }
-
     async openAvatarSelector() {
         console.log(this.currentAvatar())
         const modal = await this.modalCtrl.create({
@@ -202,10 +189,24 @@ export class SettingsPage implements OnInit {
                 .changePropic({ propicURI: data.selectedAvatar })
                 .subscribe({
                     next: async () => {
-                        this.presentToast(
-                            'Propic aggiornata con successo!',
-                            'success'
-                        )
+                        // Recupera l'oggetto 'user' intero dal localStorage
+                        const userString = localStorage.getItem('user');
+                        
+                        if (userString) {
+                            const user = JSON.parse(userString);
+                            
+                            // 2Aggiorna SOLO il campo dell'avatar nell'oggetto
+                            user.REF_PropicURI = data.selectedAvatar;
+                            
+                            // Risalva l'oggetto nel localStorage
+                            localStorage.setItem('user', JSON.stringify(user));
+                        }
+
+                        // Aggiorna il signal per la UI (con timestamp per evitare cache)
+                        const timestamp = new Date().getTime();
+                        this.currentAvatar.set(`${data.selectedAvatar}?t=${timestamp}`);
+                        
+                        this.presentToast('Propic aggiornata con successo!', 'success');
                     },
                     error: async (err) => {
                         const errorMsg =

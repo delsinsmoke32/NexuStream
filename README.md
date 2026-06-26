@@ -48,3 +48,7 @@ Scaricare l'[ultima versione](https://www.gyan.dev/ffmpeg/builds/) di `ffmpeg` p
 I node modules sono da installare rispettivamente nelle cartelle `express-backend` e `ionic-frontend`.
 
 Nella directory root della repository si trova la cartella `test_files`, contente files utili al testing delle features.
+
+### NOTE
+
+Il database non è permanente e viene resettato ogni volta che si esegue il server, per cui utenti creati non verranno mantenuti così come eventuali contenuti caricati. I file statici rimarranno. Sconsigliato cancellare serie, stagioni ed episodi default poiché si perderebbero i file ma rimarrebbero nel database.

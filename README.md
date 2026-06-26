@@ -52,3 +52,10 @@ Nella directory root della repository si trova la cartella `test_files`, content
 ### NOTE
 
 Il database non è permanente e viene resettato ogni volta che si esegue il server, per cui utenti creati non verranno mantenuti così come eventuali contenuti caricati. I file statici rimarranno. Sconsigliato cancellare serie, stagioni ed episodi default poiché si perderebbero i file ma rimarrebbero nel database.
+
+Per credenziali di utenti con vari privilegi, si può esaminare il file `db/populateDb.js`. Le credenziali dell'admin si trovano anche esse in quel file, ma per comodità sono:
+
+```
+mail: admin@stream.it
+password: admin123
+```
